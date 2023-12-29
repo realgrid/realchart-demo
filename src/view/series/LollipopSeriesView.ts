@@ -20,7 +20,7 @@ class BarElement extends GroupElement implements IPointView {
     // fields
     //-------------------------------------------------------------------------
     point: LollipopSeriesPoint;
-    saveVal: number;
+    // saveVal: number;
 
     private _line: LineElement;
     _marker: PathElement;

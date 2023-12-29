@@ -113,7 +113,7 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
         const inverted = this._inverted;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
-        const vr = this._getViewRate();
+        const gr = this._getGrowRate();
         const org = inverted ? 0 : height;
 
         this._pointContainer.invert(inverted, height);
@@ -122,8 +122,8 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
             const p = v.point;
 
             if (v.setVis(!p.isNull)) {
-                const wUnit = xAxis.getUnitLen(xLen, p.xValue) * vr;
-                const hUnit = yAxis.getUnitLen(yLen, p.yValue) * vr;
+                const wUnit = xAxis.getUnitLen(xLen, p.xValue) * gr;
+                const hUnit = yAxis.getUnitLen(yLen, p.yValue) * gr;
                 let x = xAxis.getPos(xLen, p.xValue) - wUnit / 2;
                 let y = org - yAxis.getPos(yLen, p.yValue) - hUnit / 2;
                 p.xPos = inverted ? org + yAxis.getPos(yLen, p.yValue) : x + (wUnit / 2);

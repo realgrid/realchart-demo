@@ -8,6 +8,7 @@
 
 import { absv, isArray, isFunc, isObject, isString, maxv, minv, pickNum, pickProp, pickProp3 } from "../common/Common";
 import { IPoint } from "../common/Point";
+import { RcAnimation } from "../common/RcAnimation";
 import { RcElement } from "../common/RcControl";
 import { RcObject } from "../common/RcObject";
 import { IRichTextDomain } from "../common/RichText";
@@ -626,6 +627,25 @@ const AXIS_VALUE = {
     'x': 'xValue',
     'y': 'yValue',
     'z': 'zValue'
+}
+
+class ValueAnimation extends RcAnimation {
+
+    constructor(public series: Series, public point: DataPoint) {
+        super();
+
+        this.duration = 500;
+        this.endHandler = () => {
+            delete this.point.ani;
+            this.point.cleanValue();
+        }
+    }
+
+    protected _doUpdate(rate: number): boolean {
+        this.point.y = this.point.yPrev + (this.point.yNew - this.point.yPrev) * rate;
+        this.series['_changed']();
+        return true;
+    }
 }
 
 /**
@@ -1381,15 +1401,26 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return m.visible === true;
     }
 
-    getPointAt(xValue: number): DataPoint {
+    loadPoints(src: any[]): void {
+        this._doLoadPoints(src);
+    }
+
+    getPointAt(xValue: number | string): DataPoint {
+        if (isString(xValue)) {
+            xValue = this._xAxisObj.getValue(xValue);
+        }
         return this._points.pointAt(xValue);
     }
 
-    setValueAt(xValue: number, yValue: number): boolean {
-        const p = this._points.pointAt(xValue);
-        
-        if (p.yValue !== yValue) {
-            p.yValue = yValue;
+    setValueAt(p: DataPoint, yValue: number, animate: boolean): boolean {
+        if (p && (p.ani && p.yNew !== yValue || !p.ani && p.yValue !== yValue)) {
+            const ani = animate ? new ValueAnimation(this, p) : _undef;
+
+            if (p.ani instanceof ValueAnimation) {
+                p.ani.stop();
+            }
+            p.updateValue(yValue, ani);
+            ani.start();
             this._changed();
             return true;
         }
@@ -1463,10 +1494,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     protected _doLoadPoints(src: any[]): void {
-        this._points.load(src);
-    }
-
-    loadPoints(src: any[]): void {
         this._points.load(src);
     }
 

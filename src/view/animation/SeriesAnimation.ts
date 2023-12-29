@@ -9,6 +9,7 @@
 import { RcAnimation, RcAnimationEndHandler } from "../../common/RcAnimation";
 import { ClipRectElement, RcElement } from "../../common/RcControl";
 import { pixel } from "../../common/Types";
+import { DataPoint } from "../../model/DataPoint";
 import { Series } from "../../model/Series";
 import { SeriesView } from "../SeriesView";
 
@@ -218,13 +219,28 @@ export abstract class PointAnimation extends RcAnimation {
 }
 
 /**
- * bar의 크기를 줄인 상태에서 원복시킨다.
+ * point view의 크기를 줄인 상태에서 원복시킨다.
  */
 export class GrowAnimation extends PointAnimation {
 
     //-------------------------------------------------------------------------
-    // fields
+    // overriden members
     //-------------------------------------------------------------------------
+    protected _doUpdate(rate: number): boolean {
+        this._series.setGrowRate(rate);
+        return true;
+    }
+
+    protected _doStop(): void {
+        this._series.setGrowRate(NaN);
+    }
+}
+
+/**
+ * 데이터포인트의 값 변경 변화를 표시한다.
+ */
+export class ValueAnimation extends PointAnimation {
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -232,12 +248,12 @@ export class GrowAnimation extends PointAnimation {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doUpdate(rate: number): boolean {
-        this._series.setViewRate(rate);
+        this._series.setValueRate(rate);
         return true;
     }
 
     protected _doStop(): void {
-        this._series.setViewRate(NaN);
+        this._series.setValueRate(NaN);
     }
 }
 

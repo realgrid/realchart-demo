@@ -22,7 +22,7 @@ class BarElement extends GroupElement implements IPointView {
     // fields
     //-------------------------------------------------------------------------
     point: DataPoint;
-    saveVal: number;
+    // saveVal: number;
 
     private _back: RectElement; // for hit-testing
     private _segments = new ElementPool<PathElement>(this, PathElement);
@@ -116,7 +116,7 @@ export class EqualizerSeriesView extends BoxedSeriesView<EqualizerSeries> {
     }        
 
     protected _layoutPointViews(width: number, height: number): void {
-        const len = (this.model._yAxisObj as Axis).prev(this._inverted ? width : height) * this._getViewRate();
+        const len = (this.model._yAxisObj as Axis).prev(this._inverted ? width : height) * this._getGrowRate();
 
         this.$_buildSegments(this.model, len);
 

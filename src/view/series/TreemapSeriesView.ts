@@ -9,7 +9,6 @@
 import { Color } from "../../common/Color";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
-import { createRect } from "../../common/Rectangle";
 import { Align } from "../../common/Types";
 import { RectElement } from "../../common/impl/RectElement";
 import { DataPoint } from "../../model/DataPoint";
@@ -23,7 +22,7 @@ class NodeView extends RectElement implements IPointView {
     // fields
     //-------------------------------------------------------------------------
     node: TreeNode;
-    saveVal: number;
+    // saveVal: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -131,9 +130,8 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj
         const inverted = this._inverted;
-        const labels = series.pointLabel;
-        const vr = this._getViewRate();
-
+        // const labels = series.pointLabel;
+        const gr = this._getGrowRate();
         const labelViews = this._labelViews();
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
@@ -164,7 +162,7 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
             if (xAxis.reversed) m.x = xLen - m.x - m.width;
             if (yAxis.reversed) m.y = yLen - m.y - m.height;
             if (inverted) m.y = m.y - yLen;
-            v.render(vr);
+            v.render(gr);
 
             let x = m.x + m.width / 2;
             let y = m.y + m.height / 2;

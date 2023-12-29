@@ -62,7 +62,7 @@ export class HistogramSeriesView extends ClusterableSeriesView<HistogramSeries> 
     protected _layoutPointViews(width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
-        const vr = this._getViewRate();
+        const gr = this._getGrowRate();
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
@@ -91,7 +91,7 @@ export class HistogramSeriesView extends ClusterableSeriesView<HistogramSeries> 
             p.yPos = y -= yVal;
 
             // 아래에서 위로 올라가는 animation을 위해 바닥 지점을 전달한다.
-            this._layoutPointView(pointView, i, x, y + h, w, h * vr);
+            this._layoutPointView(pointView, i, x, y + h, w, h * gr);
 
             if (info && (info.labelView = labelViews.get(p, 0))) {
                 if (inverted) {
@@ -126,14 +126,14 @@ export class HistogramSeriesView extends ClusterableSeriesView<HistogramSeries> 
         const xAxis = this.model._xAxisObj;
         const yAxis = this.model._yAxisObj;
         const y = this.height;
-        const vr = this._getViewRate();
+        const gr = this._getGrowRate();
 
         this._bars.forEach((bar, i) => {
             const p = bar.point as HistogramSeriesPoint;
             const x1 = xAxis.getPos(width, p.min);
             const x2 = xAxis.getPos(width, p.max);
             const x = x1 + (x2 - x1) / 2;
-            const h = yAxis.getPos(height, bar.point.yValue) * vr;
+            const h = yAxis.getPos(height, bar.point.yValue) * gr;
             const w = maxv(1, x2 - x1 - 1);
 
             p.xPos = x;

@@ -28,7 +28,7 @@ import { PrevAnimation, SeriesAnimation } from "./animation/SeriesAnimation";
 
 export interface IPointView {
     point: DataPoint;
-    saveVal: number;
+    // saveVal: number;
 }
 
 export class PointLabelView extends LabelElement {
@@ -292,7 +292,8 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
 
     protected _legendMarker: RcElement;
     protected _visPoints: DataPoint[];
-    private _viewRate = NaN;
+    private _growRate = NaN;
+    private _valueRate = NaN;
     private _posRate = NaN;
     protected _prevRate = NaN;
     _animations: Animation[] = [];
@@ -326,9 +327,9 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         return 'reveal';
     }
 
-    setViewRate(rate: number): void {
-        if ((!isNaN(rate) || !isNaN(this._viewRate)) && rate !== this._viewRate) {
-            this._viewRate = rate;
+    setGrowRate(rate: number): void {
+        if ((!isNaN(rate) || !isNaN(this._growRate)) && rate !== this._growRate) {
+            this._growRate = rate;
             if (isNaN(rate) && isNaN(this._posRate) && isNaN(this._prevRate)) {
                 this.invalidate();
             } else {
@@ -337,10 +338,13 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         }
     }
 
+    setValueRate(rate: number): void {
+    }
+
     setPosRate(rate: number): void {
         if ((!isNaN(rate) || !isNaN(this._posRate)) && rate !== this._posRate) {
             this._posRate = rate;
-            if (isNaN(rate) && isNaN(this._viewRate) && isNaN(this._prevRate)) {
+            if (isNaN(rate) && isNaN(this._growRate) && isNaN(this._prevRate)) {
                 this.invalidate();
             } else {
                 this._doPosRateChanged(rate);
@@ -351,7 +355,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     setPrevRate(rate: number): void {
         if ((!isNaN(rate) || !isNaN(this._prevRate)) && rate !== this._prevRate) {
             this._prevRate = rate;
-            if (isNaN(rate) && isNaN(this._viewRate) && isNaN(this._prevRate)) {
+            if (isNaN(rate) && isNaN(this._growRate) && isNaN(this._prevRate)) {
                 this.invalidate();
             } else {
                 this._doPrevRateChanged(rate);
@@ -510,9 +514,9 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
             this.$_renderTrendline(this._inverted);       
         }
         this._animatable && !this._simpleMode && this._runShowEffect(!this.control.loaded && this.chart().loadAnimatable());
-        this._getPointPool().forEach((pv: any) => {
-            pv.saveVal = pv.point ? pv.point.getValue() : NaN;
-        });
+        // this._getPointPool().forEach((pv: any) => {
+        //     pv.saveVal = pv.point ? pv.point.getValue() : NaN;
+        // });
     }
 
     protected _doAfterLayout(): void {
@@ -570,12 +574,12 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         return this._labelContainer.visible ? this._labelContainer : _undef;
     }
 
-    protected _getViewRate(): number {
-        return pickNum(this._viewRate, 1);
+    protected _getGrowRate(): number {
+        return pickNum(this._growRate, 1);
     }
 
     _animating(): boolean {
-        return !isNaN(this._viewRate) || !isNaN(this._posRate) || !isNaN(this._prevRate) || this._animations.length > 0;
+        return !isNaN(this._growRate) || !isNaN(this._posRate) || !isNaN(this._prevRate) || this._animations.length > 0;
     }
 
     protected _lazyPrepareLabels(): boolean { return false; }
@@ -839,7 +843,7 @@ export abstract class PointElement extends PathElement implements IPointView {
     // fields
     //-------------------------------------------------------------------------
     point: DataPoint;
-    saveVal: number;
+    // saveVal: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -906,7 +910,7 @@ export abstract class RangeElement extends GroupElement {
     // fields
     //-------------------------------------------------------------------------
     point: DataPoint;
-    saveVal: number;
+    // saveVal: number;
     wSave: number;
     xSave: number;
 
@@ -973,7 +977,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
     protected _layoutPointViews(width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
-        const vr = this._getViewRate();
+        const gr = this._getGrowRate();
         const pr = this._prevRate;
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
@@ -1002,10 +1006,10 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 const wUnit = xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad);
                 let wPoint = series.getPointWidth(wUnit);
                 const yVal = yAxis.getPos(yLen, p.yValue) - yBase;
-                const yGroup = (yAxis.getPos(yLen, p.yGroup) - yBase - yVal) * vr;
-                const hPoint = yVal * vr;
+                const yGroup = (yAxis.getPos(yLen, p.yGroup) - yBase - yVal) * gr;
+                const hPoint = yVal * gr;
                 let x = xAxis.getPos(xLen, p.xValue) - wUnit / 2;
-                let y = yOrg - yAxis.getPos(yLen, p.yGroup) * vr;
+                let y = yOrg - yAxis.getPos(yLen, p.yGroup) * gr;
 
                 if (!isNaN(pr + pv.wSave)) {
                     wPoint = pv.wSave + (wPoint - pv.wSave) * pr;
@@ -1029,9 +1033,9 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                     p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
                     // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
                     if (based) {
-                        p.xPos = x += yAxis.getPos(yLen, p.yGroup) * vr; // stack/fill일 때 org와 다르다.
+                        p.xPos = x += yAxis.getPos(yLen, p.yGroup) * gr; // stack/fill일 때 org와 다르다.
                     } else {
-                        p.xPos = x += yAxis.getPos(yLen, p.yGroup * vr);
+                        p.xPos = x += yAxis.getPos(yLen, p.yGroup * gr);
                     }
                 }
 
@@ -1066,7 +1070,7 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
     protected _layoutPointViews(width: number, height: number): void {
         const series = this.model;
         const inverted = series.chart.isInverted();
-        const vr = this._getViewRate();
+        const gr = this._getGrowRate();
         const pr = this._prevRate;
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
@@ -1089,9 +1093,9 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
                 const wUnit = xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad);
                 let wPoint = series.getPointWidth(wUnit);
                 const yVal = yAxis.getPos(yLen, p.yValue);
-                const hPoint = (yVal - yAxis.getPos(yLen, this._getLowValue(p))) * vr;
+                const hPoint = (yVal - yAxis.getPos(yLen, this._getLowValue(p))) * gr;
                 let x = xAxis.getPos(xLen, p.xValue) - wUnit / 2;
-                let y = org - yAxis.getPos(yLen, p.yGroup) * vr;
+                let y = org - yAxis.getPos(yLen, p.yGroup) * gr;
 
                 if (!isNaN(pr + pv.wSave)) {
                     wPoint = pv.wSave + (wPoint - pv.wSave) * pr;
@@ -1113,7 +1117,7 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
                     x = org;
                     // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
                     p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
-                    p.xPos = x += yAxis.getPos(yLen, p.yGroup) * vr;
+                    p.xPos = x += yAxis.getPos(yLen, p.yGroup) * gr;
                 }
 
                 // labels
@@ -1151,7 +1155,7 @@ export class MarkerSeriesPointView<T extends DataPoint> extends PathElement impl
     // fields
     //-------------------------------------------------------------------------
     point: T;
-    saveVal: number;
+    // saveVal: number;
 
     //-------------------------------------------------------------------------
     // constructor

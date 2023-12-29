@@ -14,11 +14,12 @@
 ### [baseLine](./category/baseLine)
 축 선(line) 설정 모델.  
 
-### categories: `any[]{:js}`[#categories]
+### categories[#categories]
 명시적으로 지정하는 카테고리 목록.
 
-카테고리 항목을 object로 지정할 때에는 name(혹은 label) 속성에 카테고리 이름을,
-width 속성에 상대 너비(1이 기본 너비)를 지정한다.
+문자열로 카테고리 항목을 지정하거나,
+object로 지정할 때에는 name(혹은 label) 속성에 카테고리 이름을 문자열로,
+width 속성에 상대 너비(1이 기본 너비)를 숫자로 지정한다.
 첫 번째 값이 [startValue](#startValue) 에 해당하고 [valueStep](#valueStep) 씩 증가한다.
 각 카테고리의 상대적 너비를 지정할 수 있다.  
 

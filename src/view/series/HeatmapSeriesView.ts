@@ -22,7 +22,7 @@ class CellView extends RectElement implements IPointView {
     // fields
     //-------------------------------------------------------------------------
     point: HeatmapSeriesPoint;
-    saveVal: number;
+    // saveVal: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -91,7 +91,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
     protected $_layoutCells(width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
-        const vr = this._getViewRate();
+        const gr = this._getGrowRate();
         // const labels = series.pointLabel;
         // const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
@@ -101,14 +101,14 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
         const xLen = inverted ? height : width;
         const org = inverted ? 0 : height;
         // const color = new Color(this._getColor());
-        Utils.log('LAYOUT CELLS', vr);
+        Utils.log('LAYOUT CELLS', gr);
 
         this._cells.forEach(cell => {
             const p = cell.point as HeatmapSeriesPoint;
 
             if (cell.setVis(!p.isNull)) {
-                const wUnit = xAxis.getUnitLen(xLen, p.xValue) * vr;
-                const hUnit = yAxis.getUnitLen(yLen, p.yValue) * vr;
+                const wUnit = xAxis.getUnitLen(xLen, p.xValue) * gr;
+                const hUnit = yAxis.getUnitLen(yLen, p.yValue) * gr;
                 let x = xAxis.getPos(xLen, p.xValue) - wUnit / 2;
                 let y = org - yAxis.getPos(yLen, p.yValue) - hUnit / 2;
                 let labelView: PointLabelView;

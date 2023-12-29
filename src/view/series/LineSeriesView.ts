@@ -273,7 +273,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const markerStyle = series.marker.style;
         const inverted = this._inverted;
         const needClip = series.needClip(false);
-        const vr = this._getViewRate();
+        const gr = this._getGrowRate();
         const vis = series.marker.visible;
         const labels = series.pointLabel as LinePointLabel;
         const labelPos = labels.position;
@@ -297,7 +297,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
             if (polar) {
                 const a = polar.start + xAxis.getPos(xLen, p.xValue);
-                const y = yAxis.getPos(polar.rd, p.yGroup) * vr;
+                const y = yAxis.getPos(polar.rd, p.yGroup) * gr;
 
                 px = p.px = polar.cx + y * cos(a);
                 py = p.py = polar.cy + y * sin(a);

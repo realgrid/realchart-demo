@@ -83,7 +83,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
         const xAxis = series._xAxisObj as Axis;
         const yAxis = series._yAxisObj as Axis;
         const polar = this._polar = (series.chart as Chart).body.getPolar(xAxis);
-        const vr = this._getViewRate();
+        const gr = this._getGrowRate();
         const jitterX = series.jitterX;
         const jitterY = series.jitterY;
         const labels = series.pointLabel;
@@ -102,7 +102,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
 
             if (mv.setVis(!p.isNull)) {
                 const s = series.getShape(p);
-                const sz = series.radius * vr;
+                const sz = series.radius * gr;
                 const xJitter = Utils.jitter(p.xValue, jitterX);
                 const yJitter = Utils.jitter(p.yGroup, jitterY);
                 let path: (string | number)[];
@@ -111,7 +111,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
 
                 if (polar) {
                     const a = polar.start + xAxis.getPos(PI_2, xJitter);
-                    const py = yAxis.getPos(polar.rd, yJitter) * vr;
+                    const py = yAxis.getPos(polar.rd, yJitter) * gr;
     
                     x = polar.cx + py * cos(a);
                     y = polar.cy + py * sin(a);

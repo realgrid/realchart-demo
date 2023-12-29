@@ -155,14 +155,15 @@ export class CategoryAxis extends Axis {
     categoryField: string | number;
     /**
      * 명시적으로 지정하는 카테고리 목록.\
-     * 카테고리 항목을 object로 지정할 때에는 name(혹은 label) 속성에 카테고리 이름을,
-     * width 속성에 상대 너비(1이 기본 너비)를 지정한다.
+     * 문자열로 카테고리 항목을 지정하거나,
+     * object로 지정할 때에는 name(혹은 label) 속성에 카테고리 이름을 문자열로,
+     * width 속성에 상대 너비(1이 기본 너비)를 숫자로 지정한다.
      * 첫 번째 값이 {@link startValue}에 해당하고 {@link valueStep}씩 증가한다.
      * 각 카테고리의 상대적 너비를 지정할 수 있다.
      * 
      * @config
      */
-    categories: any[];
+    categories: (string | object)[];
     /**
      * weigth 필드를 제공하는 시리즈.
      * // TODO: 구현할 것!
@@ -452,7 +453,7 @@ export class CategoryAxis extends Axis {
         if (isArray(categories) && categories.length > 0) {
             this._len = 0;
 
-            categories.forEach(cat => {
+            categories.forEach((cat: any) => {
                 let w = cat == null ? 1 : pickNum(cat.weight, 1);
                 let c: string;
                 let t: string;

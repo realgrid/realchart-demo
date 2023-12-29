@@ -81,7 +81,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
         const series = this.model;
         const inverted = this._inverted;
         const needClip = series.needClip(false);
-        const vr = this._getViewRate();
+        const gr = this._getGrowRate();
         const labels = series.pointLabel;
         const labelPos = labels.position;
         const labelOff = labels.getOffset();
@@ -103,7 +103,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
             const lv = labelViews && (labelView = labelViews.get(p, 0));
 
             if (mv.setVis(!p.isNull && !isNaN(p.zValue))) {
-                const sz = (p.radius = series.getRadius(p.zValue, min, max)) * vr;
+                const sz = (p.radius = series.getRadius(p.zValue, min, max)) * gr;
                 let path: (string | number)[];
                 let x: number;
                 let y: number;

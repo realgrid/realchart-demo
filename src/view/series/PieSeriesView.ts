@@ -26,7 +26,7 @@ class SectorView extends SectorElement implements IPointView {
     // fields
     //-------------------------------------------------------------------------
     point: PieSeriesPoint;
-    saveVal: number;
+    // saveVal: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -181,7 +181,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         const sum = pts.filter(p => (p.visible || p === this._zombie) && !p.isNull)
                           .map(p => p === this._zombie ? p.yValue * this._zombieRate : p.yValue)
                           .reduce((a, c) => a + c, 0);
-        const total = this.model._totalRad * this._getViewRate();
+        const total = this.model._totalRad * this._getGrowRate();
         let start = this.model._startRad;
 
         if (cnt > 1 || (cnt > 0 && !this._zombie)) {
@@ -203,7 +203,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     private $_layoutSectors(points: PieSeriesPoint[], width: number, height: number): void {
         const series = this.model;
         const cw = series.clockwise;
-        const vr = this._getViewRate();
+        const gr = this._getGrowRate();
         const center = series.getCenter(width, height);
         const cx = this._cx = center.x;
         const cy = this._cy = center.y;
@@ -215,7 +215,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         const labelOff = labels.getOffset();
         const labelDist = labels.distance || 0;
         const lineViews = this._lineContainer;
-        const sliceOff = this._slicedOff = series.getSliceOffset(rd) * vr; // TODO: sector 후에...
+        const sliceOff = this._slicedOff = series.getSliceOffset(rd) * gr; // TODO: sector 후에...
         let labelView: PointLabelView;
 
         if (this._textView.visible) {
@@ -237,7 +237,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                 let dx = 0;
                 let dy = 0;
     
-                if (p.sliced && vr >= 1 && !sector.isDomAnimating()) {
+                if (p.sliced && gr >= 1 && !sector.isDomAnimating()) {
                     const a = start + p.angle / 2;
                     dx += cos(a) * sliceOff;
                     dy += sin(a) * sliceOff;

@@ -31,7 +31,7 @@ class BarSectorView extends SectorElement implements IPointView {
     // IPointView
     //-------------------------------------------------------------------------
     point: DataPoint;
-    saveVal: number;
+    // saveVal: number;
 }
 
 export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSeriesView<T> {
@@ -103,7 +103,7 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
 
     private $_layoutSectors(): void {
         const series = this.model;
-        const vr = this._getViewRate();
+        const gr = this._getGrowRate();
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
         const body = (series.chart as Chart).body;
@@ -118,8 +118,8 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
 
         this._sectors.forEach((view, i) => {
             const p = view.point;
-            const yVal = yAxis.getPos(polar.rd, p.yValue) * vr;
-            let yGroup = yAxis.getPos(polar.rd, p.yGroup) * vr;
+            const yVal = yAxis.getPos(polar.rd, p.yValue) * gr;
+            let yGroup = yAxis.getPos(polar.rd, p.yGroup) * gr;
             const wUnit = xAxis.getUnitLen(totalAngle, p.xValue);
             const wPoint = series.getPointWidth(wUnit);
             let a = polar.start + xAxis.getPos(totalAngle, p.xValue);
@@ -185,8 +185,6 @@ export class BarSeriesView extends BarSeriesViewBase<BarSeries> {
     protected _layoutPointView(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
         view.wPoint = wPoint;
         view.hPoint = hPoint;
-        if (isNaN(x)) debugger;
-        if (isNaN(y)) debugger;
         view.layout(x, y, this._rdTop, this._rdBottom);
     }
 }

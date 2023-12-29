@@ -258,7 +258,7 @@ function setActions(container) {
         clearInterval(timer);
         timer = setInterval(() => {
             for (let i = 1; i <= 6; i++) {
-                chart.getGauge('gauge' + i).updateValue(Math.random() * 100);
+                chart.getGauge('gauge' + i).setValue(Math.random() * 100);
             }
         }, 2000);
     });

@@ -8,6 +8,7 @@
 
 import { isArray, isNone, isObject, pickNum, pickProp, pickProp3, pickProp4, assign, maxv, minv, absv } from "../common/Common";
 import { IPoint } from "../common/Point";
+import { RcAnimation } from "../common/RcAnimation";
 import { IValueRange, _undef } from "../common/Types";
 import { AxisZoom, IAxis } from "./Axis";
 import { ISeries } from "./Series";
@@ -62,6 +63,10 @@ export class DataPoint {
     zValue: number;
     label: any;
 
+    ani: RcAnimation;
+    yPrev: number;
+    yNew: number;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -72,14 +77,6 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    get yAbs(): number {
-        return absv(this.yValue);
-    }
-
-    get xAbs(): number {
-        return absv(this.xValue);
-    }
-
     ariaHint(): string {
         return (this.x || this.xValue) + ', ' + this.yValue;
     }
@@ -88,9 +85,9 @@ export class DataPoint {
         return 1;
     }
 
-    getValue(): number {
-        return this.yValue;
-    }
+    // getValue(): number {
+    //     return this.yValue;
+    // }
 
     //-------------------------------------------------------------------------
     // methods
@@ -135,11 +132,20 @@ export class DataPoint {
         return { x: this.xPos, y: this.yPos };
     }
 
-    setValue(value: any): boolean {
-        if (value !== this.yValue) {
-            this.yValue = value;
-            return true;
+    updateValue(value: number, animation: RcAnimation): void {
+        if (animation) {
+            this.yPrev = this.yValue;
+            this.yNew = value;
+            this.ani = animation;
+        } else {
+            this.y = value; // [주의] Series.collectValues에 yValue가 다시 계산된다.
         }
+    }
+
+    cleanValue(): void {
+        this.y = this.yNew;
+        delete this.yPrev;
+        delete this.yNew;
     }
 
     //-------------------------------------------------------------------------
