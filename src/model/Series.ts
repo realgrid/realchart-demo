@@ -227,7 +227,7 @@ export enum TrendType {
      */
     POWER = 'power', 
     /**
-     * 지수
+     * 지수.
      * 
      * @config
      */

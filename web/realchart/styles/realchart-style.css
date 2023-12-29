@@ -528,6 +528,7 @@
 .rct-series-trendline {
     stroke: red;
     stroke-width: 2px;
+    stroke-linejoin: round;
     fill: none;
 }
 
