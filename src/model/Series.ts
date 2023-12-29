@@ -196,41 +196,52 @@ export interface IPlottingItem {
     seriesChanged(): boolean;
 }
 
+/**
+ * 추세선(trendline) 유형.
+ * 
+ * @config
+ */
 export enum TrendType {
     /**
-     * A best-fit straight line that is used with simple linear data sets. 
-     * Your data is linear if the pattern in its data points resembles a line. 
-     * A linear trendline usually shows that something is increasing or decreasing at a steady rate.
+     * 선형.
+     * 
+     * @config
      */
     LINEAR = 'linear',
     /**
-     * A best-fit curved line that is most useful when the rate of change in the data increases or decreases quickly and then levels out. 
-     * A logarithmic trendline can use negative and/or positive values.
+     * 로그.
+     * 
+     * @config
      */
     LOGARITHMIC = 'logarithmic', 
-    POLYNOMIAL = 'polynomial', // TODO: 구현할 것!
     /**
-     * A curved line that is used with data sets that compare measurements that increase at a specific rate 
-     * — for example, the acceleration of a race car at 1-second intervals. 
-     * You cannot create a power trendline if your data contains zero or negative values.
+     * 다항.
+     * 
+     * @config
+     */
+    POLYNOMIAL = 'polynomial',
+    /**
+     * 멱급수.
+     * 
+     * @config
      */
     POWER = 'power', 
+    /**
+     * 지수
+     * 
+     * @config
+     */
     EXPONENTIAL = 'exponential', 
+    /**
+     * 이동 평균.
+     * 
+     * @config
+     */
     MOVING_AVERAGE = 'movingAverage'
 }
 
-export class MovingAverage extends RcObject {
-
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    interval = 2;
-    type: 'simple' | 'weighted' | 'exponential' | 'triangualr' = 'simple';
-}
-
 /**
- * 시리즈 추세선.
- * http://npmjs.com/package/regression
+ * 시리즈 추세선 모델.
  */
 export class Trendline extends ChartItem {
 
@@ -238,6 +249,7 @@ export class Trendline extends ChartItem {
     // fields
     //-------------------------------------------------------------------------
     _points: {x: number, y: number}[];
+    private _res: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -249,17 +261,35 @@ export class Trendline extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 추세선 유형.
+     * 
+     * @config
+     */
     type = TrendType.LINEAR;
-    lineType = LineType.DEFAULT;
-    movingAverage = new MovingAverage();
+    /**
+     * 추세선 정밀도.\
+     * 데이터포인트 사이에 계산될 지점의 개수.
+     * 
+     * @config
+     */
+    resolution = 5;
+    /**
+     * 이동 평균 유형의 계산 간격.
+     * 
+     * @config
+     */
+    movingInterval = 2;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    // http://npmjs.com/package/regression
     protected _doPrepareRender(chart: IChart): void {
         const series = this.series;
-        const minX = series._minX > 0 ? 0 : 1 - series._minX;
-        const minY = series._minY > 0 ? 0 : 1 - series._minY;
+        const res = this._res = (series._runPoints.length - 1) * Math.max(1, (this.resolution || 5));
+        const minX = series._minX > 0 ? 0 : (series._maxX - series._minX) / res - series._minX;
+        const minY = series._minY > 0 ? 0 : (series._maxY - series._minY) / res - series._minY;
         const pts = series._runPoints.filter(p => !p.isNull).map(p => {
             return {
                 x: p.xValue + minX,
@@ -323,7 +353,7 @@ export class Trendline extends ChartItem {
             const {m, a} = this.$_calcLine(logPts);
             const x1 = pts[0].x;
             const x2 = pts[len - 1].x;
-            const d = (x2 - x1) / 100;
+            const d = (x2 - x1) / this._res;
 
             for (let x = x1; x <= x2; x += d) {
                 const y = a + (Math.log(x) * m);
@@ -342,7 +372,7 @@ export class Trendline extends ChartItem {
             const coeff = Math.exp(a);
             const x1 = pts[0].x;
             const x2 = pts[len - 1].x;
-            const d = (x2 - x1) / 100;
+            const d = (x2 - x1) / this._res;
 
             for (let x = x1; x <= x2; x += d) {
                 const y = coeff * (x ** m);
@@ -385,7 +415,7 @@ export class Trendline extends ChartItem {
             const coeff = a;
             const x1 = pts[0].x;
             const x2 = pts[len - 1].x;
-            const d = (x2 - x1) / 100;
+            const d = (x2 - x1) / this._res;
 
             for (let x = x1; x <= x2; x += d) {
                 const y = coeff * Math.exp(m * x);
@@ -469,7 +499,7 @@ export class Trendline extends ChartItem {
             const coeffs = gaussianElimintaion(rhs, k);
             const x1 = pts[0].x;
             const x2 = pts[len - 1].x;
-            const d = (x2 - x1) / 100;
+            const d = (x2 - x1) / this._res;
 
             for (let x = x1; x <= x2; x += d) {
                 const y = coeffs.reduce((sum, coeff, power) => sum + (coeff * (x ** power)), 0);
@@ -480,9 +510,8 @@ export class Trendline extends ChartItem {
     }
 
     private $_movingAverage(pts: IPoint[], list: {x: number, y: number}[]): void {
-        const ma = this.movingAverage;
         const length = pts.length;
-        const interval = maxv(1, minv(length, ma.interval));
+        const interval = maxv(1, minv(length - 1, this.movingInterval));
         let i = interval;
 
         while (i <= length) {
