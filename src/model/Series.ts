@@ -363,10 +363,10 @@ export class Trendline extends ChartItem {
         pts.forEach(p => {
             sx += p.x;
             sy += p.y;
-            sxxy = p.x * p.x * p.y;
-            syy2 = p.y * Math.log(p.y);
-            sxyy2 = p.x * p.y * Math.log(p.y);
-            sxy = p.x * p.y;
+            sxxy += p.x * p.x * p.y;
+            syy2 += p.y * Math.log(p.y);
+            sxyy2 += p.x * p.y * Math.log(p.y);
+            sxy += p.x * p.y;
         });
 
         const denomintaor = sy * sxxy - sxy * sxy;
@@ -382,7 +382,7 @@ export class Trendline extends ChartItem {
         if (len > 1) {
             const logPts = pts.map(p => ({ x: p.x, y: p.y }));
             const {m, a} = this.$_calcLine2(logPts);
-            const coeff = a;//Math.exp(a); // TODO: 확인 필요.
+            const coeff = a;
             const x1 = pts[0].x;
             const x2 = pts[len - 1].x;
             const d = (x2 - x1) / 100;
