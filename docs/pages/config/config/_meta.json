@@ -1,5 +1,7 @@
 {
   "options": "options",
+  "asset": "asset",
+  "theme": "theme",
   "base": "base",
   "xAxis": "xAxis",
   "yAxis": "yAxis",

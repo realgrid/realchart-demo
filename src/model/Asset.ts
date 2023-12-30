@@ -8,10 +8,10 @@
 
 import { SVGNS, isArray, isObject, isString, assign } from "../common/Common";
 import { RcElement } from "../common/RcControl";
+import { ISize } from "../common/Size";
 import { SVGStyles, isNull } from "../common/Types";
 
 export interface IAssetItem {
-
     id: string;
 }
 
@@ -19,6 +19,7 @@ abstract class AssetItem<T extends IAssetItem> {
 
     constructor(public source: T) {}
 
+    hasDef(): boolean { return true; }
     abstract getEelement(doc: Document, source: T): Element;
 }
 
@@ -64,6 +65,9 @@ abstract class Gradient<T extends IGradient> extends AssetItem<T> {
     }
 }
 
+/**
+ * @config config.asset
+ */
 export class LinearGradient extends Gradient<ILinearGradient> {
 
     static readonly TYPE = 'lineargradient';
@@ -278,6 +282,113 @@ export class Pattern extends AssetItem<IPattern> {
     }
 }
 
+export enum PaletteMode {
+    NORMAL = 'normal',
+    // MIXED = 'mixed',
+    SHUFFLE = 'shuffle',
+    RANDOM = 'random'
+}
+
+/**
+ * @config chart.asset[type='colors']
+ */
+export interface IColorList extends IAssetItem {
+    mode?: PaletteMode;
+    colors: string[];
+}
+
+export class ColorList extends AssetItem<IColorList> {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly TYPE = 'colors';
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _colors: string[];
+    private _index: number;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    prepare(): ColorList {
+        if (this.source.mode === PaletteMode.RANDOM) {
+            this._index = -1;
+        } else {
+            this._index = 0;
+        }
+        return this;
+    }
+
+    getNext(): string {
+        if (this._index < 0) {
+            return this._colors[Math.floor(Math.random() * this._colors.length)];
+        } else {
+            return this._colors[this._index ++ % this._colors.length];
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    hasDef(): boolean {
+        return false;
+    }
+
+    getEelement(doc: Document, source: IColorList): Element {
+        this._colors = isArray(source) ? source : [];
+        return;
+    }
+}
+
+/**
+ * @config chart.asset[type='images']
+ */
+export interface IImageList extends IAssetItem {
+    rootUrl?: string;
+    width?: number;
+    height?: number;
+    items: { name?: string, url: string }[];
+}
+
+export class ImageList extends AssetItem<IImageList> {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly TYPE = 'pattern';
+    static readonly SIZE = 20;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    size: ISize;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getImage(name: string | number): string {
+        return;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    hasDef(): boolean {
+        return false;
+    }
+
+    getEelement(doc: Document, source: IImageList): Element {
+        this.size = Object.freeze({
+            width: source.width || source.height || ImageList.SIZE,
+            height: source.height || source.width || ImageList.SIZE
+        });
+        return;
+    }
+}
+
 export interface IAssetOwner {
     addDef(element: Element): void;
     removeDef(element: string): void;
@@ -320,15 +431,17 @@ export class AssetCollection {
 
     register(doc: Document, owner: IAssetOwner): void {
         this._items.forEach(item => {
-            const elt = item.getEelement(doc, item.source);
-            elt.setAttribute(RcElement.ASSET_KEY, '1');
-            owner.addDef(elt);
+            if (item.hasDef()) {
+                const elt = item.getEelement(doc, item.source);
+                elt.setAttribute(RcElement.ASSET_KEY, '1');
+                owner.addDef(elt);
+            }
         })
     }
 
     unregister(doc: Document, owner: IAssetOwner): void {
         this._items.forEach(item => {
-            owner.removeDef(item.source.id);
+            item.hasDef() && owner.removeDef(item.source.id);
         })
     }
 
@@ -336,17 +449,30 @@ export class AssetCollection {
     // internal members
     //-------------------------------------------------------------------------
     private $_loadItem(src: any): AssetItem<IAssetItem> {
-        if (isObject(src) && src.type && src.id) {
-            if (src.pattern != null) {
-                return new Pattern(src);
-            } else if (src.type) {
-                switch (src.type.toLowerCase()) {
+        if (isObject(src) && src.id) {
+            let t = src.type;
+
+            if (!t) {
+                if (src.pattern != null) {
+                    t = Pattern.TYPE;
+                } else if (isArray(src.colors)) {
+                    t = ColorList.TYPE;
+                } else if (isArray(src.images)) {
+                    t = ImageList.TYPE;
+                }
+            }
+            if (t) {
+                switch (t.toLowerCase()) {
                     case LinearGradient.TYPE:
                         return new LinearGradient(src);
                     case RadialGradient.TYPE:
                         return new RadialGradient(src);
                     case Pattern.TYPE:
                         return new Pattern(src);
+                    case ColorList.TYPE:
+                        return new ColorList(src);
+                    case ImageList.TYPE:
+                        return new ImageList(src);
                 }
             }
         }

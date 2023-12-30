@@ -1,5 +1,6 @@
 {
   "options": "options",
+  "asset": "asset",
   "base": "base",
   "xAxis": "xAxis",
   "yAxis": "yAxis",

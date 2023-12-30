@@ -880,15 +880,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     color: string;
     /**
-     * 데이터 포인트별 색들을 지정한다.\
-     * false로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.
-     * true로 지정하면 기본 색들로 표시된다.
-     * 색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.
-     * undefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.
+     * 데이터 포인트별 색들을 지정한다.
      * 
      * @config
      */
-    pointColors: boolean | string[];
+    pointColors: string[];
     /**
      * 값 범위 목록.\
      * 범위별로 다른 스타일을 적용할 수 있다.
@@ -1521,23 +1517,19 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     protected _doPrepareRender(): void {
-        let color: string;
+        const color = this.color;
         let colors: string[];
 
-        if (this.pointColors === false) {
-            color = this.color;
-        } else if (isArray(this.pointColors)) {
+        if (isArray(this.pointColors)) {
             colors = this.pointColors;
         } else if (this._colorByPoint()) { 
             colors = this.chart.colors;
         } else {
-            color = this.color;
+            colors = [];
         }
 
         this._runPoints.forEach((p, i) => {
-            if (!p.color && colors) {
-                p.color = color || colors[i % colors.length];
-            }
+            p.color = p.color || colors[i % colors.length] || color;
         })
 
         this._preparePointArgs(this._pointArgs);

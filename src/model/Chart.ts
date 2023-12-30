@@ -9,14 +9,13 @@
 import { isArray, isObject, isString, mergeObj, pickProp3, assign, isNumber } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign, _undef } from "../common/Types";
-import { AssetCollection } from "./Asset";
+import { AssetCollection, PaletteMode } from "./Asset";
 import { Axis, AxisCollection, IAxis, PaneXAxisMatrix, PaneYAxisMatrix } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem, n_char_item } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
 import { ILegendSource, Legend } from "./Legend";
 import { IPlottingItem, ISeries, PlottingItemCollection, Series, SeriesGroup, SeriesGroupLayout } from "./Series";
-import { PaletteMode, ThemeCollection } from "./Theme";
 import { Subtitle, Title } from "./Title";
 import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
@@ -390,7 +389,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     _proxy: IChartProxy;
     private _templates: {[key: string]: any};
     private _assets: AssetCollection;
-    private _themes: ThemeCollection;
     private _options: ChartOptions;
     private _title: Title;
     private _subtitle: Subtitle;
@@ -425,7 +423,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         super();
 
         this._assets = new AssetCollection();
-        this._themes = new ThemeCollection();
         this._options = new ChartOptions(this, true);
         this._title = new Title(this);
         this._subtitle = new Subtitle(this);
@@ -836,10 +833,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this.gaugeType = this.gaugeType || 'circle';
 
         // assets
-        this._assets.load(source.assets);
-
-        // themes
-        this._themes.load(source.themes);
+        this._assets.load(source.assets || source.asset);
 
         // options
         this._options.load(source.options);

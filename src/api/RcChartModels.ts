@@ -6,7 +6,6 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isObject } from "../common/Common";
 import { _undef } from "../common/Types";
 import { Annotation } from "../model/Annotation";
 import { Axis } from "../model/Axis";
@@ -295,7 +294,7 @@ export abstract class RcNamedObject extends RcChartObject {
 /**
  * 시리즈 내부에서 생성되는 데이터포인트 모델 정보.
  */
-export interface RcDataPoint {
+export interface IDataPoint {
     pid: number;
     xValue: number;
     yValue: number;
@@ -346,7 +345,7 @@ export class RcChartSeries extends RcNamedObject {
      * @param xValue x값.
      * @returns 데이터포인트 모델 정보 객체.
      */
-    getPointAt(xValue: number | string): RcDataPoint {
+    getPointAt(xValue: number | string): IDataPoint {
         const p = (this.$_p as Series).getPointAt(xValue);
         return p && p.proxy();
     }
@@ -358,7 +357,7 @@ export class RcChartSeries extends RcNamedObject {
      * @param keys 데이터포이터를 찾기 위한 값 목록.
      * @returns 데이터포인트 모델 정보 객체.
      */
-    findPoint(keys: any): RcDataPoint {
+    findPoint(keys: any): IDataPoint {
         const p = (this.$_p as Series).findPoint(keys);
         return p && p.proxy();
     }
@@ -369,7 +368,7 @@ export class RcChartSeries extends RcNamedObject {
      * @param xValue x값 혹은 x,y값이 포함된 데이터포인트 정보. x축이 category 축이면 카테고리 이름을 지정할 수 있다.
      * @returns y 또는 z값.
      */
-    getValueAt(xValue: number | string | RcDataPoint): number {
+    getValueAt(xValue: number | string | IDataPoint): number {
         const p = (this.$_p as Series).getPointAt(xValue);
         return p ? p.yValue : _undef;
     }
@@ -388,7 +387,7 @@ export class RcChartSeries extends RcNamedObject {
      * @param animate true로 지정하면 변경 효과가 표시된다. 기본값 true.
      * @returns 변경됐으면 true.
      */
-    setValueAt(xValue: number | string | RcDataPoint, value: number, animate = true): boolean {
+    setValueAt(xValue: number | string | IDataPoint, value: number, animate = true): boolean {
         const p = (this.$_p as Series).getPointAt(xValue);
 
         if (p) {
@@ -404,7 +403,7 @@ export class RcChartSeries extends RcNamedObject {
      * @param animate 추가 효과 표시.
      * @returns 실제 추가된 데이터포인트 정보 객체를 리턴한다.
      */
-    addPoint(source: any, animate = true): RcDataPoint {
+    addPoint(source: any, animate = true): IDataPoint {
         const p = (this.$_p as Series).addPoint(source, animate);
         return p && p.proxy();
     }
@@ -415,15 +414,15 @@ export class RcChartSeries extends RcNamedObject {
      * @param xValue 제거할 데이터포인트의 x값 혹은 카테고리 이름. 또는 getPointAt이나 findPoint로 가져온 데이터포인트 정보 객체.
      * @returns 실제로 제거되면 true를 리턴한다.
      */
-    removePoint(xValue: number | string | RcDataPoint): boolean {
+    removePoint(xValue: number | string | IDataPoint): boolean {
         return !!(this.$_p as Series).removePoint((this.$_p as Series).getPointAt(xValue));
     }
 
-    addPoints(source: any[]): RcDataPoint[] {
+    addPoints(source: any[]): IDataPoint[] {
         return;
     }
 
-    removePoints(point: RcDataPoint[]): void {
+    removePoints(point: IDataPoint[]): void {
     }
 
     /**
