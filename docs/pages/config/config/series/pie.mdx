@@ -65,13 +65,8 @@ group에 포함되면 group의 noClip 설정을 따른다.
 데이터 point가 클릭될 때 발생하는 이벤트 콜백.
 명시적 <Content type="keyword" value="true"></Content>를 리턴하면 기본 동작이 진행되지 않는다.  
 
-### pointColors: `boolean | string[]{:js}`[#pointColors]
-데이터 포인트별 색들을 지정한다.
-
-<Content type="keyword" value="false"></Content>로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.
-<Content type="keyword" value="true"></Content>로 지정하면 기본 색들로 표시된다.
-색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.
-<Content type="keyword" value="undefined"></Content>나 <Content type="keyword" value="null"></Content>이면 시리즈 종류에 따라 <Content type="keyword" value="false"></Content> 혹은 <Content type="keyword" value="true"></Content>로 해석된다.  
+### pointColors: `string[]{:js}`[#pointColors]
+데이터 포인트별 색들을 지정한다.  
 
 ### [pointLabel](./pie/pointLabel)
 Series data point label options.  
@@ -127,7 +122,7 @@ Slice animation duration.
 ### [trendline](./pie/trendline)
 시리즈 추세선 모델.  
 
-### viewRangeValue: `'z' | 'x' | 'y'{:js}`[#viewRangeValue]
+### viewRangeValue: `'x' | 'y' | 'z'{:js}`[#viewRangeValue]
 ranges가 적용되는 값.
 
 지정하지 않으면 시리즈 종류에 띠라 자동 적용된다.

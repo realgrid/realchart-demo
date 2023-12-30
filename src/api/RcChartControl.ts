@@ -160,7 +160,7 @@ export class RcChartControl {
         return getObject(this._objects, this.$_p.model.title) as RcTitle;
     }
     /**
-     * 차트 sub 타이틀 모델.
+     * 차트 부제목 모델.
      */
     get subtitle(): RcSubtitle {
         return getObject(this._objects, this.$_p.model.subtitle) as RcSubtitle;
@@ -172,7 +172,7 @@ export class RcChartControl {
         return getObject(this._objects, this.$_p.model.legend) as RcLegend;
     }
     /**
-     * 차트 시리즈들이 그려지는 plotting 영역 모델.
+     * split 모드가 아닐 때, 차트 시리즈들이 그려지는 plotting 영역 모델.
      */
     get body(): RcBody {
         return getObject(this._objects, this.$_p.model.legend) as RcBody;

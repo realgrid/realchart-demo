@@ -262,21 +262,6 @@ export class RcChartAxis extends RcChartObject {
     }
 }
 
-// export class RcCategoryAxis extends RcChartAxis {
-// }
-
-// export abstract class RcContinuousAxis extends RcChartAxis {
-// }
-
-// export class RcLinearAxis extends RcContinuousAxis {
-// }
-
-// export class RcTimeAxis extends RcContinuousAxis {
-// }
-
-// export class RcLogAxis extends RcContinuousAxis {
-// }
-
 export class RcPointLabel extends RcChartAxis {
 }
 
@@ -294,7 +279,7 @@ export abstract class RcNamedObject extends RcChartObject {
 /**
  * 시리즈 내부에서 생성되는 데이터포인트 모델 정보.
  */
-export interface IDataPoint {
+export interface IRcDataPoint {
     pid: number;
     xValue: number;
     yValue: number;
@@ -345,7 +330,7 @@ export class RcChartSeries extends RcNamedObject {
      * @param xValue x값.
      * @returns 데이터포인트 모델 정보 객체.
      */
-    getPointAt(xValue: number | string): IDataPoint {
+    getPointAt(xValue: number | string): IRcDataPoint {
         const p = (this.$_p as Series).getPointAt(xValue);
         return p && p.proxy();
     }
@@ -357,7 +342,7 @@ export class RcChartSeries extends RcNamedObject {
      * @param keys 데이터포이터를 찾기 위한 값 목록.
      * @returns 데이터포인트 모델 정보 객체.
      */
-    findPoint(keys: any): IDataPoint {
+    findPoint(keys: any): IRcDataPoint {
         const p = (this.$_p as Series).findPoint(keys);
         return p && p.proxy();
     }
@@ -368,7 +353,7 @@ export class RcChartSeries extends RcNamedObject {
      * @param xValue x값 혹은 x,y값이 포함된 데이터포인트 정보. x축이 category 축이면 카테고리 이름을 지정할 수 있다.
      * @returns y 또는 z값.
      */
-    getValueAt(xValue: number | string | IDataPoint): number {
+    getValueAt(xValue: number | string | IRcDataPoint): number {
         const p = (this.$_p as Series).getPointAt(xValue);
         return p ? p.yValue : _undef;
     }
@@ -387,7 +372,7 @@ export class RcChartSeries extends RcNamedObject {
      * @param animate true로 지정하면 변경 효과가 표시된다. 기본값 true.
      * @returns 변경됐으면 true.
      */
-    setValueAt(xValue: number | string | IDataPoint, value: number, animate = true): boolean {
+    setValueAt(xValue: number | string | IRcDataPoint, value: number, animate = true): boolean {
         const p = (this.$_p as Series).getPointAt(xValue);
 
         if (p) {
@@ -403,7 +388,7 @@ export class RcChartSeries extends RcNamedObject {
      * @param animate 추가 효과 표시.
      * @returns 실제 추가된 데이터포인트 정보 객체를 리턴한다.
      */
-    addPoint(source: any, animate = true): IDataPoint {
+    addPoint(source: any, animate = true): IRcDataPoint {
         const p = (this.$_p as Series).addPoint(source, animate);
         return p && p.proxy();
     }
@@ -414,15 +399,15 @@ export class RcChartSeries extends RcNamedObject {
      * @param xValue 제거할 데이터포인트의 x값 혹은 카테고리 이름. 또는 getPointAt이나 findPoint로 가져온 데이터포인트 정보 객체.
      * @returns 실제로 제거되면 true를 리턴한다.
      */
-    removePoint(xValue: number | string | IDataPoint): boolean {
+    removePoint(xValue: number | string | IRcDataPoint): boolean {
         return !!(this.$_p as Series).removePoint((this.$_p as Series).getPointAt(xValue));
     }
 
-    addPoints(source: any[]): IDataPoint[] {
+    addPoints(source: any[]): IRcDataPoint[] {
         return;
     }
 
-    removePoints(point: IDataPoint[]): void {
+    removePoints(point: IRcDataPoint[]): void {
     }
 
     /**
@@ -461,21 +446,36 @@ export class RcChartGauge extends RcNamedObject {
 export abstract class RcGaugeGroup extends RcNamedObject {
 }
 
-export class RcTitle extends RcChartObject {
-}
-
-export class RcSubtitle extends RcChartObject {
-}
-
-export class RcLegend extends RcChartObject {
-}
-
-export class RcBody extends RcChartObject {
-}
-
+/**
+ * 어노테이션 모델.
+ */
 export class RcAnnotation extends RcNamedObject {
 
     update(): void {
         (this.$_p as Annotation).update();
     }
+}
+
+/**
+ * 차트 타이틀 모델.
+ */
+export class RcTitle extends RcChartObject {
+}
+
+/**
+ * 차트 부제목 모델.
+ */
+export class RcSubtitle extends RcChartObject {
+}
+
+/**
+ * 차트 범례 모델.
+ */
+export class RcLegend extends RcChartObject {
+}
+
+/**
+ * 시리즈들이 그려지는 영역 모델.
+ */
+export class RcBody extends RcChartObject {
 }
