@@ -10,6 +10,7 @@ import { SVGNS, isArray, isObject, isString, assign } from "../common/Common";
 import { RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
 import { SVGStyles, isNull } from "../common/Types";
+import { Utils } from "../common/Utils";
 
 export interface IAssetItem {
     id: string;
@@ -317,6 +318,9 @@ export class ColorList extends AssetItem<IColorList> {
         if (this.source.mode === PaletteMode.RANDOM) {
             this._index = -1;
         } else {
+            if (this.source.mode === PaletteMode.SHUFFLE) {
+                Utils.shuffle(this._colors);
+            }
             this._index = 0;
         }
         return this;
@@ -326,7 +330,7 @@ export class ColorList extends AssetItem<IColorList> {
         if (this._index < 0) {
             return this._colors[Math.floor(Math.random() * this._colors.length)];
         } else {
-            return this._colors[this._index ++ % this._colors.length];
+            return this._colors[this._index++ % this._colors.length];
         }
     }
 
@@ -338,7 +342,7 @@ export class ColorList extends AssetItem<IColorList> {
     }
 
     getEelement(doc: Document, source: IColorList): Element {
-        this._colors = isArray(source) ? source : [];
+        this._colors = isArray(source.colors) ? source.colors : [];
         return;
     }
 }
@@ -350,7 +354,7 @@ export interface IImageList extends IAssetItem {
     rootUrl?: string;
     width?: number;
     height?: number;
-    items: { name?: string, url: string }[];
+    images: ({ name?: string, url: string } | string)[];
 }
 
 export class ImageList extends AssetItem<IImageList> {
@@ -358,19 +362,41 @@ export class ImageList extends AssetItem<IImageList> {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly TYPE = 'pattern';
+    static readonly TYPE = 'images';
     static readonly SIZE = 20;
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     size: ISize;
+    private _images: string[];
+    private _map: any;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    prepare(): void {
+        const root = this.source.rootUrl || '';
+
+        this._images = [];
+        this._map = {};
+
+        this.source.images.forEach(item => {
+            if (isString(item)) {
+                this._images.push(item);
+            } else {
+                const url = root + item.url;
+
+                if (item.name) {
+                    this._map[item.name] = url;
+                }
+                this._images.push(url);
+            }
+        });
+    }
+
     getImage(name: string | number): string {
-        return;
+        return isString(name) ? this._map[name] : this._images[name];
     }
 
     //-------------------------------------------------------------------------

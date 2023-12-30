@@ -14,36 +14,36 @@ if (typeof window !== 'undefined' && !Element.prototype.animate) {
     Element.prototype.animate = function (_: any): any {};
 }
 
-let _isOpera = false;
-let _isChrome = false;
-let _isSafari = false;
-let _isSamsung = false;
-let _isMiui = false;
+// let _isOpera = false;
+// let _isChrome = false;
+// let _isSafari = false;
+// let _isSamsung = false;
+// let _isMiui = false;
 
-if (typeof window !== 'undefined') {
-    _isOpera = !!window["opera"] || navigator.userAgent.indexOf(' OPR/') >= 0;
-    _isChrome = !!window["chrome"] && !_isOpera;          // Chrome 1+
-    _isSafari = Object.prototype.toString.call(HTMLElement).indexOf('Constructor') > 0 || (!_isChrome && !_isOpera && navigator.userAgent.indexOf("Safari") >= 0);
-    _isSamsung = navigator.userAgent.toLocaleLowerCase().indexOf('samsungbrowser') >= 0;
-    _isMiui = navigator.userAgent.toLocaleLowerCase().indexOf('miuibrowser') >= 0;
-}
+// if (typeof window !== 'undefined') {
+//     _isOpera = !!window["opera"] || navigator.userAgent.indexOf(' OPR/') >= 0;
+//     _isChrome = !!window["chrome"] && !_isOpera;          // Chrome 1+
+//     _isSafari = Object.prototype.toString.call(HTMLElement).indexOf('Constructor') > 0 || (!_isChrome && !_isOpera && navigator.userAgent.indexOf("Safari") >= 0);
+//     _isSamsung = navigator.userAgent.toLocaleLowerCase().indexOf('samsungbrowser') >= 0;
+//     _isMiui = navigator.userAgent.toLocaleLowerCase().indexOf('miuibrowser') >= 0;
+// }
 
-export {
-    _isOpera,
-    _isChrome,
-    _isSafari,
-    _isSamsung,
-    _isMiui
-};
+// export {
+//     _isOpera,
+//     _isChrome,
+//     _isSafari,
+//     _isSamsung,
+//     _isMiui
+// };
 
-export const LINE_SEP = /\r\n|\n/g;
-export const CSV_SPLIT = /,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)(?=(?:[^\']*\'[^\']*\')*[^\']*$)/;
-export const TAB_SPLIT = /\t/g;
-export const MULTI_TAB_SPLIT = /\t+/g;
-const DBL_QUOTE_REP = /"([^"]*(?="))"/;
-const QUOTE_REP = /'([^']*(?='))'/;
-const DBL_QUOTE = '"'.charCodeAt(0);
-const QUOTE = "'".charCodeAt(0);
+// export const LINE_SEP = /\r\n|\n/g;
+// export const CSV_SPLIT = /,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)(?=(?:[^\']*\'[^\']*\')*[^\']*$)/;
+// export const TAB_SPLIT = /\t/g;
+// export const MULTI_TAB_SPLIT = /\t+/g;
+// const DBL_QUOTE_REP = /"([^"]*(?="))"/;
+// const QUOTE_REP = /'([^']*(?='))'/;
+// const DBL_QUOTE = '"'.charCodeAt(0);
+// const QUOTE = "'".charCodeAt(0);
 
 /**
  * @internal
@@ -95,28 +95,28 @@ export class Utils {
         return week;
     }
 
-    static stopEvent(e: Event, immediate: boolean = false): void {
-        if (e.preventDefault) {
-            e.preventDefault();
-            e.stopPropagation();
-        } else {
-            e.returnValue = false;
-        }
-        immediate && e.stopImmediatePropagation();
-    }
+    // static stopEvent(e: Event, immediate: boolean = false): void {
+    //     if (e.preventDefault) {
+    //         e.preventDefault();
+    //         e.stopPropagation();
+    //     } else {
+    //         e.returnValue = false;
+    //     }
+    //     immediate && e.stopImmediatePropagation();
+    // }
 
-    static getErrorStack(error: any): string {
-        const stack = error.stack;
+    // static getErrorStack(error: any): string {
+    //     const stack = error.stack;
 
-        if (stack) {
-            return stack.split('\n').map((line: string) => line + '<br/>')
-        }
-        return '';
-    }
+    //     if (stack) {
+    //         return stack.split('\n').map((line: string) => line + '<br/>')
+    //     }
+    //     return '';
+    // }
 
-    static getBaseClassName(obj: any): string {
-        return Object.getPrototypeOf(obj.constructor).name;   
-    }
+    // static getBaseClassName(obj: any): string {
+    //     return Object.getPrototypeOf(obj.constructor).name;   
+    // }
 
     static isObject(v: any): boolean {
         return v && typeof v === 'object' && !isArray(v);
@@ -548,40 +548,40 @@ export class Utils {
         return false;
     }
 
-    static capitalize(s: string): string {
-        if (typeof s !== 'string') return '';
+    // static capitalize(s: string): string {
+    //     if (typeof s !== 'string') return '';
 
-        const c = s.charAt(0);
+    //     const c = s.charAt(0);
 
-        if (c >= 'A' && c <= 'Z') return s;
-        return c.toUpperCase() + s.slice(1)
-    }
+    //     if (c >= 'A' && c <= 'Z') return s;
+    //     return c.toUpperCase() + s.slice(1)
+    // }
 
-    static uncapitalize(s: string): string {
-        if (typeof s !== 'string') return '';
+    // static uncapitalize(s: string): string {
+    //     if (typeof s !== 'string') return '';
 
-        const c = s.charAt(0);
+    //     const c = s.charAt(0);
 
-        if (c >= 'a' && c <= 'z') return s;
-        return c.toLowerCase() + s.slice(1)
-    }
+    //     if (c >= 'a' && c <= 'z') return s;
+    //     return c.toLowerCase() + s.slice(1)
+    // }
 
-    static labelize(s: string): string {
-        if (typeof s !== 'string') return '';
+    // static labelize(s: string): string {
+    //     if (typeof s !== 'string') return '';
         
-        const c = s.charAt(0);
-        s = (c >= 'A' && c <= 'Z') ? s : (c.toUpperCase() + s.slice(1));
-        let s2 = s.charAt(0);
+    //     const c = s.charAt(0);
+    //     s = (c >= 'A' && c <= 'Z') ? s : (c.toUpperCase() + s.slice(1));
+    //     let s2 = s.charAt(0);
         
-        for (let i = 1; i< s.length; i++) {
-            const c = s.charAt(i);
-            if (c >= 'A' && c <= 'Z') {
-                s2 += ' ';
-            }
-            s2 += c;
-        }
-        return s2;
-    }
+    //     for (let i = 1; i< s.length; i++) {
+    //         const c = s.charAt(i);
+    //         if (c >= 'A' && c <= 'Z') {
+    //             s2 += ' ';
+    //         }
+    //         s2 += c;
+    //     }
+    //     return s2;
+    // }
 
     static deepClone(obj: object): object {
         if (obj instanceof Date) {
@@ -610,64 +610,64 @@ export class Utils {
         return arr;
     }
 
-    static hasSetter(obj: any, prop: string): boolean {
-        while (obj) {
-            const pd = Reflect.getOwnPropertyDescriptor(obj, prop);
-            if (pd) return pd.writable || !!pd.set;
+    // static hasSetter(obj: any, prop: string): boolean {
+    //     while (obj) {
+    //         const pd = Reflect.getOwnPropertyDescriptor(obj, prop);
+    //         if (pd) return pd.writable || !!pd.set;
 
-            obj = Object.getPrototypeOf(obj);
-        }
-        return false;
-    }
+    //         obj = Object.getPrototypeOf(obj);
+    //     }
+    //     return false;
+    // }
 
-    static dataUriToBinary(dataUri: string): Uint8Array {
-        const BASE64_MARKER = ';base64,';
-        const base64Index = dataUri.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
-        const base64 = dataUri.substring(base64Index);
-        const raw = window.atob(base64);
-        const rawLength = raw.length;
-        const array = new Uint8Array(new ArrayBuffer(rawLength));
+    // static dataUriToBinary(dataUri: string): Uint8Array {
+    //     const BASE64_MARKER = ';base64,';
+    //     const base64Index = dataUri.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+    //     const base64 = dataUri.substring(base64Index);
+    //     const raw = window.atob(base64);
+    //     const rawLength = raw.length;
+    //     const array = new Uint8Array(new ArrayBuffer(rawLength));
 
-        for(let i = 0; i < rawLength; i++) {
-            array[i] = raw.charCodeAt(i);
-        }
-        return array;
-    }
+    //     for(let i = 0; i < rawLength; i++) {
+    //         array[i] = raw.charCodeAt(i);
+    //     }
+    //     return array;
+    // }
 
-    static assignProps(target: any, source: any): boolean {
-        let changed = false;
+    // static assignProps(target: any, source: any): boolean {
+    //     let changed = false;
 
-        if (source) {
-            for (let p in source) {
-                // if (target.hasOwnProperty(p)) {
-                    if (source[p] !== target[p]) {
-                        target[p] = source[p];
-                        changed = true;
-                    }
-                //}
-            }
-        }
-        return changed;
-    }
+    //     if (source) {
+    //         for (let p in source) {
+    //             // if (target.hasOwnProperty(p)) {
+    //                 if (source[p] !== target[p]) {
+    //                     target[p] = source[p];
+    //                     changed = true;
+    //                 }
+    //             //}
+    //         }
+    //     }
+    //     return changed;
+    // }
 
-    static assignStyleAndProps(target: any, source: any): boolean {
-        let changed = false;
+    // static assignStyleAndProps(target: any, source: any): boolean {
+    //     let changed = false;
 
-        if (source) {
-            for (let p in source) {
-                if (p === 'style') {
-                    target[p] = source[p];
-                    changed = true;
-                } else if (target.hasOwnProperty(p)) {
-                    //if (source[p] !== target[p]) {
-                        target[p] = source[p];
-                        changed = true;
-                    //}
-                }
-            }
-        }
-        return changed;
-    }
+    //     if (source) {
+    //         for (let p in source) {
+    //             if (p === 'style') {
+    //                 target[p] = source[p];
+    //                 changed = true;
+    //             } else if (target.hasOwnProperty(p)) {
+    //                 //if (source[p] !== target[p]) {
+    //                     target[p] = source[p];
+    //                     changed = true;
+    //                 //}
+    //             }
+    //         }
+    //     }
+    //     return changed;
+    // }
 
     static dedupe(list: any[], comparer?: (v1: any, v2: any) => number): any[] {
         list = list.sort(comparer || ((n1, n2) => n1 > n2 ? 1 : n1 < n2 ? -1 : 0));
@@ -679,15 +679,15 @@ export class Utils {
         return list;
     }
 
-    static isUnique(list: any[], comparer?: (v1: any, v2: any) => number): boolean {
-        list = list.sort(comparer || ((n1, n2) => n1 > n2 ? 1 : n1 < n2 ? -1 : 0));
-        for (let i = list.length - 1; i > 0; i--) {
-            if (list[i] === list[i - 1]) {
-                return false;
-            }
-        }
-        return true;
-    }
+    // static isUnique(list: any[], comparer?: (v1: any, v2: any) => number): boolean {
+    //     list = list.sort(comparer || ((n1, n2) => n1 > n2 ? 1 : n1 < n2 ? -1 : 0));
+    //     for (let i = list.length - 1; i > 0; i--) {
+    //         if (list[i] === list[i - 1]) {
+    //             return false;
+    //         }
+    //     }
+    //     return true;
+    // }
 
     static sortNum(list: number[]): number[] {
         return list.sort((n1, n2) => n1 - n2);
@@ -712,46 +712,53 @@ export class Utils {
         return arr;
     }
 
-    static setInterval(handler: () => void, interval: number): any {
-        return setInterval(handler, interval);
-    }
-
-    static clearInterval(handle: any): void {
-        clearInterval(handle);
-    }
-
-    static isStringArray(value: any): boolean {
-        return isArray(value) && value.every(v => typeof v === 'string');
-    }
-
-    static isNumberArray(value: any): boolean {
-        return isArray(value) && value.every(v => typeof v === 'number');
-    }
-
-    static makeLineSeparator(pattern: string | string[]): RegExp {
-        if (isArray(pattern)) {
-            if (pattern.length > 0) {
-                let s = pattern[0];
-                for (let i = 1, n = pattern.length; i < n; i++) {
-                    s += '|' + pattern[i];
-                }
-                return new RegExp(s, 'g')
-            }
-        } else if (pattern) {
-            return new RegExp(pattern, 'g')
+    static shuffle(arr: any[]): void {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
         }
     }
 
-    static stripQuotes(s: string): string {
-        const c = s.charCodeAt(0);
+    // static setInterval(handler: () => void, interval: number): any {
+    //     return setInterval(handler, interval);
+    // }
 
-        if (c === DBL_QUOTE) {
-            s = s.replace(DBL_QUOTE_REP, "$1");
-        } else if (c === QUOTE) {
-            s = s.replace(QUOTE_REP, "$1");
-        }
-        return s;
-    }
+    // static clearInterval(handle: any): void {
+    //     clearInterval(handle);
+    // }
+
+    // static isStringArray(value: any): boolean {
+    //     return isArray(value) && value.every(v => typeof v === 'string');
+    // }
+
+    // static isNumberArray(value: any): boolean {
+    //     return isArray(value) && value.every(v => typeof v === 'number');
+    // }
+
+    // static makeLineSeparator(pattern: string | string[]): RegExp {
+    //     if (isArray(pattern)) {
+    //         if (pattern.length > 0) {
+    //             let s = pattern[0];
+    //             for (let i = 1, n = pattern.length; i < n; i++) {
+    //                 s += '|' + pattern[i];
+    //             }
+    //             return new RegExp(s, 'g')
+    //         }
+    //     } else if (pattern) {
+    //         return new RegExp(pattern, 'g')
+    //     }
+    // }
+
+    // static stripQuotes(s: string): string {
+    //     const c = s.charCodeAt(0);
+
+    //     if (c === DBL_QUOTE) {
+    //         s = s.replace(DBL_QUOTE_REP, "$1");
+    //     } else if (c === QUOTE) {
+    //         s = s.replace(QUOTE_REP, "$1");
+    //     }
+    //     return s;
+    // }
 
     static isDate(v: any): boolean {
         // return v instanceof Date;
@@ -816,31 +823,3 @@ export class Utils {
         return v + (Math.random() * 2 - 1 ) * amount; 
     }
 }
-
-// export class Stopwatch {
-
-//     //-------------------------------------------------------------------------
-//     // fields
-//     //-------------------------------------------------------------------------
-//     private _started: number;
-
-//     //-------------------------------------------------------------------------
-//     // constructor
-//     //-------------------------------------------------------------------------
-//     constructor() {
-//         this._started = +new Date();
-//     }
-
-//     //-------------------------------------------------------------------------
-//     // methods
-//     //-------------------------------------------------------------------------
-//     elapsed(reset = false): number {
-//         const e =  +new Date() - this._started;
-//         reset && (this._started = +new Date());
-//         return e;
-//     }
-
-//     elapsedText(reset = false, suffix = 'ms.'): string {
-//         return this.elapsed(reset) + suffix;
-//     }
-// }
