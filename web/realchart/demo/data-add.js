@@ -60,6 +60,7 @@ const config = {
 let animate;
 let chart;
 let timer;
+let dong = 1;
 
 function setActions(container) {
     createCheckBox(
@@ -72,7 +73,11 @@ function setActions(container) {
         false
     );
     createButton(container, "Add Point", function (e) {
-        chart.series.addPoint(["분당동", 12345]);
+        chart.series.addPoint(["분당" + dong++ + "동", Math.floor(Math.random() * 10000)]);
+    });
+    createButton(container, "Remove Point", function (e) {
+        const i = Math.floor(Math.random() * chart.series.pointCount);
+        chart.series.removePoint(i);
     });
     // createButton(container, "Random Set", function (e) {
     //     const i = Math.floor(Math.random() * chart.series.pointCount);

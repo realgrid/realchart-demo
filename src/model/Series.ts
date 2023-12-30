@@ -1086,17 +1086,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     createPoints(source: any[]): DataPoint[] {
         this._containsNull = false;
-
-        return source.map((s, i) => {
-            const p = this._createPoint(s);
-
-            p.index = i;
-            p.parse(this);
-            if (p.isNull ||= s == null || p.y == null) {
-                this._containsNull = true;
-            }
-            return p;
-        });
+        return source.map((s, i) => this.$_addPoint(s, i));
     }
 
     private $_getXStart(): number {
@@ -1437,18 +1427,19 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     addPoint(source: any, animate: boolean): DataPoint {
         const p = this._doAddPoint(source);
+
         if (p) {
+            this._points.add(p);
             this._changed();
         }
         return p;
     }
 
-    removePoint(proxy: any): DataPoint {
-        const p = this._points.pointAt(proxy);
-
-        if (p) {
+    removePoint(p: DataPoint): boolean {
+        if (p && this._points.remove(p)) {
             this._doPointRemoved(p);
-            return p;
+            this._changed();
+            return true;
         }
     }
     
@@ -1462,8 +1453,19 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return new DataPoint(source);
     }
 
+    private $_addPoint(source: any, i: number): DataPoint {
+        const p = this._createPoint(source);
+
+        p.index = i;
+        p.parse(this);
+        if (p.isNull ||= source == null || p.y == null) {
+            this._containsNull = true;
+        }
+        return p;
+    }
+
     protected _doAddPoint(source: any): DataPoint {
-        return;
+        return this.$_addPoint(source, this._points.count);
     }
 
     protected _doPointRemoved(point: DataPoint): void {

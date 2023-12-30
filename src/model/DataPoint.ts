@@ -275,6 +275,18 @@ export class DataPointCollection {
         }
     }
 
+    add(p: DataPoint): void {
+        this._points.push(p);
+    }
+
+    remove(p: DataPoint): boolean {
+        const i = this._points.indexOf(p);
+        if (i >= 0) {
+            this._points.splice(i, 1);
+            return true;
+        }
+    }
+
     getProps(prop: string | number): any[] {
         return this._points.map(p => p.getProp(prop));
     }

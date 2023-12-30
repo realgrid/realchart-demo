@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { absv, cos, sin } from "../../common/Common";
+import { cos, sin } from "../../common/Common";
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";

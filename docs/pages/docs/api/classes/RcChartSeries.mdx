@@ -11,14 +11,38 @@
 ### name: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)[#name]
 config에서 설정해된 name을 리턴한다.\
 최초 설정한 이름은 변경할 수 없다.
+### pointCount: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)[#pointCount]
 ### pointLabel: [RcChartObject](../classes/RcChartObject)[#pointLabel]
 point label 모델.
 ### tooltip: [RcChartObject](../classes/RcChartObject)[#tooltip]
 point label 모델.
 ### trendLine: [RcChartObject](../classes/RcChartObject)[#trendLine]
 point label 모델.
+### visiblePointCount: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)[#visiblePointCount]
 
 ## Methods
+### addPoint(source, animate): RcDataPoint[#addPoint]
+데이터포인트를 추가한다.
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| source | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 데이터포인트 원본 정보. |
+| animate=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | 추가 효과 표시. |
+### addPoints(source): [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) &#124; \< &#124; RcDataPoint &#124; >[#addPoints]
+| Parameter | Type |
+| ----------- | ----------- |
+| source | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) &#124; \< &#124; [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) &#124; > |
+### findPoint(keys): RcDataPoint[#findPoint]
+지정한 값들에 해당하는 첫번째 데이터포인트의 정보를 리턴한다.\
+전달되는 데이터포인트 정보는 리턴 시점의 복사본이다.
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| keys | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 데이터포이터를 찾기 위한 값 목록. |
 ### get(prop): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)[#get]
 지정한 설정 값(들)을 가져온다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
@@ -40,10 +64,15 @@ Utils.log(chart.axis.get('title.text'));
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | '**.**'으로 구분되는 속성 경로. |
-### getPoint(keys): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)[#getPoint]
-| Parameter | Type |
-| ----------- | ----------- |
-| keys | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |
+### getPointAt(xValue): RcDataPoint[#getPointAt]
+지정한 x축 값에 위치한 첫번째 데이터포인트의 정보를 리턴한다.\
+전달되는 데이터포인트 정보는 리턴 시점의 복사본이다.
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| xValue | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | x값. |
 ### getValueAt(xValue): [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)[#getValueAt]
 xValue에 해당하는 첫번째 데이터포인터의 yValue를 리턴한다.
 
@@ -51,7 +80,19 @@ xValue에 해당하는 첫번째 데이터포인터의 yValue를 리턴한다.
 
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
-| xValue | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | x값. x축이 category 축이면 카테고리 이름을 지정할 수 있다. |
+| xValue | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) &#124; RcDataPoint | x값 혹은 x,y값이 포함된 데이터포인트 정보. x축이 category 축이면 카테고리 이름을 지정할 수 있다. |
+### removePoint(xValue): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)[#removePoint]
+데이터포인트를 제거한다.
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| xValue | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) &#124; RcDataPoint | 제거할 데이터포인트의 x값 혹은 카테고리 이름. 또는 getPointAt이나 findPoint로 가져온 데이터포인트 정보 객체. |
+### removePoints(point): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#removePoints]
+| Parameter | Type |
+| ----------- | ----------- |
+| point | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) &#124; \< &#124; RcDataPoint &#124; > |
 ### set(prop, value, redraw): [RcChartObject](../classes/RcChartObject)[#set]
 지정한 속성의 값(들)을 설정한다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다.\
@@ -92,7 +133,7 @@ JSON 객체로 지정한 속성들의 값을 설정한다.\
 | ----------- | ----------- | ----------- |
 | props | [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | 여러 설정 값들이 지정된 JSON 객체 |
 | redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](/docs/api/classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
-### setValueAt(xValue, yValue, animate): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)[#setValueAt]
+### setValueAt(xValue, value, animate): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)[#setValueAt]
 xValue에 해당하는 첫번째 데이터포인터의 yValue를 변경한다.
 
 ```
@@ -106,8 +147,8 @@ chart.series.setValueAt(x, v + 10, true);
 
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
-| xValue | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | x값. x축이 category 축이면 카테고리 이름을 지정할 수 있다. |
-| yValue | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | 변경할 y값. |
+| xValue | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) &#124; RcDataPoint | x값. x축이 category 축이면 카테고리 이름을 지정할 수 있다. |
+| value | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | 변경할 y 또는 z값. |
 | animate=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 변경 효과가 표시된다. 기본값 true. |
 ### toggle(prop, redraw): [RcChartObject](../classes/RcChartObject)[#toggle]
 Boolean 타입의 설정값을 변경한다.\
@@ -133,8 +174,3 @@ chart.getSeries('ser02').toggle('visible');
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | data | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 원본 데이터포인트 값 배열. |
-### updatePoint(keys, values): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#updatePoint]
-| Parameter | Type |
-| ----------- | ----------- |
-| keys | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |
-| values | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |
