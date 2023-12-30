@@ -156,66 +156,66 @@ export class ElementPool<T extends RcElement> extends RcObject {
      * 기존 view를 재활용하도록 한다.
      * objProp가 설정되지 않으면 objs의 개별 obj 자체외 비교한다.
      */
-    reprepare(viewProp: string, objs: RcObject[], objProp: string, cleaner?: Visitor<T>, initor?: Visitor<T>, visitor?: Visitor<T>): ElementPool<T> {
-        const doc = this._owner.doc;
-        const pool = this._pool;
-        const oldViews = this._views;
-        const views: T[] = [];
+    // reprepare(viewProp: string, objs: RcObject[], objProp: string, cleaner?: Visitor<T>, initor?: Visitor<T>, visitor?: Visitor<T>): ElementPool<T> {
+    //     const doc = this._owner.doc;
+    //     const pool = this._pool;
+    //     const oldViews = this._views;
+    //     const views: T[] = [];
 
-        for (let i = this._removes.length - 1; i >= 0; i--) {
-            if (!this._removes[i].parent) {
-                const v = this._removes.splice(i, 1)[0];
-                pool.push(v);
-            }
-        }
+    //     for (let i = this._removes.length - 1; i >= 0; i--) {
+    //         if (!this._removes[i].parent) {
+    //             const v = this._removes.splice(i, 1)[0];
+    //             pool.push(v);
+    //         }
+    //     }
 
-        for (let i = 0, cnt = objs.length; i < cnt; i++) {
-            const obj = objs[i];
-            let found = -1;
+    //     for (let i = 0, cnt = objs.length; i < cnt; i++) {
+    //         const obj = objs[i];
+    //         let found = -1;
 
-            if (viewProp) {
-                for (let i = 0, cnt = oldViews.length; i < cnt; i++) {
-                    const oldKey = oldViews[i][viewProp];
+    //         if (viewProp) {
+    //             for (let i = 0, cnt = oldViews.length; i < cnt; i++) {
+    //                 const oldKey = oldViews[i][viewProp];
     
-                    if (objProp && oldKey === obj[objProp] || !objProp && oldKey === obj) {
-                        views.push(oldViews[i]);
-                        found = i;
-                        break;
-                    }
-                }
-            }
+    //                 if (objProp && oldKey === obj[objProp] || !objProp && oldKey === obj) {
+    //                     views.push(oldViews[i]);
+    //                     found = i;
+    //                     break;
+    //                 }
+    //             }
+    //         }
 
-            if (found >= 0) {
-                const v = oldViews.splice(found, 1)[0];
-                if (!v.parent) this._owner.add(v);
-            } else {
-                const v = this.$_create(doc, i, cnt);
-                views.push(v);
-                initor?.(v, i, cnt);
-            }
-        }
+    //         if (found >= 0) {
+    //             const v = oldViews.splice(found, 1)[0];
+    //             if (!v.parent) this._owner.add(v);
+    //         } else {
+    //             const v = this.$_create(doc, i, cnt);
+    //             views.push(v);
+    //             initor?.(v, i, cnt);
+    //         }
+    //     }
     
-        for (let i = 0, cnt = oldViews.length; i < cnt; i++) {
-            const v = oldViews[i];
+    //     for (let i = 0, cnt = oldViews.length; i < cnt; i++) {
+    //         const v = oldViews[i];
 
-            if (v.removing) {
-                //views.push(v);
-            } else {
-                if (this.removeDelay > 0) {
-                    //pool.push(v.removeLater(true, this.removeDelay) as T);
-                    this._removes.push(v.removeLater(this.removeDelay) as T);
-                } else {
-                    pool.push(v.remove() as T);
-                }
-                cleaner?.(v, i, cnt);
-            }
-        }
+    //         if (v.removing) {
+    //             //views.push(v);
+    //         } else {
+    //             if (this.removeDelay > 0) {
+    //                 //pool.push(v.removeLater(true, this.removeDelay) as T);
+    //                 this._removes.push(v.removeLater(this.removeDelay) as T);
+    //             } else {
+    //                 pool.push(v.remove() as T);
+    //             }
+    //             cleaner?.(v, i, cnt);
+    //         }
+    //     }
 
-        this._views = views;
-        // Utils.log('pool views', this._views.length);
-        visitor && this.forEach(visitor);
-        return this;
-    }
+    //     this._views = views;
+    //     // Utils.log('pool views', this._views.length);
+    //     visitor && this.forEach(visitor);
+    //     return this;
+    // }
 
     borrow(): T {
         const elt = this._pool.pop() || new this._creator(this._owner.doc, this._styleName);

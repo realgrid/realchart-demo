@@ -1405,7 +1405,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._doLoadPoints(src);
     }
 
-    getPointAt(xValue: number | string): DataPoint {
+    getPointAt(xValue: number | string | object): DataPoint {
         if (isString(xValue)) {
             xValue = this._xAxisObj.getValue(xValue);
         }
@@ -1426,16 +1426,30 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         }
     }
 
-    getPoint(keys: any): DataPoint {
+    findPoint(keys: any): DataPoint {
         return;
-    }
- 
-    updatePoint(keys: any, values: any): void {
     }
 
     updateData(data: any): void {
         this._points.load(data);
         this._changed();
+    }
+
+    addPoint(source: any, animate: boolean): DataPoint {
+        const p = this._doAddPoint(source);
+        if (p) {
+            this._changed();
+        }
+        return p;
+    }
+
+    removePoint(proxy: any): DataPoint {
+        const p = this._points.pointAt(proxy);
+
+        if (p) {
+            this._doPointRemoved(p);
+            return p;
+        }
     }
     
     //-------------------------------------------------------------------------
@@ -1446,6 +1460,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     protected _createPoint(source: any): DataPoint {
         return new DataPoint(source);
+    }
+
+    protected _doAddPoint(source: any): DataPoint {
+        return;
+    }
+
+    protected _doPointRemoved(point: DataPoint): void {
     }
 
     protected _createLegendMarker(doc: Document, size: number): RcElement {

@@ -9,7 +9,6 @@
 import { pickNum, pickProp, assign, maxv, minv } from "../../common/Common";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
-import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { MarkerSeries } from "../Series";
 
@@ -77,6 +76,10 @@ export class BubbleSeriesPoint extends DataPoint {
         super._readSingle(v);
 
         this.z = this.y;
+    }
+
+    getValue(): number {
+        return this.zValue;
     }
 
     getZValue(): number {

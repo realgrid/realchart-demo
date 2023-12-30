@@ -292,6 +292,16 @@ export abstract class RcNamedObject extends RcChartObject {
 }
 
 /**
+ * 시리즈 내부에서 생성되는 데이터포인트 모델 정보.
+ */
+export interface RcDataPoint {
+    pid: number;
+    xValue: number;
+    yValue: number;
+    zValue: number;
+}
+
+/**
  * 차트 시리즈 모델들의 기반 클래스.\
  */
 export class RcChartSeries extends RcNamedObject {
@@ -320,13 +330,45 @@ export class RcChartSeries extends RcNamedObject {
      */
     get tooltip(): RcChartObject { return this._tooltip; }
 
+    get pointCount(): number {
+        return (this.$_p as Series)._runPoints.length;
+    }
+
+    get visiblePointCount(): number {
+        return (this.$_p as Series)._visPoints.length;
+    }
+
+    /**
+     * 지정한 x축 값에 위치한 첫번째 데이터포인트의 정보를 리턴한다.\
+     * 전달되는 데이터포인트 정보는 리턴 시점의 복사본이다.
+     * 
+     * @param xValue x값.
+     * @returns 데이터포인트 모델 정보 객체.
+     */
+    getPointAt(xValue: number): RcDataPoint {
+        const p = (this.$_p as Series).getPointAt(xValue);
+        return p && p.proxy();
+    }
+
+    /**
+     * 지정한 값들에 해당하는 첫번째 데이터포인트의 정보를 리턴한다.\
+     * 전달되는 데이터포인트 정보는 리턴 시점의 복사본이다.
+     * 
+     * @param keys 데이터포이터를 찾기 위한 값 목록.
+     * @returns 데이터포인트 모델 정보 객체.
+     */
+    findPoint(keys: any): RcDataPoint {
+        const p = (this.$_p as Series).findPoint(keys);
+        return p && p.proxy();
+    }
+
     /**
      * xValue에 해당하는 첫번째 데이터포인터의 yValue를 리턴한다.
      * 
-     * @param xValue x값. x축이 category 축이면 카테고리 이름을 지정할 수 있다.
-     * @returns y값.
+     * @param xValue x값 혹은 x,y값이 포함된 데이터포인트 정보. x축이 category 축이면 카테고리 이름을 지정할 수 있다.
+     * @returns y 또는 z값.
      */
-    getValueAt(xValue: number | string): number {
+    getValueAt(xValue: number | string | RcDataPoint): number {
         const p = (this.$_p as Series).getPointAt(xValue);
         return p ? p.yValue : _undef;
     }
@@ -341,25 +383,34 @@ export class RcChartSeries extends RcNamedObject {
      * ```
      * 
      * @param xValue x값. x축이 category 축이면 카테고리 이름을 지정할 수 있다.
-     * @param yValue 변경할 y값.
+     * @param value 변경할 y 또는 z값.
      * @param animate true로 지정하면 변경 효과가 표시된다. 기본값 true.
      * @returns 변경됐으면 true.
      */
-    setValueAt(xValue: number | string, yValue: number, animate = true): boolean {
+    setValueAt(xValue: number | string | RcDataPoint, value: number, animate = true): boolean {
         const p = (this.$_p as Series).getPointAt(xValue);
 
         if (p) {
-            return !!(this.$_p as Series).setValueAt(p, yValue, animate);
+            return !!(this.$_p as Series).setValueAt(p, value, animate);
         }
         return false;
     }
 
-    getPoint(keys: any): any {
-        return (this.$_p as Series).getPoint(keys);
+    addPoint(source: any, animate = true): RcDataPoint {
+        const p = (this.$_p as Series).addPoint(source, animate);
+        return p && p.proxy();
     }
 
-    updatePoint(point: any): void {
-        // (this.$_p as Series).updatePoint(keys, values);
+    removePoint(point: RcDataPoint): boolean {
+        const p = (this.$_p as Series).removePoint(point);
+        return !!p;
+    }
+
+    addPoints(source: any[]): RcDataPoint[] {
+        return;
+    }
+
+    removePoints(point: RcDataPoint[]): void {
     }
 
     /**

@@ -85,13 +85,22 @@ export class DataPoint {
         return 1;
     }
 
-    // getValue(): number {
-    //     return this.yValue;
-    // }
+    getValue(): number {
+        return this.yValue;
+    }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    proxy(): any {
+        return {
+            pid: this.pid,
+            xValue: this.xValue,
+            yValue: this.yValue,
+            zValue: this.zValue
+        };
+    }
+
     assignTo(proxy?: any): any {
         if (!proxy) proxy = {};
         this._assignTo(proxy);
@@ -237,9 +246,16 @@ export class DataPointCollection {
         return this._points[index];
     }
 
-    pointAt(xValue: number): DataPoint {
-        for (const p of this._points) {
-            if (p.xValue === xValue) return p;
+    pointAt(xValue: number | any): DataPoint {
+        if (isObject(xValue)) {
+            const id = xValue.pid;
+            for (const p of this._points) {
+                if (p.pid === id) return p;
+            }
+        } else {
+            for (const p of this._points) {
+                if (p.xValue === xValue) return p;
+            }
         }
     }
 

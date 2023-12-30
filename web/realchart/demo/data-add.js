@@ -4,7 +4,7 @@
  */
 const config = {
     options: {},
-    title: "Update Data",
+    title: "Add Point",
     legend: true,
     body: {
         style: {
@@ -71,38 +71,31 @@ function setActions(container) {
         },
         false
     );
-    createButton(container, "Set Value", function (e) {
-        const v = chart.series.getValueAt(0);
-        console.log(v);
-        chart.series.setValueAt(0, v + 5000);
+    createButton(container, "Add Point", function (e) {
+        chart.series.addPoint(["분당동", 12345]);
     });
-    createButton(container, "Set Value2", function (e) {
-        const v = chart.series.getValueAt("신흥3동");
-        console.log(v);
-        chart.series.setValueAt("신흥3동", v + 3000);
-    });
-    createButton(container, "Random Set", function (e) {
-        const i = Math.floor(Math.random() * chart.series.pointCount);
-        const v = chart.series.getValueAt(i);
-        chart.series.setValueAt(i, v + Math.floor(Math.random() * 10000));
-    });
-    createButton(container, "Run", function (e) {
-        if (timer) {
-            clearInterval(timer);
-            timer = null;
-        }
-        timer = setInterval(() => {
-            const i = Math.floor(Math.random() * chart.series.pointCount);
-            const v = chart.series.getValueAt(i) + Math.floor(Math.random() * 10000) - 5000
-            chart.series.setValueAt(i, Math.max(0, v));
-        }, 200);
-    });
-    createButton(container, "Stop", function (e) {
-        if (timer) {
-            clearInterval(timer);
-            timer = null;
-        }
-    });
+    // createButton(container, "Random Set", function (e) {
+    //     const i = Math.floor(Math.random() * chart.series.pointCount);
+    //     const v = chart.series.getValueAt(i);
+    //     chart.series.setValueAt(i, v + Math.floor(Math.random() * 10000));
+    // });
+    // createButton(container, "Run", function (e) {
+    //     if (timer) {
+    //         clearInterval(timer);
+    //         timer = null;
+    //     }
+    //     timer = setInterval(() => {
+    //         const i = Math.floor(Math.random() * chart.series.pointCount);
+    //         const v = chart.series.getValueAt(i) + Math.floor(Math.random() * 10000) - 5000
+    //         chart.series.setValueAt(i, Math.max(0, v));
+    //     }, 200);
+    // });
+    // createButton(container, "Stop", function (e) {
+    //     if (timer) {
+    //         clearInterval(timer);
+    //         timer = null;
+    //     }
+    // });
     createCheckBox(
         container,
         "Inverted",
@@ -144,7 +137,7 @@ function setActions(container) {
 function init() {
     console.log("RealChart v" + RealChart.getVersion());
     // RealChart.setDebugging(true);
-    // RealChart.setLogging(true);
+    RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, "realchart", config);
     setActions("actions");
