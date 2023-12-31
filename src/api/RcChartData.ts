@@ -22,6 +22,10 @@ export class RcChartData {
         this.$_p = control;
     }
 
+    get rowCount(): number {
+        return this.$_p._rows.length;
+    }
+
     getValue(row: number, field: string): any {
         return this.$_p.getValue(row, field);
     }

@@ -959,7 +959,7 @@ export class ChartView extends LayerElement {
                 vNavi.layout().transX(x);
             }
 
-            const org = this._org = Point.create(x, y);
+            const org = this._org = {x, y};
 
             this._plotWidth = w;
             this._plotHeight = h;

@@ -48,6 +48,36 @@ export class Tester {
         control['_dom'].style.height = (height || 500) + 'px';
         return control;
     }
+
+    static irandom(min: number, max?: number): number {
+        if (max !== undefined) {
+            const v1 = min >> 0;
+            const v2 = max >> 0;
+            return (Math.random() * (v2 - v1) + v1) >>> 0;
+        } else {
+            const v = min >> 0;
+            return (Math.random() * v) >> 0;
+        }
+    }
+    
+    static srandom(min: number, max: number): string {
+        let s = '';
+        const len = this.irandom(min, max);
+
+        for (let i = 0; i < len; i++) {
+            s += String.fromCharCode(this.irandom(97, 123))
+        }
+        return s;
+    }
+
+    static erandom(clazz: any): any {
+        const vals = Object.values(clazz);
+        return vals[this.irandom(vals.length)];
+    }
+
+    static arandom(arr: any[]): any {
+        return arr[(Math.random() * arr.length) >> 0];
+}
 }
 
 export class TestChartControl extends ChartControl {

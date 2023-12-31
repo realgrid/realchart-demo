@@ -40,47 +40,47 @@ export class Point implements IPoint {
 	//-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /** isEmpty */
-	get isEmpty(): boolean {
-		return this.x === 0 || this.y === 0;
-    }
+    // /** isEmpty */
+	// get isEmpty(): boolean {
+	// 	return this.x === 0 || this.y === 0;
+    // }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-	clone(): Point {
-		return new Point(this.x, this.y);
-    }
+	// clone(): Point {
+	// 	return new Point(this.x, this.y);
+    // }
     
-	equals(sz: Point): boolean {
-		return sz === this
-			|| sz && this.x === sz.x && this.y === sz.y;
-    }
+	// equals(sz: Point): boolean {
+	// 	return sz === this
+	// 		|| sz && this.x === sz.x && this.y === sz.y;
+    // }
     
-	setEmpty(): Point {
-		this.x = this.y = 0;
-		return this;
-    }
+	// setEmpty(): Point {
+	// 	this.x = this.y = 0;
+	// 	return this;
+    // }
     
-	set(x: number, y: number): Point {
-		this.x = x;
-		this.y = y;
-		return this;
-    }
+	// set(x: number, y: number): Point {
+	// 	this.x = x;
+	// 	this.y = y;
+	// 	return this;
+    // }
     
-	round(): Point {
-		const pt = this.clone();
-		pt.x >>>= 0;
-		pt.y >>>= 0;
-		return pt;
-	}
+	// round(): Point {
+	// 	const pt = this.clone();
+	// 	pt.x >>>= 0;
+	// 	pt.y >>>= 0;
+	// 	return pt;
+	// }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-	toString(): string {
-		return "{x: " + this.x + ", y: " + this.y + "}";
-	}
+	// toString(): string {
+	// 	return "{x: " + this.x + ", y: " + this.y + "}";
+	// }
 
     //-------------------------------------------------------------------------
     // internal members

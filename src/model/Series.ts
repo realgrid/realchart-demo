@@ -15,7 +15,7 @@ import { Align, IPercentSize, IValueRange, IValueRanges, RtPercentSize, SVGStyle
 import { Utils } from "../common/Utils";
 import { RectElement } from "../common/impl/RectElement";
 import { Shape, Shapes } from "../common/impl/SvgShape";
-import { ChartData } from "../data/ChartData";
+import { ChartData, ChartDataCollection, IChartDataListener } from "../data/ChartData";
 import { IAxis } from "./Axis";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
@@ -650,7 +650,7 @@ class ValueAnimation extends RcAnimation {
 /**
  * @config chart.series[base]
  */
-export abstract class Series extends ChartItem implements ISeries, ILegendSource, ITooltipContext {
+export abstract class Series extends ChartItem implements ISeries, IChartDataListener, ILegendSource, ITooltipContext {
 
     //-------------------------------------------------------------------------
     // consts
@@ -701,6 +701,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _yFielder: (src: any) => any;
     _colorFielder: (src: any) => any;
     _dataDirty: boolean;
+    _cdata: ChartData;
     protected _points: DataPointCollection;
     _runPoints: DataPoint[];
     _visPoints: DataPoint[];
@@ -742,6 +743,33 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     protected _createLabel(chart: IChart): DataPointLabel {
         return new DataPointLabel(chart);
+    }
+
+    //-------------------------------------------------------------------------
+    // IChartDataListener
+    //-------------------------------------------------------------------------
+    onDataValueChanged(data: ChartData, row: number, field: string, value: any, oldValue: any): void {
+        Utils.log('onDataValueChanged', row, field, value, oldValue);
+        
+        if (field === (this.yField || 'y')) {
+            const p = this._runPoints[row];
+            if (p) {
+                this.setValueAt(p, value, true);
+            }
+        }
+    }
+
+    onDataRowUpdated(data: ChartData, row: number, oldValues: any): void {
+    }
+
+    onDataRowAdded(data: ChartData, row: number): void {
+    }
+
+    onDataRowDeleted(data: ChartData, row: number): void {
+    }
+
+    onDataChanged(data: ChartData): void {
+        Utils.log('onDataChanged');
     }
 
     //-------------------------------------------------------------------------
@@ -1511,11 +1539,23 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     protected _doLoadData(src: any): any[] {
         if (isArray(src)) {
             return src;
-        } else if (src instanceof ChartData) {
-            return src._internalValues();
-        } else if (isString(src)) {
-            const d = this.chart.data.get(src);
-            if (d) return d._internalValues();
+        } else {
+            let d: ChartData;
+            if (src.$_p instanceof ChartData) {
+                d = src.$_p;
+            } else if (src instanceof ChartData) {
+                d = src;
+            } else if (isString(src)) {
+                d =  this.chart.data.get(src);
+            }
+            if (d) {
+                if (d !== this._cdata) {
+                    if (this._cdata) this._cdata.removeListener(this);
+                    this._cdata = d;
+                    if (this._cdata) this._cdata.addListener(this);
+                }
+                return d._internalValues();
+            }
         }
     }
 

@@ -104,9 +104,12 @@ export class Globals {
      * 차트 시리즈에 연결할 수 있는 데이터 저장소.\
      * 저장되는 행은 json, array 또는 단일값일 수 있다.
      * 기본적으로 한 필드이 모든 행이 시리즈의 데이터로 연결되어 표시된다.
+     * rows로 전달된 배열이 초기 데이터로 저장된다.
+     * 이 때, rows 배열 항목들의 사본(shallow copy)이 저장되므로,
+     * 차트 렌더링에 불필요한 값들은 최소화 해야 한다.
      * 
      * @param options 데이터 생성 옵션들.
-     * @param rows 행 목록. 각 행은 json, array 또는 단일값일 수 있다.  
+     * @param rows 행 목록. 각 행은 json, array 또는 단일값일 수 있다.
      * @returns 차트데이터 객체.
      */
     static createData(options?: IRcChartDataOptions, rows?: any[]): RcChartData {

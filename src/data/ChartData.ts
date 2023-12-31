@@ -6,8 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray } from "../common/Common";
+import { isArray, isString } from "../common/Common";
 import { locale } from "../common/RcLocale";
+import { RcEventProvider } from "../common/RcObject";
 import { _undef, throwFormat } from "../common/Types";
 
 export interface IChartDataListener {
@@ -22,17 +23,31 @@ const isObj = function (v: any): boolean { return v && typeof v === 'object'; }
 
 /**
  * 차트 생성 옵션들.
+ * 
+ * @config
  */
 export interface IRcChartDataOptions {
     /**
-     * row가 배열이나 단일 값일 때 필드 이름들.
+     * 배열로 row 값들로 지정될 때, 각 항목에 해당되는 필드 이름들.\
+     * 이 이름들을 속성으로 갖는 json 객체로 저장된다.
+     * 
+     * 기본값은 ['x', 'y', 'z'];
      */
-    fieldNames?: string[];
+    fields?: string[];
+    /**
+     * row가 단일 값일 때 필드 이름.\
+     * 이 필드 이름 속성을 갖는 json 객체로 저장된다.
+     * 
+     * 기본값은 'y'.
+     * 
+     * @config
+     */
+    field?: string;
 }
 
 /**
  */
-export class ChartData {
+export class ChartData extends RcEventProvider<IChartDataListener> {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -40,22 +55,41 @@ export class ChartData {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _listeners: IChartDataListener[] = [];
-    private _rows: any[] = [];
+    _rows: any[] = [];
     private _fields: string[];
+    private _field: string;
     private _fieldMap: {[name: string]: number};
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(options: IRcChartDataOptions, rows: any[]) {
-        this.$_buildOptions(options);
+        super();
+
+        this.$_buildOptions(options || {});
+
         if (isArray(rows)) {
-            rows.forEach(row => this._rows.push(row.slice(0)));
+            rows.forEach(row => this._rows.push(this.$_readRow(row)));
         }
     }
 
     private $_buildOptions(options: IRcChartDataOptions): void {
+        const f = options.fields;
+        let flds: string[];
+
+        if (isArray(f)) {
+            flds = f.slice();
+        } else if (isString(f)) {
+            flds = [f];
+        } else {
+            flds = ['x', 'y', 'z'];
+        }
+        this._fields = flds;
+        this._field = options.field || 'y';
+        this._fieldMap = {};
+        for (let i = 0; i < flds.length; i++) {
+            this._fieldMap[flds[i]] = i;
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -68,54 +102,50 @@ export class ChartData {
         return this._rows;
     }
 
-    addListener(listener: IChartDataListener): void {
-        if (listener && this._listeners.indexOf(listener) < 0) {
-            this._listeners.push(listener);
-        }
-    }
+    private $_readRow(vals: any): object {
+        let row = {};
 
-    removeListener(listener: IChartDataListener): void {
-        const i = this._listeners.indexOf(listener);
-        if (i >= 0) {
-            this._listeners.splice(i, 1);
+        if (isArray(vals)) {
+            for (let i = 0; i < this._fields.length; i++) {
+                row[this._fields[i]] = vals[i];
+            }
+        } else if (isObj(vals)) {
+            Object.assign(row, vals);
+        } else {
+            row[this._field] = vals;
         }
-    }
-
-    protected _getValue(vals: any, field: string): any {
-        if (isObj(vals)) {
-            return vals[field];
-        } else if (isArray(vals)) {
-            return vals[this._fieldMap[field]];
-        } else if (field === this._fields[0]) {
-            return vals;
-        }
+        return row;
     }
 
     getValue(row: number, field: string): any {
         this._checkRow(row);
-        return this._getValue(this._rows[row], field);
+        return this._rows[row][field];
     }
     
+    // row를 json으로 변경한다.
     setValue(row: number, field: string, value: any): void {
         this._checkRow(row);
 
-        const old = this._rows[row][field];
+        const vals = this._rows[row];
+        const old = vals[field];
 
         if (value !== old) {
-            this._rows[row][field] = value;
+            vals[field] = value;
+            this._rows[row] = vals;
             this._fireEvent('onDataValueChanged', row, field, value, old);
+            this._changed();
         }
     }
 
     getValues(field: string, fromRow: number, toRow: number): any[] {
-        const values = this._rows;
+        const rows = this._rows;
         const vals = [];
 
         if (isNaN(fromRow) || fromRow < 0) fromRow = 0;
-        if (isNaN(toRow) || toRow < 0 || toRow > values.length) toRow = values.length; 
+        if (isNaN(toRow) || toRow < 0 || toRow > rows.length) toRow = rows.length; 
 
         for (let r = fromRow; r < toRow; r++) {
-            vals.push(this._getValue(values, field));
+            vals.push(rows[r][field]);
         }
         return vals;
     }
@@ -123,19 +153,7 @@ export class ChartData {
     getRow(row: number): object {
         this._checkRow(row);
 
-        const vals = this._rows[row];
-        let ret = {};
-
-        if (isObj(vals)) {
-            Object.assign({}, vals);
-        } else if (isArray(vals)) {
-            for (let i = 0; i < vals.length; i++) {
-                ret[this._fields[i]] = vals[i];
-            }
-        } else {
-            ret[this._fields[0]] = vals;
-        }
-        return ret;
+        return Object.assign({}, this._rows[row]);
     }
 
     addRow(values: any, row: number): void {
@@ -144,6 +162,7 @@ export class ChartData {
 
         this._rows.splice(row, 0, values);
         this._fireEvent('onDataRowAdded', row);
+        this._changed();
     }
 
     deleteRow(row: number): void {
@@ -153,6 +172,7 @@ export class ChartData {
 
         this._rows.splice(row, 1);
         this._fireEvent('onDataRowDeleted', row, old);
+        this._changed();
     }
 
     //-------------------------------------------------------------------------
@@ -167,19 +187,8 @@ export class ChartData {
         }
     }
 
-    protected _fireEvent(event: string, ...args: any[]): any {
-        const arr = Array.prototype.slice.call(arguments, 0);
-        arr[0] = this;
-
-        for (const listener of this._listeners) {
-            const func = listener[event];
-            if (func) {
-                const rslt = func.apply(listener, arr);
-                if (rslt !== void 0) {
-                    return rslt;
-                }
-            }
-        }
+    protected _changed(): void {
+        this._fireEvent('onDataChanged');
     }
 }
 

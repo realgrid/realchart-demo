@@ -2,9 +2,15 @@
  * @demo
  *
  */
-const data = RealChart.createData('main', [{
-    
-}]);
+const data = RealChart.createData('main', [
+    ["신흥1동", 3904],
+    ["신흥2동", 19796],
+    ["신흥3동", 10995],
+    ["태평1동", 14625],
+    ["태평2동", 14627],
+    ["태평3동", 12649],
+    ["태평4동", 12279],
+]);
 const config = {
     options: {},
     title: "Chart Data",
@@ -41,15 +47,7 @@ const config = {
     },
     series: {
         pointLabel: true,
-        data: [
-            ["신흥1동", 3904],
-            ["신흥2동", 19796],
-            ["신흥3동", 10995],
-            ["태평1동", 14625],
-            ["태평2동", 14627],
-            ["태평3동", 12649],
-            ["태평4동", 12279],
-        ],
+        data,
         pointStyleCallback: args => {
             if (args.yValue > 30000) {
                 return { fill: 'blue', stroke: 'blue' };
@@ -75,13 +73,16 @@ function setActions(container) {
         },
         false
     );
-    createButton(container, "Add Point", function (e) {
-        chart.series.addPoint(["분당" + dong++ + "동", Math.floor(Math.random() * 10000)]);
+    createButton(container, "Set Value", function (e) {
+        data.setValue(0, 'y', data.getValue(0, 'y') * 2);
     });
-    createButton(container, "Remove Point", function (e) {
-        const i = Math.floor(Math.random() * chart.series.pointCount);
-        chart.series.removePoint(i);
-    });
+    // createButton(container, "Add Point", function (e) {
+    //     chart.series.addPoint(["분당" + dong++ + "동", Math.floor(Math.random() * 10000)]);
+    // });
+    // createButton(container, "Remove Point", function (e) {
+    //     const i = Math.floor(Math.random() * chart.series.pointCount);
+    //     chart.series.removePoint(i);
+    // });
     // createButton(container, "Random Set", function (e) {
     //     const i = Math.floor(Math.random() * chart.series.pointCount);
     //     const v = chart.series.getValueAt(i);
