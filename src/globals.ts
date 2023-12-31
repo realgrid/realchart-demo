@@ -13,7 +13,7 @@ import { RcDebug } from "./common/Common";
 import { RcControl, RcElement } from "./common/RcControl";
 import { $_registerLocale, $_setLocale, IRcLocale } from "./common/RcLocale";
 import { Utils } from "./common/Utils";
-import { ChartData } from "./data/ChartData";
+import { ChartData, IRcChartDataOptions } from "./data/ChartData";
 
 // const clazz: any = RcChartControl;
 
@@ -100,8 +100,16 @@ export class Globals {
         c.load(config, true);
         return c;
     }
-    static createData(name: string, values?: any[]): RcChartData {
-        const d = new (RcChartData as any)(new ChartData(name, values));
-        return d;
+    /**
+     * 차트 시리즈에 연결할 수 있는 데이터 저장소.\
+     * 저장되는 행은 json, array 또는 단일값일 수 있다.
+     * 기본적으로 한 필드이 모든 행이 시리즈의 데이터로 연결되어 표시된다.
+     * 
+     * @param options 데이터 생성 옵션들.
+     * @param rows 행 목록. 각 행은 json, array 또는 단일값일 수 있다.  
+     * @returns 차트데이터 객체.
+     */
+    static createData(options?: IRcChartDataOptions, rows?: any[]): RcChartData {
+        return new (RcChartData as any)(new ChartData(options || {}, rows));
     }
 }

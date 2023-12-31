@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject } from "../common/Common";
+import { isArray } from "../common/Common";
 import { locale } from "../common/RcLocale";
 import { _undef, throwFormat } from "../common/Types";
 
@@ -21,33 +21,41 @@ export interface IChartDataListener {
 const isObj = function (v: any): boolean { return v && typeof v === 'object'; }
 
 /**
+ * 차트 생성 옵션들.
+ */
+export interface IRcChartDataOptions {
+    /**
+     * row가 배열이나 단일 값일 때 필드 이름들.
+     */
+    fieldNames?: string[];
+}
+
+/**
  */
 export class ChartData {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    /**
-     * row가 단일 값일 때 필드 이름.
-     */
-    fieldName = 'y';
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _listeners: IChartDataListener[] = [];
-
-    name: string;
-    private _values: any[] = [];
+    private _rows: any[] = [];
+    private _fields: string[];
+    private _fieldMap: {[name: string]: number};
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(name: string, values: any[]) {
-        this.name = name;
-        if (isArray(values)) {
-            values.forEach(row => this._values.push(row.slice(0)));
+    constructor(options: IRcChartDataOptions, rows: any[]) {
+        this.$_buildOptions(options);
+        if (isArray(rows)) {
+            rows.forEach(row => this._rows.push(row.slice(0)));
         }
+    }
+
+    private $_buildOptions(options: IRcChartDataOptions): void {
     }
 
     //-------------------------------------------------------------------------
@@ -57,7 +65,7 @@ export class ChartData {
     // methods
     //-------------------------------------------------------------------------
     _internalValues(): any[] {
-        return this._values;
+        return this._rows;
     }
 
     addListener(listener: IChartDataListener): void {
@@ -74,27 +82,33 @@ export class ChartData {
     }
 
     protected _getValue(vals: any, field: string): any {
-        return isObj(vals) ? vals[field] : field === this.fieldName ? vals : _undef;
+        if (isObj(vals)) {
+            return vals[field];
+        } else if (isArray(vals)) {
+            return vals[this._fieldMap[field]];
+        } else if (field === this._fields[0]) {
+            return vals;
+        }
     }
 
     getValue(row: number, field: string): any {
         this._checkRow(row);
-        return this._getValue(this._values[row], field);
+        return this._getValue(this._rows[row], field);
     }
     
     setValue(row: number, field: string, value: any): void {
         this._checkRow(row);
 
-        const old = this._values[row][field];
+        const old = this._rows[row][field];
 
         if (value !== old) {
-            this._values[row][field] = value;
+            this._rows[row][field] = value;
             this._fireEvent('onDataValueChanged', row, field, value, old);
         }
     }
 
     getValues(field: string, fromRow: number, toRow: number): any[] {
-        const values = this._values;
+        const values = this._rows;
         const vals = [];
 
         if (isNaN(fromRow) || fromRow < 0) fromRow = 0;
@@ -106,35 +120,38 @@ export class ChartData {
         return vals;
     }
 
-    getRow(row: number): any {
+    getRow(row: number): object {
         this._checkRow(row);
 
-        const v = this._values[row];
-        if (isObj(v)) {
-            return Object.assign({}, this._values[row]);
-        } else if (this.fieldName) {
-            const obj: any = {};
-            obj.fieldName = v;
-            return obj;
+        const vals = this._rows[row];
+        let ret = {};
+
+        if (isObj(vals)) {
+            Object.assign({}, vals);
+        } else if (isArray(vals)) {
+            for (let i = 0; i < vals.length; i++) {
+                ret[this._fields[i]] = vals[i];
+            }
         } else {
-            return v;
+            ret[this._fields[0]] = vals;
         }
+        return ret;
     }
 
     addRow(values: any, row: number): void {
-        if (isNaN(row) || row < 0) row = this._values.length;
+        if (isNaN(row) || row < 0) row = this._rows.length;
         else this._checkRow(row);
 
-        this._values.splice(row, 0, values);
+        this._rows.splice(row, 0, values);
         this._fireEvent('onDataRowAdded', row);
     }
 
     deleteRow(row: number): void {
         this._checkRow(row);
 
-        const old = this._values[row];
+        const old = this._rows[row];
 
-        this._values.splice(row, 1);
+        this._rows.splice(row, 1);
         this._fireEvent('onDataRowDeleted', row, old);
     }
 
@@ -145,7 +162,7 @@ export class ChartData {
     // internal members
     //-------------------------------------------------------------------------
     protected _checkRow(row: number): void {
-        if (row < 0 || row > this._values.length) {
+        if (row < 0 || row > this._rows.length) {
             throwFormat(locale.invalidRowIndex, row);
         }
     }
@@ -186,10 +203,9 @@ export class ChartDataCollection {
             let d: ChartData;
 
             if (isArray(src)) {
-                d = new ChartData(p, src);
+                d = new ChartData({}, src);
             } else if (isObj(src) && isArray(src.values)) {
-                d = new ChartData(p, src.values);
-                if (src.fieldName) d = src.fieldName;
+                d = new ChartData(src.options, src.values);
             }
             this._map[p] = d;
         }
