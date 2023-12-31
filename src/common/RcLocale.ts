@@ -18,11 +18,7 @@ export interface IRcLocale {
     notExistsDataField: string;
     notSpecifiedDataField: string;
     invalidFieldName: string;
-    invalidFieldIndex: string;
     invalidRowIndex: string;
-    requiredField: string;
-    invalidValueInDomain: string;
-    invalidValueInRange: string;
     invalidToIndex: string;
     requireSourceData: string;
     requireFilterName: string;
@@ -48,11 +44,7 @@ Locales['ko'] = {
     notExistsDataField: '존재하지 않는 필드입니다: %1',
     notSpecifiedDataField: '하나 이상의 데이터필드가 설정돼야 합니다.',
     invalidFieldName: '잘못된 데이터필드 이름입니다: %1',
-    invalidFieldIndex: '잘못된 데이터필드 index입니다: %1',
     invalidRowIndex: '잘못된 데이터행 index입니다: %1',
-    requiredField: '반드시 값을 지정해야 하는 필드입니다: %1',
-    invalidValueInDomain: '값이 필드 값 도메인에 포함되지 않습니다: %1',
-    invalidValueInRange: '값이 필드 값 범위에 포함되지 않습니다: %1',
     invalidToIndex: "잘못된 'to' index입니다.: %1",
     requireSourceData: '원본 data가 반드시 지정돼야 합니다.',
     requireFilterName: '필터 이름이 반드시 지정돼야 합니다.',
@@ -76,11 +68,7 @@ Locales['en'] = {
     notExistsDataField: 'A data field is not exists: %1',
     notSpecifiedDataField: 'At least one datafield must be set.',
     invalidFieldName: 'Invalid field name: %1',
-    invalidFieldIndex: 'Invalid field index: %1',
     invalidRowIndex: 'Invalid row index: %1',
-    requiredField: 'Required field: %1',
-    invalidValueInDomain: 'The value is not int the domain: %1',
-    invalidValueInRange: 'The value is not int the range: %1',
     invalidToIndex: "Invalid 'to' index: %1",
     requireSourceData: 'A source data must be set.',
     requireFilterName: 'A filter name must be set.',

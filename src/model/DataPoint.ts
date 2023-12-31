@@ -269,10 +269,14 @@ export class DataPointCollection {
             // source = source.sort((a, b) => {
             //     return ((isArray(a) || isObject(a)) ? 1 : 0) - ((isArray(b) || isObject(b)) ? 1 : 0);
             // });
-            this._points = this._owner.createPoints(source);
+            this._points = this._owner.initPoints(source);
         } else {
             this._points = [];
         }
+    }
+
+    clear(): void {
+        this._points = [];
     }
 
     add(p: DataPoint): void {

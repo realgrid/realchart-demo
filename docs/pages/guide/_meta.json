@@ -7,9 +7,10 @@
     "series": "시리즈(Series)",
     "gauges": "게이지(Gauges)",
     "annotations": "어노테이션(Annotations)",
-    "title": "Title",
+    "title": "제목(Title)",
     "legend": "범례(Legend)",
-    "style": "스타일",
+    "assets": "에셋(Assets)",
+    "style": "스타일(Styles)",
     "split": "분할 모드(Split)",
     "exporting": "내보내기(Exporting)",
     "---": {

@@ -8,9 +8,12 @@
 
 import { ChartControl } from "./ChartControl";
 import { RcChartControl } from "./api/RcChartControl";
+import { RcChartData } from "./api/RcChartData";
 import { RcDebug } from "./common/Common";
 import { RcControl, RcElement } from "./common/RcControl";
+import { $_registerLocale, $_setLocale, IRcLocale } from "./common/RcLocale";
 import { Utils } from "./common/Utils";
+import { ChartData } from "./data/ChartData";
 
 // const clazz: any = RcChartControl;
 
@@ -31,6 +34,15 @@ export class Globals {
      */
     static getVersion(): string {
         return '$Version';
+    }
+    static setLocale(lang: string, config?: IRcLocale): void {
+        if (config) {
+            $_registerLocale(lang, config);    
+        }
+        $_setLocale(lang);
+    }
+    static registerLocale(lang: string, config: IRcLocale): void {
+        $_registerLocale(lang, config);
     }
     /**
      * true로 지정하면 차트 요소별 디버그 경계를 표시한다.\
@@ -87,5 +99,9 @@ export class Globals {
         const c =  new (RcChartControl as any)(new ChartControl(doc, container));
         c.load(config, true);
         return c;
+    }
+    static createData(name: string, values?: any[]): RcChartData {
+        const d = new (RcChartData as any)(new ChartData(name, values));
+        return d;
     }
 }

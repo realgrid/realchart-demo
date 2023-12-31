@@ -277,6 +277,9 @@ export const throwError = (message: string) => {
 export const throwFormat = (format: string, value: any) => {
     throw new Error(formatMessage(format, value));
 }
+export const throwFormat2 = (format: string, value1: any, value2: any) => {
+    throw new Error(formatMessage2(format, value1, value2));
+}
 
 export interface StyleProps {
     fill?: string;

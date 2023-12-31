@@ -9,7 +9,7 @@
 import { isArray, isObject, isString, mergeObj, pickProp3, assign, isNumber } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign, _undef } from "../common/Types";
-import { AssetCollection, PaletteMode } from "./Asset";
+import { AssetCollection } from "./Asset";
 import { Axis, AxisCollection, IAxis, PaneXAxisMatrix, PaneYAxisMatrix } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem, n_char_item } from "./ChartItem";
@@ -57,6 +57,8 @@ import { ShapeAnnotation } from "./annotation/ShapeAnnotation";
 import { CircleBarSeries, CircleBarSeriesGroup } from "./series/CircleBarSeries";
 import { Utils } from "../common/Utils";
 import { ITooltipContext, ITooltipOwner, Tooltip, TooltipLevel } from "./Tooltip";
+import { PaletteMode } from "./ChartTypes";
+import { ChartDataCollection } from "../data/ChartData";
 
 export interface IChartProxy {
     getChartObject(model: any): object;
@@ -64,6 +66,7 @@ export interface IChartProxy {
 
 export interface IChart {
     _proxy: IChartProxy;
+    data: ChartDataCollection;
     type: string;
     gaugeType: string;
     _xPaneAxes: PaneXAxisMatrix;
@@ -387,6 +390,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     // fields
     //-------------------------------------------------------------------------
     _proxy: IChartProxy;
+    private _data = new ChartDataCollection();
     private _templates: {[key: string]: any};
     private _assets: AssetCollection;
     private _options: ChartOptions;
@@ -564,6 +568,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      * @config
      */
     startOfWeek = 0;
+
+    get data(): ChartDataCollection {
+        return this._data;
+    }
 
     get assets(): AssetCollection {
         return this._assets;
@@ -819,6 +827,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         Utils.LOGGING && console.time(sTime);
 
         this._config = source;
+
+        this._data.load(source.data);
+
         // defaults
         this.$_loadTemplates(source.templates);
 

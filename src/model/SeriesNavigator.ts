@@ -195,13 +195,13 @@ export class SeriesNavigator extends ChartItem {
         }
 
         this._naviChart = this.chart._createChart(config);
-
-        if (this._source = chart._getSeries().getSeries(this.source) || chart.firstSeries) {
-            this._naviChart.firstSeries.loadPoints(this._source.getPoints().getProxies());
-        }
     }
 
     protected _doPrepareRender(chart: IChart): void {
+        if (this._source = chart._getSeries().getSeries(this.source) || chart.firstSeries) {
+            this._naviChart.firstSeries._loadPoints(this._source.getPoints().getProxies());
+        }
+
         this._vertical = false;
         this._naviChart.prepareRender();
     }

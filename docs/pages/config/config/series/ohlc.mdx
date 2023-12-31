@@ -19,9 +19,6 @@ json 객체나 배열로 전달되는 데이터포인트 정보에서 종료(clo
 ### data: `any{:js}`[#data]
 데이터포인터들을 생성하는 데 사용되는 값 목록.  
 
-### dataProp: `string{:js}`[#dataProp]
-<Content type="keyword" value="undefined"></Content>이면 <Content type="expression" value="'data'"></Content>.  
-
 ### declineStyle: `SVGStyles | string{:js}`[#declineStyle]
 값이 하락한 데이터포인트에 적용되는 스타일셋.  
 - `SVGStyles{:js}` 
@@ -75,8 +72,10 @@ json 객체나 배열로 전달되는 데이터포인트 정보에서 시작(ope
 
 <Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 항목 수가 5이상이면 2, 아니면 1, 객체이면 <Content type="expression" value="'open'"></Content>.  
 
-### pointColors: `string[]{:js}`[#pointColors]
-데이터 포인트별 색들을 지정한다.  
+### pointColors: `string | string[]{:js}`[#pointColors]
+데이터 포인트별 색들을 지정한다.
+
+색 배열로 지정하거나, <Content type="expression" value="'colors'"></Content> asset으로 등록된 이름을 지정할 수 있다.  
 
 ### [pointLabel](./ohlc/pointLabel)
 Series data point label options.  

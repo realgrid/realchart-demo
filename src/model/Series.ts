@@ -10,16 +10,15 @@ import { absv, isArray, isFunc, isObject, isString, maxv, minv, pickNum, pickPro
 import { IPoint } from "../common/Point";
 import { RcAnimation } from "../common/RcAnimation";
 import { RcElement } from "../common/RcControl";
-import { RcObject } from "../common/RcObject";
 import { IRichTextDomain } from "../common/RichText";
 import { Align, IPercentSize, IValueRange, IValueRanges, RtPercentSize, SVGStyleOrClass, _undef, buildValueRanges, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { RectElement } from "../common/impl/RectElement";
 import { Shape, Shapes } from "../common/impl/SvgShape";
+import { ChartData } from "../data/ChartData";
 import { IAxis } from "./Axis";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
-import { LineType } from "./ChartTypes";
 import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource, LegendItem } from "./Legend";
 import { ITooltipContext } from "./Tooltip";
@@ -590,7 +589,7 @@ export interface ISeries extends IPlottingItem {
     color: string;
 
     displayName(): string;
-    createPoints(source: any[]): DataPoint[];
+    initPoints(source: any[]): DataPoint[];
     getPoints(): DataPointCollection;
     isVisible(p: DataPoint): boolean;
 }
@@ -687,6 +686,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    private _data: any;
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -699,6 +700,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _xFielder: (src: any) => any;
     _yFielder: (src: any) => any;
     _colorFielder: (src: any) => any;
+    _dataDirty: boolean;
     protected _points: DataPointCollection;
     _runPoints: DataPoint[];
     _visPoints: DataPoint[];
@@ -843,13 +845,15 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * 
      * @config
      */
-    data: any;
-    /**
-     * undefined이면 'data'.
-     * 
-     * @config
-     */
-    dataProp: string;
+    get data(): any {
+        return this._data;
+    }
+    set data(value: any) {
+        if (value !== this._data) {
+            this._data = value;
+            this._dataDirty = true;
+        }
+    }
     /**
      * x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.\
      * 이 후에는 {@link xStep}씩 증가시키면서 설정한다.
@@ -880,11 +884,12 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     color: string;
     /**
-     * 데이터 포인트별 색들을 지정한다.
+     * 데이터 포인트별 색들을 지정한다.\
+     * 색 배열로 지정하거나, 'colors' asset으로 등록된 이름을 지정할 수 있다.
      * 
      * @config
      */
-    pointColors: string[];
+    pointColors: string[] | string;
     /**
      * 값 범위 목록.\
      * 범위별로 다른 스타일을 적용할 수 있다.
@@ -1080,7 +1085,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._row = row;
     }
 
-    createPoints(source: any[]): DataPoint[] {
+    initPoints(source: any[]): DataPoint[] {
         this._containsNull = false;
         return source.map((s, i) => this.$_addPoint(s, i));
     }
@@ -1100,6 +1105,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._xAxisObj = this.group ? this.group._xAxisObj : this.chart._connectSeries(this, true);
         this._yAxisObj = this.group ? this.group._yAxisObj : this.chart._connectSeries(this, false);
         this._calcedColor = void 0;
+
+        if (this._dataDirty) {
+            const data = this._doLoadData(this._data);
+            this._loadPoints(data);
+            this._dataDirty = false;
+        }
+
         this._runPoints = this._points.getPoints(this._xAxisObj, this._yAxisObj);
         this._visPoints = this._runPoints.filter(p => p.visible);
 
@@ -1387,10 +1399,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return m.visible === true;
     }
 
-    loadPoints(src: any[]): void {
-        this._doLoadPoints(src);
-    }
-
     getPointAt(xValue: number | string | object): DataPoint {
         if (isString(xValue)) {
             xValue = this._xAxisObj.getValue(xValue);
@@ -1496,23 +1504,26 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     protected _doLoad(src: any): void {
         super._doLoad(src);
+
         this._createFielders();
+    }
 
-        // const t = console.time('load points');
-        const data = this._loadData(src);
-
-        if (isArray(data) && data.length > 0) {
-            this._doLoadPoints(data);
+    protected _doLoadData(src: any): any[] {
+        if (isArray(src)) {
+            return src;
+        } else if (src instanceof ChartData) {
+            return src._internalValues();
+        } else if (isString(src)) {
+            const d = this.chart.data.get(src);
+            if (d) return d._internalValues();
         }
-        // console.timeEnd('load points');
     }
 
-    protected _loadData(src: any): any {
-        const data = src[this.dataProp || 'data'];
-        return data;
+    _loadPoints(data: any): void {
+        this._doLoadPoints(data);
     }
 
-    protected _doLoadPoints(src: any[]): void {
+    protected _doLoadPoints(src: any): void {
         this._points.load(src);
     }
 
@@ -1523,7 +1534,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         if (isArray(this.pointColors)) {
             colors = this.pointColors;
         } else if (this._colorByPoint()) { 
-            colors = this.chart.colors;
+            colors = this.chart.colors || [];
         } else {
             colors = [];
         }

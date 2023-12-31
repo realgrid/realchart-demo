@@ -31,6 +31,7 @@ import { BarSeries } from '../../../src/model/series/BarSeries';
         const series = chart.firstSeries;
 
         expect(series).instanceOf(BarSeries);
+        series.prepareRender()
         expect(series.getPoints().count).eq(json.series.data.length);
     });
 

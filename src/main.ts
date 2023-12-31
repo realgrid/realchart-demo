@@ -13,7 +13,11 @@ export const setDebugging = Globals.setDebugging;
 export const setLogging = Globals.setLogging;
 export const setAnimatable = Globals.setAnimatable;
 export const createChart = Globals.createChart;
+export const createData = Globals.createData;
 
+export { 
+    RcChartData 
+} from "./api/RcChartData";
 export { 
     RcChartControl 
 } from "./api/RcChartControl";

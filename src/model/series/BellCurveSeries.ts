@@ -83,18 +83,8 @@ export class BellCurveSeries extends AreaSeries {
         return new BellCurveSeriesPoint(source);
     }
 
-    // createPoints(source: any[]): DataPoint[] {
-    //     const pts = super.createPoints(source);
-
-    //     if (pts && pts.length > 0) {
-    //         pts.forEach(p => p.yValue = parseFloat(p.y));
-    //         return this.$_loadTable(pts);
-    //     }      
-    //     return []; 
-    // }
-
-    protected _loadData(src: any): any {
-        const data = super._loadData(src);
+    protected _doLoadData(src: any): any[] {
+        const data = super._doLoadData(src);
 
         if (isArray(data)) {
             return this.$_loadTable(data);
@@ -153,19 +143,6 @@ export class BellCurveSeries extends AreaSeries {
         }
 
         return pts2;
-
-        // pts2.forEach(p => {
-        //     p.xValue = p.x;
-        //     p.yGroup = p.yValue = p.y;
-        // })
-
-        // pts.forEach((p, i) => {
-        //     // p.index = i;
-        //     p.x = p.source.x;
-        //     p.y = p.source.y;
-        //     p.yGroup = p.y;
-        // })
-        // return pts2;
     }
 
     private $_getDenstiy(mean: number, stdv: number, sigma: number): any {

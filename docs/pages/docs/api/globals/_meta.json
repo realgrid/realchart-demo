@@ -1,5 +1,6 @@
 {
   "createChart": "createChart",
+  "createData": "createData",
   "getVersion": "getVersion",
   "setAnimatable": "setAnimatable",
   "setDebugging": "setDebugging",

@@ -3,6 +3,7 @@
   "RcBody": "RcBody",
   "RcChartAxis": "RcChartAxis",
   "RcChartControl": "RcChartControl",
+  "RcChartData": "RcChartData",
   "RcChartGauge": "RcChartGauge",
   "RcChartObject": "RcChartObject",
   "RcChartSeries": "RcChartSeries",

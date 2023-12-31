@@ -63,9 +63,6 @@ Bar 시리즈.<br/>
 ### data: `any{:js}`[#data]
 데이터포인터들을 생성하는 데 사용되는 값 목록.  
 
-### dataProp: `string{:js}`[#dataProp]
-<Content type="keyword" value="undefined"></Content>이면 <Content type="expression" value="'data'"></Content>.  
-
 ### label: `string{:js}`[#label]
 이 시리즈를 나타내는 텍스트.
 
@@ -90,8 +87,10 @@ group에 포함되면 group의 noClip 설정을 따른다.
 데이터 point가 클릭될 때 발생하는 이벤트 콜백.
 명시적 <Content type="keyword" value="true"></Content>를 리턴하면 기본 동작이 진행되지 않는다.  
 
-### pointColors: `string[]{:js}`[#pointColors]
-데이터 포인트별 색들을 지정한다.  
+### pointColors: `string | string[]{:js}`[#pointColors]
+데이터 포인트별 색들을 지정한다.
+
+색 배열로 지정하거나, <Content type="expression" value="'colors'"></Content> asset으로 등록된 이름을 지정할 수 있다.  
 
 ### [pointLabel](./bar/pointLabel)
 Series data point label options.  

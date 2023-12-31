@@ -11,6 +11,7 @@ import { RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
 import { SVGStyles, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
+import { PaletteMode } from "./ChartTypes";
 
 export interface IAssetItem {
     id: string;
@@ -283,13 +284,6 @@ export class Pattern extends AssetItem<IPattern> {
     }
 }
 
-export enum PaletteMode {
-    NORMAL = 'normal',
-    // MIXED = 'mixed',
-    SHUFFLE = 'shuffle',
-    RANDOM = 'random'
-}
-
 /**
  * @config chart.asset[type='colors']
  */
@@ -420,55 +414,65 @@ export interface IAssetOwner {
     removeDef(element: string): void;
 }
 
+/**
+ * 종류 구분없이 id는 유일하게 반드시 지정해야 한다.
+ */
 export class AssetCollection {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _items: AssetItem<IAssetItem>[] = [];
+    private _map: {[id: string]: AssetItem<IAssetItem>} = {};
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    count(): number {
-        return this._items.length;
-    }
-
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    get(index: number): AssetItem<IAssetItem> {
-        return this._items[index];
-    }
-
     load(source: any): void {
         this._items = [];
 
         if (isArray(source)) {
             source.forEach(src => {
-                let item = this.$_loadItem(src);
-                item && this._items.push(item);
+                const item = this.$_loadItem(src);
+                if (item) {
+                    if (item.hasDef()) {
+                        this._items.push(item);
+                    } else {
+                        this._map[src.id] = item;
+                    }
+                }
             })
         } else if (isObject(source)) {
-            let item = this.$_loadItem(source);
-            item && this._items.push(item);
+            const item = this.$_loadItem(source);
+            if (item) {
+                if (item.hasDef()) {
+                    this._items.push(item);
+                } else {
+                    this._map[source.id] = item;
+                }
+            }
         }
     }
 
     register(doc: Document, owner: IAssetOwner): void {
         this._items.forEach(item => {
-            if (item.hasDef()) {
-                const elt = item.getEelement(doc, item.source);
-                elt.setAttribute(RcElement.ASSET_KEY, '1');
-                owner.addDef(elt);
-            }
+            const elt = item.getEelement(doc, item.source);
+            elt.setAttribute(RcElement.ASSET_KEY, '1');
+            owner.addDef(elt);
         })
     }
 
     unregister(doc: Document, owner: IAssetOwner): void {
         this._items.forEach(item => {
-            item.hasDef() && owner.removeDef(item.source.id);
+            owner.removeDef(item.source.id);
         })
+    }
+
+    get(id: string): AssetItem<IAssetItem> {
+        return this._map[id];
     }
 
     //-------------------------------------------------------------------------

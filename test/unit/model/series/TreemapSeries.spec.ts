@@ -40,6 +40,7 @@ import { Chart } from '../../../../src/model/Chart';
         const series = loadSeries("treemap-01");
 
         expect(series).instanceOf(TreemapSeries);
+        series.prepareRender();
         expect(series.getPoints().count).gte(7);
     });
 
