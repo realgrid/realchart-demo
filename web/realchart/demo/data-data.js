@@ -76,9 +76,12 @@ function setActions(container) {
     createButton(container, "Set Value", function (e) {
         data.setValue(0, 'y', data.getValue(0, 'y') * 2);
     });
-    // createButton(container, "Add Point", function (e) {
-    //     chart.series.addPoint(["분당" + dong++ + "동", Math.floor(Math.random() * 10000)]);
-    // });
+    createButton(container, "Add Row", function (e) {
+        data.addRow({
+            'x': "분당" + dong++ + "동",
+            'y': Math.floor(Math.random() * 10000)
+        })
+    });
     // createButton(container, "Remove Point", function (e) {
     //     const i = Math.floor(Math.random() * chart.series.pointCount);
     //     chart.series.removePoint(i);

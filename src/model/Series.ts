@@ -15,7 +15,7 @@ import { Align, IPercentSize, IValueRange, IValueRanges, RtPercentSize, SVGStyle
 import { Utils } from "../common/Utils";
 import { RectElement } from "../common/impl/RectElement";
 import { Shape, Shapes } from "../common/impl/SvgShape";
-import { ChartData, ChartDataCollection, IChartDataListener } from "../data/ChartData";
+import { ChartData, IChartDataListener } from "../data/ChartData";
 import { IAxis } from "./Axis";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
@@ -763,9 +763,13 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     }
 
     onDataRowAdded(data: ChartData, row: number): void {
+        Utils.log('onDataRowAdded', row);
+
+        this.addPoint(data.getRow(row), true);
     }
 
     onDataRowDeleted(data: ChartData, row: number): void {
+        Utils.log('onDataRowDeleted', row);
     }
 
     onDataChanged(data: ChartData): void {
