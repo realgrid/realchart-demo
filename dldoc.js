@@ -524,6 +524,7 @@ class Tunner {
         this.classMap[name] = {
           kind,
           type,
+          config,
           props: itfProps
         }
         break;
@@ -579,7 +580,7 @@ class Tunner {
 class MDGenerater {
 
   static get TYPE_ELEMENTS() {
-    return ['series', 'xAxis', 'yAxis', 'gauge', 'annotation'];
+    return ['series', 'xAxis', 'yAxis', 'gauge', 'annotation', 'asset'];
   } 
 
   constructor(map, { debug=false }) {
@@ -916,7 +917,6 @@ class MDGenerater {
 
     let subtitle = '';
     let subtitleText = opt;
-    
 
     // 개요 문서에만 링크 추가
     if (type) {
@@ -939,7 +939,7 @@ class MDGenerater {
         _content: (this.docMap[opt]?._content || '') + `${subtitle}\n${_content}` 
       };
     }
-    
+
     // 속성 추가
     if (props) {
 

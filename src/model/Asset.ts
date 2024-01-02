@@ -32,7 +32,7 @@ export interface IGradient extends IAssetItem {
 }
 
 /**
- * @config chart.asset[type='lineargradient']
+ * @config chart.asset[type=lineargradient]
  */
 export interface ILinearGradient extends IGradient {
 
@@ -105,7 +105,7 @@ export class LinearGradient extends Gradient<ILinearGradient> {
 }
 
 /**
- * @config chart.asset[type='radialgradient']
+ * @config chart.asset[type=radialgradient]
  */
 export interface IRadialGradient extends IGradient {
 
@@ -285,7 +285,7 @@ export class Pattern extends AssetItem<IPattern> {
 }
 
 /**
- * @config chart.asset[type='colors']
+ * @config chart.asset[type=colors]
  */
 export interface IColorList extends IAssetItem {
     mode?: PaletteMode;
@@ -342,7 +342,7 @@ export class ColorList extends AssetItem<IColorList> {
 }
 
 /**
- * @config chart.asset[type='images']
+ * @config chart.asset[type=images]
  */
 export interface IImageList extends IAssetItem {
     rootUrl?: string;
