@@ -86,7 +86,7 @@ export class PointLabelContainer extends LayerElement {
         const styles = model.style;
 
         view.point = p;
-        view.setModel(doc, model, null);
+        view.setModel(doc, model, null, null);
 
         view.internalClearStyleAndClass();
         view.internalSetStyleOrClass(styles);

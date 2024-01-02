@@ -11,7 +11,7 @@ import { IRichTextDomain } from "../common/RichText";
 import { Align, DEG_RAD, ORG_ANGLE, SVGStyleOrClass, VerticalAlign, _undef, fixnum, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
-import { ChartItem, ChartTextOverflow, FormattableText } from "./ChartItem";
+import { ChartItem, ChartTextOverflow, FormattableText, IconedText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
 import { IClusterable, IPlottingItem, ISeries } from "./Series";
 
@@ -378,7 +378,7 @@ export abstract class AxisGrid extends AxisItem {
  * 
  * @config
  */
-export class AxisGuideLabel extends FormattableText {
+export class AxisGuideLabel extends IconedText {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -670,7 +670,7 @@ export interface IAxisLabelArgs {
  * 5. 배치 후 공간을 초과하는 label은 wrap 속성에 따라 줄나누기를 하거나, 
  *    ellipsis('...')로 처리해서 표시한다.
  */
-export abstract class AxisLabel extends FormattableText {
+export abstract class AxisLabel extends IconedText {
 
     //-------------------------------------------------------------------------
     // fields
@@ -783,6 +783,10 @@ export abstract class AxisLabel extends FormattableText {
      * @config
      */
     styleCallback: (args: IAxisLabelArgs) => SVGStyleOrClass;
+    /**
+     * 축 label과 함께 표시될 icon url을 리턴한다.
+     */
+    iconCallback: (args: IAxisLabelArgs) => string;
 
     //-------------------------------------------------------------------------
     // methods
@@ -822,10 +826,16 @@ export abstract class AxisLabel extends FormattableText {
         if (idx === count - 1) return this.lastStyle;
     }
 
+    getIcon(tick: IAxisTick): string {
+        return;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _doPrepareRender(chart: IChart): void {
+        super._doPrepareRender(chart);
+
         this._domain.numberFormatter = this._numberFormatter;
     }
 }

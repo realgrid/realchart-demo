@@ -63,6 +63,12 @@ class CategoryAxisLabel extends AxisLabel {
             return '';
         }
     }
+
+    getIcon(tick: IAxisTick): string {
+        debugger;
+        return (this.axis as CategoryAxis)._categories[tick.index].i;
+        // return super.getIcon(tick);
+    }
 }
 
 class CategoryAxisGrid extends AxisGrid {
@@ -110,7 +116,7 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    _categories: {c: string, t: string, w: number}[];
+    _categories: {c: string, t: string, w: number, i?: string}[];
     _cats: string[];
     _weights: number[];  // 한 카테고리의 상대 너비. 한 카테고리의 기본 크기는 1
     _len: number;
@@ -227,6 +233,11 @@ export class CategoryAxis extends Axis {
     getCategory(index: number): string {
         return this._cats[index];
     }
+
+    // categoryOf(cat: string): any {
+    //     const i = this._map[cat];
+    //     return i >= 0 ? this._categories[i] : '';
+    // }
 
     xValueAt(pos: number): number {
         for (let i = 2; i < this._pts.length - 1; i++) {
@@ -454,7 +465,8 @@ export class CategoryAxis extends Axis {
             this._len = 0;
 
             categories.forEach((cat: any) => {
-                let w = cat == null ? 1 : pickNum(cat.weight, 1);
+                const w = cat == null ? 1 : pickNum(cat.weight, 1);
+                const i = cat && cat.icon;
                 let c: string;
                 let t: string;
 
@@ -468,7 +480,7 @@ export class CategoryAxis extends Axis {
                 }
 
                 this._len += w;
-                cats.push({c, t, w});
+                cats.push({c, t, w, i});
             })
         } else {
             if (isArray(series)) {

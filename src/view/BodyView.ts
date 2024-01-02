@@ -358,7 +358,7 @@ export abstract class AxisGuideView<T extends AxisGuide> extends RcElement {
     prepare(doc: Document, model: T): void {
         this.model = model;
         if (this._labelView.setVis(!!model.label.text)) {
-            this._labelView.setModel(doc, model.label, null);
+            this._labelView.setModel(doc, model.label, null, null);
             this._labelView.setStyles(model.label.style);
         }
     }

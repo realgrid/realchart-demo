@@ -6,10 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { ChartText, ChartTextEffect } from "../../model/ChartItem";
+import { ChartTextEffect, IconedText } from "../../model/ChartItem";
 import { Color } from "../Color";
 import { Align, _undef } from "../Types";
 import { GroupElement } from "./GroupElement";
+import { ImageElement } from "./ImageElement";
 import { RectElement } from "./RectElement";
 import { TextAnchor, TextElement } from "./TextElement";
 
@@ -24,7 +25,8 @@ export class LabelElement extends GroupElement {
     private _back: RectElement;
     _outline: TextElement;
     _text: TextElement;
-    private _model: ChartText;
+    _icon: ImageElement;
+    private _model: IconedText;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -39,10 +41,10 @@ export class LabelElement extends GroupElement {
 	//-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /** text */
-    get text(): string {
-        return this._text.text;
-    }
+    // /** text */
+    // get text(): string {
+    //     return this._text.text;
+    // }
 
     //-------------------------------------------------------------------------
     // methods
@@ -53,7 +55,7 @@ export class LabelElement extends GroupElement {
         return this;
     }
 
-    setModel(doc: Document, model: ChartText, contrastTarget: Element): LabelElement {
+    setModel(doc: Document, model: IconedText, icon: string, contrastTarget: Element): LabelElement {
         const e = model.effect;
 
         this._model = model;
@@ -81,6 +83,7 @@ export class LabelElement extends GroupElement {
             this._back && this._back.remove();
             this._outline && this._outline.remove();
         }
+
         return this;
     }
 

@@ -280,7 +280,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
         if (this._labelContainer.setVis(model.label.visible)) {
             this._labelContainer.setStyleOrClass(model.label.style);
             this._labels.prepare(nStep, v => {
-                v.setModel(doc, labels, null);
+                v.setModel(doc, labels, null, null);
             });
 
             if (nStep > 0) {

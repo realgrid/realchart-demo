@@ -69,6 +69,7 @@ export interface IChart {
     data: ChartDataCollection;
     type: string;
     gaugeType: string;
+    assets: AssetCollection;
     _xPaneAxes: PaneXAxisMatrix;
     _yPaneAxes: PaneYAxisMatrix;
     options: ChartOptions;

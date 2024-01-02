@@ -13,7 +13,7 @@ import { ISize } from "../common/Size";
 import { DEG_RAD, IMinMax, IPercentSize, IValueRange, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, buildValueRanges, calcPercent, fixnum, isNull, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
-import { ChartItem, FormattableText } from "./ChartItem";
+import { ChartItem, FormattableText, IconedText } from "./ChartItem";
 import { Widget } from "./Widget";
 
 /**
@@ -591,7 +591,7 @@ export class GuageScaleTick extends ChartItem {
     length = 7;
 }
 
-export class GaugeScaleLabel extends FormattableText {
+export class GaugeScaleLabel extends IconedText {
 
     //-------------------------------------------------------------------------
     // methods

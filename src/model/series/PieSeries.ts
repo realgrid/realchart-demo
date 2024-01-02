@@ -8,7 +8,7 @@
 
 import { pickNum, assign, minv, maxv } from "../../common/Common";
 import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
-import { FormattableText } from "../ChartItem";
+import { FormattableText, IconedText } from "../ChartItem";
 import { DataPoint } from "../DataPoint";
 import { ISeries, RadialSeries, Series, SeriesGroup, SeriesGroupLayout, WidgetSeriesPoint } from "../Series";
 
@@ -65,7 +65,7 @@ export class PieSeriesPoint extends WidgetSeriesPoint {
     }
 }
 
-class PieSeriesText extends FormattableText {
+class PieSeriesText extends IconedText {
 
     //-------------------------------------------------------------------------
     // constructor

@@ -18,7 +18,7 @@ import { Shape, Shapes } from "../common/impl/SvgShape";
 import { ChartData, IChartDataListener } from "../data/ChartData";
 import { IAxis } from "./Axis";
 import { IChart } from "./Chart";
-import { ChartItem, FormattableText } from "./ChartItem";
+import { ChartItem, IconedText } from "./ChartItem";
 import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource, LegendItem } from "./Legend";
 import { ITooltipContext } from "./Tooltip";
@@ -40,7 +40,7 @@ export const NUMBER_FORMAT = '#,##0.#';
 /**
  * Series data point label options.
  */
-export class DataPointLabel extends FormattableText {
+export class DataPointLabel extends IconedText {
 
     //-------------------------------------------------------------------------
     // const
@@ -156,6 +156,8 @@ export class DataPointLabel extends FormattableText {
     }
 
     protected _doPrepareRender(chart: IChart): void {
+        super._doPrepareRender(chart);
+        
         this._domain.numberFormatter = this._numberFormatter;
     }
 }
