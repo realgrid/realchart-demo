@@ -75,9 +75,10 @@ interface IRelativeSize {
 /**
  * 다중 분할 panes.\
  * 각 pane에 해당하는 x, y축이 반드시 존재해야 한다.
- * axis는 {@link Axis.row row}, {@link Axis.col col} 속성으로 위치를 지정한다.
- * 시리즈는 {@link Series.row row}, {@link Series.col col} 속성으로 지정하거나, 아니면 axis 위치에 따라 자동으로 결정된다.
- * 시리즈그룹은 {@link SeriesGroup.row row}, {@link SeriesGroup.col col} 속성으로 지정하거나, 아니면 axis 위치에 따라 자동으로 결정된다.
+ * axis는 {@link config.base.axis#row row}, {@link config.base.axis#col col} 속성으로 위치를 지정한다.
+ * 시리즈는 {@link config.base.series#row row}, {@link config.base.series#col col} 속성으로 지정하거나, 아니면 axis 위치에 따라 자동으로 결정된다.
+ * // 현재 문서 구조로 SeriesGroup을 가리킬 수 없음.
+ * // 시리즈그룹은 {@link SeriesGroup.row row}, {@link SeriesGroup.col col} 속성으로 지정하거나, 아니면 axis 위치에 따라 자동으로 결정된다.
  * 
  * @config chart.split
  */

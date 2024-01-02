@@ -822,13 +822,13 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      */
     readonly trendline: Trendline;
     /**
-     * 분할 모드일 때 시리즈가 표시될 pane의 수평 위치.
+     * 분할 모드일 때 시리즈가 표시될 pane의 수직 위치.
      * 
      * @config
      */
     row: number;
     /**
-     * 분할 모드일 때 시리즈가 표시될 pane의 수직 위치.
+     * 분할 모드일 때 시리즈가 표시될 pane의 수평 위치.
      * 
      * @config
      */
