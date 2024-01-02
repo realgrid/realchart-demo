@@ -837,8 +837,10 @@ class MDGenerater {
       }
 
       lines += `<DefaultValue value="${value}" contents="${content.join(' ')}"></DefaultValue>`.trim();
+    } else {
+      lines += `<DefaultValue value="undefined" contents=""></DefaultValue>`.trim();
     }
-
+    
     return lines;
   }
 
@@ -1012,8 +1014,12 @@ class MDGenerater {
     const root = 'docs/pages/config/config';
     // clear
     fs.existsSync(root) && fs.rmSync(root, { recursive: true, force: true });
+    
     this._saveFile(root, this.docMap);
+
+    // overwrite config
     fs.copyFileSync('docs/pages/config/config._meta.json', `${root}/_meta.json`);
+    fs.copyFileSync('docs/pages/config/base._meta.json', `${root}/base/_meta.json`);
   }
 
   exportModel() {

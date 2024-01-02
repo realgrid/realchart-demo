@@ -64,6 +64,9 @@ config로 노출하고자 하는 구성에 @config를 사용한다.
   - 부모/추상 클래스 속성의 설명에서 링크를 `{@link config.gauge.$guage.label 라벨}` 처럼 설정한다.
   - 상속 받는 클래스의 설명에서 `@configvar gauge=band`처럼 $gauge를 교체할 값을 설정한다.
 
+- series, axis처럼 type을 갖는 클래스들의 공통 config 노출은 base 카테고리에 둔다.
+  - 공통 속성을 노출하려면 노출하고자 하는 추상 클래스 주석에서 `@config chart.axis[base]`와 같이 type자리에 base를 설정한다.
+
 - jsfiddle 링크를 추가하려면 `@fiddle url label...` 을 설정한다.
 
 - **주의: config 설명에 double quotes(`""`)를 써서는 안된다.**

@@ -22,7 +22,7 @@
 | fromValue | `number{:js}` | true |  
 | label | `string{:js}` | true |  
 | style | `SVGStyles \| string{:js}` | true |  
-| toValue | `number{:js}` | true |
+| toValue | `number{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 - `SVGStyles{:js}` 
@@ -39,14 +39,14 @@
 | stroke | `string{:js}` | true |  
 | strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |  
-| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### thickness: `string | number{:js}`[#thickness]
 밴드의 두께를 픽셀 단위나, 
 게이지 rim의 두께에 대한 상대적 크기로 지정할 수 있다.
 
 값을 지정하지 않으면 게이지 본체 내부에 표시될 때 <Content type="expression" value="'100%'"></Content>(본체 두께와 동일)로 표시되고,
 외부에 있을 때는 7 픽셀로 두께로 표시된다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### [tickLabel](./band/tickLabel)
 RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
 

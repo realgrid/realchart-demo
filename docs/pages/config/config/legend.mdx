@@ -12,7 +12,7 @@ visible 기본값이 <Content type="keyword" value="undefined"></Content>이고,
 - `'left'` 
 - `'right'` 
 
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### alignBase: `'chart'|'parent'|'plot'{:js}`[#alignBase]
 legend 정렬 기준.  
 - `'chart'` 
@@ -37,7 +37,7 @@ legend 정렬 기준.
 | stroke | `string{:js}` | true |  
 | strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |  
-| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### gap: `number{:js}`[#gap]
 [location](#location) 이 <Content type="expression" value="'plot'"></Content>이 아닐 때,
 legend view와 나머지 chart 영역 사이의 gap.  
@@ -54,7 +54,7 @@ legend 아이템들 사이의 간격.
 <DefaultValue value="'center'" contents=""></DefaultValue>
 ### itemsPerLine: `number{:js}`[#itemsPerLine]
 한 줄 당 표시할 최대 legend 항목 수.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### layout: `'auto'|'horizontal'|'vertical'{:js}`[#layout]
 item 배치 방향.  
 - `'auto'` legend가 차트 좌우에 배치되면 item들을 수직으로 배치.  legend가 차트 상하에 배치되면 item들을 수평으로 배치.
@@ -86,11 +86,11 @@ marker 표시 여부.
 ### maxHeight: `string | number{:js}`[#maxHeight]
 수직 [배치](#layout) 일 때,
 최대 높이를 픽셀 단위의 크기 혹은 plot 높이에 대한 상대 길이를 <Content type="expression" value="'%'"></Content>로 지정한다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### maxWidth: `string | number{:js}`[#maxWidth]
 수평 [배치](#layout) 일 때,
 최대 너비를 픽셀 단위의 크기 혹은 plot 너비에 대한 상대 길이를 <Content type="expression" value="'%'"></Content>로 지정한다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### offsetX: `number{:js}`[#offsetX]
 범례와 body 혹은 차트 경계 사이의 수평 간격.  
 <DefaultValue value="0" contents=""></DefaultValue>
@@ -113,10 +113,10 @@ marker 표시 여부.
 | stroke | `string{:js}` | true |  
 | strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |  
-| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### useTextColor: `boolean{:js}`[#useTextColor]
 범례 항목의 텍스트에도 marker와 동일한 색상을 적용한다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### verticalAlign: `'bottom'|'middle'|'top'{:js}`[#verticalAlign]
 수직 배치.
 값을 지정하지 않으면, 기본값이 [location](#location) 이 <Content type="expression" value="'plot'일 때는 'top'"></Content>,
@@ -125,7 +125,7 @@ marker 표시 여부.
 - `'middle'` 
 - `'top'` 
 
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
 명시적으로 <Content type="keyword" value="true"></Content>로 설정되거나, 명시적 <Content type="keyword" value="false"></Content>가 아니면서 표시 항목 수가 1보다 클 때 표시된다..

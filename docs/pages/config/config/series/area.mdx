@@ -18,7 +18,7 @@ area 영역에 추가적으로 적용되는 스타일셋이나 class selector.
 | minWidth | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
 | strokeDasharray | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |
+| strokeWidth | `string{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### baseValue: `number{:js}`[#baseValue]
 y축 기준 위/아래 구분의 기준이 되는 값.  
 <DefaultValue value="0" contents=""></DefaultValue>
@@ -36,7 +36,7 @@ base 아래쪽 area 영역에 추가적으로 적용되는 스타일셋이나 cl
 | minWidth | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
 | strokeDasharray | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |
+| strokeWidth | `string{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### belowStyle: `SVGStyles | string{:js}`[#belowStyle]
 [baseValue](#basevalue) 혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.  
 - `SVGStyles{:js}` 
@@ -53,29 +53,29 @@ base 아래쪽 area 영역에 추가적으로 적용되는 스타일셋이나 cl
 | stroke | `string{:js}` | true |  
 | strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |  
-| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### col: `number{:js}`[#col]
 분할 모드일 때 시리즈가 표시될 pane의 수직 위치.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### color: `string{:js}`[#color]
 데이터 포인트 기본 색.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### colorField: `string{:js}`[#colorField]
 <Content type="keyword" value="undefined"></Content>이면, data point의 값이 객체일 때 <Content type="expression" value="'color'"></Content>.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### connectNullPoints: `boolean{:js}`[#connectNullPoints]
 <Content type="keyword" value="true"></Content>로 지정하면 y값이 지정되지 않은 <Content type="keyword" value="null"></Content> 포인터를 무시하고 다음 포인트에 연결한다.
 <Content type="keyword" value="false"></Content>면 <Content type="keyword" value="null"></Content> 포인트에서 연결이 끊어진다.  
 <DefaultValue value="false" contents=""></DefaultValue>
 ### data: `any{:js}`[#data]
 데이터포인터들을 생성하는 데 사용되는 값 목록.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### label: `string{:js}`[#label]
 이 시리즈를 나타내는 텍스트.
 
 레전드나 툴팁에서 시리즈를 대표한다.
 이 속성이 지정되지 않으면 [name](#name) 이 사용된다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### lineType: `'default'|'spline'|'step'{:js}`[#lineType]
 - `'default'` 직선.
 - `'spline'` 점들을 연결하는 스플라인 곡선.
@@ -89,34 +89,34 @@ base 아래쪽 area 영역에 추가적으로 적용되는 스타일셋이나 cl
 시리즈 이름.
 
 시리즈 생성시 지정되고 변경할 수 없다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### noClip: `boolean{:js}`[#noClip]
 <Content type="keyword" value="true"></Content>로 지정하면 body를 벗어난 data point 영역도 표시된다.
 
 값을 지정하지 않으면 polar 차트에서는 <Content type="keyword" value="true"></Content>, 직교 차트에서는 <Content type="keyword" value="false"></Content>이다.
 group에 포함되면 group의 noClip 설정을 따른다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### nullAsBase: `boolean{:js}`[#nullAsBase]
 <Content type="keyword" value="null"></Content>인 y값을 [baseValue](#basevalue) 로 간주한다.  
 <DefaultValue value="false" contents=""></DefaultValue>
 ### onPointClick[#onPointClick]
 데이터 point가 클릭될 때 발생하는 이벤트 콜백.
 명시적 <Content type="keyword" value="true"></Content>를 리턴하면 기본 동작이 진행되지 않는다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### pointColors: `string | string[]{:js}`[#pointColors]
 데이터 포인트별 색들을 지정한다.
 
 색 배열로 지정하거나, <Content type="expression" value="'colors'"></Content> asset으로 등록된 이름을 지정할 수 있다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### [pointLabel](./area/pointLabel)
 Series data point label options.  
 
 ### pointStyleCallback[#pointStyleCallback]
 데이터 point의 동적 스타일 콜백.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### row: `number{:js}`[#row]
 분할 모드일 때 시리즈가 표시될 pane의 수평 위치.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### stepDir[#stepDir]
 
 
@@ -137,7 +137,7 @@ Series data point label options.
 | stroke | `string{:js}` | true |  
 | strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |  
-| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### tooltipText: `string{:js}`[#tooltipText]
 데이터포인트 툴팁 텍스트.  
 <DefaultValue value="'<b>${name}</b><br>${series}:<b>" contents="${yValue}</b>'"></DefaultValue>
@@ -150,13 +150,13 @@ ranges가 적용되는 값.
 지정하지 않으면 시리즈 종류에 띠라 자동 적용된다.
 <Content type="expression" value="'line' 시리즈 계열은 'x', 나머지는 'y'"></Content>가 된다.
 현재 <Content type="expression" value="'z'"></Content>은 range는 bubble 시리즈에만 적용할 수 있다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### viewRanges: `IValueRanges | IValueRange[]{:js}`[#viewRanges]
 값 범위 목록.
 
 범위별로 다른 스타일을 적용할 수 있다.
 범위들은 중첩될 수 없다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
 <DefaultValue value="true" contents=""></DefaultValue>
@@ -165,32 +165,32 @@ ranges가 적용되는 값.
 <DefaultValue value="true" contents=""></DefaultValue>
 ### xAxis: `string | number{:js}`[#xAxis]
 그룹에 포함되면 그룹 설정을 따른다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### xField: `string | number{:js}`[#xField]
 json 객체나 배열로 전달되는 데이터포인트 정보에서 x 값을 지정하는 속성명이나 인덱스.
 
 <Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 0, 객체이면 <Content type="expression" value="'x'"></Content>.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### xStart: `any{:js}`[#xStart]
 x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.
 
 이 후에는 [xStep](#xstep) 씩 증가시키면서 설정한다.
 이 속성이 지징되지 않은 경우 [xStart](/config/config/options#xstart) 가 적용된다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### xStep: `string | number{:js}`[#xStep]
 x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
 
 첫번째 값은 [xStart](#xstart) 로 설정한다.
 time 축일 때, 정수 값 대신 시간 단위(<Content type="expression" value="'y', 'm', 'w', 'd', 'h', 'n', 's'"></Content>)로 지정할 수 있다.
 이 속성이 지정되지 않으면 [xStep](/config/config/options#xstep) 이 적용된다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### yAxis: `string | number{:js}`[#yAxis]
 그룹에 포함되면 그룹 설정을 따른다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### yField: `string | number | Function{:js}`[#yField]
 json 객체나 배열로 전달되는 데이터포인트 정보에서 y 값을 지정하는 속성명이나 인덱스.
 
 <Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 1, 객체이면 <Content type="expression" value="'y'"></Content>.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### zOrder: `number{:js}`[#zOrder]
 <DefaultValue value="0" contents=""></DefaultValue>

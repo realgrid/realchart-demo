@@ -22,11 +22,11 @@ object로 지정할 때에는 name(혹은 label) 속성에 카테고리 이름�
 width 속성에 상대 너비(1이 기본 너비)를 숫자로 지정한다.
 첫 번째 값이 [startValue](#startValue) 에 해당하고 [valueStep](#valueStep) 씩 증가한다.
 각 카테고리의 상대적 너비를 지정할 수 있다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### categoryField: `string | number{:js}`[#categoryField]
 카테고리로 사용되는 dataPoint 속성.
  [categories](#categories) 가 지정되면 이 속성은 무시된다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### categoryPadding: `number{:js}`[#categoryPadding]
 각 카테고리의 양 끝에 추가되는 여백의 카테고리에 너비에 대한 상대적 크기.  
 <DefaultValue value="0.1" contents=""></DefaultValue>
@@ -34,7 +34,7 @@ width 속성에 상대 너비(1이 기본 너비)를 숫자로 지정한다.
 Category 목록을 수집하는 시리즈.
 
 지정하지 않으면 모든 시리즈에서 카테고리를 수집한다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### [crosshair](./category/crosshair)
 RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
 
@@ -69,20 +69,20 @@ plot 영역이나 먼저 표시되는 축 사이의 여백 크기.
 축의 끝 카테고리 위치 이 후에 여백으로 추가되는 크기.
 
 카테고리 기본 너비(1)에 대한 상대적 크기로 지정한다. [padding](#padding) 속성으로 양끝 padding을 한꺼번에 지정할 수 있다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### maxValue: `number{:js}`[#maxValue]
 명시적으로 지정하는 최대값.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### minPadding: `number{:js}`[#minPadding]
 축의 시작 카테고리 위치 이 전에 여백으로 추가되는 크기.
 
 카테고리 기본 너비(1)에 대한 상대적 크기로 지정한다. [padding](#padding) 속성으로 양끝 padding을 한꺼번에 지정할 수 있다.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### minValue: `number{:js}`[#minValue]
 명시적으로 지정하는 최소값.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### name: `string{:js}`[#name]
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### padding: `number{:js}`[#padding]
 축의 양 끝 카테고리 위치 전후에 여백으로 추가되는 크기.
 
@@ -132,7 +132,7 @@ ex) 0.5로 지정하면 bar 시리즈의 첫 째 bar가 12시 위치에 표시�
 | stroke | `string{:js}` | true |  
 | strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |  
-| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### [tick](./category/tick)
 축에 표시되는 tick 위치와 표시 마크에 관한 설정 모델.  
 
@@ -141,7 +141,7 @@ ex) 0.5로 지정하면 bar 시리즈의 첫 째 bar가 12시 위치에 표시�
 
 ### tooltipFooter: `string{:js}`[#tooltipFooter]
 축에 포함된 시리즈들 툴팁의 아래쪽에 표시되는 텍스트.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### tooltipHeader: `string{:js}`[#tooltipHeader]
 축에 포함된 시리즈들 툴팁의 위쪽에 표시되는 텍스트.
 
@@ -163,7 +163,7 @@ Polar 차트에서 사용될 때 원호 전체 각도.
 <DefaultValue value="360" contents=""></DefaultValue>
 ### unit: `string{:js}`[#unit]
 label 등에 표시할 수 있는 단위 정보 문자열.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
 <DefaultValue value="true" contents=""></DefaultValue>
