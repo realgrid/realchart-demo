@@ -21,7 +21,6 @@ import { IClusterable, IPlottingItem, ISeries } from "./Series";
 export interface IAxis {
     _type(): string;
     chart: IChart;
-    
     row: number;
     col: number;
     _isX: boolean;
@@ -1109,7 +1108,15 @@ export abstract class Axis extends ChartItem implements IAxis {
      */
     readonly scrollBar = new AxisScrollBar(this);
 
+    /**
+     * 분할 모드일 때 축이 표시될 pane의 수평 위치.
+     * @config
+     */
     row = 0;
+    /**
+     * 분할 모드일 때 축이 표시될 pane의 수직 위치.
+     * @config
+     */
     col = 0;
     /**
      * Polar 차트에서 사용될 때 시작 각도.
