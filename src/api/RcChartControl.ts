@@ -15,7 +15,6 @@ import { Gauge } from "../model/Gauge";
 import { Legend } from "../model/Legend";
 import { Series } from "../model/Series";
 import { Subtitle, Title } from "../model/Title";
-import { ImageExportOptions, ImageExporter } from "../export/ImageExporter";
 import { RcAnnotation, RcBody, RcChartAxis, RcChartGauge, RcChartObject, RcChartSeries, RcLegend, RcSubtitle, RcTitle } from "./RcChartModels";
 
 function getObject(map: Map<any, any>, obj: ChartItem): RcChartObject {
@@ -250,9 +249,9 @@ export class RcChartControl {
         this.$_p.scroll(axis.$_p as any, pos);
     }
 
-    exportImage(options?: ImageExportOptions) {
-        new ImageExporter().export(this.$_p.dom(), options)
-    }
+    // exportImage(options?: ImageExportOptions) {
+    //     new ImageExporter().export(this.$_p.dom(), options)
+    // }
   
     setParam(param: string, value: any, redraw?: boolean): void {
         this.$_p.model?.setParam(param, value, redraw);

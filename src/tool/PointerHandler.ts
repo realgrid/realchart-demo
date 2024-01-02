@@ -133,10 +133,10 @@ export class ChartPointerHandler implements IPointerHandler {
             series.clicked(elt)
         } else if (credit = chart.creditByDom(elt)) {
             credit.clicked(elt);
-        } else if (this._chart.isMenuButton(elt)) {
-            this._chart.onMenuClick(elt);   
-        } else if (this._chart.isMenuItem(elt)) {
-            this._chart.onMenuItemClick(elt);   
+        // } else if (this._chart.isMenuButton(elt)) {
+        //     this._chart.onMenuClick(elt);   
+        // } else if (this._chart.isMenuItem(elt)) {
+        //     this._chart.onMenuItemClick(elt);   
         }
     }
 

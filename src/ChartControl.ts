@@ -9,7 +9,6 @@
 import { isObject } from "./common/Common";
 import { RcControl, RcElement } from "./common/RcControl";
 import { IRect } from "./common/Rectangle";
-import { ImageExporter } from "./export/ImageExporter";
 import { Annotation } from "./model/Annotation";
 import { Axis } from "./model/Axis";
 import { Chart, ExportOptions, ExportType, IChartEventListener } from "./model/Chart";
@@ -116,36 +115,36 @@ export class ChartControl extends RcControl implements IChartEventListener {
         this._chartView.getAxis(axis)?.scroll(pos);
     }
 
-    isMenuButton(dom: Element): boolean {
-        return dom.isEqualNode(this._menuButton);
-    }
+    // isMenuButton(dom: Element): boolean {
+    //     return dom.isEqualNode(this._menuButton);
+    // }
 
-    isMenuItem(dom: Element): boolean {
-        return !dom.isEqualNode(this._menuList) && this._menuList?.contains(dom);
-    }
+    // isMenuItem(dom: Element): boolean {
+    //     return !dom.isEqualNode(this._menuList) && this._menuList?.contains(dom);
+    // }
 
-    onMenuClick(dom: Element): void {
-        const contextmenu = this._contextmenu;
-        if (contextmenu) {
-            contextmenu.style.display = contextmenu.style.display === 'none' ? 'block' : 'none';
-        }
-    }
+    // onMenuClick(dom: Element): void {
+    //     const contextmenu = this._contextmenu;
+    //     if (contextmenu) {
+    //         contextmenu.style.display = contextmenu.style.display === 'none' ? 'block' : 'none';
+    //     }
+    // }
 
-    onMenuItemClick(dom: Element): void {
-        const type = dom.id;
-        const {fileName, width, scale, hideScrollbar, hideNavigator, hideZoomButton, url} = this._model.export;
-        try {
-            switch(type) {
-                case ExportType.PNG:
-                case ExportType.JPEG:
-                    new ImageExporter().export(this.dom(), {type, fileName, width, scale, hideScrollbar, hideNavigator, hideZoomButton, url}, this._model.config);
-                    break;
-                default:
-                    break;
-            }   
-        } catch (error) {
-        }
-    }
+    // onMenuItemClick(dom: Element): void {
+    //     const type = dom.id;
+    //     const {fileName, width, scale, hideScrollbar, hideNavigator, hideZoomButton, url} = this._model.export;
+    //     try {
+    //         switch(type) {
+    //             case ExportType.PNG:
+    //             case ExportType.JPEG:
+    //                 new ImageExporter().export(this.dom(), {type, fileName, width, scale, hideScrollbar, hideNavigator, hideZoomButton, url}, this._model.config);
+    //                 break;
+    //             default:
+    //                 break;
+    //         }   
+    //     } catch (error) {
+    //     }
+    // }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -160,7 +159,7 @@ export class ChartControl extends RcControl implements IChartEventListener {
             this.setData('theme', model.options.theme, true);
             this.setData('palette', model.options.palette);
 
-            if (model.export.visible) {
+            if (window['RealChartExporter'] && model.export.visible) {
                 this._menuButton ? this.$_layoutContextMenu(model.export) : this.$_initExportMenu(model.export);
             } else {
                 this.$_hideMenuButton();
