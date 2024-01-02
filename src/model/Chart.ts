@@ -124,6 +124,9 @@ export interface IChart {
 
     getParam(target: any, param: string): any;
     setParam(param: string, value: any, redraw?: boolean): void;
+
+    dataChanged(): void;
+    isDataChanged(): boolean;
 }
 
 const group_types = {
@@ -420,6 +423,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     colors: string[];
     assignTemplates: (target: any) => any;
     _loadAnimatable = true;
+    _dataChanged = false;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -896,6 +900,14 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return isX ? this._xAxes.connect(series) : this._yAxes.connect(series);
     }
 
+    dataChanged(): void {
+        this._dataChanged = true;
+    }
+
+    isDataChanged(): boolean {
+        return this._dataChanged;
+    }
+
     prepareRender(): void {
         const xAxes = this._xAxes;
         const yAxes = this._yAxes;
@@ -956,6 +968,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     afterRender(): void {
+        this._dataChanged = false;
         this._xAxes.afterRender();
         this._yAxes.afterRender();
     }

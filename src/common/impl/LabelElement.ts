@@ -84,6 +84,17 @@ export class LabelElement extends GroupElement {
             this._outline && this._outline.remove();
         }
 
+        if (icon) {
+            if (!this._icon) {
+                this.add(this._icon = new ImageElement(doc, false));
+                this._icon.url = icon;
+                this._icon.width = model.width;
+                this._icon.height = model.height || 16;
+            }
+        } else if (this._icon) {
+            this._icon.remove();
+            this._icon = null;
+        }
         return this;
     }
 

@@ -15,7 +15,7 @@ import { ISize, Size } from "../common/Size";
 import { Align, AlignBase, SectionDir, VerticalAlign, _undef } from "../common/Types";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Annotation, AnnotationScope } from "../model/Annotation";
-import { Axis } from "../model/Axis";
+import { Axis, IAxis } from "../model/Axis";
 import { Chart, Credits } from "../model/Chart";
 import { ChartItem } from "../model/ChartItem";
 import { DataPoint } from "../model/DataPoint";

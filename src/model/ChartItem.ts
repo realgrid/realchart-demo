@@ -510,7 +510,7 @@ export abstract class IconedText extends FormattableText {
     //-------------------------------------------------------------------------
     iconPosition = LabelIconPostion.DEFAULT;
     imageList: string;
-    rootUrl: string;
+    iconRoot: string;
     width: number;
     height: number;
 
@@ -523,20 +523,22 @@ export abstract class IconedText extends FormattableText {
             const i = chart.assets.get(this.imageList);
             if (i instanceof ImageList) this._images = i;
         }
-        this._root = this._images ? '' : (this.rootUrl || '');
+        this._root = this._images ? '' : (this.iconRoot || '');
     }
 
     getUrl(url: string): string {
-        const i = url.indexOf('::');
-        if (i === 0) {
-            url = url.substring(2);
-            return this._images ? this._images.getImage(url) : url;
-        } else if (i > 0) {
-             const images = this.chart.assets.get(url.substring(0, i));
-             const s2 = url.substring(i + 2);
-             return images instanceof ImageList ? images.getImage(s2) : s2;
-        } else {
-            return this._root + url;
+        if (url) {
+            const i = url.indexOf('::');
+            if (i === 0) {
+                url = url.substring(2);
+                return this._images ? this._images.getImage(url) : url;
+            } else if (i > 0) {
+                 const images = this.chart.assets.get(url.substring(0, i));
+                 const s2 = url.substring(i + 2);
+                 return images instanceof ImageList ? images.getImage(s2) : s2;
+            } else {
+                return this._root + url;
+            }
         }
     }
 }

@@ -65,8 +65,7 @@ class CategoryAxisLabel extends AxisLabel {
     }
 
     getIcon(tick: IAxisTick): string {
-        debugger;
-        return (this.axis as CategoryAxis)._categories[tick.index].i;
+        return (this.axis as CategoryAxis)._categories[tick.index]?.i;
         // return super.getIcon(tick);
     }
 }

@@ -1448,6 +1448,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
                 p.ani.stop();
             }
             p.updateValue(yValue, ani);
+            this.chart.dataChanged();
             ani.start();
             this._changed();
             return true;
@@ -1460,6 +1461,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
 
     updateData(data: any): void {
         this._points.load(data);
+        this.chart.dataChanged();
         this._changed();
     }
 
@@ -1468,6 +1470,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
 
         if (p) {
             this._points.add(p);
+            this.chart.dataChanged();
             this._changed();
         }
         return p;
@@ -1475,6 +1478,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
 
     removePoint(p: DataPoint): boolean {
         if (p && this._points.remove(p)) {
+            this.chart.dataChanged();
             this._doPointRemoved(p);
             this._changed();
             return true;

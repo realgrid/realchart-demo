@@ -19,9 +19,10 @@ const config = {
             {name: "브라질", icon: "bra.png"},
             {name: "캐나다", icon: "can.png"},
             {name: "말레이시아", icon: "mys.png"},
-            {name: "파키스탄", icon: "pak"},
+            {name: "파키스탄", icon: "pak.png"},
         ],
         label: {
+            iconRoot: '/realchart/assets/images/country/',
             style: {},
         },
         grid: {

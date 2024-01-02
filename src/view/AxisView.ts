@@ -157,7 +157,7 @@ export class AxisLabelView extends LabelElement {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    setLabel(model: AxisLabel, label: string, maxWidth: number, maxHeight: number): void {
+    setLabel(model: AxisLabel, tick: IAxisTick, label: string, maxWidth: number, maxHeight: number): void {
         if (label) {
             if (!this._richText) {
                 this._richText = new SvgRichText(label);
@@ -165,7 +165,8 @@ export class AxisLabelView extends LabelElement {
             } else if (this._richText._format !== label) {
                 this._richText.setFormat(label);
             }
-            this.setModel(this.doc, model, '', null);
+            const icon = model.getIcon(tick);
+            this.setModel(this.doc, model, icon && model.getUrl(icon), null);
             this._richText.build(this._text, maxWidth, maxHeight, model, model._domain);
             this._outline && this._richText.build(this._outline, maxWidth, maxHeight, model, model._domain);
         } else if (this._richText) {
@@ -528,7 +529,7 @@ export class AxisView extends ChartElement<Axis> {
             this._prevMax = m.axisMax();
     
             if (!isNaN(max) && this._prevMax !== max || !isNaN(min) && this._prevMin !== min) {
-                if (m.animatable) {
+                if (m.chart.isDataChanged() && m.animatable) {
                     new AxisAnimation(this, min, max, () => {
                         this.invalidate();
                     });
@@ -831,7 +832,7 @@ export class AxisView extends ChartElement<Axis> {
             const m = label && text.match(axis_label_reg);
             
             if (m) {
-                view.setLabel(model, text.replace(axis_label_reg, label), 1000, 1000);
+                view.setLabel(model, tick, text.replace(axis_label_reg, label), 1000, 1000);
             } else {
                 model.prepareRich(text);
                 model._paramTick = tick;
@@ -840,7 +841,7 @@ export class AxisView extends ChartElement<Axis> {
             }
         } else {
             // view.setText(tick.label);
-            view.setLabel(model, label, 1000, 1000);
+            view.setLabel(model, tick, label, 1000, 1000);
         }
     }
 

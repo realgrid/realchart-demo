@@ -1004,6 +1004,10 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
 
             if (pv.setVis(!p.isNull)) {
                 const wUnit = xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad);
+                if (isNaN(wUnit)) {
+                    debugger;
+                    console.log(xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad));
+                }
                 let wPoint = series.getPointWidth(wUnit);
                 const yVal = yAxis.getPos(yLen, p.yValue) - yBase;
                 const yGroup = (yAxis.getPos(yLen, p.yGroup) - yBase - yVal) * gr;

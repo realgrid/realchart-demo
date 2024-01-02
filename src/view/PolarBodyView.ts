@@ -124,7 +124,7 @@ abstract class PolarAxisView extends RcElement {
             const m = label && text.match(axis_label_reg);
             
             if (m) {
-                view.setLabel(model, text.replace(axis_label_reg, label), 1000, 1000);
+                view.setLabel(model, tick, text.replace(axis_label_reg, label), 1000, 1000);
             } else {
                 model.prepareRich(text);
                 model._paramTick = tick;
@@ -132,7 +132,7 @@ abstract class PolarAxisView extends RcElement {
             }
         } else {
             // view.setText(tick.label);
-            view.setLabel(model, label, 1000, 1000);
+            view.setLabel(model, tick, label, 1000, 1000);
         }
     }
 

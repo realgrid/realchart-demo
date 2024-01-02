@@ -1328,6 +1328,8 @@ export class RcElement extends RcObject {
     }
 
     front(siblings: RcElement[], group?: RcElement[]): void {
+        if (!this.parent) return;
+
         const p = this.parent._dom;
         const dom = this._dom;
         const len = siblings.length;
@@ -1351,6 +1353,8 @@ export class RcElement extends RcObject {
     }
 
     back(siblings: RcElement[]): void {
+        if (!this.parent) return;
+
         const len = siblings.length;
 
         if (len > 1) {
