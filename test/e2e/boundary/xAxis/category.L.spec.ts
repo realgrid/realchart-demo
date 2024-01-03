@@ -18,7 +18,7 @@ test.describe("xAxis, category test", () => {
 
   let chart;
 
-  let config = {
+  let config: any = {
     title: "Boundary",
     xAxis: {
       categories: [],
