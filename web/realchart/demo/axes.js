@@ -2,38 +2,38 @@
  * @demo
  */
 let config = {
-  type: "line",
+  type: 'line',
   options: {
-    theme: "real",
-    palette: "unicorn",
+    theme: 'real',
+    palette: 'unicorn',
   },
   title: {
-    text: "xAxis",
+    text: 'xAxis',
     style: {
-      fontSize: "48px",
-      fontWeight: "bold",
+      fontSize: '48px',
+      fontWeight: 'bold',
     },
   },
   split: { visible: true, rows: 4, col: 1 },
   xAxis: [
     {
-      type: "category",
-      categories: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
+      type: 'category',
+      categories: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
       tick: { visible: true },
       row: 0,
     },
     {
-      type: "linear",
+      type: 'linear',
       tick: { visible: true, stepInterval: 1 },
       row: 1,
     },
     {
-      type: "time",
-      tick: { visible: true, stepInterval: "1m" },
+      type: 'time',
+      tick: { visible: true, stepInterval: '1m' },
       row: 2,
     },
     {
-      type: "log",
+      type: 'log',
       tick: {
         visible: true,
         stepInterval: 0.1,
@@ -43,41 +43,41 @@ let config = {
   ],
   yAxis: [
     {
-      template: "yAxis",
+      template: 'yAxis',
       title: {
-        text: "category",
+        text: 'category',
       },
     },
     {
-      template: "yAxis",
+      template: 'yAxis',
       row: 1,
       title: {
-        text: "linear",
+        text: 'linear',
       },
     },
     {
-      template: "yAxis",
+      template: 'yAxis',
       row: 2,
       title: {
-        text: "time",
+        text: 'time',
       },
     },
     {
-      type: "log",
-      template: "yAxis",
+      type: 'log',
+      template: 'yAxis',
       row: 3,
       title: {
-        text: "log",
+        text: 'log',
       },
     },
   ],
-  tooltip: false,
+  tooltip: !false,
   legend: false,
   templates: {
     series: {
       marker: false,
       style: {
-        strokeWidth: "3px",
+        strokeWidth: '3px',
       },
     },
     yAxis: {
@@ -90,32 +90,32 @@ let config = {
   },
   series: [
     {
-      template: "series",
-      type: "area",
-      lineType: "spline",
+      template: 'series',
+      type: 'area',
+      lineType: 'spline',
       data: [7, 11, 9, 7.5, 15.3, 13, 7, 9, 11, 2.5],
       xAxis: 0,
       yAxis: 0,
     },
     {
-      template: "series",
-      lineType: "spline",
+      template: 'series',
+      lineType: 'spline',
       data: [7, 10, 8, 6.5, 15.3, 13, 10, 9.5, 11.5, 3.5],
       xAxis: 1,
       yAxis: 1,
     },
     {
-      template: "series",
-      lineType: "step",
+      template: 'series',
+      lineType: 'step',
       data: [7, 10, 8, 6.5, 15.3, 13, 10, 9.5, 11.5, 3.5],
-      xStart: "2023-01",
-      xStep: "1m",
+      xStart: '2023-01',
+      xStep: '1m',
       xAxis: 2,
       yAxis: 2,
     },
     {
-      template: "series",
-      lineType: "spline",
+      template: 'series',
+      lineType: 'spline',
       data: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
       xAxis: 3,
       yAxis: 3,
@@ -129,19 +129,19 @@ let timer;
 function setActions(container) {
   createCheckBox(
     container,
-    "Debug",
+    'Debug',
     function (e) {
       RealChart.setDebugging(_getChecked(e));
       chart.render();
     },
     false
   );
-  createButton(container, "Test", function (e) {
-    alert("hello");
+  createButton(container, 'Test', function (e) {
+    alert('hello');
   });
   createCheckBox(
     container,
-    "reversed",
+    'reversed',
     function (e) {
       config.gauge[0].reversed = _getChecked(e);
       chart.load(config);
@@ -150,23 +150,23 @@ function setActions(container) {
   );
   createListBox(
     container,
-    "label.position",
-    ["", "left", "right", "top", "bottom"],
+    'label.position',
+    ['', 'left', 'right', 'top', 'bottom'],
     function (e) {
       const pos = _getValue(e);
       config.gauge[0].label.position = pos;
-      config.gauge[0].height = pos === "top" || pos === "bottom" ? 86 : 65;
+      config.gauge[0].height = pos === 'top' || pos === 'bottom' ? 86 : 65;
       config.gauge[0].label.text =
-        pos === "top" || pos === "bottom"
-          ? "RealChart Bullet ver 1.0"
-          : "RealChart Bullet<br>ver 1.0";
+        pos === 'top' || pos === 'bottom'
+          ? 'RealChart Bullet ver 1.0'
+          : 'RealChart Bullet<br>ver 1.0';
       chart.load(config);
     },
-    ""
+    ''
   );
   createCheckBox(
     container,
-    "scale",
+    'scale',
     function (e) {
       config.gauge[0].scale.visible = _getChecked(e);
       chart.load(config);
@@ -175,7 +175,7 @@ function setActions(container) {
   );
   createCheckBox(
     container,
-    "scale.line",
+    'scale.line',
     function (e) {
       config.gauge[0].scale.line = _getChecked(e);
       chart.load(config);
@@ -184,7 +184,7 @@ function setActions(container) {
   );
   createCheckBox(
     container,
-    "scale.tick",
+    'scale.tick',
     function (e) {
       config.gauge[0].scale.tick = _getChecked(e);
       chart.load(config);
@@ -193,19 +193,19 @@ function setActions(container) {
   );
   createListBox(
     container,
-    "scale.gap",
-    ["0", "4", "8", "12"],
+    'scale.gap',
+    ['0', '4', '8', '12'],
     function (e) {
       config.gauge[0].scale.gap = _getValue(e);
       chart.load(config);
     },
-    "8"
+    '8'
   );
   createCheckBox(
     container,
-    "scale.opposite",
+    'scale.opposite',
     function (e) {
-      config.gauge[0].scale.position = _getChecked(e) ? "opposite" : "default";
+      config.gauge[0].scale.position = _getChecked(e) ? 'opposite' : 'default';
       chart.load(config);
     },
     false
@@ -213,7 +213,7 @@ function setActions(container) {
   line(container);
   createCheckBox(
     container,
-    "reversed2",
+    'reversed2',
     function (e) {
       config.gauge[1].reversed = _getChecked(e);
       chart.load(config);
@@ -222,20 +222,20 @@ function setActions(container) {
   );
   createListBox(
     container,
-    "label2.position",
-    ["", "left", "right", "top", "bottom"],
+    'label2.position',
+    ['', 'left', 'right', 'top', 'bottom'],
     function (e) {
       const pos = _getValue(e);
       config.gauge[1].label.position = pos;
-      config.gauge[1].width = pos === "left" || pos === "right" ? 140 : 65;
+      config.gauge[1].width = pos === 'left' || pos === 'right' ? 140 : 65;
       // config.gauge[0].label.text = (pos === 'left' || pos === 'bottom') ? 'RealChart Bullet ver 1.0' : 'RealChart Bullet<br>ver 1.0';
       chart.load(config);
     },
-    ""
+    ''
   );
   createCheckBox(
     container,
-    "scale2",
+    'scale2',
     function (e) {
       config.gauge[1].scale.visible = _getChecked(e);
       chart.load(config);
@@ -244,7 +244,7 @@ function setActions(container) {
   );
   createCheckBox(
     container,
-    "scale2.line",
+    'scale2.line',
     function (e) {
       config.gauge[1].scale.line = _getChecked(e);
       chart.load(config);
@@ -253,7 +253,7 @@ function setActions(container) {
   );
   createCheckBox(
     container,
-    "scale2.tick",
+    'scale2.tick',
     function (e) {
       config.gauge[1].scale.tick = _getChecked(e);
       chart.load(config);
@@ -262,19 +262,19 @@ function setActions(container) {
   );
   createListBox(
     container,
-    "scale2.gap",
-    ["0", "4", "8", "12"],
+    'scale2.gap',
+    ['0', '4', '8', '12'],
     function (e) {
       config.gauge[1].scale.gap = _getValue(e);
       chart.load(config);
     },
-    "8"
+    '8'
   );
   createCheckBox(
     container,
-    "scale2.opposite",
+    'scale2.opposite',
     function (e) {
-      config.gauge[1].scale.position = _getChecked(e) ? "opposite" : "default";
+      config.gauge[1].scale.position = _getChecked(e) ? 'opposite' : 'default';
       chart.load(config);
     },
     false
@@ -286,6 +286,6 @@ function init() {
   // RealChart.setDebugging(true);
   RealChart.setLogging(true);
 
-  chart = RealChart.createChart(document, "realchart", config);
-  setActions("actions");
+  chart = RealChart.createChart(document, 'realchart', config);
+  setActions('actions');
 }
