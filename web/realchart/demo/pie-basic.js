@@ -37,9 +37,9 @@ const config = {
       style: {
         fill: '#fff',
       },
-      //   offset: 10,
+        // offset: 10,
       textCallback: ({ x, y }) => {
-        const fontSize = Math.max(15, y);
+        const fontSize = Math.max(15, y * 0.9);
         return `${x}<br><b style="font-size:${fontSize}px">${y}%</b>`;
       },
     },

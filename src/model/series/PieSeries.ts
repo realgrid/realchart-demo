@@ -8,9 +8,10 @@
 
 import { pickNum, assign, minv, maxv } from "../../common/Common";
 import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
-import { FormattableText, IconedText } from "../ChartItem";
+import { IChart } from "../Chart";
+import { IconedText } from "../ChartItem";
 import { DataPoint } from "../DataPoint";
-import { ISeries, RadialSeries, Series, SeriesGroup, SeriesGroupLayout, WidgetSeriesPoint } from "../Series";
+import { DataPointLabel, ISeries, RadialSeries, Series, SeriesGroup, SeriesGroupLayout, WidgetSeriesPoint } from "../Series";
 
 export class PieSeriesPoint extends WidgetSeriesPoint {
 
@@ -76,6 +77,13 @@ class PieSeriesText extends IconedText {
 
     //-------------------------------------------------------------------------
     // overriden members
+    //-------------------------------------------------------------------------
+}
+
+export class PieSeriesLabel extends DataPointLabel {
+
+    //-------------------------------------------------------------------------
+    // properties
     //-------------------------------------------------------------------------
 }
 
@@ -165,6 +173,10 @@ export class PieSeries extends RadialSeries {
     //-------------------------------------------------------------------------
     _type(): string {
         return 'pie';
+    }
+
+    protected _createLabel(chart: IChart): DataPointLabel {
+        return new PieSeriesLabel(chart);
     }
 
     protected _createPoint(source: any): DataPoint {

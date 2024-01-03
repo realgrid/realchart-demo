@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { absv, cos, sin } from "../../common/Common";
+import { absv, cos, pickNum, sin } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { RcElement } from "../../common/RcControl";
@@ -16,7 +16,7 @@ import { LabelElement } from "../../common/impl/LabelElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
 import { TextAnchor } from "../../common/impl/TextElement";
 import { PointItemPosition } from "../../model/Series";
-import { PieSeries, PieSeriesGroup, PieSeriesPoint } from "../../model/series/PieSeries";
+import { PieSeries, PieSeriesGroup, PieSeriesLabel, PieSeriesPoint } from "../../model/series/PieSeries";
 import { IPointView, PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
@@ -209,7 +209,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         const cy = this._cy = center.y;
         const rd = this._rd;
         const rdInner = this._rdInner;
-        const labels = series.pointLabel;
+        const labels = series.pointLabel as PieSeriesLabel;
         const labelViews = this._labelViews();
         const labelInside = series.getLabelPosition() === PointItemPosition.INSIDE;
         const labelOff = labels.getOffset();
@@ -271,7 +271,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                     } else {
                         line.visible = false;
                         // this.$_layoutLabelInner(p, label, off, dist, slicedOff);
-                        this.$_layoutLabelInner(p, labelView, labelOff, 0, p.sliced ? sliceOff : 0);
+                        this.$_layoutLabelInside(p, labelView, labelOff, 0, p.sliced ? sliceOff : 0);
                     }
                     labelView.setContrast(labelInside && sector.dom).setVis(true);
                 } else {
@@ -330,10 +330,10 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         !view.isDomAnimating() && view.layout(Align.CENTER).trans(x3 + dx, y2 + dy);
     }
 
-    private $_layoutLabelInner(p: PieSeriesPoint, view: PointLabelView, off: number, dist: number, sliceOff: number): void {
+    private $_layoutLabelInside(p: PieSeriesPoint, view: PointLabelView, off: number, dist: number, sliceOff: number): void {
         const r = view.getBBox();
-        const inner = this._rdInner * this._rd;
-        const rd = inner > 0 ? inner + (this._rd - inner) / 2 : this._rd * 0.7;
+        const inner = this._rd * this._rdInner;
+        const rd = (inner > 0 ? inner + (this._rd - inner) / 2 : this._rd * 0.7) + off;
         const a = p.startAngle + p.angle / 2;
         let x = this._cx + cos(a) * rd;
         let y = this._cy + sin(a) * rd;
@@ -370,7 +370,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     
                 if (needLayout) {
                     if (labelInside) {
-                        this.$_layoutLabelInner(p, labelView, labels.getOffset(), labels.distance, this._slicedOff);
+                        this.$_layoutLabelInside(p, labelView, labels.getOffset(), labels.distance, this._slicedOff);
                     } else {
                         this.$_layoutLabel(p, labelView, lineView, labels.getOffset(), labels.distance, this._slicedOff, m.clockwise);
                     }

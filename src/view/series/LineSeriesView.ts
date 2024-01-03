@@ -565,13 +565,22 @@ export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
         super._doLayout();
 
         const flag = this.model.flag;
+        const v = this._flagView;
         let s: string;
 
-        if (this._flagView.setVis(flag.visible && !!(s = flag.label()))) {
-            this._flagView.setText(s);
-            this._flagView.setModel(this.doc, flag, null, null);
-            this._flagView.layout(Align.LEFT);
-            this._flagView.trans(this._markers.last.tx + flag.offset, this._markers.last.ty)
+        if (v.setVis(flag.visible && !!(s = flag.label()))) {
+            let x: number;
+            let y: number;
+
+            v.setText(s);
+            v.setModel(this.doc, flag, null, null);
+            v.layout(Align.LEFT);
+            
+            x = this._markers.last.tx;
+            y = this._markers.last.ty;
+
+            x += flag.offset;
+            v.trans(x, y);
         }
     }
 }
