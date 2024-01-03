@@ -238,7 +238,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const marker = series.marker;
         const sts = [marker.style, null];
 
-        this._pointContainer.setStyle('opacity', marker.visible ? '1' : '0');
+        // this._pointContainer.setStyle('opacity', marker.visible ? '1' : '0');
 
         if (this._pointContainer.setVis(!series._simpleMode)) {
             const mpp = this._markersPerPoint();
@@ -272,6 +272,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     protected _layoutMarkers(pts: LineSeriesPoint[], width: number, height: number): void {
         const series = this.model;
         const markerStyle = series.marker.style;
+        const markerVisible = series.marker.visible;
         const inverted = this._inverted;
         const needClip = series.needClip(false);
         const gr = this._getGrowRate();
@@ -319,6 +320,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
             if (mv && mv.setVis(!p.isNull && (polared || !needClip || px >= 0 && px <= width && py >= 0 && py <= height))) {
                 this._layoutMarker(mv, markerStyle, px, py);
+                mv.setStyle('opacity', markerVisible ? '1' : '0');
 
                 if (lv) {
                     const r = lv.getBBox();
@@ -540,13 +542,16 @@ export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _labelView: LabelElement;
+    private _flagView: LabelElement;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, LineSeriesView.CLASS);
+
+        this._flagView = new LabelElement(doc, 'rct-line-series-flag');
+        this._pointContainer.add(this._flagView);
     }
 
     //-------------------------------------------------------------------------
@@ -554,5 +559,19 @@ export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
     //-------------------------------------------------------------------------
     protected _legendColorProp(): string {
         return 'stroke';
+    }
+
+    protected _doLayout(): void {
+        super._doLayout();
+
+        const flag = this.model.flag;
+        let s: string;
+
+        if (this._flagView.setVis(flag.visible && !!(s = flag.label()))) {
+            this._flagView.setText(s);
+            this._flagView.setModel(this.doc, flag, null, null);
+            this._flagView.layout(Align.LEFT);
+            this._flagView.trans(this._markers.last.tx + flag.offset, this._markers.last.ty)
+        }
     }
 }

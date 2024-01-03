@@ -263,7 +263,7 @@ export class LineSeriesFlag extends IconedText {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(series: LineSeries) {
+    constructor(public series: LineSeries) {
         super(series.chart, false);
     }
 
@@ -271,6 +271,13 @@ export class LineSeriesFlag extends IconedText {
     // properties
     //-------------------------------------------------------------------------
     offset = 8;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    label(): string {
+        return this.text || this.series.displayName();
+    }
 }
 
 /**

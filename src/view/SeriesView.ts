@@ -376,13 +376,13 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     protected _doPrevRateChanged(rate: number): void {
     }
 
+    // SeriesAnimation 시작
     _animationStarted(ani: Animation): void {
         this._animations.push(ani);
-        if (this._labelContainer && this._labelContainer.visible) {
-            this._labelContainer.setVis(false);
-        }
+        this._labelContainer && this._labelContainer.setVis(false);
     }
 
+    // SeriesAnimation 종료
     _animationFinished(ani: Animation): void {
         const i = this._animations.indexOf(ani);
         i >= 0 && this._animations.splice(i, 1);
@@ -454,8 +454,8 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     setFocusPoint(pv: IPointView, p: IPoint): void {
         const focused = !!p;
 
+        (pv as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, focused);
         if (this._needFocusOrder()) {
-            (pv as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, focused);
             focused ? this._getPointPool().front(pv as any) : this._getPointPool().back(pv as any);
         }
     }

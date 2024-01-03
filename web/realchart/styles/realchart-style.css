@@ -681,7 +681,16 @@
     stroke-dasharray: none;
 }
 .rct-line-series .rct-point[data-focus] {
-    stroke-width: 3px;
+    stroke: #0088ff20 !important; 
+    stroke-width: 9px !important;
+    opacity: inherit !important;
+    /** TODO: 아래가 적용되지 않고 있다 */
+    transition-property: opacity;
+    transition-duration: 0.7s;
+}
+.rct-line-series-flag {
+    font-weight: bold;
+    font-size: 0.9em;
 }
 
 /** area series */
