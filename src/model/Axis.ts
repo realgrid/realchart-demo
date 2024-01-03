@@ -833,7 +833,7 @@ export abstract class AxisLabel extends IconedText {
     }
 
     getDefaultIconPos(): LabelIconPostion {
-        return LabelIconPostion.TOP;
+        return this.axis._isHorz ? LabelIconPostion.TOP : LabelIconPostion.RIGHT;
     }
 
     //-------------------------------------------------------------------------

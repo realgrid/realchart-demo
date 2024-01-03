@@ -72,7 +72,7 @@ const config = {
             value: Math.random() * 100,
             valueRim: {
                 style: {
-                    fill: 'var(--color-3)'
+                    fill: 'var(--color-3)',
                 }
             },
             label: {
@@ -82,7 +82,7 @@ const config = {
                 text: "<t style='fill:gray'>Kcal -</t> ${value}"
             }
         }],
-        innerRadius: '30%',
+        innerRadius: '50%',
         sweepAngle: 270,
         valueRim: {
             ranges: [{

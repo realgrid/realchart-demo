@@ -2,34 +2,34 @@
 데이터 포인트 maker 설정 정보.
 ## Properties
 
-### firstVisible: `'default'|'hidden'|'visible'{:js}`[#firstVisible]
-첫번째 point의 marker 표시 여부.  
-- `'default'` visible 속성에 따른다.
-- `'hidden'` visible 속성과 상관없이 항상 표시하지 않는다.
-- `'visible'` visible 속성과 상관없이 항상 표시한다.
+### firstVisible: `boolean{:js}`[#firstVisible]
+첫번째 point의 marker 표시 여부.
 
-<DefaultValue value="'default'" contents=""></DefaultValue>
-### lastVisible: `'default'|'hidden'|'visible'{:js}`[#lastVisible]
-첫번째 point의 marker 표시 여부.  
-- `'default'` visible 속성에 따른다.
-- `'hidden'` visible 속성과 상관없이 항상 표시하지 않는다.
-- `'visible'` visible 속성과 상관없이 항상 표시한다.
+<Content type="keyword" value="true"></Content>로 지정하면 모델 visible과 상관없이 표시하고,
+<Content type="keyword" value="false"></Content>면 상관없이 표시하지 않는다.
+아니면 모델의 visible을 따른다.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### lastVisible: `boolean{:js}`[#lastVisible]
+첫번째 point의 marker 표시 여부.
 
-<DefaultValue value="'default'" contents=""></DefaultValue>
-### maxVisible: `'default'|'hidden'|'visible'{:js}`[#maxVisible]
-최대값 point들의 marker 표시 여부.  
-- `'default'` visible 속성에 따른다.
-- `'hidden'` visible 속성과 상관없이 항상 표시하지 않는다.
-- `'visible'` visible 속성과 상관없이 항상 표시한다.
+<Content type="keyword" value="true"></Content>로 지정하면 모델 visible과 상관없이 표시하고,
+<Content type="keyword" value="false"></Content>면 상관없이 표시하지 않는다.
+아니면 모델의 visible을 따른다.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### maxVisible: `boolean{:js}`[#maxVisible]
+최대값 point들의 marker 표시 여부.
 
-<DefaultValue value="'default'" contents=""></DefaultValue>
-### minVisible: `'default'|'hidden'|'visible'{:js}`[#minVisible]
-최소값 point들의 marker 표시 여부.  
-- `'default'` visible 속성에 따른다.
-- `'hidden'` visible 속성과 상관없이 항상 표시하지 않는다.
-- `'visible'` visible 속성과 상관없이 항상 표시한다.
+<Content type="keyword" value="true"></Content>로 지정하면 모델 visible과 상관없이 표시하고,
+<Content type="keyword" value="false"></Content>면 상관없이 표시하지 않는다.
+아니면 모델의 visible을 따른다.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### minVisible: `boolean{:js}`[#minVisible]
+최소값 point들의 marker 표시 여부.
 
-<DefaultValue value="'default'" contents=""></DefaultValue>
+<Content type="keyword" value="true"></Content>로 지정하면 모델 visible과 상관없이 표시하고,
+<Content type="keyword" value="false"></Content>면 상관없이 표시하지 않는다.
+아니면 모델의 visible을 따른다.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### radius: `number{:js}`[#radius]
 [shape](#shape) 의 반지름.  
 <DefaultValue value="4" contents=""></DefaultValue>

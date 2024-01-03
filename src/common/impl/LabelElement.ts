@@ -8,6 +8,7 @@
 
 import { ChartTextEffect, IconedText, LabelIconPostion } from "../../model/ChartItem";
 import { Color } from "../Color";
+import { pickNum } from "../Common";
 import { Align, _undef } from "../Types";
 import { GroupElement } from "./GroupElement";
 import { ImageElement } from "./ImageElement";
@@ -116,28 +117,35 @@ export class LabelElement extends GroupElement {
     }
 
     layout(align: Align): LabelElement {
+        const icon = this._icon;
+        let gap = 0;
         const r = this._text.getBBox();
         // TODO: 높이 너비를 지정할 수 있다.
-        const w = r.width;
-        const h = r.height;
+        const wText = r.width;
+        const hText = r.height;
+        let w = wText;
+        let h = hText;
         let wIcon = 0;
         let hIcon = 0;
         let x = 0;
         let y = 0;
 
-        if (this._icon) {
-            const rIcon = this._icon.getBBox();
+        if (icon) {
+            const rIcon = icon.getBBox();
 
+            gap = pickNum(this._model.iconGap, 0);
             wIcon = rIcon.width;
             hIcon = rIcon.height;
 
             switch (this._model.getIconPos()) {
                 case LabelIconPostion.LEFT:
                 case LabelIconPostion.RIGHT:
-                    x += this._icon.getBBox().width;
+                    w += gap + wIcon;
+                    h = Math.max(hIcon, hText);
                     break;
                 default:
-                    y += this._icon.getBBox().height;
+                    h += gap + hIcon;
+                    w = Math.max(wIcon, wText);
                     break;
             }
         }
@@ -156,6 +164,28 @@ export class LabelElement extends GroupElement {
                 h + y + (parseFloat(cs.paddingBottom) || 0),
                 cs['rx']
             )
+            this._back.setStyle('fill', 'lightgray');
+        }
+
+        if (icon) {
+            switch (this._model.getIconPos()) {
+                case LabelIconPostion.LEFT:
+                    icon.trans(x, (h - hIcon) / 2);
+                    x += wIcon + gap;
+                    w -= wIcon + gap;
+                    break;
+                case LabelIconPostion.RIGHT:
+                    icon.trans(x + w - wIcon, (h - hIcon) / 2);
+                    w -= wIcon + gap;
+                    break;
+                case LabelIconPostion.TOP:
+                    icon.transX((w - wIcon) / 2);
+                    y += hIcon + gap;
+                    break;
+                case LabelIconPostion.BOTTOM:
+                    icon.trans((w - wIcon) / 2, y + hText + gap);
+                    break;
+            }
         }
 
         // [주의] 멀티라인을 위해 anchor를 지정해야 한다.
@@ -173,6 +203,7 @@ export class LabelElement extends GroupElement {
         }
 
         this._text.trans(x, y);
+
         if (this._outline) {
             this._outline.anchor = this._text.anchor;
             this._outline.setAttr('y', this._text.getAttr('y'));

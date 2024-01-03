@@ -511,6 +511,7 @@ export abstract class IconedText extends FormattableText {
     iconPosition = LabelIconPostion.DEFAULT;
     imageList: string;
     iconRoot: string;
+    iconGap = 2;
     width: number;
     height: number;
 

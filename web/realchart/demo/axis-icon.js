@@ -3,6 +3,7 @@
  *
  */
 const config = {
+    // inverted: true,
     options: {},
     title: "Axis Label Icons",
     legend: true,
@@ -23,6 +24,9 @@ const config = {
         ],
         label: {
             iconRoot: '/realchart/assets/images/country/',
+            // iconPosition: 'bottom',
+            // iconPosition: 'left',
+            // iconPosition: 'right',
             style: {},
         },
         grid: {
