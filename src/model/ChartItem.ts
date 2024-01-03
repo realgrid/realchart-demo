@@ -517,6 +517,12 @@ export abstract class IconedText extends FormattableText {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    abstract getDefaultIconPos(): LabelIconPostion;
+
+    getIconPos(): LabelIconPostion {
+        return (this.iconPosition === LabelIconPostion.DEFAULT) ? this.getDefaultIconPos() : this.iconPosition;
+    }
+
     protected _doPrepareRender(chart: IChart): void {
         this._images = null;
         if (this.imageList) {

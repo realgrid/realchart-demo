@@ -9,7 +9,7 @@
 import { pickNum, assign, minv, maxv } from "../../common/Common";
 import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
-import { IconedText } from "../ChartItem";
+import { IconedText, LabelIconPostion } from "../ChartItem";
 import { DataPoint } from "../DataPoint";
 import { DataPointLabel, ISeries, RadialSeries, Series, SeriesGroup, SeriesGroupLayout, WidgetSeriesPoint } from "../Series";
 
@@ -78,6 +78,9 @@ class PieSeriesText extends IconedText {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    getDefaultIconPos(): LabelIconPostion {
+        return LabelIconPostion.LEFT;
+    }
 }
 
 export class PieSeriesLabel extends DataPointLabel {

@@ -11,6 +11,7 @@ import { DEG_RAD, PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { Axis, AxisGrid, AxisTick, AxisLabel, IAxisTick } from "../Axis";
 import { IChart } from "../Chart";
+import { LabelIconPostion } from "../ChartItem";
 import { IPlottingItem } from "../Series";
 
 export enum CategoryTickPosition {

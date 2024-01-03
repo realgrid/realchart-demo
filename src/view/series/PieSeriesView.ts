@@ -314,7 +314,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
             //line.move(x1, y1);
             //line.setPath(pb.move(x1, y1).lines(x2, y2, x3, y2).end())
             line.setLine(new PathBuilder().move(0, 0).quad(x2 - x1, y2 - y1, x3 - x1, y2 - y1).end())
-            line.move(x1, y1); // 위치 정보 저장.
+            line.setPos(x1, y1); // 위치 정보 저장.
             !view.isDomAnimating() && line.trans(x1 + dx, y1 + dy);
         }
 
@@ -326,7 +326,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
             x3 += off;
             y2 -= r.height / 2;
         }
-        view.move(x3, y2); // 위치 정보 저장.
+        view.setPos(x3, y2); // 위치 정보 저장.
         !view.isDomAnimating() && view.layout(Align.CENTER).trans(x3 + dx, y2 + dy);
     }
 

@@ -953,10 +953,9 @@ export class RcElement extends RcObject {
         return this;
     }
 
-    movep(p: IPoint): RcElement {
-        this.x = p.x;
-        this.y = p.y;
-        return this;
+    setPos(x: number, y: number): void {
+        this._x = x;
+        this._y = y;
     }
 
     isDomAnimating(): boolean {

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { ChartTextEffect, IconedText } from "../../model/ChartItem";
+import { ChartTextEffect, IconedText, LabelIconPostion } from "../../model/ChartItem";
 import { Color } from "../Color";
 import { Align, _undef } from "../Types";
 import { GroupElement } from "./GroupElement";
@@ -120,8 +120,27 @@ export class LabelElement extends GroupElement {
         // TODO: 높이 너비를 지정할 수 있다.
         const w = r.width;
         const h = r.height;
+        let wIcon = 0;
+        let hIcon = 0;
         let x = 0;
         let y = 0;
+
+        if (this._icon) {
+            const rIcon = this._icon.getBBox();
+
+            wIcon = rIcon.width;
+            hIcon = rIcon.height;
+
+            switch (this._model.getIconPos()) {
+                case LabelIconPostion.LEFT:
+                case LabelIconPostion.RIGHT:
+                    x += this._icon.getBBox().width;
+                    break;
+                default:
+                    y += this._icon.getBBox().height;
+                    break;
+            }
+        }
 
         // background
         if (this._back && this._back.parent) {

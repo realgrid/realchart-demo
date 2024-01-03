@@ -16,7 +16,10 @@ const config = {
         name: '2021년',
         type: 'line',
         // lineType: 'spline',
-        marker: false,
+        marker: {
+            visible: false,
+            lastVisible: true,
+        },
 		data : mask_data.filter(d => d.연도 === 2021),
 		xField: '월',
 		yField: '보건용 마스크 (6307904020) 수출',
@@ -25,7 +28,10 @@ const config = {
         name: '2022년',
         type: 'line',
         // lineType: 'spline',
-        marker: false,
+        marker: {
+            visible: false,
+            lastVisible: true,
+        },
 		data : mask_data.filter(d => d.연도 === 2022),
 		xField: '월',
 		yField: '보건용 마스크 (6307904020) 수출',
@@ -34,7 +40,13 @@ const config = {
         name: '2023년',
         type: 'line',
         // lineType: 'spline',
-        marker: false,
+        style: {
+            strokeDasharray: '4'
+        },
+        marker: {
+            visible: false,
+            lastVisible: true,
+        },
 		data : mask_data.filter(d => d.연도 === 2023),
 		xField: '월',
 		yField: '보건용 마스크 (6307904020) 수출',

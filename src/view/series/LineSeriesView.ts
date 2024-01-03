@@ -16,6 +16,7 @@ import { LabelElement } from "../../common/impl/LabelElement";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
+import { LabelIconPostion } from "../../model/ChartItem";
 import { LineType } from "../../model/ChartTypes";
 import { PointItemPosition } from "../../model/Series";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
@@ -266,17 +267,18 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
         markerStyle && mv.internalSetStyleOrClass(markerStyle);
         SvgShapes.setShape(mv, series.getShape(p), rd, rd);
+        mv.setPos(x, y);
         mv.trans(x -= rd, y -= rd);
     }
 
     protected _layoutMarkers(pts: LineSeriesPoint[], width: number, height: number): void {
         const series = this.model;
-        const markerStyle = series.marker.style;
-        const markerVisible = series.marker.visible;
+        const marker = series.marker;
+        const markerStyle = marker.style;
         const inverted = this._inverted;
         const needClip = series.needClip(false);
         const gr = this._getGrowRate();
-        const vis = series.marker.visible;
+        const vis = marker.visible;
         const labels = series.pointLabel as LinePointLabel;
         const labelPos = labels.position;
         const labelAlign = labels.align;
@@ -291,6 +293,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const yLen = yAxis.prev(inverted ? width : height);
         const xLen = xAxis.prev(polar ? polar.rd * PI_2 : inverted ? height : width);
         const yOrg = inverted ? 0 : height;
+        const count = pts.length;
 
         pts.forEach((p, i) => {
             // const p = pts[i];
@@ -320,7 +323,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
             if (mv && mv.setVis(!p.isNull && (polared || !needClip || px >= 0 && px <= width && py >= 0 && py <= height))) {
                 this._layoutMarker(mv, markerStyle, px, py);
-                mv.setStyle('opacity', markerVisible ? '1' : '0');
+                mv.setStyle('opacity', (vis || (i == 0 && marker.firstVisible === true) || (i === count - 1 && marker.lastVisible === true)) ? '1' : '0');
 
                 if (lv) {
                     const r = lv.getBBox();
@@ -564,22 +567,40 @@ export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
     protected _doLayout(): void {
         super._doLayout();
 
-        const flag = this.model.flag;
+        const m = this.model;
+        const flag = m.flag;
         const v = this._flagView;
         let s: string;
 
         if (v.setVis(flag.visible && !!(s = flag.label()))) {
-            let x: number;
-            let y: number;
-
             v.setText(s);
             v.setModel(this.doc, flag, null, null);
             v.layout(Align.LEFT);
             
-            x = this._markers.last.tx;
-            y = this._markers.last.ty;
+            const xAxis = m._xAxisObj;
+            const yAxis = m._yAxisObj; 
+            const r = v.getBBox();
+            let x: number;
+            let y: number;
 
-            x += flag.offset;
+            x = this._markers.last.x
+            y = this._markers.last.y;
+
+            if (this._inverted) {
+                if (m._xAxisObj.reversed) {
+                    y += flag.offset;
+                } else {
+                    y -= flag.offset + r.height;
+                }                
+                x -= r.width / 2;
+            } else {
+                if (m._xAxisObj.reversed) {
+                    x -= flag.offset + r.width;
+                } else {
+                    x += flag.offset;
+                }   
+                y -= r.height / 2;
+            }
             v.trans(x, y);
         }
     }

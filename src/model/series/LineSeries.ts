@@ -13,11 +13,11 @@ import { Align, IValueRange, SVGStyleOrClass, StyleProps } from "../../common/Ty
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { IChart } from "../Chart";
-import { IconedText } from "../ChartItem";
+import { IconedText, LabelIconPostion } from "../ChartItem";
 import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
 import { LegendItem } from "../Legend";
-import { DataPointLabel, MarkerVisibility, PointItemPosition, Series, SeriesGroup, SeriesGroupLayout, SeriesMarker } from "../Series";
+import { DataPointLabel, PointItemPosition, Series, SeriesGroup, SeriesGroupLayout, SeriesMarker } from "../Series";
 import { AreaLegendMarkerView } from "./legend/AreaLegendMarkerView";
 import { LineLegendMarkerView } from "./legend/LineLegendMarkerView";
 import { ShapeLegendMarkerView } from "./legend/ShapeLegendMarkerView";
@@ -73,29 +73,41 @@ export class LineSeriesMarker extends SeriesMarker {
     //-------------------------------------------------------------------------
     radius = 4;
     /**
-     * 첫번째 point의 marker 표시 여부.
+     * 첫번째 point의 marker 표시 여부.<br>
+     * true로 지정하면 모델 visible과 상관없이 표시하고,
+     * false면 상관없이 표시하지 않는다.
+     * 아니면 모델의 visible을 따른다.
      * 
      * @config
      */
-    firstVisible = MarkerVisibility.DEFAULT;
+    firstVisible: boolean;
     /**
-     * 첫번째 point의 marker 표시 여부.
+     * 첫번째 point의 marker 표시 여부.<br>
+     * true로 지정하면 모델 visible과 상관없이 표시하고,
+     * false면 상관없이 표시하지 않는다.
+     * 아니면 모델의 visible을 따른다.
      * 
      * @config
      */
-    lastVisible = MarkerVisibility.DEFAULT;
+    lastVisible: boolean;
     /**
-     * 최소값 point들의 marker 표시 여부.
+     * 최소값 point들의 marker 표시 여부.<br>
+     * true로 지정하면 모델 visible과 상관없이 표시하고,
+     * false면 상관없이 표시하지 않는다.
+     * 아니면 모델의 visible을 따른다.
      * 
      * @config
      */
-    minVisible = MarkerVisibility.DEFAULT;
+    minVisible: boolean;
     /**
-     * 최대값 point들의 marker 표시 여부.
+     * 최대값 point들의 marker 표시 여부.<br>
+     * true로 지정하면 모델 visible과 상관없이 표시하고,
+     * false면 상관없이 표시하지 않는다.
+     * 아니면 모델의 visible을 따른다.
      * 
      * @config
      */
-    maxVisible = MarkerVisibility.DEFAULT;
+    maxVisible: boolean;
 }
 
 export class LinePointLabel extends DataPointLabel {
@@ -258,6 +270,10 @@ export enum LineStepDirection {
 
 export type PointLine = IPointPos[];
 
+/**
+ * Line 시리즈의 마지막 데이터포인트 옆에 표시되는 아이콘과 텍스트 설정 모델.<br/>
+ * 마지막 포인트와의 간격은 {@link offset} 속성으로 지정한다.
+ */
 export class LineSeriesFlag extends IconedText {
 
     //-------------------------------------------------------------------------
@@ -270,6 +286,11 @@ export class LineSeriesFlag extends IconedText {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 마지막 데이터포인트 중심과 flag의 표시 간격을 픽셀 단위로 지정한다.
+     * 
+     * @config
+     */
     offset = 8;
 
     //-------------------------------------------------------------------------
@@ -277,6 +298,13 @@ export class LineSeriesFlag extends IconedText {
     //-------------------------------------------------------------------------
     label(): string {
         return this.text || this.series.displayName();
+    }
+
+    //-------------------------------------------------------------------------
+    // overidden members
+    //-------------------------------------------------------------------------
+    getDefaultIconPos(): LabelIconPostion {
+        return LabelIconPostion.LEFT;
     }
 }
 
@@ -356,7 +384,9 @@ export class LineSeries extends LineSeriesBase {
      */
     nullStyle: SVGStyleOrClass;
     /**
-     * 시리즈의 마지막 포인터 옆에 표시되는 아이콘과 텍스트 설정 모델.
+     * 시리즈의 마지막 데이터포인트 옆에 표시되는 아이콘과 텍스트 설정 모델.
+     * 
+     * @config
      */
     flag: LineSeriesFlag;
 

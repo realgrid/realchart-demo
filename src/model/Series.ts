@@ -18,7 +18,7 @@ import { Shape, Shapes } from "../common/impl/SvgShape";
 import { ChartData, IChartDataListener } from "../data/ChartData";
 import { IAxis } from "./Axis";
 import { IChart } from "./Chart";
-import { ChartItem, IconedText } from "./ChartItem";
+import { ChartItem, IconedText, LabelIconPostion } from "./ChartItem";
 import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource, LegendItem } from "./Legend";
 import { ITooltipContext } from "./Tooltip";
@@ -144,6 +144,10 @@ export class DataPointLabel extends IconedText {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    getDefaultIconPos(): LabelIconPostion {
+        return LabelIconPostion.TOP;
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -1833,27 +1837,6 @@ export class PlottingItemCollection  {
         ser.index = index;
         return ser;
     }
-}
-
-export enum MarkerVisibility {
-    /** 
-     * visible 속성에 따른다. 
-     * 
-     * @config
-     * */
-    DEFAULT = 'default',
-    /** 
-     * visible 속성과 상관없이 항상 표시한다. 
-     * 
-     * @config
-     * */
-    VISIBLE = 'visible',
-    /** 
-     * visible 속성과 상관없이 항상 표시하지 않는다. 
-     * 
-     * @config
-     * */
-    HIDDEN = 'hidden'
 }
 
 /**

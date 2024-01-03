@@ -13,7 +13,7 @@ import { ISize } from "../common/Size";
 import { DEG_RAD, IMinMax, IPercentSize, IValueRange, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, buildValueRanges, calcPercent, fixnum, isNull, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
-import { ChartItem, FormattableText, IconedText } from "./ChartItem";
+import { ChartItem, FormattableText, IconedText, LabelIconPostion } from "./ChartItem";
 import { Widget } from "./Widget";
 
 /**
@@ -601,6 +601,13 @@ export class GaugeScaleLabel extends IconedText {
             return this._getText(null, value, absv(value) > 1000, true);
         }
         return value;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    getDefaultIconPos(): LabelIconPostion {
+        return LabelIconPostion.LEFT;
     }
 }
 

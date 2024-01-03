@@ -11,7 +11,7 @@ import { IRichTextDomain } from "../common/RichText";
 import { Align, DEG_RAD, ORG_ANGLE, SVGStyleOrClass, VerticalAlign, _undef, fixnum, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
-import { ChartItem, ChartTextOverflow, FormattableText, IconedText } from "./ChartItem";
+import { ChartItem, ChartTextOverflow, FormattableText, IconedText, LabelIconPostion } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
 import { IClusterable, IPlottingItem, ISeries } from "./Series";
 
@@ -421,6 +421,9 @@ export class AxisGuideLabel extends IconedText {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    getDefaultIconPos(): LabelIconPostion {
+        return LabelIconPostion.LEFT;
+    }
 }
 
 export enum AxisGuideType {
@@ -827,6 +830,10 @@ export abstract class AxisLabel extends IconedText {
 
     getIcon(tick: IAxisTick): string {
         return;
+    }
+
+    getDefaultIconPos(): LabelIconPostion {
+        return LabelIconPostion.TOP;
     }
 
     //-------------------------------------------------------------------------
