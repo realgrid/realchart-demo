@@ -1009,7 +1009,9 @@ export class AxisZoom {
 }
 
 /**
- * 차트에서 축을 명식적으로 지정하지 않으면, 첫번째 시리즈에 합당한 축이 기본 생성된다.
+ * 축 모델.\
+ * 차트에서 축을 명식적으로 지정하지 않으면, 첫번째 시리즈에 합당한 축이 기본 생성된다.\
+ * {@link guide.axes 축 개요} 페이지를 참조한다.
  * @config chart.axis[base]
  */
 export abstract class Axis extends ChartItem implements IAxis {

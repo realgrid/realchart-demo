@@ -12,6 +12,7 @@ import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { ClipRectElement, PathElement, RcElement } from "../../common/RcControl";
 import { Align, FILL, IValueRange, PI_2, SVGStyleOrClass, _undef } from "../../common/Types";
+import { LabelElement } from "../../common/impl/LabelElement";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
@@ -535,6 +536,11 @@ export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
     // consts
     //-------------------------------------------------------------------------
     static readonly CLASS = 'rct-line-series';
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _labelView: LabelElement;
 
     //-------------------------------------------------------------------------
     // constructor

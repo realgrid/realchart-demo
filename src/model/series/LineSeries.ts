@@ -13,6 +13,7 @@ import { Align, IValueRange, SVGStyleOrClass, StyleProps } from "../../common/Ty
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { IChart } from "../Chart";
+import { IconedText } from "../ChartItem";
 import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
 import { LegendItem } from "../Legend";
@@ -257,6 +258,21 @@ export enum LineStepDirection {
 
 export type PointLine = IPointPos[];
 
+export class LineSeriesFlag extends IconedText {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(series: LineSeries) {
+        super(series.chart, false);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    offset = 8;
+}
+
 /**
  * Line 시리즈.<br/>
  * 
@@ -292,6 +308,12 @@ export class LineSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
+    constructor(chart: IChart, name?: string) {
+        super(chart, name)
+
+        this.flag = new LineSeriesFlag(this);
+    }
+
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
@@ -326,6 +348,10 @@ export class LineSeries extends LineSeriesBase {
      * {@link connectNullPoints}이 true일 때 null 포인트의 양끝 포인트를 연결하는 선에 적용되는 스타일.
      */
     nullStyle: SVGStyleOrClass;
+    /**
+     * 시리즈의 마지막 포인터 옆에 표시되는 아이콘과 텍스트 설정 모델.
+     */
+    flag: LineSeriesFlag;
 
     //-------------------------------------------------------------------------
     // methods

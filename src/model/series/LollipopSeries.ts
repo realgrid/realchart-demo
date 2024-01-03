@@ -30,6 +30,7 @@ export class LollipopSeriesPoint extends DataPoint {
 
 /**
  * Bar 시리즈 변종.
+ * bar가 겹치더라도 데이터포인트들이 구분된다.
  * 
  * @config chart.series[type=lollipop]
  */

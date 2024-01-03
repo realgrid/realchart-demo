@@ -54,6 +54,7 @@ config로 노출하고자 하는 구성에 @config를 사용한다.
 
 - inline link
   - 설명에 `{@link config.series.line 라인}`과 같은 포맷으로 링크를 설정한다. 라벨을 지정하지 않으면 마지막 구분자(`line`)를 라벨로 한다.
+  - 가이드 문서는 `{@link guide.axes 축 개요}` 
   - class api 링크는 `sub.Class.Property`로 고정한다. 예를 들어,
     - global 링크는 `g.createChart`
     - class 링크는 `rc.RcAreaSeries`, class property 링크는 `rc.RcAreaSeries.name`. `rc.` 생략 가능

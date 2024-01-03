@@ -1549,7 +1549,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     protected _doLoadData(src: any): any[] {
         if (isArray(src)) {
             return src;
-        } else {
+        } else if (src) { // #382
             let d: ChartData;
             if (src.$_p instanceof ChartData) {
                 d = src.$_p;
