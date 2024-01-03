@@ -33,9 +33,7 @@ let animate = false;
 let chart;
 
 function init() {
-    console.log("RealChart v" + RealChart.getVersion());
     RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, "realchart", config);
-    setActions("actions");
 }
