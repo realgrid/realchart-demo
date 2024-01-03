@@ -30,18 +30,17 @@
         const config = {
           title: "Boundary",
           xAxis: {
-            categories: [1,2],
+            categories: [1,2,3]
           },
           series: [
             {
-              type: "bar",
-              name: "column1",
-                data: [1, 2, 3, 4],
+              name: "column",
+              data: null
             },
           ],
         };
         try {
-          chart = RealChart.createChart(document, "realchart", undefined);
+          chart = RealChart.createChart(document, "realchart", config);
         } catch (err) {
           alert(err);
           console.error(err);
