@@ -258,7 +258,7 @@ class Tunner {
         // % 상속받은 prop이면 현재 prop id와 다르다.
         const [current] = this.currents.slice(-1);
         // 현재 속성 중에 있거나, 상속 받은 속성. 조상까지 찾을 필요는 없다.
-        const prop = current.props?.find(
+        const prop = current.children?.find(
           (p) =>
             line.target == p.id ||
             line.text == p.inheritedFrom?.name.split('.').pop()
@@ -400,6 +400,7 @@ class Tunner {
   _parseSummary(summary) {
     return summary
       ?.map((line) => {
+        if (line.text == 'offset') debugger;
         switch (line.kind) {
           case 'inline-tag':
             return this._parseInlineTag(line);
@@ -481,14 +482,14 @@ class Tunner {
     const staticPropFilter = (child) => {
       return child.kind === ReflectionKind.Property && child.flags?.isStatic;
     };
-    this.currents.push({ name, kind, comment });
+    this.currents.push({ name, kind, comment, children });
 
     const { config, content } = this._parseComment(comment);
     switch (kind) {
       case ReflectionKind.Class:
         // this.current = { name, kind, comment, props: children.filter(propFilter)}
         const clsProps = children.filter(propFilter);
-        this.currents[this.currents.length - 1].props = clsProps;
+        // this.currents[this.currents.length - 1].props = clsProps;
         this.classMap[name] = {
           // header, content, prop, type,
           kind,
@@ -563,11 +564,12 @@ class Tunner {
           ?.map((c) => {
             return this._setContent(c);
           });
-        this.currents[this.currents.length - 1].props = itfProps;
+        // this.currents[this.currents.length - 1].props = itfProps;
         this.classMap[name] = {
           kind,
           type,
           config,
+          content,
           props: itfProps,
         };
         break;
