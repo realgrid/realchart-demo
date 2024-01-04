@@ -301,6 +301,7 @@ export interface IColorList extends IAssetItem {
     /**
      * 색상 목록에서 색을 꺼내오는 방식.
      * 
+     * @default PaletteMode.NORMAL
      * @config
      */
     mode?: PaletteMode;
