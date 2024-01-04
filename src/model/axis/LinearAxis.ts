@@ -894,7 +894,7 @@ export abstract class ContinuousAxis extends Axis {
         let min = vals[1] - vals[0];
 
         for (let i = 2; i < vals.length; i++) {
-            min = minv(vals[i] - vals[i - 1]);
+            min = minv(min, vals[i] - vals[i - 1]);
         }
 
         // 이 축에 연결된 clsuterable 시리즈들의 point 최소 간격.
