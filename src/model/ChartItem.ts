@@ -18,6 +18,10 @@ import { IChart } from "./Chart";
 
 export let n_char_item = 0;
 
+/**
+ * @config chart.base
+ */
+export class RcBase {}
 export class ChartItem extends RcObject {
 
     //-------------------------------------------------------------------------
