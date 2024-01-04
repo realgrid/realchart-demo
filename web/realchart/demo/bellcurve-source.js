@@ -10,7 +10,7 @@ const config = {
         name: 'baxis',
         position: 'opposite',
         title: 'Bell X',
-    }],
+    }], 
     yAxis: [{
         title: 'Scatter Y'
     }, {
@@ -54,7 +54,7 @@ function setActions(container) {
         alert('hello');
     });
     createCheckBox(container, 'Curved', function (e) {
-        config.series[1].curved = _getChecked(e);
+        config.series[0].curved = _getChecked(e);
         chart.load(config);
     }, true);
     createCheckBox(container, 'Inverted', function (e) {
@@ -62,11 +62,13 @@ function setActions(container) {
         chart.load(config, animate);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
-        config.xAxis.reversed = _getChecked(e);
+        config.xAxis[0].reversed = _getChecked(e);
+        config.xAxis[1].reversed = _getChecked(e);
         chart.load(config, animate);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
-        config.yAxis.reversed = _getChecked(e);
+        config.yAxis[0].reversed = _getChecked(e);
+        config.yAxis[1].reversed = _getChecked(e);
         chart.load(config, animate);
     }, false);
 }

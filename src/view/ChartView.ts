@@ -625,6 +625,7 @@ export class ChartView extends LayerElement {
     private _historyView: HistoryView;
     private _tooltipView: TooltipView;
     private _seriesClip: ClipRectElement;
+    private _seriesClip2: ClipRectElement; // bubble, scatter처럼 transform으로 inverted를 하지 않는 시리즈를 위한.
     // private _lineSeriesClip: ClipRectElement;
 
     _org: IPoint;
@@ -1207,7 +1208,7 @@ export class ChartView extends LayerElement {
         }
 
         const inverted = this._model.inverted && invertable;
-        const sc = this._seriesClip;
+        let sc = invertable ? this._seriesClip : this._seriesClip2;
 
         // TODO: pane 단위로 -> body로 가야하나?
         view && clip(view);
@@ -1309,6 +1310,7 @@ export class ChartView extends LayerElement {
     //-------------------------------------------------------------------------
     protected _doAttached(parent: RcElement): void {
         this._seriesClip = this.control.clipBounds();
+        this._seriesClip2 = this.control.clipBounds();
         // this._lineSeriesClip = this.control.clipBounds();
     }
 

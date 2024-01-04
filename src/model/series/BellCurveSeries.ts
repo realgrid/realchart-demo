@@ -60,10 +60,9 @@ export class BellCurveSeries extends AreaSeries {
     /**
      * true면 spline 곡선으로 표시한다.
      * 
-     * @default false
      * @config
      */
-    curved = false;
+    curved = true; // bell'curve' 이니까...
 
     //-------------------------------------------------------------------------
     // methods

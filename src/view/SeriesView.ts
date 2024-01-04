@@ -311,7 +311,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    invertable(): boolean {
+    clipInvertable(): boolean {
         return true;
     }
 
@@ -1192,8 +1192,8 @@ export abstract class MarkerSeriesView<T extends MarkerSeries> extends SeriesVie
         return this._markers;
     }
 
-    invertable(): boolean {
-        return false;
+    clipInvertable(): boolean {
+        return false; // TODO: true로 개선할 것!, bubble, scatter view 참조.
     }
 
     //-------------------------------------------------------------------------

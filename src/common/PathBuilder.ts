@@ -47,8 +47,11 @@ export class PathBuilder {
     }
 
     end(close = false): string {
-        close && this._path.push('Z');
-        return this._path.join(' ');
+        if (this._path.length > 0) {
+            close && this._path.push('Z');
+            return this._path.join(' ');
+        }
+        return '';
     }
 
     close(clear: boolean): string {

@@ -44,6 +44,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
     }
 
     protected _renderSeries(width: number, height: number): void {
+        // invert 하지 않는다! // TODO: invert할 것!
         // this._pointContainer.invert(this.model.chart.isInverted(), height);
         this.$_layoutMarkers(width, height);
     }

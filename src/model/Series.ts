@@ -1152,7 +1152,6 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         }
 
         this._runPoints = this._points.getPoints(this._xAxisObj, this._yAxisObj);
-        this._visPoints = this._runPoints.filter(p => p.visible);
 
         this.pointLabel.prepareRender();
 
@@ -1330,6 +1329,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         if (this._referents) {
             this._referents.forEach(r => r.reference(this, axis));
         }
+        this._visPoints = this._runPoints.filter(p => p.visible);
     }
 
     reference(other: Series, axis: IAxis): void {
