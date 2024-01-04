@@ -28,9 +28,6 @@ export class ChartControl extends RcControl implements IChartEventListener {
     //-------------------------------------------------------------------------
     private _model: Chart;
     private _chartView: ChartView;
-    private _menuButton: HTMLDivElement;
-    private _contextmenu: HTMLDivElement;
-    private _menuList: HTMLUListElement;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -115,37 +112,6 @@ export class ChartControl extends RcControl implements IChartEventListener {
         this._chartView.getAxis(axis)?.scroll(pos);
     }
 
-    // isMenuButton(dom: Element): boolean {
-    //     return dom.isEqualNode(this._menuButton);
-    // }
-
-    // isMenuItem(dom: Element): boolean {
-    //     return !dom.isEqualNode(this._menuList) && this._menuList?.contains(dom);
-    // }
-
-    // onMenuClick(dom: Element): void {
-    //     const contextmenu = this._contextmenu;
-    //     if (contextmenu) {
-    //         contextmenu.style.display = contextmenu.style.display === 'none' ? 'block' : 'none';
-    //     }
-    // }
-
-    // onMenuItemClick(dom: Element): void {
-    //     const type = dom.id;
-    //     const {fileName, width, scale, hideScrollbar, hideNavigator, hideZoomButton, url} = this._model.export;
-    //     try {
-    //         switch(type) {
-    //             case ExportType.PNG:
-    //             case ExportType.JPEG:
-    //                 new ImageExporter().export(this.dom(), {type, fileName, width, scale, hideScrollbar, hideNavigator, hideZoomButton, url}, this._model.config);
-    //                 break;
-    //             default:
-    //                 break;
-    //         }   
-    //     } catch (error) {
-    //     }
-    // }
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -159,11 +125,6 @@ export class ChartControl extends RcControl implements IChartEventListener {
             this.setData('theme', model.options.theme, true);
             this.setData('palette', model.options.palette);
 
-            if (window['RealChartExporter'] && model.export.visible) {
-                this._menuButton ? this.$_layoutContextMenu(model.export) : this.$_initExportMenu(model.export);
-            } else {
-                this.$_hideMenuButton();
-            }
             model.prepareRender();
         }
         if (!this.loaded) view.clean();
@@ -192,59 +153,4 @@ export class ChartControl extends RcControl implements IChartEventListener {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_hideMenuButton() {
-        if (this._menuButton) {
-            this._menuButton.style.display = 'none';
-        }
-    }
-
-    private $_initExportMenu(options: ExportOptions): void {
-        const doc = this.doc();
-        const dom = this.dom();
-        
-        const contextmenuButton = this._menuButton = doc.createElement('div');
-        contextmenuButton.classList.add('rct-contextmenu-button');
-        contextmenuButton.style.position = 'absolute';
-
-        const contextmenu = this._contextmenu = doc.createElement('div');
-        contextmenu.classList.add('rct-contextmenu');
-        contextmenu.style.position = 'absolute';
-        contextmenu.style.display = 'none';
-        contextmenu.style.right = '0px';
-
-        const menuList = this._menuList = doc.createElement('ul');
-        menuList.classList.add('rct-contextmenu-list');
-        
-        contextmenu.appendChild(menuList);
-        contextmenuButton.appendChild(contextmenu);
-        dom.appendChild(contextmenuButton);
-
-        this.$_layoutContextMenu(options);
-    }
-
-    private $_layoutContextMenu(options: ExportOptions): void {
-        const doc = this.doc();
-        const dom = this.dom();
-        const rect = dom.getBoundingClientRect();
-        const contextmenuButton = this._menuButton;
-        const contextmenu = this._contextmenu;
-
-        // 버튼의 오른쪽 여백
-        const marginRight = 11;
-
-        contextmenuButton.style.display = 'block';
-        contextmenuButton.style.top = '20px';
-        contextmenuButton.style.left = rect.width - contextmenuButton.clientWidth - marginRight + 'px';
-
-        contextmenu.style.top = contextmenuButton.clientHeight + 'px';
-
-        this._menuList.innerHTML = '';
-        options.menus.forEach((type) => {
-            const menuItem = doc.createElement('li');
-            menuItem.classList.add('rct-contextmenu-item');
-            menuItem.id = type;
-            menuItem.textContent = `Download ${type.toUpperCase()}`;
-            this._menuList.appendChild(menuItem);
-        });
-    }
 }
