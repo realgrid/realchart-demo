@@ -772,8 +772,6 @@ class MDGenerater {
       readonly,
     } = prop;
 
-    // if (keys.includes('series') && name == 'flag') debugger;
-
     let extraLines = '';
     let lines =
       `### ${readonly ? '*`<readonly>`* ' : ''}` +
@@ -800,8 +798,19 @@ class MDGenerater {
       if (!v) return console.warn(`[WARN] Not found classMap of ${dtype.name}`);
       switch (v.kind) {
         case ReflectionKind.Class:
+          // docMap 생성을 위해 _makeClassProp이 실행되어야 한다.
           const _content = this._makeClassProp(param, v);
           if (!content) return _content;
+
+          const _keys = keys.slice();
+          _keys.push(name);
+          const subtitle = _keys.pop();
+          const parent = _keys.pop();
+
+          // set link
+          const link = [parent || 'config', subtitle].join('/');
+          lines = `### [${subtitle}](./${link})\n`;
+
           break;
         case ReflectionKind.Enum:
           extraLines = this._makeEnums({ name, enums: v.props });

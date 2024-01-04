@@ -191,7 +191,7 @@ export function RealChartReact({
     ? typeof _width === "number"
       ? _width + "px"
       : _width
-    : "100%";
+    : "800px";
 
   const hasPieOrGauge =
     config["type"] == "pie" ||
