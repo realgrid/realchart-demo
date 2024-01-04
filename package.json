@@ -30,7 +30,7 @@
     "tsdoc": "npx typedoc --entryPointStrategy expand ./src/model --entryPointStrategy expand ./src/common --json ./docs/.tdout/model.json",
     "jsdoc": "rm -rf api/jsdoc && npx jsdoc -c jsdoc.json",
     "dldoc": "npm run tsdoc && node dldoc && npx typedoc && node docs/typedoc",
-    "dldoc:dev": "node dldoc",
+    "dldoc:dev": "NODE_ENV=dev node dldoc",
     "typedoc:dev": "node docs/typedoc",
     "dev:www": "npm run dldoc && npx live-server web/realchart",
     "dev": "concurrently \"npm run build-w\" \"npm run dbw\" \"node app\"",

@@ -4,15 +4,15 @@ bullet 게이지 모델.
 또, 여러 값 범위 중 어디에 속한 상태인 지를 나타낸다.
 ## Properties
 
-### [actualBar](./bullet/actualBar)
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
-
+### actualBar[#actualBar]
+actual bar.  
+<DefaultValue value="..." contents=""></DefaultValue>
 ### animatable: `boolean{:js}`[#animatable]
 [value](#value) 변화를 애니메이션으로 표현한다.  
 <DefaultValue value="true" contents=""></DefaultValue>
-### [band](./bullet/band)
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
-
+### band[#band]
+밴드.  
+<DefaultValue value="..." contents=""></DefaultValue>
 ### bottom: `string | number{:js}`[#bottom]
 plot 영역의 아래쪽 모서리와 widget 사이의 간격.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
@@ -23,9 +23,9 @@ Animation duration.
 게이지 높이.
 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
-### [label](./bullet/label)
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
-
+### label[#label]
+label 설정 모델.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### left: `string | number{:js}`[#left]
 plot 영역의 왼쪽 모서리와 widget 사이의 간격.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
@@ -48,48 +48,25 @@ group에 포함되면 이 값 대신 group의 최소값이 사용된다.
 ### ranges: `IValueRange[]{:js}`[#ranges]
 값 범위 목록.
 범위별로 다른 스타일을 적용할 수 있다.  
-- `IValueRange{:js}` 
-
-| Name | Type | Optional |  
-| ----- | ----- | ----- |  
-| areaStyle | `SVGStyles \| string{:js}` | true |  
-| color | `string{:js}` | false |  
-| fromValue | `number{:js}` | true |  
-| label | `string{:js}` | true |  
-| style | `SVGStyles \| string{:js}` | true |  
-| toValue | `number{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### reversed: `boolean{:js}`[#reversed]
 <Content type="keyword" value="true"></Content>면 반대 방향으로 표시한다.  
 <DefaultValue value="false" contents=""></DefaultValue>
 ### right: `string | number{:js}`[#right]
 plot 영역의 오른쪽 모서리와 widget 사이의 간격.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
-### [scale](./bullet/scale)
-Gauge scale.  
-
+### scale[#scale]
+scale.  
+<DefaultValue value="..." contents=""></DefaultValue>
 ### size: `string | number{:js}`[#size]
 [width](#width) 와 [height](#height) 를 동시에 설정한다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
-- `SVGStyles{:js}` 
-
-| Name | Type | Optional |  
-| ----- | ----- | ----- |  
-| fill | `string{:js}` | true |  
-| fillOpacity | `string{:js}` | true |  
-| fontFamily | `string{:js}` | true |  
-| fontSize | `string{:js}` | true |  
-| fontStyle | `string{:js}` | true |  
-| fontWeight | `string{:js}` | true |  
-| rx | `string{:js}` | true |  
-| stroke | `string{:js}` | true |  
-| strokeDasharray | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |  
-| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
-### [targetBar](./bullet/targetBar)
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### targetBar[#targetBar]
+target bar.  
+<DefaultValue value="..." contents=""></DefaultValue>
 ### targetValue: `number{:js}`[#targetValue]
 목표 값.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
