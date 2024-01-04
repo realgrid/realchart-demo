@@ -16,6 +16,7 @@ import { Utils } from "../common/Utils";
 import { RectElement } from "../common/impl/RectElement";
 import { Shape, Shapes } from "../common/impl/SvgShape";
 import { ChartData, IChartDataListener } from "../data/ChartData";
+import { ColorList } from "./Asset";
 import { IAxis } from "./Axis";
 import { IChart } from "./Chart";
 import { ChartItem, IconedText, LabelIconPostion } from "./ChartItem";
@@ -1584,18 +1585,32 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     protected _doPrepareRender(): void {
         const color = this.color;
         let colors: string[];
+        let list: ColorList;
 
         if (isArray(this.pointColors)) {
             colors = this.pointColors;
+        } else if (isString(this.pointColors)) {
+            list = this.chart.assets.get(this.pointColors) as ColorList;
         } else if (this._colorByPoint()) { 
-            colors = this.chart.colors || [];
-        } else {
-            colors = [];
+            colors = this.chart.colors;
         }
 
-        this._runPoints.forEach((p, i) => {
-            p.color = p.color || colors[i % colors.length] || color;
-        })
+        if (list instanceof ColorList) {
+            list.prepare();
+            this._runPoints.forEach((p, i) => {
+                p.color = p.color || list.getNext() || color;
+            })
+        } else if (colors) {
+            this._runPoints.forEach((p, i) => {
+                p.color = p.color || colors[i % colors.length] || color;
+            })
+        } else {
+            this._runPoints.forEach((p, i) => {
+                p.color = p.color || color;
+            })
+        }
+         
+
 
         this._preparePointArgs(this._pointArgs);
     }

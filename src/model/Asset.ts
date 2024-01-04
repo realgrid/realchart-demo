@@ -317,6 +317,7 @@ export class ColorList extends AssetItem<IColorList> {
             }
             this._index = 0;
         }
+        this._colors = isArray(this.source.colors) ? this.source.colors : [];
         return this;
     }
 
