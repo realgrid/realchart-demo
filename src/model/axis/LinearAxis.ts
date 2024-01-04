@@ -10,7 +10,6 @@ import { isArray, isObject, pickNum, pickNum3, assign, ceil, floor, log10, maxv,
 import { IPercentSize, RtPercentSize, assert, calcPercent, fixnum, parsePercentSize } from "../../common/Types";
 import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick, AxisGrid } from "../Axis";
 import { IChart } from "../Chart";
-import { LabelIconPostion } from "../ChartItem";
 import { DataPoint } from "../DataPoint";
 import { SeriesGroup, SeriesGroupLayout } from "../Series";
 

@@ -1,5 +1,4 @@
 const config = {
-    
     options: {
         // animatable: false
     },
@@ -46,6 +45,11 @@ const config = {
         }]
     },
     xAxis: [{
+        line: {
+            style: {
+                stroke: '#333'
+            }
+        }
     },{
         col: 1,
     }],
@@ -54,6 +58,9 @@ const config = {
     }, {
         col: 1,
         grid: false,
+        label: {
+            style:  { fill: 'red' }
+        }
     }],
     series: [{
         type: 'line',
@@ -102,16 +109,20 @@ function setActions(container) {
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
         chart.load(config, animate);
-    }, true);
+    }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis[0].reversed = _getChecked(e);
+        chart.load(config, animate);
+    }, false);
+    createCheckBox(container, 'X Reversed 2', function (e) {
+        config.xAxis[1].reversed = _getChecked(e);
         chart.load(config, animate);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis[0].reversed = _getChecked(e);
         chart.load(config, animate);
-    }, true);
-    createCheckBox(container, 'Y Reversed2', function (e) {
+    }, false);
+    createCheckBox(container, 'Y Reversed 2', function (e) {
         config.yAxis[1].reversed = _getChecked(e);
         chart.load(config, animate);
     }, false);

@@ -1197,7 +1197,6 @@ export abstract class Axis extends ChartItem implements IAxis {
      * @config
      */
     unit: string;
-
     /**
      * 축에 포함된 시리즈들 툴팁의 위쪽에 표시되는 텍스트.
      * 
@@ -1807,6 +1806,8 @@ export abstract class PaneAxisMatrix {
     }
 
     buildTicks(lens: number[]): void {
+        const isX = this.isX;
+
         // 다른 축을 참조하는 axis를 나중에 계산한다.
         this._matrix.forEach((mat, i) => {
             mat.forEach((m, j) => {
@@ -1815,7 +1816,7 @@ export abstract class PaneAxisMatrix {
                         // if (!lens[axis._runPos === AxisPosition.OPPOSITE ? i - 1 : i]) debugger;
                         // axis.buildTicks(lens[axis._runPos === AxisPosition.OPPOSITE ? i - 1 : i]);
                         // axis.buildTicks(lens[i]);
-                        axis.buildTicks(lens[axis._isX ? axis.col : axis.row]);
+                        axis.buildTicks(lens[isX ? axis.col : axis.row]);
                     }
                 });
             });
@@ -1826,7 +1827,7 @@ export abstract class PaneAxisMatrix {
                     if (axis.isBased()) {
                         // axis.buildTicks(lens[axis._runPos === AxisPosition.OPPOSITE ? i - 1 : i]);
                         // axis.buildTicks(lens[i]);
-                        axis.buildTicks(lens[axis._isX ? axis.col : axis.row]);
+                        axis.buildTicks(lens[isX ? axis.col : axis.row]);
                     }
                 });
             });
@@ -1834,11 +1835,15 @@ export abstract class PaneAxisMatrix {
     }
 
     calcPoints(lens: number[], phase: number): void {
+        const isX = this.isX;
+
         this._matrix.forEach(mat => {
             mat.forEach((m, i) => {
                 m._axes.forEach(axis => {
+                    const a = isX ? axis.col : axis.row; 
+
                     // axis.calcPoints(lens[axis._runPos === AxisPosition.OPPOSITE ? i - 1 : i], phase);
-                    axis.calcPoints(lens[i], phase);
+                    axis.calcPoints(lens[a], phase);
                 });
             });
         })

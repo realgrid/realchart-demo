@@ -576,7 +576,7 @@ export class AxisView extends ChartElement<Axis> {
         if (this.$_prepareTickMarks(doc, model)) {
             this._markViews.forEach(v => v.measure(doc, model.tick, hintWidth, hintHeight, phase));
         }
-        if (between) sz *= 2; // 양쪽에 간격은 둔다.
+        if (between) sz *= 2; // 양쪽에 간격을 둔다.
 
         // labels
         if (this.$_prepareLabels(model)) {

@@ -188,6 +188,7 @@ class AxisSectionView extends SectionView {
         } else {
             this.views.forEach(v => {
                 v.resize(v.mw, this.height);
+                v.transX(this.width - v.mw); // TODO: 여러개 있을 때, opposite일 때,...
                 v.layout();
             })
         }
@@ -278,19 +279,19 @@ class AxisContainer extends SectionView {
 
     protected _doLayout(pts: number[]): void {
         if (this._isHorz) {
-            this.sections.forEach((sec, i) => {
-                if (this.height > 0) {
+            if (this.height > 0) {
+                this.sections.forEach((sec, i) => {
                     sec.resize(pts[(i + 1) * 2] - pts[(i + 1) * 2 - 1], this.height).trans(pts[i * 2 + 1] - pts[1], 0);
                     sec.layout();
-                }
-            });
+                });
+            }
         } else {
-            this.sections.forEach((sec, i) => {
-                if (this.width > 0) {
+            if (this.width > 0) {
+                this.sections.forEach((sec, i) => {
                     sec.resize(this.width, pts[(i + 1) * 2] - pts[(i + 1) * 2 - 1]).trans(0, this.height - (pts[(i + 1) * 2] - pts[1]));
                     sec.layout();
-                }
-            });
+                });
+            }
         }
     }
 }

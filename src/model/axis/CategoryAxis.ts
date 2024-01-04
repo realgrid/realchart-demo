@@ -94,8 +94,9 @@ class CategoryAxisGrid extends AxisGrid {
 }
 
 /**
- * 지정된 카테고리 수로 축을 분할해서 각 카테고리에 연결된 데이터포인트들이 표시되게 한다.
- * <br>
+ * 지정된 카테고리 개수로 축을 분할해서 각 카테고리에 연결된 데이터포인트들이 표시되게 한다.<br/>
+ * 카테고리 하나가 1의 너비를 갖는다.
+ * 
  * 1. categories 속성으로 카테고리 목록을 구성한다.
  * 2. 이 축에 연결된 시리즈들에 포함된 data point들의 문자열인 값들, 혹은 categoryField에 해당하는 값들을 수집한다.
  *    수집된 category들 중 숫자가 아닌 것들은 {@link startValue}부터 시작해서 {@link valueStep} 속성에 지정된 값씩 차례대로 증가한 값을 갖게된다.
