@@ -9,7 +9,7 @@
 import { isArray, isBoolean, isObject, isString, pickNum, assign } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
-import { SvgRichText, RichTextParamCallback, IRichTextDomain } from "../common/RichText";
+import { SvgRichText, IRichTextDomain } from "../common/RichText";
 import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undef } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
@@ -19,9 +19,14 @@ import { IChart } from "./Chart";
 export let n_char_item = 0;
 
 /**
+ * {@link config.base.axis}, {@link config.base.series}, {@link config.base.gauge}, 
+ * {@link config.base.annotation} 등의 'type'과 무관한 공통 설정 항목들을 
+ * 참조하기 위한 곳으로, 차트 configuration에 'base'라는 최상위 설정 항목이 존재하는 것은 아니다.
+ * 
  * @config chart.base
  */
 export class RcBase {}
+
 export class ChartItem extends RcObject {
 
     //-------------------------------------------------------------------------

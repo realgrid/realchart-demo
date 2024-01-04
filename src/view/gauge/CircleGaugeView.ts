@@ -15,7 +15,7 @@ import { ISize } from "../../common/Size";
 import { RAD_DEG, fixnum, pixel } from "../../common/Types";
 import { ArcElement } from "../../common/impl/CircleElement";
 import { SectorElement } from "../../common/impl/SectorElement";
-import { TextAnchor, TextElement, TextLayout } from "../../common/impl/TextElement";
+import { TextAnchor, TextElement } from "../../common/impl/TextElement";
 import { GaugeItemPosition, GaugeRangeBand, ICircularGaugeExtents } from "../../model/Gauge";
 import { CircleGauge, CircleGaugeGroup, CircleGaugeHand, CircleGaugePin, CircleGaugeScale } from "../../model/gauge/CircleGauge";
 import { ChartElement } from "../ChartElement";
@@ -437,7 +437,8 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         m.scale.buildSteps(exts.scale * props._sweepRad, NaN);
 
         // rim
-        if (this._rimView.setVis(m.rim.visible)) {
+        if (this._rimView.visible) {
+            this._rimView.setStyleOrClass(m.rim.style);
             this._rimView.setSector({
                 cx: center.x,
                 cy: center.y,
@@ -452,6 +453,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
         // scale rim
         if (this._scaleView.visible) {
+            this._scaleView.setStyleOrClass(m.scale.style);
             this._scaleView.measure(this.doc, m.scale, this.width, this.height, 0);
             this._scaleView.setExtents(center, exts);
             this._scaleView.layout();
@@ -459,6 +461,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
         // band rim
         if (this._bandView.visible) {
+            this._bandView.setStyleOrClass(m.band.style);
             this._bandView.measure(this.doc, m.band, this.width, this.height, 0);
             this._bandView.setExtends(center, exts);
             this._bandView.layout();
