@@ -14,6 +14,13 @@ import { Utils } from "../common/Utils";
 import { PaletteMode } from "./ChartTypes";
 
 export interface IAssetItem {
+    /**
+     * 에셋 id.<br/>
+     * 시리즈나 축에서 이 에셋 항목을 참조할 때 사용하는 키로서
+     * 차트 내에서 유일한 문자열로 반드시 지정해야 한다.
+     * 
+     * @config
+     */
     id: string;
 }
 
@@ -285,10 +292,23 @@ export class Pattern extends AssetItem<IPattern> {
 }
 
 /**
+ * 색상 목록을 미리 지정하고 series.pointColors 등에 적용할 수 있다.<br>
+ * 목록에서 색상을 꺼내오는 방식은 {@link model} 속성으로 지정한다.
+ * 
  * @config chart.asset[type=colors]
  */
 export interface IColorList extends IAssetItem {
+    /**
+     * 색상 목록에서 색을 꺼내오는 방식.
+     * 
+     * @config
+     */
     mode?: PaletteMode;
+    /**
+     * 색상 목록.
+     * 
+     * @config
+     */
     colors: string[];
 }
 
@@ -309,15 +329,18 @@ export class ColorList extends AssetItem<IColorList> {
     // methods
     //-------------------------------------------------------------------------
     prepare(): ColorList {
-        if (this.source.mode === PaletteMode.RANDOM) {
+        const src = this.source;
+
+        this._colors = isArray(src.colors) ? src.colors.slice() : [];
+
+        if (src.mode === PaletteMode.RANDOM) {
             this._index = -1;
         } else {
-            if (this.source.mode === PaletteMode.SHUFFLE) {
+            if (src.mode === PaletteMode.SHUFFLE) {
                 Utils.shuffle(this._colors);
             }
             this._index = 0;
         }
-        this._colors = isArray(this.source.colors) ? this.source.colors : [];
         return this;
     }
 

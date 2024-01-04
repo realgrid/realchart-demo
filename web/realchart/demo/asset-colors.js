@@ -7,13 +7,13 @@ const config = {
     assets: [{
         id: 'cols1',
         type: 'colors',
-        colors: ['#888', '#aaa', '#bbb', '#ccc', '#ddd']
+        colors: ['#888', '#aaa', '#bbb', '#ddd', '#eee']
     }, {
         id: 'cols2',
-        colors: ['#88f', '#aaf', '#bbf', '#ccf', '#ddf']
+        colors: ['#88f', '#aaf', '#bbf', '#ddf', '#eef']
     }, {
         id: 'cols3',
-        colors: ['#f88', '#faa', '#fbb', '#fcc', '#fdd']
+        colors: ['#f88', '#faa', '#fbb', '#fdd', '#fee']
     }],
     options: {
         // animatable: false
@@ -109,6 +109,12 @@ function setActions(container) {
         config.series.pointColors = _getValue(e);
         chart.load(config);
     }, 'cols1');
+    createListBox(container, "assets.colors.mode", ['normal', 'shuffle', 'random'], function (e) {
+        config.assets.forEach(colors => {
+            colors.mode = _getValue(e);
+        })
+        chart.load(config);
+    }, 'normal');
 }
 
 function init() {
