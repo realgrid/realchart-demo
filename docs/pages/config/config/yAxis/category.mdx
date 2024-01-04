@@ -95,6 +95,10 @@ plot 영역이나 먼저 표시되는 축 사이의 여백 크기.
 ### position: `'base'|'normal'|'opposite'{:js}`[#position]
 표시 위치.
 기본적으로 상대 축의 원점 쪽에 표시된다.  
+- `'base'` 상대 축의 baseValue 지점에 표시된다.      [주의]   1. 축에 연결된 시리즈들이 BarSeries 계열일 때만 가능하다.  2. 차트의 X축 하나에만 적용할 수 있다. 두번째로 지정된 축의 속성은 `normal` 로 적용된다.  3. 상대 축이 **linear** 가 아니거나 [baseValue](/config/config/xAxis#basevalue) 가 min 보다 작거나 max보다 크면 이 값은 무시되고, `normal` 로 적용된다.
+- `'normal'` X축은 아래쪽에 수평으로, Y축은 왼쪽에 수직으로 표시된다.     [inverted](/config/config#inverted) 이면 Y축이 아래쪽에 수평으로, X축은 왼쪽에 수직으로 표시된다.
+- `'opposite'` X축은 위쪽에 수평으로, Y축은 오른쪽에 수직으로 표시된다.     [inverted](/config/config#inverted) 이면 Y축이 위쪽에 수평으로, X축은 오른쪽에 수직으로 표시된다.
+
 <DefaultValue value="'normal'" contents=""></DefaultValue>
 ### reversed: `boolean{:js}`[#reversed]
 <Content type="keyword" value="true"></Content>면 반대 방향으로 point 위치들이 지정된다.  
@@ -122,7 +126,21 @@ ex) 0.5로 지정하면 bar 시리즈의 첫 째 bar가 12시 위치에 표시�
 <DefaultValue value="0" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
-<DefaultValue value="undefined" contents=""></DefaultValue>
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### [tick](./category/tick)
 축에 표시되는 tick 위치와 표시 마크에 관한 설정 모델.  
 

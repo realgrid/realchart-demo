@@ -1,0 +1,47 @@
+## **trendline**
+시리즈 추세선 모델.
+## Properties
+
+### curved: `boolean{:js}`[#curved]
+<Content type="keyword" value="true"></Content>로 지정하면 spline 곡선으로 지점들을 연결한다.
+
+지정하지 않으면 [type](#type) 이 <Content type="expression" value="'logarithmic', 'exponential', 'power'"></Content>일 때 곡선으로 그린다.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### movingInterval: `number{:js}`[#movingInterval]
+이동 평균 유형의 계산 간격.  
+<DefaultValue value="2" contents=""></DefaultValue>
+### resolution: `number{:js}`[#resolution]
+추세선 정밀도.
+
+데이터포인트 사이에 계산될 지점의 개수.  
+<DefaultValue value="5" contents=""></DefaultValue>
+### style: `SVGStyles | string{:js}`[#style]
+스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
+### type: `'exponential'|'linear'|'logarithmic'|'movingAverage'|'polynomial'|'power'{:js}`[#type]
+추세선 유형.  
+- `'exponential'` 지수.
+- `'linear'` 선형.
+- `'logarithmic'` 로그.
+- `'movingAverage'` 이동 평균.
+- `'polynomial'` 다항.
+- `'power'` 멱급수.
+
+<DefaultValue value="'linear'" contents=""></DefaultValue>
+### visible: `boolean{:js}`[#visible]
+표시 여부.  
+<DefaultValue value="true" contents=""></DefaultValue>

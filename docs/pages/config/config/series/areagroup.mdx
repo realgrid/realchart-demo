@@ -11,10 +11,28 @@
 <DefaultValue value="100" contents=""></DefaultValue>
 ### lineType: `'default'|'spline'|'step'{:js}`[#lineType]
 이 그룹에 포함된 시리즈들의 line 종류.  
+- `'default'` 직선.
+- `'spline'` 점들을 연결하는 스플라인 곡선.
+- `'step'` 계단형 직선.
+
 <DefaultValue value="'default'" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
-<DefaultValue value="undefined" contents=""></DefaultValue>
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### tooltipFooter: `string{:js}`[#tooltipFooter]
 그룹 툴팁의 아래쪽에 표시되는 텍스트.  
 <DefaultValue value="undefined" contents=""></DefaultValue>

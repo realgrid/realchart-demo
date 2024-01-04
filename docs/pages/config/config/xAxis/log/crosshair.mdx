@@ -16,12 +16,29 @@ RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 <DefaultValue value="true" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
-<DefaultValue value="undefined" contents=""></DefaultValue>
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### timeFormat: `string{:js}`[#timeFormat]
 표시되는 값이 날짜(시간)일 때 사용되는 표시 형식.  
 <DefaultValue value="'yyyy-MM-dd" contents="HH:mm'"></DefaultValue>
 ### type: `'auto'|'line'{:js}`[#type]
 표시 방식.  
+- `'auto'` 카테고리 축이면 bar, 연속 축이면 line으로 표시한다.
+- `'line'` 항상 line으로 표시한다.
+
 <DefaultValue value="'auto'" contents=""></DefaultValue>
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  

@@ -781,91 +781,86 @@ class MDGenerater {
       `${type ? ': `' + type + '{:js}`' : ''}` +
       `[#${name}]\n`;
 
-    if (!content) {
-      if (dtype instanceof Array) {
-        // dtype.map(t => {
-        //   if (t.type == 'reference') {
-        //     t.name != 'Date' && console.warn('Not Implemented union references', t);
-        //     // Date
-        //     return t.name;
-        //   } else if (t.type == 'array') {
-        //     // console.warn(`[WARN] Unexpected type in array`, t)
-        //   } else if (t.type == 'intrinsic') {
-        //     // console.warn(`[WARN] Unexpected type in array`, t)
-        //   } else if (Object.keys(t.type || {}).length) {
-        //     // console.warn(`[WARN] Unexpected type in array`, t)
-        //   }
-        // });
-      } else if (dtype?.type == 'reference') {
-        const v = this.classMap[dtype.name];
-        if (!v)
-          return console.warn(`[WARN] Not found classMap of ${dtype.name}`);
-        switch (v.kind) {
-          case ReflectionKind.Class:
-            return this._makeClassProp(param, v);
-          case ReflectionKind.Enum:
-            extraLines = this._makeEnums({ name, enums: v.props });
-            break;
+    if (dtype instanceof Array) {
+      // dtype.map(t => {
+      //   if (t.type == 'reference') {
+      //     t.name != 'Date' && console.warn('Not Implemented union references', t);
+      //     // Date
+      //     return t.name;
+      //   } else if (t.type == 'array') {
+      //     // console.warn(`[WARN] Unexpected type in array`, t)
+      //   } else if (t.type == 'intrinsic') {
+      //     // console.warn(`[WARN] Unexpected type in array`, t)
+      //   } else if (Object.keys(t.type || {}).length) {
+      //     // console.warn(`[WARN] Unexpected type in array`, t)
+      //   }
+      // });
+    } else if (dtype?.type == 'reference') {
+      const v = this.classMap[dtype.name];
+      if (!v) return console.warn(`[WARN] Not found classMap of ${dtype.name}`);
+      switch (v.kind) {
+        case ReflectionKind.Class:
+          const _content = this._makeClassProp(param, v);
+          if (!content) return _content;
+          break;
+        case ReflectionKind.Enum:
+          extraLines = this._makeEnums({ name, enums: v.props });
+          break;
+        case ReflectionKind.Interface:
+          const { props, content: itfContent } = this.classMap[type];
+          const itfContents = this._makeInterfaceProps({
+            name: type,
+            content: itfContent,
+            props,
+          });
+          extraLines = itfContents;
+          break;
+        case ReflectionKind.TypeAlias:
+          // union에 reference가 있고, Interface 이면,
+          v.type.types?.map(({ name, type }) => {
+            // if (type.target)
+            if (type == 'reference') {
+              const { kind, props, content: itfContent } = this.classMap[name];
+              if (kind == ReflectionKind.Interface) {
+                extraLines += this._makeInterfaceProps({
+                  name,
+                  content: itfContent,
+                  props,
+                });
+              } else {
+                // class??
+                console.warn(`[WARN] Unexpected union alias ${name}`, type);
+              }
+            } else if (type != 'intrinsic') {
+              console.warn(`[DEBUG] TODO: ${name}`, type);
+            }
+          });
+          // callback function
+          const { declaration } = v;
+          if (declaration) console.debug({ declaration });
+          break;
+        default:
+          console.warn('[WARN] Unexpected prop type', v);
+      }
+    } else if (dtype?.type == 'array') {
+      const {
+        elementType: { name: ename, type: etype },
+      } = dtype;
+      if (etype == 'reference') {
+        const ref = this.classMap[ename];
+        switch (ref?.kind) {
           case ReflectionKind.Interface:
-            const { props, content: itfContent } = this.classMap[type];
-            const itfContents = this._makeInterfaceProps({
-              name: type,
+            const { props, content: itfContent } = ref;
+            extraLines = this._makeInterfaceProps({
+              name: ename,
               content: itfContent,
               props,
             });
-            extraLines = itfContents;
             break;
-          case ReflectionKind.TypeAlias:
-            // union에 reference가 있고, Interface 이면,
-            v.type.types?.map(({ name, type }) => {
-              // if (type.target)
-              if (type == 'reference') {
-                const {
-                  kind,
-                  props,
-                  content: itfContent,
-                } = this.classMap[name];
-                if (kind == ReflectionKind.Interface) {
-                  extraLines += this._makeInterfaceProps({
-                    name,
-                    content: itfContent,
-                    props,
-                  });
-                } else {
-                  // class??
-                  console.warn(`[WARN] Unexpected union alias ${name}`, type);
-                }
-              } else if (type != 'intrinsic') {
-                console.warn(`[DEBUG] TODO: ${name}`, type);
-              }
-            });
-            // callback function
-            const { declaration } = v;
-            if (declaration) console.debug({ declaration });
-            break;
+          case ReflectionKind.Class:
+            return this._makeClassProp(param, ref);
           default:
-            console.warn('[WARN] Unexpected prop type', v);
-        }
-      } else if (dtype?.type == 'array') {
-        const {
-          elementType: { name: ename, type: etype },
-        } = dtype;
-        if (etype == 'reference') {
-          const ref = this.classMap[ename];
-          switch (ref?.kind) {
-            case ReflectionKind.Interface:
-              const { props, content: itfContent } = ref;
-              extraLines = this._makeInterfaceProps({
-                name: ename,
-                content: itfContent,
-                props,
-              });
-              break;
-            case ReflectionKind.Class:
-              return this._makeClassProp(param, ref);
-            default:
-              break;
-          }
+            break;
         }
       }
     }

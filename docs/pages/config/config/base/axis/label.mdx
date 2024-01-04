@@ -12,6 +12,11 @@
 기본 설정이나 [step](#step) , [rows](#rows) , [rotation](#rotation) 속성들을 명시적으로 설정한 경우에도
 label들이 본래 차지하는 공간을 초과할 때,
 label들을 재배치하는 방식을 지정한다.  
+- `'none'` label들이 겹치도록 놔둔다.
+- `'rotate'` -45도 회전시킨다.
+- `'rows'` label들이 겹치지 않도록 여러 줄로 나누어 배치한다.
+- `'step'` label들이 겹치지 않도록 건너 뛰면서 배치한다.     [startStep](#startStep) 으로 지정된 step부터 배치된다.
+
 <DefaultValue value="'rotate'" contents=""></DefaultValue>
 ### autoContrast: `boolean{:js}`[#autoContrast]
 텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
@@ -60,13 +65,41 @@ darkStyle이 지정되지 않으면 <Content type="expression" value="'rct-text-
 <DefaultValue value="ChartTextEffect.NONE" contents=""></DefaultValue>
 ### firstStyle: `SVGStyles | string{:js}`[#firstStyle]
 첫번째 tick 라벨에 추가로 적용되는 스타일.  
-<DefaultValue value="undefined" contents=""></DefaultValue>
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### firstText: `string{:js}`[#firstText]
 첫번째 tick 라벨에 표시될 텍스트.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### lastStyle: `SVGStyles | string{:js}`[#lastStyle]
 마지막 tick 라벨에 추가로 적용되는 스타일.  
-<DefaultValue value="undefined" contents=""></DefaultValue>
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### lastText: `string{:js}`[#lastText]
 마지막 tick 라벨에 표시될 텍스트.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
@@ -116,7 +149,21 @@ label 표시 간격.
 <DefaultValue value="0" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
-<DefaultValue value="undefined" contents=""></DefaultValue>
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### suffix: `string{:js}`[#suffix]
 label 문자열 끝에 추가되는 문자열.  
 <DefaultValue value="undefined" contents=""></DefaultValue>

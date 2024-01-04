@@ -8,14 +8,36 @@ visible 기본값이 <Content type="keyword" value="undefined"></Content>이고,
 수평 배치.
 값을 지정하지 않으면, 기본값이 [location](#location) 이 <Content type="expression" value="'plot'일 때는 'left'"></Content>,
 <Content type="expression" value="'left', 'right'일 때는 'center'"></Content>이다.  
+- `'center'` 
+- `'left'` 
+- `'right'` 
+
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### alignBase: `'chart'|'parent'|'plot'{:js}`[#alignBase]
 legend 정렬 기준.  
+- `'chart'` 
+- `'parent'` 상위 모델이 존재하는 경우 상위 모델 영역 기준.    상위가 없으면 기본값(대부분 <Content type="expression" value="'plot'"></Content>)과 동일.  ex) subtitle인 경우 title 기준.
+- `'plot'` 
+
 <DefaultValue value="'plot'" contents=""></DefaultValue>
 ### backgroundStyle: `SVGStyles | string{:js}`[#backgroundStyle]
 배경 스타일 셋.
 배경 색상 및 경계선 스타일을 지정할 수 있다.  
-<DefaultValue value="undefined" contents=""></DefaultValue>
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### gap: `number{:js}`[#gap]
 [location](#location) 이 <Content type="expression" value="'plot'"></Content>이 아닐 때,
 legend view와 나머지 chart 영역 사이의 gap.  
@@ -25,18 +47,32 @@ legend 아이템들 사이의 간격.
 <DefaultValue value="8" contents=""></DefaultValue>
 ### itemsAlign: `'center'|'end'|'start'{:js}`[#itemsAlign]
 한 라인의 item들이 배치되는 위치.  
+- `'center'` 수평 혹은 수직의 중앙으로 몰아서 배치한다.
+- `'end'` 수평일 때 오른쪽, 수직일 때는 아래쪽으로 몰아서 배치한다.
+- `'start'` 수평일 때 왼쪽, 수직일 때는 위쪽으로 몰아서 배치한다.
+
 <DefaultValue value="'center'" contents=""></DefaultValue>
 ### itemsPerLine: `number{:js}`[#itemsPerLine]
 한 줄 당 표시할 최대 legend 항목 수.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### layout: `'auto'|'horizontal'|'vertical'{:js}`[#layout]
 item 배치 방향.  
+- `'auto'` legend가 차트 좌우에 배치되면 item들을 수직으로 배치.  legend가 차트 상하에 배치되면 item들을 수평으로 배치.
+- `'horizontal'` item들을 수평으로 배치
+- `'vertical'` item들을 수직으로 배치
+
 <DefaultValue value="'auto'" contents=""></DefaultValue>
 ### lineGap: `number{:js}`[#lineGap]
 라인 사이의 간격.  
 <DefaultValue value="4" contents=""></DefaultValue>
 ### location: `'bottom'|'left'|'plot'|'right'|'top'{:js}`[#location]
 표시 위치.  
+- `'bottom'` 차트 본체 아래 표시한다.
+- `'left'` 차트 본체 왼쪽에 표시한다.
+- `'plot'` 차트 본체 영역 내부에 표시한다.
+- `'right'` 차트 본체 오른쪽에 표시한다.
+- `'top'` 차트 타이틀 아래 표시한다.
+
 <DefaultValue value="'bottom'" contents=""></DefaultValue>
 ### markerGap: `number{:js}`[#markerGap]
 marker와 text사이의 간격.  
@@ -63,7 +99,21 @@ marker 표시 여부.
 <DefaultValue value="0" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
-<DefaultValue value="undefined" contents=""></DefaultValue>
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### useTextColor: `boolean{:js}`[#useTextColor]
 범례 항목의 텍스트에도 marker와 동일한 색상을 적용한다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
@@ -71,6 +121,10 @@ marker 표시 여부.
 수직 배치.
 값을 지정하지 않으면, 기본값이 [location](#location) 이 <Content type="expression" value="'plot'일 때는 'top'"></Content>,
 <Content type="expression" value="'top', 'bottom'일 때는 'middle'"></Content>이다.  
+- `'bottom'` 
+- `'middle'` 
+- `'top'` 
+
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  

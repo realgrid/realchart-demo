@@ -18,6 +18,8 @@ RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 
 ### endFit[#endFit]
 축 끝 위치에 tick 표시 여부. [strictMax](#strictmax) 가 설정되면 무시되고 `value` 로 적용된다.  
+
+
 <DefaultValue value="AxisFit.DEFAULT" contents=""></DefaultValue>
 ### grid[#grid]
 visible 기본값이 <Content type="keyword" value="undefined"></Content>이다.
@@ -84,6 +86,10 @@ data point의 이 축 값이 <Content type="keyword" value="NaN"></Content>일 �
 ### position: `'base'|'normal'|'opposite'{:js}`[#position]
 표시 위치.
 기본적으로 상대 축의 원점 쪽에 표시된다.  
+- `'base'` 상대 축의 baseValue 지점에 표시된다.      [주의]   1. 축에 연결된 시리즈들이 BarSeries 계열일 때만 가능하다.  2. 차트의 X축 하나에만 적용할 수 있다. 두번째로 지정된 축의 속성은 `normal` 로 적용된다.  3. 상대 축이 **linear** 가 아니거나 [baseValue](/config/config/xAxis#basevalue) 가 min 보다 작거나 max보다 크면 이 값은 무시되고, `normal` 로 적용된다.
+- `'normal'` X축은 아래쪽에 수평으로, Y축은 왼쪽에 수직으로 표시된다.     [inverted](/config/config#inverted) 이면 Y축이 아래쪽에 수평으로, X축은 왼쪽에 수직으로 표시된다.
+- `'opposite'` X축은 위쪽에 수평으로, Y축은 오른쪽에 수직으로 표시된다.     [inverted](/config/config#inverted) 이면 Y축이 위쪽에 수평으로, X축은 오른쪽에 수직으로 표시된다.
+
 <DefaultValue value="'normal'" contents=""></DefaultValue>
 ### reversed: `boolean{:js}`[#reversed]
 <Content type="keyword" value="true"></Content>면 반대 방향으로 point 위치들이 지정된다.  
@@ -105,6 +111,8 @@ Polar 차트에서 사용될 때 시작 각도.
 <DefaultValue value="0" contents=""></DefaultValue>
 ### startFit[#startFit]
 축 시작 위치에 tick 표시 여부. [strictMin](#strictmin) 이 설정되면 `value` 로 적용된다.  
+
+
 <DefaultValue value="AxisFit.DEFAULT" contents=""></DefaultValue>
 ### strictMax: `number{:js}`[#strictMax]
 무조건 적용되는 최대값.
@@ -118,7 +126,21 @@ minPadding도 적용되지 않는다.
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
-<DefaultValue value="undefined" contents=""></DefaultValue>
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### [tick](./time/tick)
 축에 표시되는 tick 위치와 표시 마크에 관한 설정 모델.  
 

@@ -4,9 +4,9 @@
 설정 모델 등에서 <Content type="expression" value="'body'"></Content>로 접근한다.
 ## Properties
 
-### annotation: `Annotation[]{:js}`[#annotation]
-[annotation](/config/config#annotation) 설정을 Body에 할 수도 있다.  
-<DefaultValue value="undefined" contents=""></DefaultValue>
+### [annotation](/config/config/annotation)
+[annotation](/config/config#annotation) 설정을 Body에 할 수도 있다.
+
 ### centerX: `string | number{:js}`[#centerX]
 차트가 극좌표(polar)일 때 중심 x 좌표.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
@@ -24,7 +24,21 @@
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
-<DefaultValue value="undefined" contents=""></DefaultValue>
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
 <DefaultValue value="true" contents=""></DefaultValue>
@@ -33,4 +47,6 @@ Zoom 리셋 버튼 설정 모델.
 <DefaultValue value="..." contents=""></DefaultValue>
 ### zoomType[#zoomType]
 plot 영역 마우스 드래깅을 통한 zooming 방식.  
+
+
 <DefaultValue value="ZoomType.NONE" contents=""></DefaultValue>
