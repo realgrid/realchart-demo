@@ -14,14 +14,17 @@
 export enum PaletteMode {
     /**
      * 순서대로 가져오고 끝에 도달하면 처음으로 돌아간다.
+     * @config
      */
     NORMAL = 'normal',
     /**
      * 첫 색상을 가져오기 전 항목들을 섞는다.
+     * @config
      */
     SHUFFLE = 'shuffle',
     /**
      * 임의 위치의 색상을 가져온다.
+     * @config
      */
     RANDOM = 'random'
 }

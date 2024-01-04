@@ -5,9 +5,9 @@
 ### animatable: `boolean{:js}`[#animatable]
 [value](#value) 변화를 애니메이션으로 표현한다.  
 <DefaultValue value="true" contents=""></DefaultValue>
-### [band](./circle/band)
-게이지 밴드 모델.  
-
+### band[#band]
+게이지 본체 주변이나 내부에 값 영역들을 구분해서 표시하는 band의 모델.  
+<DefaultValue value="..." contents=""></DefaultValue>
 ### bottom: `string | number{:js}`[#bottom]
 plot 영역의 아래쪽 모서리와 widget 사이의 간격.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
@@ -25,9 +25,9 @@ plot 영역의 아래쪽 모서리와 widget 사이의 간격.
 ### duration: `number{:js}`[#duration]
 Animation duration.  
 <DefaultValue value="500" contents=""></DefaultValue>
-### [hand](./circle/hand)
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
-
+### hand[#hand]
+게이지 바늘 설정 모델.  
+<DefaultValue value="..." contents=""></DefaultValue>
 ### height: `string | number{:js}`[#height]
 게이지 높이.
 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.  
@@ -39,24 +39,10 @@ RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### innerStyle: `SVGStyles | string{:js}`[#innerStyle]
 내부 원에 적용할 스타일셋 혹은 class selector.  
-- `SVGStyles{:js}` 
-
-| Name | Type | Optional |  
-| ----- | ----- | ----- |  
-| fill | `string{:js}` | true |  
-| fillOpacity | `string{:js}` | true |  
-| fontFamily | `string{:js}` | true |  
-| fontSize | `string{:js}` | true |  
-| fontStyle | `string{:js}` | true |  
-| fontWeight | `string{:js}` | true |  
-| rx | `string{:js}` | true |  
-| stroke | `string{:js}` | true |  
-| strokeDasharray | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |  
-| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
-### [label](./circle/label)
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
-
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### label[#label]
+게이지 중앙에 표시되는 label 설정 모델  
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### left: `string | number{:js}`[#left]
 plot 영역의 왼쪽 모서리와 widget 사이의 간격.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
@@ -72,9 +58,9 @@ group에 포함되면 이 값 대신 group의 최소값이 사용된다.
 게이지 이름.
 동적으로 게이지를 다루기 위해서는 반드시 지정해야 한다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
-### [pin](./circle/pin)
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
-
+### pin[#pin]
+게이지 중앙에 표시되는 핀 설정 모델.  
+<DefaultValue value="..." contents=""></DefaultValue>
 ### radius: `string | number{:js}`[#radius]
 게이지 원호의 반지름.
 픽셀 단위의 크기나, plot 영역 전체 크기(너비와 높이 중 작은 값)에 대한 상대적 크기로 지정할 수 있다.
@@ -83,12 +69,12 @@ RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 ### right: `string | number{:js}`[#right]
 plot 영역의 오른쪽 모서리와 widget 사이의 간격.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
-### [rim](./circle/rim)
-바탕 rim.  
-
-### [scale](./circle/scale)
-Gauge scale.  
-
+### rim[#rim]
+게이지 배경 원호 테두리 설정 모델.  
+<DefaultValue value="..." contents=""></DefaultValue>
+### scale[#scale]
+스케일 모델.  
+<DefaultValue value="..." contents=""></DefaultValue>
 ### size: `string | number{:js}`[#size]
 [width](#width) 와 [height](#height) 를 동시에 설정한다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
@@ -99,21 +85,7 @@ Gauge scale.
 <DefaultValue value="0" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
-- `SVGStyles{:js}` 
-
-| Name | Type | Optional |  
-| ----- | ----- | ----- |  
-| fill | `string{:js}` | true |  
-| fillOpacity | `string{:js}` | true |  
-| fontFamily | `string{:js}` | true |  
-| fontSize | `string{:js}` | true |  
-| fontStyle | `string{:js}` | true |  
-| fontWeight | `string{:js}` | true |  
-| rx | `string{:js}` | true |  
-| stroke | `string{:js}` | true |  
-| strokeDasharray | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |  
-| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### sweepAngle: `number{:js}`[#sweepAngle]
 게이지 원호 전체 각도.
 0 ~ 360 사이의 값으로 지정해야 한다.
@@ -127,9 +99,9 @@ plot 영역의 위쪽 모서리와 widget 사이의 간격.
 ### value: `number{:js}`[#value]
 현재값.  
 <DefaultValue value="0" contents=""></DefaultValue>
-### [valueRim](./circle/valueRim)
-값을 표시하는 rim.  
-
+### valueRim[#valueRim]
+게이지의 값 원호 테두리 설정 모델.  
+<DefaultValue value="..." contents=""></DefaultValue>
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
 <DefaultValue value="true" contents=""></DefaultValue>

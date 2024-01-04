@@ -29,21 +29,7 @@ Bar 시리즈.<br/>
 <DefaultValue value="0" contents=""></DefaultValue>
 ### belowStyle: `SVGStyles | string{:js}`[#belowStyle]
 [baseValue](#basevalue) 혹은 y축의 baseValue보다 작은 쪽의 point들에 적용되는 스타일.  
-- `SVGStyles{:js}` 
-
-| Name | Type | Optional |  
-| ----- | ----- | ----- |  
-| fill | `string{:js}` | true |  
-| fillOpacity | `string{:js}` | true |  
-| fontFamily | `string{:js}` | true |  
-| fontSize | `string{:js}` | true |  
-| fontStyle | `string{:js}` | true |  
-| fontWeight | `string{:js}` | true |  
-| rx | `string{:js}` | true |  
-| stroke | `string{:js}` | true |  
-| strokeDasharray | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |  
-| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### bottomRadius: `number{:js}`[#bottomRadius]
 지정한 반지름 크기로 데이터포인트 bar의 아래쪽 모서리를 둥글게 표시한다.
 최대값이 bar 폭으로 절반으로 제한되므로 아주 큰 값을 지정하면 반원으로 표시된다.  
@@ -92,9 +78,9 @@ group에 포함되면 group의 noClip 설정을 따른다.
 
 색 배열로 지정하거나, <Content type="expression" value="'colors'"></Content> asset으로 등록된 이름을 지정할 수 있다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
-### [pointLabel](./bar/pointLabel)
-Series data point label options.  
-
+### pointLabel[#pointLabel]
+데이터포인트 label 설정 모델.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### pointPadding: `number{:js}`[#pointPadding]
 이 시리즈의 point가 차지하는 영역 중에서 point bar 양쪽 끝에 채워지는 빈 영역의 크기.
 
@@ -118,21 +104,7 @@ point가 차지할 원래 크기에 대한 상대 값으로서,
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
-- `SVGStyles{:js}` 
-
-| Name | Type | Optional |  
-| ----- | ----- | ----- |  
-| fill | `string{:js}` | true |  
-| fillOpacity | `string{:js}` | true |  
-| fontFamily | `string{:js}` | true |  
-| fontSize | `string{:js}` | true |  
-| fontStyle | `string{:js}` | true |  
-| fontWeight | `string{:js}` | true |  
-| rx | `string{:js}` | true |  
-| stroke | `string{:js}` | true |  
-| strokeDasharray | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |  
-| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### tooltipText: `string{:js}`[#tooltipText]
 데이터포인트 툴팁 텍스트.  
 <DefaultValue value="'<b>${name}</b><br>${series}:<b>" contents="${yValue}</b>'"></DefaultValue>
@@ -141,9 +113,9 @@ point가 차지할 원래 크기에 대한 상대 값으로서,
 
 최대값이 bar 폭으로 절반으로 제한되므로 아주 큰 값을 지정하면 반원으로 표시된다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
-### [trendline](./bar/trendline)
-시리즈 추세선 모델.  
-
+### trendline[#trendline]
+추세선 설정 모델.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### viewRangeValue: `'x' | 'y' | 'z'{:js}`[#viewRangeValue]
 ranges가 적용되는 값.
 
