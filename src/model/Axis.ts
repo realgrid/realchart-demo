@@ -996,7 +996,7 @@ export class AxisZoom {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    resize(start: number, end: number): boolean {
+    resize(start: number, end: number, minSize: number): boolean {
         start = isNaN(start) ? this.start : maxv(this.min, minv(this.max, start));
         end = isNaN(end) ? this.end : maxv(start, minv(this.max, end));
 
@@ -1007,7 +1007,9 @@ export class AxisZoom {
         }
 
         // 최소 크기를 갖게 한다. #244 #245
-        if ((start !== this.start || end !== this.end) && (end - start > (this.max - this.min) * 0.05)) {
+        const len = this.max - this.min;
+
+        if ((start !== this.start || end !== this.end) && end > start && (isNaN(minSize) || (end - start) / len >= minSize) && (len / (end - start) > 1)) {
             this.start = start;
             this.end = end;
             return true;
@@ -1462,10 +1464,10 @@ export abstract class Axis extends ChartItem implements IAxis {
         return this._zoom;
     }
     
-    zoom(start: number, end: number): boolean {
+    zoom(start: number, end: number, minSize = NaN): boolean {
         const zoom = this._prepareZoom();
 
-        if (zoom.resize(start, end)) {
+        if (zoom.resize(start, end, minSize)) {
             if (zoom.isFull()) {
                 this._zoom = null;
             }

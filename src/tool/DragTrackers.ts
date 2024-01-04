@@ -184,24 +184,25 @@ export class NavigatorHandleTracker extends ChartDragTracker {
         let p = view.svgToElement(x, y).x - this._startOff;
         const len = axis._zoom.total();// view.model.axisLen();
         const min = axis._zoom.min;//axisMin();
+        const minSize = view.model.minSize;
 
         if (this._handleView._vertical) {
             if (this._isStart) {
             } else {
             }
         } else {
-            // if (p < 750) debugger;
+            
             if (this._isStart) {
                 if (p > 0) {
-                    axis.zoom(p * len / view.width + min, NaN);
+                    axis.zoom(p * len / view.width + min, NaN, minSize);
                 } else {
-                    axis.zoom(min, NaN);
+                    axis.zoom(min, NaN, minSize);
                 }
             } else {
                 if (p > 0 && p < view.width) {
-                    axis.zoom(NaN, p * len / view.width + min);
+                    axis.zoom(NaN, p * len / view.width + min, minSize);
                 } else if (p >= view.width) {
-                    axis.zoom(NaN, axis._zoom.max);
+                    axis.zoom(NaN, axis._zoom.max, minSize);
                 }
             }
         }

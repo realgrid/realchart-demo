@@ -351,7 +351,9 @@ export class DataPointCollection {
                 x1 = maxv(x1 - 1, 0);
                 x2 = minv(x2 + 1, len - 1);
             } else {
-                x1 = maxv(0, Math.floor(x1) - 1);
+                // x1 = maxv(0, Math.floor(x1) - 1);
+                // x2 = minv(Math.ceil(x2), len - 1);
+                x1 = maxv(0, Math.floor(x1));
                 x2 = minv(Math.ceil(x2), len - 1);
             }
             return this._points.slice(x1, x2 + 1);
