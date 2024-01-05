@@ -203,12 +203,6 @@ export class RcChartControl {
     get type(): string {
         return this.$_p.model.type;
     }
-    // set type(value: string) {
-    //     if (value !== this.$_p.model.type) {
-    //         this.$_p.model.type = value;
-    //         this.$_p.invalidateLayout();
-    //     }
-    // }
     /**
      * 
      * 기본 게이지 종류.\
@@ -220,12 +214,6 @@ export class RcChartControl {
     get gaugeType(): string {
         return this.$_p.model.gaugeType;
     }
-    // set gaugeType(value: string) {
-    //     if (value !== this.$_p.model.gaugeType) {
-    //         this.$_p.model.gaugeType = value;
-    //         this.$_p.invalidateLayout();
-    //     }
-    // }
     /**
      * true면 x축과 y축을 뒤바꿔 표시한다.\
      * 즉, true면 x축이 수직, y축이 수평으로 배치된다.
@@ -233,12 +221,6 @@ export class RcChartControl {
     get inverted(): boolean {
         return this.$_p.model.inverted;
     }
-    // set inverted(value: boolean) {
-    //     if (value !== this.$_p.model.inverted) {
-    //         this.$_p.model.inverted = value;
-    //         this.$_p.invalidateLayout();
-    //     }
-    // }
     /**
      * true면 차트가 {@link https://en.wikipedia.org/wiki/Polar_coordinate_system 극좌표계}로 표시된다.
      * 기본은 {@link https://en.wikipedia.org/wiki/Cartesian_coordinate_system 직교좌표계}이다.
@@ -254,13 +236,12 @@ export class RcChartControl {
     get polar(): boolean {
         return this.$_p.model.polar;
     }
-    // set polar(value: boolean) {
-    //     if (value !== this.$_p.model.polar) {
-    //         this.$_p.model.polar = value;
-    //         this.$_p.invalidateLayout();
-    //     }
-    // }
-
+    /**
+     * @internal
+     * 
+     * @param axis 
+     * @param pos 
+     */
     scroll(axis: RcChartAxis, pos: number): void {
         this.$_p.scroll(axis.$_p as any, pos);
     }
@@ -270,6 +251,21 @@ export class RcChartControl {
     // }
   
     setParam(param: string, value: any, redraw?: boolean): void {
-        this.$_p.model?.setParam(param, value, redraw);
+        this.$_p.model.setParam(param, value, redraw);
+    }
+    /**
+     * 시리즈를 추가한다.
+     * 
+     * @param source 시리즈 설정 json.
+     * @param animate 애니메이션 실행 여부.
+     * @returns 생성된 시리즈 객체.
+     */
+    addSeries(source: any, animate = true): RcChartSeries {
+        const series = this.$_p.model.addSeries(source, animate);
+        return series && getObject(this._objects, series) as RcChartSeries;
+    }
+
+    removeSeries(series: string | RcChartSeries, animate = true): boolean {
+        return !!this.$_p.model.removeSeries(series instanceof RcChartSeries ? series.$_p as Series : series, animate);
     }
 }

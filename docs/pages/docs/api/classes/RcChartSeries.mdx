@@ -1,7 +1,7 @@
 ## RcChartSeries
 ### Extends
 - [RcNamedObject](../classes/RcNamedObject)
-차트 시리즈 모델들의 기반 클래스.\
+차트 시리즈 모델들의 기반 클래스.
 
 
 
@@ -9,7 +9,7 @@
 
 ## Properties
 ### name: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)[#name]
-config에서 설정해된 name을 리턴한다.\
+config에서 설정해된 name을 리턴한다.<br/>
 최초 설정한 이름은 변경할 수 없다.
 ### pointCount: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)[#pointCount]
 ### pointLabel: [RcChartObject](../classes/RcChartObject)[#pointLabel]
@@ -35,7 +35,7 @@ point label 모델.
 | ----------- | ----------- |
 | source | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) &#124; \< &#124; [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) &#124; > |
 ### findPoint(keys): IRcDataPoint[#findPoint]
-지정한 값들에 해당하는 첫번째 데이터포인트의 정보를 리턴한다.\
+지정한 값들에 해당하는 첫번째 데이터포인트의 정보를 리턴한다.<br/>
 전달되는 데이터포인트 정보는 리턴 시점의 복사본이다.
 
 
@@ -44,7 +44,7 @@ point label 모델.
 | ----------- | ----------- | ----------- |
 | keys | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 데이터포이터를 찾기 위한 값 목록. |
 ### get(prop): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)[#get]
-지정한 설정 값(들)을 가져온다.\
+지정한 설정 값(들)을 가져온다.<br/>
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
 
 ```js
@@ -65,7 +65,7 @@ Utils.log(chart.axis.get('title.text'));
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | '**.**'으로 구분되는 속성 경로. |
 ### getPointAt(xValue): IRcDataPoint[#getPointAt]
-지정한 x축 값에 위치한 첫번째 데이터포인트의 정보를 리턴한다.\
+지정한 x축 값에 위치한 첫번째 데이터포인트의 정보를 리턴한다.<br/>
 전달되는 데이터포인트 정보는 리턴 시점의 복사본이다.
 
 
@@ -94,8 +94,8 @@ xValue에 해당하는 첫번째 데이터포인터의 yValue를 리턴한다.
 | ----------- | ----------- |
 | point | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) &#124; \< &#124; IRcDataPoint &#124; > |
 ### set(prop, value, redraw): [RcChartObject](../classes/RcChartObject)[#set]
-지정한 속성의 값(들)을 설정한다.\
-지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다.\
+지정한 속성의 값(들)을 설정한다.<br/>
+지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다.<br/>
 또, 이 객체 자신을 리턴하므로 javascript에서 builder 패턴으로 설정 값들을 연속해서 지정할 수 있다.
 
 ```js
@@ -165,7 +165,7 @@ chart.getSeries('ser02').toggle('visible');
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 설정 속성 이름 |
 | redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](/docs/api/classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
 ### updateData(data): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#updateData]
-시리즈 data 원본을 변경한다.\
+시리즈 data 원본을 변경한다.<br/>
 [주의] x축이 카테고리 축이고, x축의 categories 속성이 명시적으로 설정되지 않았다면,
 이 함수 호출 후 카테고리가 변경될 수 있다.
 

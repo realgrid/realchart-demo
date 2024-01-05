@@ -1744,7 +1744,6 @@ export class PlottingItemCollection  {
         const chart = this.chart;
         const items: IPlottingItem[] = this._items = [];
         const series: Series[] = this._series = [];
-        const map = this._map = {};
 
         if (isArray(src)) {
             src.forEach((s, i) => {
@@ -1755,8 +1754,7 @@ export class PlottingItemCollection  {
         }
 
         // series
-        items.forEach((item, i) => {
-            item.index = i;
+        items.forEach(item => {
             if (item instanceof SeriesGroup) {
                 series.push(...item.series);
             } else if (item instanceof Series) {
@@ -1764,26 +1762,53 @@ export class PlottingItemCollection  {
             }
         })
 
+        this._map = {};
         this._widget = true;
+        series.forEach(ser => this.$_add(ser));
+    }
 
-        series.forEach(ser => {
-            if (this._widget && !(ser instanceof WidgetSeries)) {
-                this._widget = false;
-            }
-            if (ser.name) {
-                map[ser.name] = ser;
-            }
-            for (const ser2 of this._series) {
-                if (ser2 !== ser) {
-                    if (!ser.canMixWith(ser2)) {
-                        throw new Error('동시에 표시할 수 없는 시리즈들입니다: ' + ser._type() + ', ' + ser2._type());
-                    }
-                    if (ser._referOtherSeries(ser2)) {
-                        break;
-                    }
+    private $_add(ser: Series): void {
+        if (this._widget && !(ser instanceof WidgetSeries)) {
+            this._widget = false;
+        }
+        if (ser.name) {
+            this._map[ser.name] = ser;
+        }
+        for (const ser2 of this._series) {
+            if (ser2 !== ser) {
+                if (!ser.canMixWith(ser2)) {
+                    throw new Error('동시에 표시할 수 없는 시리즈들입니다: ' + ser._type() + ', ' + ser2._type());
+                }
+                if (ser._referOtherSeries(ser2)) {
+                    break;
                 }
             }
-        });
+        }
+    }
+
+    add(source: any): Series {
+        const series = this.$_loadItem(this.chart, source, this._series.length) as Series;
+
+        if (series) {
+            this._items.push(series);
+            this._series.push(series);
+            this.$_add(series);
+            return series;
+        }
+    }
+
+    remove(series: string | Series): Series {
+        let ser: Series;
+
+        if (series instanceof Series) ser = series;
+        else if (isString(series)) ser = this._map[series];
+
+        if (ser) {
+            if (ser.group) {
+            } else {
+            }
+            return ser;
+        }
     }
 
     updateData(values: any[]): void {

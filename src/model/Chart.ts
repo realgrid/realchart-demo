@@ -1032,6 +1032,26 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         }
     }
 
+    addSeries(source: any, animate: boolean): Series {
+        const series = this._series.add(source);
+
+        if (series) {
+            this.dataChanged();
+            this._modelChanged(series);
+        }
+        return series;
+    }
+
+    removeSeries(series: string | Series, animate: boolean): Series {
+        const ser = this._series.remove(series);
+
+        if (ser) {
+            this.dataChanged();
+            this._modelChanged(null);
+            return ser; 
+        }
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

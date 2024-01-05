@@ -53,7 +53,7 @@ export class RcChartObject {
     }
 
     /**
-     * 지정한 설정 값(들)을 가져온다.\
+     * 지정한 설정 값(들)을 가져온다.<br/>
      * 지정 가능한 설정 값 목록은 {@link config Configuration API 페이지}에서 확인할 수 있다. 
      * 
      * ```js
@@ -82,8 +82,8 @@ export class RcChartObject {
         }
     }
     /**
-     * 지정한 속성의 값(들)을 설정한다.\
-     * 지정 가능한 설정 값 목록은 {@link config Configuration API 페이지}에서 확인할 수 있다.\
+     * 지정한 속성의 값(들)을 설정한다.<br/>
+     * 지정 가능한 설정 값 목록은 {@link config Configuration API 페이지}에서 확인할 수 있다.<br/>
      * 또, 이 객체 자신을 리턴하므로 javascript에서 builder 패턴으로 설정 값들을 연속해서 지정할 수 있다.
      * 
      * ```js
@@ -265,10 +265,13 @@ export class RcChartAxis extends RcChartObject {
 export class RcPointLabel extends RcChartAxis {
 }
 
+/**
+ * {@link name | 이름}을 갖는 모델 base.
+ */
 export abstract class RcNamedObject extends RcChartObject {
 
     /**
-     * config에서 설정해된 name을 리턴한다.\
+     * config에서 설정해된 name을 리턴한다.<br/>
      * 최초 설정한 이름은 변경할 수 없다.
      */
     get name(): string {
@@ -287,7 +290,7 @@ export interface IRcDataPoint {
 }
 
 /**
- * 차트 시리즈 모델들의 기반 클래스.\
+ * 차트 시리즈 모델들의 기반 클래스.
  */
 export class RcChartSeries extends RcNamedObject {
 
@@ -324,7 +327,7 @@ export class RcChartSeries extends RcNamedObject {
     }
 
     /**
-     * 지정한 x축 값에 위치한 첫번째 데이터포인트의 정보를 리턴한다.\
+     * 지정한 x축 값에 위치한 첫번째 데이터포인트의 정보를 리턴한다.<br/>
      * 전달되는 데이터포인트 정보는 리턴 시점의 복사본이다.
      * 
      * @param xValue x값.
@@ -336,7 +339,7 @@ export class RcChartSeries extends RcNamedObject {
     }
 
     /**
-     * 지정한 값들에 해당하는 첫번째 데이터포인트의 정보를 리턴한다.\
+     * 지정한 값들에 해당하는 첫번째 데이터포인트의 정보를 리턴한다.<br/>
      * 전달되는 데이터포인트 정보는 리턴 시점의 복사본이다.
      * 
      * @param keys 데이터포이터를 찾기 위한 값 목록.
@@ -411,7 +414,7 @@ export class RcChartSeries extends RcNamedObject {
     }
 
     /**
-     * 시리즈 data 원본을 변경한다.\
+     * 시리즈 data 원본을 변경한다.<br/>
      * [주의] x축이 카테고리 축이고, x축의 categories 속성이 명시적으로 설정되지 않았다면,
      * 이 함수 호출 후 카테고리가 변경될 수 있다.
      * 

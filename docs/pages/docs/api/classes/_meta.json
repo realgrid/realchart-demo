@@ -9,6 +9,7 @@
   "RcChartSeries": "RcChartSeries",
   "RcGaugeGroup": "RcGaugeGroup",
   "RcLegend": "RcLegend",
+  "RcNamedObject": "RcNamedObject",
   "RcSeriesGroup": "RcSeriesGroup",
   "RcSubtitle": "RcSubtitle",
   "RcTitle": "RcTitle"

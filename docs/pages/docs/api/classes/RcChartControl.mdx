@@ -42,6 +42,15 @@ x축이 원호에, y축은 방사선에 위치하고, 아래의 제한 사항이
 첫번째 y 축.
 
 ## Methods
+### addSeries(source, animate): [RcChartSeries](../classes/RcChartSeries)[#addSeries]
+시리즈를 추가한다.
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| source | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 시리즈 설정 json. |
+| animate=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | 애니메이션 실행 여부. |
 ### getAnnotation(name): [RcAnnotation](../classes/RcAnnotation)[#getAnnotation]
 Annotation 이름에 해당하는 Annotation 객체를 리턴한다.
 
@@ -93,6 +102,11 @@ name 매개변수가 문자열이면 지정한 이름의 y 축을,
 | ----------- | ----------- |
 | config | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |
 | animate | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) |
+### removeSeries(series, animate): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)[#removeSeries]
+| Parameter | Type |
+| ----------- | ----------- |
+| series | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [RcChartSeries](../classes/RcChartSeries) |
+| animate=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) |
 ### render(now): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#render]
 차트를 다시 그린다.
 
@@ -101,11 +115,6 @@ name 매개변수가 문자열이면 지정한 이름의 y 축을,
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | now=`false` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 즉시 차트 SVG를 디시 구축한다. |
-### scroll(axis, pos): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#scroll]
-| Parameter | Type |
-| ----------- | ----------- |
-| axis | [RcChartAxis](../classes/RcChartAxis) |
-| pos | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
 ### setParam(param, value, redraw?): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#setParam]
 | Parameter | Type |
 | ----------- | ----------- |
