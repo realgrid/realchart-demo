@@ -1062,10 +1062,12 @@
 }
 
 /** annotation */
+.rct-annotation-background {
+    fill: none;
+    stroke: none;
+}
 .rct-text-annotation {
     font-size: 20px;
-}
-.rct-shape-annotation {
     stroke: #333;
     stroke-width: 3px;
 }

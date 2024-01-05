@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { toSize } from "../../common/Rectangle";
-import { IRichTextDomain, SvgRichText } from "../../common/RichText";
+import { SvgRichText } from "../../common/RichText";
 import { ISize } from "../../common/Size";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../../common/impl/TextElement";
@@ -42,12 +42,6 @@ export class TextAnnotationView extends AnnotationView<TextAnnotation> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _setBackgroundStyle(back: RectElement): void {
-        super._setBackgroundStyle(back);
-
-        back.internalSetStyleOrClass(this.model.backgroundStyle);
-    }
-
     protected _doMeasure(doc: Document, model: TextAnnotation, hintWidth: number, hintHeight: number, phase: number): ISize {
         const tv = this._textView;
 

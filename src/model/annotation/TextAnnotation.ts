@@ -45,13 +45,6 @@ export class TextAnnotation extends Annotation {
      */
     text = 'Text';
     /**
-     * 텍스트 배경 스타일.\
-     * 경계 및 배경 색, padding 스타일을 지정할 수 있다.
-     * 
-     * @config
-     */
-    backgroundStyle: SVGStyleOrClass;
-    /**
      * {@link text}에 동적으로 전달되는 값이 숫자일 때 사용되는 표시 형식.
      * 
      * @config

@@ -80,7 +80,7 @@ export class TooltipView extends RcElement {
         const cw = this.control.contentWidth();
         const ch = this.control.contentHeight();
         const tv = this._textView;
-        const isInverted = series.chart.isInverted();
+        const inverted = series.chart.isInverted();
 
         // text
         this._richText.setFormat(ctx.getTooltipText(series, point));
@@ -96,21 +96,21 @@ export class TooltipView extends RcElement {
         this._top.setFill(series._calcedColor);
 
         const dur = this.getStyle('visibility') === 'visible' ? 300 : 0;
+        let p: number;
 
-        let translate = 0;
-        if (isInverted) {
+        if (inverted) {
             h += this._topHeight;
-            translate = (y - h / 2) - maxv(0, minv(y - h / 2, ch - h));
-            this.drawTooltip(0, -this._topHeight / 2, w, h, TooltipPosition.RIGHT, translate);
+            p = (y - h / 2) - maxv(0, minv(y - h / 2, ch - h));
+            this.drawTooltip(0, -this._topHeight / 2, w, h, TooltipPosition.RIGHT, p);
             x = x + model.offset;
             y = y - h / 2, dur, false;
         } else {
             h += this._topHeight;
-            translate = (x - w / 2) - maxv(0, minv(x - w / 2, cw - w));
-            this.drawTooltip(0, -this._topHeight, w, h, TooltipPosition.TOP, translate);
+            p = (x - w / 2) - maxv(0, minv(x - w / 2, cw - w));
+            this.drawTooltip(0, -this._topHeight, w, h, TooltipPosition.TOP, p);
             x = x - w / 2;
             y = y - h - model.offset;
-        };
+        }
 
         x = maxv(0, minv(x, cw - w));
         y = maxv(0, minv(y, ch - h));
@@ -118,12 +118,12 @@ export class TooltipView extends RcElement {
 
         if (dur === 0) {
             this.setStyle('visibility', 'visible');
-        };
+        }
 
         if (this._hideTimer) {
             clearTimeout(this._hideTimer);
             this._hideTimer = void 0;
-        };
+        }
     }
 
     close(force: boolean, animate: boolean): void {

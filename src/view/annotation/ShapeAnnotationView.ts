@@ -8,7 +8,6 @@
 
 import { PathElement } from "../../common/RcControl";
 import { ISize } from "../../common/Size";
-import { RectElement } from "../../common/impl/RectElement";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { ShapeAnnotation } from "../../model/annotation/ShapeAnnotation";
 import { AnnotationView } from "../AnnotationView";

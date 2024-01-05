@@ -9,7 +9,7 @@
 import { isArray, isObject, isString } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { ISize } from "../common/Size";
-import { Align, IAnnotationAnimation, IPercentSize, RtPercentSize, VerticalAlign, calcPercent, parsePercentSize } from "../common/Types";
+import { Align, IAnnotationAnimation, IPercentSize, RtPercentSize, SVGStyleOrClass, VerticalAlign, calcPercent, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 import { ISeries } from "./Series";
@@ -91,6 +91,13 @@ export abstract class Annotation extends ChartItem {
      * 처음 표시될 때 실행될 에니메이션 설정 정보.
      */
     loadAnimation: IAnnotationAnimation;
+    /**
+     * 배경 스타일.\
+     * 경계 및 배경 색, padding 스타일을 지정할 수 있다.
+     * 
+     * @config
+     */
+    backgroundStyle: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
     // methods

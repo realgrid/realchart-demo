@@ -280,8 +280,9 @@ export class SvgShapes {
     }
 
     static star(x: number, y: number, w: number, h: number): PathValue[] {
+        let start = -Math.PI / 2
         const cx = x + w / 2;
-        const cy = y + h / 2;
+        const cy = y + h / 2 + (h / 2 - h / 2 * sin(start + Math.PI * 6 / 5)) / 2;
         const rx = w / 2;
         const ry = h / 2;
         const rx2 = w / 4;
@@ -289,7 +290,6 @@ export class SvgShapes {
         const a = Math.PI * 2 / 5;
         const a2 = a / 2;
         const path = [];
-        let start = -Math.PI / 2
 
         path.push('M', cx + rx * cos(start), cy + ry * sin(start));
         for (let i = 0; i < 5; i++) {

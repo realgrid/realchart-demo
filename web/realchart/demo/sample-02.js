@@ -50,6 +50,8 @@ const config = {
             shape: 'rectangle',
             front: true,
             series: 'main',
+            // width: 100,
+            // height: 100,
             xRange: [new Date(2022, 8), new Date(2023, 3)],
             yRange: [95, 145],
             style: {

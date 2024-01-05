@@ -25,7 +25,7 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, styleName: string) {
-        super(doc, AnnotationView.CLASS_NAME + ' ' + styleName, _undef);
+        super(doc, AnnotationView.CLASS_NAME + ' ' + styleName, 'rct-annotation-background');
     }
 
     //-------------------------------------------------------------------------
@@ -40,7 +40,7 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
     // overriden members
     //-------------------------------------------------------------------------
     protected _setBackgroundStyle(back: RectElement): void {
-        back.setFill('none');
+        back.internalSetStyleOrClass(this.model.backgroundStyle);
     }
 
     protected _doLayout(param: any): void {

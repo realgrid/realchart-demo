@@ -48,7 +48,7 @@ function getObject(map: Map<any, any>, obj: ChartItem): RcChartObject {
 export interface RealChartExporter {
     // export: (options, type) => void;
     // print: (options) => void;
-    render: (options) => void;
+    render: (options: any) => void;
 }
 
 /**
