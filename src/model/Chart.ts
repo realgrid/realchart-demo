@@ -73,7 +73,7 @@ export interface IChart {
     _xPaneAxes: PaneXAxisMatrix;
     _yPaneAxes: PaneYAxisMatrix;
     options: ChartOptions;
-    export: ExportOptions;
+    exportOptions: IExportOptions;
     first: IPlottingItem;
     firstSeries: Series;
     xAxis: IAxis;
@@ -330,44 +330,54 @@ export enum ExportType {
     PNG = 'png',
     /** @config */
     JPEG = 'jpeg',
+    /** @config */
+    SVG = 'svg',
+    /** @config */
+    PDF = 'pdf',
+    /** @config */
+    PRINT = 'print',
 }
 
-export class ExportOptions extends ChartItem {
+export interface IExportOptions {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     /**
+     * 표시 여부 지정
+     */
+    visible?: boolean
+    /**
      * 내보내기 메뉴에 포함할 export type
      */
-    menus = [ExportType.PNG, ExportType.JPEG];
+    menus?: ExportType[];
     /**
      * 내보내기시 저장되는 파일명
      */
-    fileName = 'realchart';
+    fileName?: string;
     /**
      * 너비, 지정한 너비에 맞춰 높이가 결정됩니다.
      */
-    width: number;
+    width?: number;
     /**
      * 이미지의 scale
      */
-    scale = 1;
+    scale?: number;
     /**
      * 내보내기 실패시 api요청을 보낼 경로
      */
-    url: string;
+    url?: string;
     /**
      * true로 지정하면 내보내기 결과에 {@link AxisScrollBar}가 포함되지 않는다.
      */
-    hideScrollbar = false;
+    hideScrollbar?: boolean
     /**
      * true로 지정하면 내보내기 결과에 {@link SeriesNavigator}가 포함되지 않는다.
      */
-    hideNavigator = false;
+    hideNavigator?: boolean
     /**
      * true로 지정하면 내보내기 결과에 {@link ZoomButton}가 포함되지 않는다.
      */
-    hideZoomButton = false;
+    hideZoomButton?: boolean
 
     //-------------------------------------------------------------------------
     // methods
@@ -412,7 +422,15 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _body: Body;
     private _annotations: AnnotationCollection;
     private _navigator: SeriesNavigator;
-    private _export: ExportOptions;
+    private _exportOptions = {
+        visible: true,
+        menus: [ExportType.PNG, ExportType.JPEG, ExportType.SVG, ExportType.PDF, ExportType.PRINT],
+        fileName: 'realchart',
+        scale: 1,
+        hideNavigator: false,
+        hideScrollbar: false,
+        hideZoomButton: false
+    };
     private _params = {};
 
     private _inverted: boolean;
@@ -447,7 +465,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._body = new Body(this);
         this._annotations = new AnnotationCollection(this);
         this._navigator = new SeriesNavigator(this);
-        this._export = new ExportOptions(this, false);
 
         source && this.load(source);
     }
@@ -586,8 +603,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._options;
     }
 
-    get export(): ExportOptions {
-        return this._export;
+    get exportOptions(): IExportOptions {
+        return this._exportOptions;
     }
 
     get title(): Title {
@@ -855,7 +872,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._options.load(source.options);
 
         // options
-        this._export.load(source.export);
+        Object.assign(this._exportOptions, source.exportOptions);
 
         // titles
         this._title.load(source.title);

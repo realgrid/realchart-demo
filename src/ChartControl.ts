@@ -11,7 +11,7 @@ import { RcControl, RcElement } from "./common/RcControl";
 import { IRect } from "./common/Rectangle";
 import { Annotation } from "./model/Annotation";
 import { Axis } from "./model/Axis";
-import { Chart, ExportOptions, ExportType, IChartEventListener } from "./model/Chart";
+import { Chart, IChartEventListener } from "./model/Chart";
 import { ChartItem } from "./model/ChartItem";
 import { DataPoint } from "./model/DataPoint";
 import { Series } from "./model/Series";

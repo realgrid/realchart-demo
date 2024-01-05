@@ -45,6 +45,12 @@ function getObject(map: Map<any, any>, obj: ChartItem): RcChartObject {
     }
 }
 
+export interface RealChartExporter {
+    // export: (options, type) => void;
+    // print: (options) => void;
+    render: (options) => void;
+}
+
 /**
  * RealChart 컨트롤.
  */
@@ -57,6 +63,7 @@ export class RcChartControl {
             return getObject(this._objects, model);
         },
     };
+    private _exporter: RealChartExporter;
 
     /** 
      * @internal 
@@ -70,7 +77,15 @@ export class RcChartControl {
      */
     load(config: any, animate?: boolean): void {
         this.$_p.load(config, animate);
-        this.$_p.model._proxy = this._proxy;
+        const model = this.$_p.model;
+        model._proxy = this._proxy;
+
+        const realChartExporter = window['RealChartExporter'];
+        const exportVisible = model.exportOptions.visible;
+        if (realChartExporter && exportVisible) {
+            this._exporter = realChartExporter.render(this.$_p.doc(), this.$_p.dom(), model.exportOptions);
+        };
+
         this._objects.clear();
     }
     /**
@@ -80,6 +95,7 @@ export class RcChartControl {
      */
     render(now = false): void {
         this.$_p.refresh(now);
+        this._exporter && this._exporter.render(this.$_p.model.exportOptions);
     }
     /**
      * 첫번째 x 축.
