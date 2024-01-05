@@ -6,10 +6,16 @@ export const config = {
       height: 65,
       label: { width: '19%' },
       targetBar: { style: { fill: '#222' } },
-      actualBar: {
-        styleCallback: ({gauge, value}) => { if (value > gauge.get("targetValue")) { return { fill: "#0047AB", }; } else { return { fill: "#ED254E", }; } }
-      }
-    }
+      valueBar: {
+        styleCallback: ({ gauge, value }) => {
+          if (value > gauge.get('targetValue')) {
+            return { fill: '#0047AB' };
+          } else {
+            return { fill: '#ED254E' };
+          }
+        },
+      },
+    },
   },
   title: 'Intel Core i9-13900K Performance',
   gauge: [
@@ -24,12 +30,12 @@ export const config = {
       ranges: [
         { toValue: 3.5, color: '#AFCBE6' },
         { toValue: 4.5, color: '#8DA9C4' },
-        { toValue: 5.5, color: '#7C98B3' }
+        { toValue: 5.5, color: '#7C98B3' },
       ],
       scale: { label: { suffix: 'GHz' } },
       label: {
-        text: "<t style='font-weight: bold'>Turbo Clock Speed</t> <br>  vs AMD Ryzen 9 7950x"
-      }
+        text: "<t style='font-weight: bold'>Turbo Clock Speed</t> <br>  vs AMD Ryzen 9 7950x",
+      },
     },
     {
       type: 'bullet',
@@ -42,12 +48,12 @@ export const config = {
       ranges: [
         { toValue: 2, color: '#AFCBE6' },
         { toValue: 3.5, color: '#8DA9C4' },
-        { toValue: 4.5, color: '#7C98B3' }
+        { toValue: 4.5, color: '#7C98B3' },
       ],
       scale: { label: { suffix: 'GHz' } },
       label: {
-        text: "<t style='font-weight: bold'>Clock Speed</t> <br>  vs AMD Ryzen 9 7950x"
-      }
+        text: "<t style='font-weight: bold'>Clock Speed</t> <br>  vs AMD Ryzen 9 7950x",
+      },
     },
     {
       type: 'bullet',
@@ -60,11 +66,11 @@ export const config = {
       ranges: [
         { toValue: 8, color: '#AFCBE6' },
         { toValue: 16, color: '#8DA9C4' },
-        { toValue: 14, color: '#7C98B3' }
+        { toValue: 14, color: '#7C98B3' },
       ],
       label: {
-        text: "<t style='font-weight: bold'>Physical Cores</t> <br>  vs AMD Ryzen 9 7950x"
-      }
+        text: "<t style='font-weight: bold'>Physical Cores</t> <br>  vs AMD Ryzen 9 7950x",
+      },
     },
     {
       type: 'bullet',
@@ -77,11 +83,11 @@ export const config = {
       ranges: [
         { toValue: 60, color: '#AFCBE6' },
         { toValue: 100, color: '#8DA9C4' },
-        { toValue: 120, color: '#7C98B3' }
+        { toValue: 120, color: '#7C98B3' },
       ],
       label: {
-        text: "<t style='font-weight: bold'>CPU Value</t> <br>  vs AMD Ryzen 9 7950x"
-      }
+        text: "<t style='font-weight: bold'>CPU Value</t> <br>  vs AMD Ryzen 9 7950x",
+      },
     },
     {
       type: 'bullet',
@@ -94,11 +100,11 @@ export const config = {
       ranges: [
         { toValue: 35000, color: '#AFCBE6' },
         { toValue: 50000, color: '#8DA9C4' },
-        { toValue: 70000, color: '#7C98B3' }
+        { toValue: 70000, color: '#7C98B3' },
       ],
       label: {
-        text: "<t style='font-weight: bold'>CPU Mark</t> <br>  vs AMD Ryzen 9 7950x"
-      }
+        text: "<t style='font-weight: bold'>CPU Mark</t> <br>  vs AMD Ryzen 9 7950x",
+      },
     },
     {
       type: 'bullet',
@@ -111,12 +117,12 @@ export const config = {
       ranges: [
         { toValue: 200, color: '#AFCBE6' },
         { toValue: 400, color: '#8DA9C4' },
-        { toValue: 550, color: '#7C98B3' }
+        { toValue: 550, color: '#7C98B3' },
       ],
       label: {
-        text: "<t style='font-weight: bold'>price</t> <br>  vs AMD Ryzen 9 7950x"
+        text: "<t style='font-weight: bold'>price</t> <br>  vs AMD Ryzen 9 7950x",
       },
-      actualBar: { belowStyle: { fill: 'red', stroke: 'red' } }
-    }
-  ]
-}
+      valueBar: { belowStyle: { fill: 'red', stroke: 'red' } },
+    },
+  ],
+};

@@ -26,7 +26,7 @@ export const config = {
       name: 'gauge1',
       left: 0,
       top: 0,
-      value: 88.93875190231309
+      value: 50.59279074085043
     },
     {
       template: 'gauge',
@@ -34,21 +34,21 @@ export const config = {
       left: '33%',
       top: 0,
       valueRim: { thickness: '200%' },
-      value: 50.84695290985026
+      value: 34.934717844047846
     },
     {
       template: 'gauge',
       name: 'gauge3',
       left: '66%',
       top: 0,
-      value: 94.42986921500729
+      value: 61.73392864351555
     },
     {
       template: 'gauge',
       name: 'gauge4',
       left: 0,
       top: '50%',
-      value: 74.30062059486198,
+      value: 25.874394427645342,
       innerRadius: '85%',
       valueRim: { stroked: true, style: { strokeLinecap: 'round' } },
       paneStyle: { stroke: 'lightblue', strokeWidth: '2px', borderRadius: '10px' }
@@ -58,7 +58,7 @@ export const config = {
       name: 'gauge5',
       left: '33%',
       top: '50%',
-      value: 55.94467822227842,
+      value: 52.500419054237014,
       innerRadius: '75%',
       valueRim: { stroked: true, style: { strokeDasharray: '3' } },
       label: { style: { fontSize: '30px' } }
@@ -68,7 +68,7 @@ export const config = {
       name: 'gauge6',
       left: '66%',
       top: '50%',
-      value: 31.12371557788567,
+      value: 52.872160217072796,
       innerStyle: { fill: '#003300', stroke: 'white', strokeWidth: '5px' },
       label: {
         text: '<t style="fill:yellow">${value}</t><t style="font-size:12px;">&nbsp;</t><t style="font-size:20px;">%</t><br><t style="font-size:20px;font-weight:normal">Gauge Test</t>',

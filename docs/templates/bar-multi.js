@@ -10,26 +10,22 @@ export const config = {
   yAxis: { title: '수출량(단위 만)' },
   series: [
     {
-      children: [
-        {
-          pointWidth: 2,
-          pointLabel: { visible: true, position: 'inside', effect: 'outline' },
-          name: '배',
-          data: [ 485, 550, 554, 233, 181 ]
-        },
-        {
-          pointWidth: 2,
-          pointLabel: { visible: true, position: 'inside', effect: 'outline' },
-          name: '배즙',
-          data: [ 230, 250, 250, 330, 260 ]
-        },
-        {
-          pointWidth: 2,
-          pointLabel: { visible: true, position: 'inside', effect: 'outline' },
-          name: '단감',
-          data: [ 60, 100, 70, 67, 28 ]
-        }
-      ]
+      pointWidth: 2,
+      pointLabel: { visible: true, position: 'inside', effect: 'outline' },
+      name: '배',
+      data: [ 485, 550, 554, 233, 181 ]
+    },
+    {
+      pointWidth: 2,
+      pointLabel: { visible: true, position: 'inside', effect: 'outline' },
+      name: '배즙',
+      data: [ 230, 250, 250, 330, 260 ]
+    },
+    {
+      pointWidth: 2,
+      pointLabel: { visible: true, position: 'inside', effect: 'outline' },
+      name: '단감',
+      data: [ 60, 100, 70, 67, 28 ]
     }
   ]
 }

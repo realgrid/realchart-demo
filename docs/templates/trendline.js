@@ -1,14 +1,13 @@
 export const config = {
   title: 'Trendline',
   xAxis: {},
-  yAxis: {},
+  yAxis: { startFit: 'value' },
   series: {
-    type: 'line',
-    trendline: { visible: true, type: 'linear', movingAverage: { interval: 4 } },
+    trendline: { visible: true, type: 'linear', movingAverage: { interval: 2 } },
     data: [
-       5,  7, 11, 9,  3,  6,  9,
-      15,  4,  6, 8, 10, 15, 17,
-      11, 19, 18
+       1.4,    2,  7.4, 10.8,
+      11.4, 10.4, 22.8, 16.6,
+        15,   12,  9.5,  4.2
     ]
   }
 }

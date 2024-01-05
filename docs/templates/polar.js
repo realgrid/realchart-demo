@@ -3,10 +3,7 @@ export const config = {
   options: {},
   title: 'Polar Chart',
   xAxis: { categories: [ '성남시', '용인시', '수원시', '일산시', '화성시', '평택시' ] },
-  yAxis: {
-    label: true,
-    guides: [ { type: 'line', value: 5.5, style: { stroke: 'red' } } ]
-  },
+  yAxis: { label: true },
   body: {},
   series: [
     {

@@ -32,7 +32,7 @@ export const config = {
     { template: 'yAxis', row: 2, title: { text: 'time' } },
     { type: 'log', template: 'yAxis', row: 3, title: { text: 'log' } }
   ],
-  tooltip: false,
+  tooltip: true,
   legend: false,
   templates: {
     series: { marker: false, style: { strokeWidth: '3px' } },

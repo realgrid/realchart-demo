@@ -15,6 +15,7 @@ export const config = {
       [ 'zzz', 13 ],
       [ '낙동강', 12.5 ]
     ],
-    style: {}
+    style: {},
+    marker: { style: {} }
   }
 }

@@ -87,6 +87,7 @@ const tool = {
 };
 
 const config = {
+  ...tool,
   type: 'area',
   tooltip: false,
   templates: {

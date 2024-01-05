@@ -16,7 +16,8 @@ export const config = {
         { toValue: 50, color: '#777' },
         { toValue: 70, color: '#aaa' }
       ],
-      label: { text: 'RealChart Bullet<br>ver 1.0' }
+      label: { text: 'RealChart Bullet<br>ver 1.0' },
+      style: {}
     },
     {
       type: 'bullet',
