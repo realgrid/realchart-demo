@@ -15,14 +15,20 @@ const config = {
         type: 'linear',
         name: 'linear1',
         width: '60%',
-        height: 65,
+        height: 85,
         top: 100,
         // maxValue: 100,
         value: 81,
+        valueBar: {
+            style: {
+                fill: 'blue'
+            }
+        },
         scale: {
             line: true,
         },
         band: {
+            visible: true,
             gap: 3,
             ranges: [{
                 toValue: 30,
@@ -34,19 +40,10 @@ const config = {
                 color: '#f40'
             }],
         },
-        ranges: [{
-            toValue: 50,
-            color: '#777'
-        }, {
-            toValue: 70,
-            color: '#aaa'
-        }],
         label: {
-            text: "RealChart Linear<br>ver 1.0"
+            text: "RealChart Linear<br>ver 1.0",
             // position: 'bottom',
-        },
-        style: {
-            stroke: 'lightblue',
+            style: { fill: 'blue' }
         }
     }, {
         type: 'linear',
@@ -57,6 +54,12 @@ const config = {
         // minValue: 30,
         // maxValue: 175,
         value: 81,
+        valueBar: {
+            styleCallback: args => {
+                if (args.value < 40) return { fill: 'red' }
+                else if (args.value < 60) return { fill: 'yellow' }
+            }
+        },
         scale: {
             line: true,
         },
@@ -71,7 +74,10 @@ const config = {
             position: 'top',
             text: "RealChart Linear ver 1.0"
         },
-        style: {
+        // style: {
+        //     fill: 'blue'
+        // },
+        paneStyle: {
             stroke: 'lightblue'
         }
     }]

@@ -298,7 +298,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     }
 
     protected _doInitContents(doc: Document, container: LayerElement): void {
-        container.add(this._rimView = new SectorElement(doc, 'rct-circle-gauge-back'));
+        container.add(this._rimView = new SectorElement(doc, 'rct-circle-gauge-rim'));
         container.add(this._valueView = new SectorElement(doc, 'rct-circle-gauge-value'));
         container.add(this._innerView = new SectorElement(doc, 'rct-circle-gauge-inner'));
         container.add(this._textView = new TextElement(doc, 'rct-circle-gauge-label'));
@@ -310,6 +310,10 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _backgroundView(): RcElement {
+        return this._rimView;
+    }
+
     protected _prepareGauge(doc: Document, model: CircleGauge): void {
         // rim
         this._rimView.setVis(model.rim.visible);
@@ -438,7 +442,8 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
         // rim
         if (this._rimView.visible) {
-            this._rimView.setStyleOrClass(m.rim.style);
+            // this._rimView.setStyleOrClass(m.rim.style); <= _prepareStyleOrClass()에서 m.style로 set 했다.
+            this._rimView.internalSetStyleOrClass(m.rim.style);
             this._rimView.setSector({
                 cx: center.x,
                 cy: center.y,

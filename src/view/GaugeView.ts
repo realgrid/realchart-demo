@@ -97,8 +97,7 @@ export abstract class GaugeView<T extends GaugeBase> extends ContentView<T> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareStyleOrClass(model: T): void {
-        super._prepareStyleOrClass(model);
-
+        // super._prepareStyleOrClass(model);
         this._paneElement.setStyleOrClass(model.paneStyle);
     }
 
@@ -175,6 +174,12 @@ export abstract class ValueGaugeView<T extends ValueGauge> extends GaugeView<T> 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _prepareStyleOrClass(model: T): void {
+        super._prepareStyleOrClass(model);
+
+        this._backgroundView().setStyleOrClass(model.style);
+    }
+
     protected _doLayout(): void {
         if (this._ani) {
             this._ani.stop();
@@ -189,6 +194,8 @@ export abstract class ValueGaugeView<T extends ValueGauge> extends GaugeView<T> 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected abstract _backgroundView(): RcElement;
+
     // value가 변경될 때 animation 등에서 호출된다.
     abstract _renderValue(): void;
 

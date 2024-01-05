@@ -184,6 +184,10 @@ export class LinearGaugeView extends LinearGaugeBaseView<LinearGauge> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _backgroundView(): RcElement {
+        return this._background;
+    }
+
     protected labelView(): TextElement {
         return this._labelView;
     }
@@ -239,21 +243,26 @@ export class LinearGaugeView extends LinearGaugeBaseView<LinearGauge> {
     }
 
     protected _renderBand(m: LinearGauge, r: IRect, value: number): void {
+        const v = this._valueView;
         const reversed = m.reversed;
+        const bar = m.valueBar;
         const scale = m.group ? (m.group as LinearGaugeGroup).scale : m.scale;
 
         // value bar
-        if (this._valueView.setVis(!scale.isEmpty() && !isNaN(m.value))) {
+        if (v.setVis(bar.visible && !scale.isEmpty() && !isNaN(m.value))) {
+            v.setStyleOrClass(bar.style);
+            v.internalSetStyleOrClass(bar.getStyle(value));
+
             if (this._vertical) {
                 const h = r.height * scale.getRate(value);
                 const y = reversed ? r.y : r.y + r.height - h;
 
-                this._valueView.setBounds(r.x, y, r.width, h);
+                v.setBounds(r.x, y, r.width, h);
             } else {
                 const w = r.width * scale.getRate(value);
                 const x = reversed ? r.x + r.width - w : r.x;
 
-                this._valueView.setBounds(x, r.y, w, r.height);
+                v.setBounds(x, r.y, w, r.height);
             }
         }
     }

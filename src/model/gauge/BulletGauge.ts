@@ -10,7 +10,7 @@ import { isObject, pickProp } from "../../common/Common";
 import { IPercentSize, IValueRange, RtPercentSize, SVGStyleOrClass, buildValueRanges, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
-import { LinearGaugeBase, LinearGaugeGroupBase } from "./LinearGauge";
+import { LinearGaugeBase, LinearGaugeGroupBase, LinearValueBar } from "./LinearGauge";
 
 export class BulletGaugeBand extends ChartItem {
 
@@ -133,23 +133,14 @@ export interface IBulletGaugeArgs {
     value: number;
 }
 
-export class BulletActualBar extends ChartItem {
+export class BulletActualBar extends LinearValueBar {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _args = {
-        gauge: null,
-        value: NaN
-    };
-
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(public gauge: BulletGauge) {
-        super(gauge.chart, true);
-    }
-
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
@@ -159,25 +150,10 @@ export class BulletActualBar extends ChartItem {
      * @config
      */
     belowStyle: SVGStyleOrClass;
-    /**
-     * {@link value 현재 값} 등을 기준으로 추가 적용되는 스타일을 리턴한다.
-     * 기본 설정을 따르게 하고 싶으면 undefined나 null을 리턴한다.
-     * 
-     * @config
-     */
-    styleCallback: (args: any) => SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getStyle(value: number): SVGStyleOrClass {
-        if (this.styleCallback) {
-            this._args.gauge = this.chart._proxy.getChartObject(this.gauge);
-            this._args.value = value;
-            const st = this.styleCallback(this._args)
-            if (isObject(st)) return st;
-        }
-    }
 }
 
 /**

@@ -68,7 +68,7 @@ const config = {
                 fontFamily: 'Arial',
                 fontWeight: 'bold',
             },
-        }
+        },
     }
 }
 

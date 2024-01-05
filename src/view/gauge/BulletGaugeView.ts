@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
-import { LayerElement } from "../../common/RcControl";
+import { LayerElement, RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
@@ -51,6 +51,10 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _backgroundView(): RcElement {
+        return this._background;
+    }
+
     protected labelView(): TextElement {
         return this._labelView;
     }

@@ -6,7 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { IMinMax, IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
+import { isObject } from "../../common/Common";
+import { IMinMax, IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
 import { GaugeGroup, GaugeLabel, GaugeRangeBand, LinearGaugeScale, ValueGauge } from "../Gauge";
@@ -232,10 +233,21 @@ export abstract class LinearGaugeBase extends ValueGauge {
 
 export enum LinearGaugeMarkerType {
     BAR = 'bar',
-    needle = 'needle'
+    NEEDLE = 'needle'
 }
 
-export class LinearGaugeMarker extends ChartItem {
+/**
+ * linear 게이지의 값을 표시하는 영역에 대한 설정 모델.
+ */
+export class LinearValueBar extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _args = {
+        gauge: null,
+        value: NaN
+    };
 
     //-------------------------------------------------------------------------
     // constructor
@@ -243,7 +255,29 @@ export class LinearGaugeMarker extends ChartItem {
     constructor(public gauge: LinearGaugeBase) {
         super(gauge.chart, true);
     }
-}
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * {@link value 현재 값} 등을 기준으로 추가 적용되는 스타일을 리턴한다.
+     * 기본 설정을 따르게 하고 싶으면 undefined나 null을 리턴한다.
+     * 
+     * @config
+     */
+    styleCallback: (args: any) => SVGStyleOrClass;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getStyle(value: number): SVGStyleOrClass {
+        if (this.styleCallback) {
+            this._args.gauge = this.chart._proxy.getChartObject(this.gauge);
+            this._args.value = value;
+            const st = this.styleCallback(this._args)
+            return st;
+        }
+    }}
 
 /**
  * 선형 게이지 모델.
@@ -271,7 +305,12 @@ export class LinearGauge extends LinearGaugeBase {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    marker = new LinearGaugeMarker(this);
+    /**
+     * 게이지 값을 표시하는 bar 모델.
+     * 
+     * @config
+     */
+    valueBar = new LinearValueBar(this);
     /**
      * 게이지 본체 주변이나 내부에 값 영역들을 구분해서 표시하는 band의 모델.
      * 

@@ -36,7 +36,10 @@ const config = {
         label: {
             text: "RealChart Bullet<br>ver 1.0",
             // position: 'top',
-        }
+        },
+        // style: {
+        //     fill: 'blue'
+        // }
     }, {
         type: 'bullet',
         name: 'bullet2',
