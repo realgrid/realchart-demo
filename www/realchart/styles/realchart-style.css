@@ -136,7 +136,6 @@
 .rct-control[data-theme='real'] {
 	--rct-background: #264653;
 }
-
 .rct-root {
     --rct-font-family: AppleSDGothicNeo-Light, "HelveticaNeue", "Malgun Gothic", "맑은 고딕", sans-serif;
     --rct-font-size: 16px;
@@ -152,6 +151,7 @@
 
     --rct-axis-title-fill: #333;
     --rct-axis-line-stroke: #aaa;
+    --rct-axis-baseline-stroke: #333;
     --rct-axis-tick-stroke: #555;
     --rct-axis-label-fill: #555;
     --rct-axis-grid-line-stroke: #ddd;
@@ -182,13 +182,25 @@
     --rct-polar-yaxis-grid-line-stroke: #ccc;
     --rct-polar-axis-labels-fill: #555;
 
+    /* linear gauge */
+    --rct-linear-gauge-background-fill: #eee;
+    --rct-linear-gauge-value-fill: green;
+    --rct-linear-gauge-band-tick-labels-stroke: #333;
+    /** bullet gauge */
+    --rct-bullet-gauge-background-fill: #eee;
+    --rct-bullet-gauge-value-fill: #333;
+    --rct-bullet-gauge-target-fill: #333;
+    --rct-bullet-gauge-label-fill: #333;
+    --rct-bullet-gauge-scale-line-stroke: #333;
+    --rct-bullet-gauge-scale-ticks-stroke: #333;
+    --rct-bullet-gauge-scale-tick-labels-stroke: #333;
     /* circle gauge */
-    --rct-circle-gauge-back-fill: #ededed;
+    --rct-circle-gauge-rim-fill: #ededed;
     --rct-circle-gauge-inner-fill: none;
     --rct-circle-gauge-label-fill: #000;
     --rct-gauge-scale-line: #555;
     --rct-gauge-scale-tick: #555;
-    --rct-gauge-scale-tick-labels: #333;
+    --rct-gauge-scale-tick-labels-stroke: #333;
     /* clock gauge */
     --rct-clock-gauge-face-fill: white;
     --rct-clock-gauge-rim-fill: #eee;
@@ -216,6 +228,7 @@
     
     --rct-axis-title-fill: #fff;
     --rct-axis-line-stroke: #fff;
+    --rct-axis-baseline-stroke: #fff;
     --rct-axis-tick-stroke: #fff;
     --rct-axis-label-fill: #fff;
     --rct-axis-grid-line-stroke: #fff;
@@ -236,11 +249,11 @@
     --rct-polar-axis-labels-fill: #fff;
 
     /* circle gauge */
-    --rct-circle-gauge-back-fill: #515151;
+    --rct-circle-gauge-rim-fill: #515151;
     --rct-circle-gauge-label-fill: #fff;
     --rct-gauge-scale-line: #fff;
     --rct-gauge-scale-tick: #fff;
-    --rct-gauge-scale-tick-labels: #fff;
+    --rct-gauge-scale-tick-labels-stroke: #fff;
 
     /** zoom tracker */
     --rct-zoom-tracker-fill: #efefef40;
@@ -276,16 +289,15 @@
     --rct-polar-axis-labels-fill: #f0d9be;
 
     /* circle gauge */
-    --rct-circle-gauge-back-fill: #515151;
+    --rct-circle-gauge-rim-fill: #515151;
     --rct-circle-gauge-label-fill: #fff;
     --rct-gauge-scale-line: #fff;
     --rct-gauge-scale-tick: #fff;
-    --rct-gauge-scale-tick-labels: #fff;
+    --rct-gauge-scale-tick-labels-stroke: #fff;
 
     /** zoom tracker */
     --rct-zoom-tracker-fill: #efefef40;
 }
-
 
 /** control */
 .rct-control {
@@ -408,6 +420,10 @@
     stroke: var(--rct-axis-line-stroke);
     stroke-width: 1px;
 }
+.rct-axis-baseline {
+    stroke: var(--rct-axis-baseline-stroke);
+    stroke-width: 1px;
+}
 .rct-axis-tick {
     stroke: var(--rct-axis-tick-stroke);
     stroke-width: 1px;
@@ -524,6 +540,7 @@
 .rct-series-trendline {
     stroke: red;
     stroke-width: 2px;
+    stroke-linejoin: round;
     fill: none;
 }
 
@@ -618,7 +635,7 @@
 .rct-series {
     opacity: inherit;
     transition-property: opacity;
-    transition-duration: 0.9s;
+    transition-duration: 0.7s;
 }
 .rct-series[data-unfocus] {
     opacity: 0.2;
@@ -631,7 +648,7 @@
 .rct-point-labels {
     opacity: inherit;
     transition-property: opacity;
-    transition-duration: 0.9s;
+    transition-duration: 0.7s;
 }
 .rct-point-labels[data-unfocus] {
     opacity: 0.3;
@@ -676,7 +693,16 @@
     stroke-dasharray: none;
 }
 .rct-line-series .rct-point[data-focus] {
-    stroke-width: 3px;
+    stroke: #0088ff20 !important; 
+    stroke-width: 9px !important;
+    opacity: inherit !important;
+    /** TODO: 아래가 적용되지 않고 있다 */
+    transition-property: opacity;
+    transition-duration: 0.7s;
+}
+.rct-line-series-flag {
+    font-weight: bold;
+    font-size: 0.9em;
 }
 
 /** area series */
@@ -884,8 +910,8 @@
 }
 
 /** circle gauge */
-.rct-circle-gauge-back {
-    fill: var(--rct-circle-gauge-back-fill);
+.rct-circle-gauge-rim {
+    fill: var(--rct-circle-gauge-rim-fill);
 }
 .rct-circle-gauge-inner {
     fill: var(--rct-circle-gauge-inner-fill);
@@ -965,19 +991,19 @@
 }
 .rct-gauge-scale-tick-labels {
     font-size: 0.85em;
-    fill: var(--rct-gauge-scale-tick-labels);
+    fill: var(--rct-gauge-scale-tick-labels-stroke);
 }
 
 /** linear gauge */
 .rct-linear-gauge-background {
-    fill: #eee;
+    fill: var(--rct-linear-gauge-background-fill);
 }
 .rct-linear-gauge-value {
-    fill: green;
+    fill: var(--rct-linear-gauge-value-fill);
 }
 .rct-linear-gauge-band-tick-labels {
     font-size: 0.85em;
-    fill: #333;
+    fill: var(--rct-linear-gauge-band-tick-labels-stroke);
 }
 
 /** linear gauge group */
@@ -987,27 +1013,27 @@
 
 /** bullet gauge */
 .rct-bullet-gauge-background {
-    fill: #eee;
+    fill: var(--rct-bullet-gauge-background-fill);
 }
 .rct-bullet-gauge-value {
-    fill: #333;
+    fill: var(--rct-bullet-gauge-value-fill);
 }
 .rct-bullet-gauge-target {
-    fill: #338;
+    fill: var(--rct-bullet-gauge-target-fill);
 }
 .rct-bullet-gauge-label {
     font-size: 1em;
-    fill: #333;
+    fill: var(--rct-bullet-gauge-label-fill);
 }
 .rct-bullet-gauge-scale-line {
-    stroke: #333;
+    stroke: var(--rct-bullet-gauge-scale-line-stroke);
 }
 .rct-bullet-gauge-scale-ticks {
-    stroke: #333;
+    stroke: var(--rct-bullet-gauge-scale-ticks-stroke);
 }
 .rct-bullet-gauge-scale-tick-labels {
     font-size: 0.9em;
-    fill: #333;
+    fill: var(--rct-bullet-gauge-scale-tick-labels-stroke);
 }
 
 /** bullet gauge group */
