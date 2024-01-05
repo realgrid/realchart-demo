@@ -29,7 +29,7 @@ const config = {
           },
           rim: {
             style: {
-              fill: 'yellow',
+              // fill: 'yellow',
             },
           },
           label: {

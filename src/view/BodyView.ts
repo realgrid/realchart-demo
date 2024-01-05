@@ -163,9 +163,9 @@ export class AxisGridView extends ChartElement<AxisGrid> {
             lines.forEach((line, i) => {
                 // 최소/최대값이 tick에 해당되지 않을 때는 표시한다.
                 if (i === 0) {
-                    vis = m.startVisible || !reversed && pts[i] > 0 || reversed && pts[i] < w;
+                    vis = m.firstVisible || !reversed && pts[i] > 0 || reversed && pts[i] < w;
                 } else if (i === end) {
-                    vis = m.endVisible || !reversed && pts[i] < w || reversed && pts[i] > 0;
+                    vis = m.lastVisible || !reversed && pts[i] < w || reversed && pts[i] > 0;
                 } else {
                     vis = true;
                 }
@@ -179,9 +179,9 @@ export class AxisGridView extends ChartElement<AxisGrid> {
                 p = h - pts[i];
                 // 최소/최대값이 tick에 해당되지 않을 때는 표시한다.
                 if (i === 0) {
-                    vis = m.startVisible || !reversed && p < h || reversed && p > 0;
+                    vis = m.firstVisible || !reversed && p < h || reversed && p > 0;
                 } else if (i === end) {
-                    vis = m.endVisible || !reversed && p > 0 || reversed && p < h;
+                    vis = m.lastVisible || !reversed && p > 0 || reversed && p < h;
                 } else {
                     vis = true;
                 }

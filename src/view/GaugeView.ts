@@ -500,7 +500,8 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
             const wMax = vert ? width : label.getMaxWidth(width);
             const hMax = vert ? label.getMaxHeight(height) : height;
             const rLabel = this._rLabel = createRect(0, 0, width, height);
-
+            
+            labelView.setStyleOrClass(label.style);
             label.setText(m.getLabel(label, label.animatable ? value : m.value));
             labelView.text = label.text;
             label.buildSvg(labelView, null, pickNum(w, wMax), pickNum(h, hMax), m, label._domain);

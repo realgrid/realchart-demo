@@ -3,7 +3,7 @@ export const config = {
   title: {
     text: '제주 특산물 감귤 가격 동향',
     style: { fontSize: '1.2em' },
-    backgroundStyle: { rx: '5px' }
+    backgroundStyle: { rx: '5px' },
   },
   body: { style: {} },
   xAxis: {
@@ -11,7 +11,7 @@ export const config = {
     padding: 0,
     tick: { step: 20 },
     line: { style: { stroke: 'black', strokeWidth: 2 } },
-    grid: { endVisible: true }
+    grid: { lastVisible: true },
   },
   yAxis: { title: '총 가격(원)', line: true },
   series: {
@@ -1538,8 +1538,8 @@ export const config = {
       { data: '2023-02-28', value: 26571550 },
       { data: '2023-03-01', value: 26145689.9 },
       { data: '2023-03-02', value: 18578925 },
-      { data: '2023-03-03', value: 37650704 }
-    ]
+      { data: '2023-03-03', value: 37650704 },
+    ],
   },
-  seriesNavigator: { visible: true }
-}
+  seriesNavigator: { visible: true },
+};

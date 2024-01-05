@@ -133,7 +133,7 @@ export interface IBulletGaugeArgs {
     value: number;
 }
 
-export class BulletActualBar extends LinearValueBar {
+export class BulletValueBar extends LinearValueBar {
 
     //-------------------------------------------------------------------------
     // fields
@@ -201,7 +201,7 @@ export class BulletGauge extends LinearGaugeBase {
      * 
      * @config
      */
-    actualBar = new BulletActualBar(this);
+    valueBar = new BulletValueBar(this);
     /**
      * 목표 값.
      * 

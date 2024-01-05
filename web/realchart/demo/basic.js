@@ -3,190 +3,190 @@
  *
  */
 const config = {
-    options: {},
-    title: "경기도 성남시 인구 현황",
-    legend: true,
-    body: {
-        style: {
-            stroke: "none",
-        },
+  options: {},
+  title: '경기도 성남시 인구 현황',
+  legend: true,
+  body: {
+    style: {
+      stroke: 'none',
     },
-    xAxis: {
-        label: {
-            style: {},
-        },
-        grid: {
-            visible: true,
-            endVisible: true,
-        },
-        tick: true,
-        // type: 'category',
-        // position: 'apposite'
-        // position: 'base',
-        // baseAxis: 1,
-        title: {
-            text: "수정구",
-        },
-        // grid: true,
-        crosshair: true,
+  },
+  xAxis: {
+    label: {
+      style: {},
     },
-    yAxis: {
-        title: {
-            text: "전체 인구수",
-        },
-        unit: "(명)",
-        label: {
-            lastText: "${label}<br>${axis.unit}",
-            lastStyle: { fontWeight: "bold" },
-        },
+    grid: {
+      visible: true,
+      lastVisible: true,
     },
-    series: {
-        pointLabel: {
-            visible: true,
-            // textCallback: ({index, y}) => {
-            //     return index === 0 ? y + '%' : y;
-            // },
-        },
-        onPointClick: (args) => {
-            // alert(JSON.stringify(args));
-            args.series.updateData(
-                [
-                    ["신흥1동", 100],
-                    ["신흥2동", 200],
-                ],
-                true
-            );
-        },
-        data: [
-            ["신흥1동", 12904],
-            ["신흥2동", 19796],
-            ["신흥3동", 10995],
-            ["태평1동", 14625],
-            ["태평2동", 14627],
-            ["태평3동", 12649],
-            ["태평4동", 12279],
+    tick: true,
+    // type: 'category',
+    // position: 'apposite'
+    // position: 'base',
+    // baseAxis: 1,
+    title: {
+      text: '수정구',
+    },
+    // grid: true,
+    crosshair: true,
+  },
+  yAxis: {
+    title: {
+      text: '전체 인구수',
+    },
+    unit: '(명)',
+    label: {
+      lastText: '${label}<br>${axis.unit}',
+      lastStyle: { fontWeight: 'bold' },
+    },
+  },
+  series: {
+    pointLabel: {
+      visible: true,
+      // textCallback: ({index, y}) => {
+      //     return index === 0 ? y + '%' : y;
+      // },
+    },
+    onPointClick: (args) => {
+      // alert(JSON.stringify(args));
+      args.series.updateData(
+        [
+          ['신흥1동', 100],
+          ['신흥2동', 200],
         ],
+        true
+      );
     },
+    data: [
+      ['신흥1동', 12904],
+      ['신흥2동', 19796],
+      ['신흥3동', 10995],
+      ['태평1동', 14625],
+      ['태평2동', 14627],
+      ['태평3동', 12649],
+      ['태평4동', 12279],
+    ],
+  },
 };
 
 let animate;
 let chart;
 
 function createCodePenButton() {
-    let elements = document.getElementById("actions");
+  let elements = document.getElementById('actions');
 
-    let data = {
-        title: "Cool Pen",
-        description: "",
-        html: '<script>var realChartLic = \'upVcPE+wPOkOR/egW8JuxkM/nBOseBrflwxYpzGZyYmhB+vWdw2W7OeKriArSGg/tcphfKS2Musnm9T+R9R8ZnQHkEFeJWIE\';</script><script src="https://unpkg.com/realchart"></script>\n<div id="realchart"></div>',
-        html_pre_processor: "none",
-        css: '@import url("https://unpkg.com/realchart/dist/realchart-style.css");\n#realchart {\n    width: 100%;\n    height: 550px;\n    border: 1px solid lightgray;\n    margin-bottom: 20px;\n}',
-        css_pre_processor: "none",
-        css_starter: "neither",
-        css_prefix_free: false,
-        js:
-            "var realChartLic = 'upVcPE+wPOkOR/egW8JuxkM/nBOseBrflwxYpzGZyYmhB+vWdw2W7OeKriArSGg/tcphfKS2Musnm9T+R9R8ZnQHkEFeJWIE'; \n" +
-            "const config = " +
-            JSON.stringify(config, null, 2) +
-            '; \n  chart = RealChart.createChart(document, "realchart", config);',
-        js_pre_processor: "none",
-        js_modernizr: false,
-        js_library: "",
-        html_classes: "",
-        css_external: "",
-        js_external: "",
-        template: true,
-    };
+  let data = {
+    title: 'Cool Pen',
+    description: '',
+    html: '<script>var realChartLic = \'upVcPE+wPOkOR/egW8JuxkM/nBOseBrflwxYpzGZyYmhB+vWdw2W7OeKriArSGg/tcphfKS2Musnm9T+R9R8ZnQHkEFeJWIE\';</script><script src="https://unpkg.com/realchart"></script>\n<div id="realchart"></div>',
+    html_pre_processor: 'none',
+    css: '@import url("https://unpkg.com/realchart/dist/realchart-style.css");\n#realchart {\n    width: 100%;\n    height: 550px;\n    border: 1px solid lightgray;\n    margin-bottom: 20px;\n}',
+    css_pre_processor: 'none',
+    css_starter: 'neither',
+    css_prefix_free: false,
+    js:
+      "var realChartLic = 'upVcPE+wPOkOR/egW8JuxkM/nBOseBrflwxYpzGZyYmhB+vWdw2W7OeKriArSGg/tcphfKS2Musnm9T+R9R8ZnQHkEFeJWIE'; \n" +
+      'const config = ' +
+      JSON.stringify(config, null, 2) +
+      '; \n  chart = RealChart.createChart(document, "realchart", config);',
+    js_pre_processor: 'none',
+    js_modernizr: false,
+    js_library: '',
+    html_classes: '',
+    css_external: '',
+    js_external: '',
+    template: true,
+  };
 
-    let JSONstring = JSON.stringify(data)
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&apos;");
+  let JSONstring = JSON.stringify(data)
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
 
-    let form = document.createElement("form");
-    form.setAttribute("action", "https://codepen.io/pen/define");
-    form.setAttribute("method", "POST");
-    form.setAttribute("target", "_blank");
+  let form = document.createElement('form');
+  form.setAttribute('action', 'https://codepen.io/pen/define');
+  form.setAttribute('method', 'POST');
+  form.setAttribute('target', '_blank');
 
-    let inputData = document.createElement("input");
-    inputData.setAttribute("type", "hidden");
-    inputData.setAttribute("name", "data");
-    inputData.setAttribute("value", JSONstring);
-    form.appendChild(inputData);
+  let inputData = document.createElement('input');
+  inputData.setAttribute('type', 'hidden');
+  inputData.setAttribute('name', 'data');
+  inputData.setAttribute('value', JSONstring);
+  form.appendChild(inputData);
 
-    let inputSubmit = document.createElement("input");
-    inputSubmit.setAttribute("type", "submit");
-    inputSubmit.setAttribute("value", "Code Pen");
-    form.appendChild(inputSubmit);
+  let inputSubmit = document.createElement('input');
+  inputSubmit.setAttribute('type', 'submit');
+  inputSubmit.setAttribute('value', 'Code Pen');
+  form.appendChild(inputSubmit);
 
-    elements.appendChild(form);
+  elements.appendChild(form);
 }
 
 function setActions(container) {
-    createCheckBox(
-        container,
-        "Debug",
-        function (e) {
-            RealChart.setDebugging(_getChecked(e));
-            chart.render();
-        },
-        false
-    );
-    createButton(container, "Test", function (e) {
-        // alert('hello');
-        // alert(RealChart.getVersion());
-        // chart.series.visible = !chart.series.visible;
-        // chart.series.set('visible', !chart.series.get('visible'));
-        // chart.series.toggle('visible');
-        // chart.series.set('pointLabel', false);
-        // chart.series.toggle('pointLabel.visible');
-        // chart.series.pointLabel.toggle('visible');
-        // chart.$_p.test(document.getElementById('canvas'));
-    });
-    createCheckBox(
-        container,
-        "Inverted",
-        function (e) {
-            config.inverted = _getChecked(e);
-            chart.load(config, animate);
-        },
-        false
-    );
-    createCheckBox(
-        container,
-        "X Reversed",
-        function (e) {
-            config.xAxis.reversed = _getChecked(e);
-            chart.load(config, animate);
-        },
-        false
-    );
-    createCheckBox(
-        container,
-        "Y Reversed",
-        function (e) {
-            config.yAxis.reversed = _getChecked(e);
-            chart.load(config, animate);
-        },
-        false
-    );
-    createCheckBox(
-        container,
-        "X Opposite",
-        function (e) {
-            config.xAxis.position = _getChecked(e) ? "opposite" : "";
-            chart.load(config, animate);
-        },
-        false
-    );
+  createCheckBox(
+    container,
+    'Debug',
+    function (e) {
+      RealChart.setDebugging(_getChecked(e));
+      chart.render();
+    },
+    false
+  );
+  createButton(container, 'Test', function (e) {
+    // alert('hello');
+    // alert(RealChart.getVersion());
+    // chart.series.visible = !chart.series.visible;
+    // chart.series.set('visible', !chart.series.get('visible'));
+    // chart.series.toggle('visible');
+    // chart.series.set('pointLabel', false);
+    // chart.series.toggle('pointLabel.visible');
+    // chart.series.pointLabel.toggle('visible');
+    // chart.$_p.test(document.getElementById('canvas'));
+  });
+  createCheckBox(
+    container,
+    'Inverted',
+    function (e) {
+      config.inverted = _getChecked(e);
+      chart.load(config, animate);
+    },
+    false
+  );
+  createCheckBox(
+    container,
+    'X Reversed',
+    function (e) {
+      config.xAxis.reversed = _getChecked(e);
+      chart.load(config, animate);
+    },
+    false
+  );
+  createCheckBox(
+    container,
+    'Y Reversed',
+    function (e) {
+      config.yAxis.reversed = _getChecked(e);
+      chart.load(config, animate);
+    },
+    false
+  );
+  createCheckBox(
+    container,
+    'X Opposite',
+    function (e) {
+      config.xAxis.position = _getChecked(e) ? 'opposite' : '';
+      chart.load(config, animate);
+    },
+    false
+  );
 
-    createCodePenButton();
+  createCodePenButton();
 }
 
 function init() {
-    console.log("RealChart v" + RealChart.getVersion());
-    // RealChart.setDebugging(true);
-    RealChart.setLogging(true);
+  console.log('RealChart v' + RealChart.getVersion());
+  // RealChart.setDebugging(true);
+  RealChart.setLogging(true);
 
-    chart = RealChart.createChart(document, "realchart", config);
-    setActions("actions");
+  chart = RealChart.createChart(document, 'realchart', config);
+  setActions('actions');
 }

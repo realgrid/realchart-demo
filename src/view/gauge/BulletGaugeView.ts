@@ -113,11 +113,11 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
 
         // value bar
         if (vActual.setVis(!scale.isEmpty() && !isNaN(value))) {
-            vActual.setStyleOrClass(m.actualBar.style);
-            if (value < m.targetValue && m.actualBar.belowStyle) {
-                vActual.internalSetStyleOrClass(m.actualBar.belowStyle);
+            vActual.setStyleOrClass(m.valueBar.style);
+            if (value < m.targetValue && m.valueBar.belowStyle) {
+                vActual.internalSetStyleOrClass(m.valueBar.belowStyle);
             }
-            vActual.internalSetStyleOrClass(m.actualBar.getStyle(value));
+            vActual.internalSetStyleOrClass(m.valueBar.getStyle(value));
 
             if (vertical) {
                 const h = r.height * scale.getRate(value);

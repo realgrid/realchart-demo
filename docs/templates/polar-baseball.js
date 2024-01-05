@@ -4,10 +4,14 @@ export const config = {
     {
       label: 'yAxis.type',
       type: 'select',
-      data: [ 'linear', 'log' ],
+      data: ['linear', 'log'],
       value: 'log',
-      action: ({value}) => { config.yAxis.type = value; config.yAxis.template = `${value}Axis`; chart.load(config); }
-    }
+      action: ({ value }) => {
+        config.yAxis.type = value;
+        config.yAxis.template = `${value}Axis`;
+        chart.load(config);
+      },
+    },
   ],
   polar: true,
   templates: {
@@ -16,7 +20,7 @@ export const config = {
       pointLabel: false,
       xField: 'angle',
       yField: 'hits',
-      tooltipText: '${x}°: ${y}hits'
+      tooltipText: '${x}°: ${y}hits',
     },
     logAxis: {
       label: {
@@ -24,19 +28,15 @@ export const config = {
         effect: 'outline',
         outlineThickness: 5,
         style: { fill: '#555' },
-        firstText: ''
+        firstText: '',
       },
       title: 'hits',
       tick: {
         visible: false,
         steps: [
-          0,
-          0.6989700043360189,
-          1,
-          1.3010299956639813,
-          1.4771212547196624
-        ]
-      }
+          0, 0.6989700043360189, 1, 1.3010299956639813, 1.4771212547196624,
+        ],
+      },
     },
     linearAxis: {
       label: {
@@ -44,17 +44,17 @@ export const config = {
         effect: 'outline',
         outlineThickness: 5,
         style: { fill: '#555' },
-        firstText: ''
+        firstText: '',
       },
-      tick: { visible: false }
-    }
+      tick: { visible: false },
+    },
   },
   options: { style: { paddingLeft: '100px' }, credits: false },
   title: { text: 'J.D Reyes', align: 'left', style: { fontWeight: 700 } },
   subtitle: {
     text: '<t style="fill:#888">Balls in play</t><br><t style="fill:var(--color-3)">Hits</t>',
     align: 'left',
-    style: { textAlign: 'left' }
+    style: { textAlign: 'left' },
   },
   legend: false,
   xAxis: {
@@ -68,12 +68,14 @@ export const config = {
       visible: true,
       suffix: '°',
       style: { fill: '#999' },
-      textCallback: ({ count, index, value }) => { return (value > -90 && value < 90) ? value.toString() : ''; }
+      textCallback: ({ count, index, value }) => {
+        return value > -90 && value < 90 ? value.toString() : '';
+      },
     },
     tick: { stepInterval: 10 },
-    grid: { startVisible: false },
+    grid: { firstVisible: false },
     line: { visible: true, style: { stroke: '#999' } },
-    sectorLine: { style: { stroke: '#999' } }
+    sectorLine: { style: { stroke: '#999' } },
   },
   yAxis: { template: 'logAxis', type: 'log' },
   body: {
@@ -83,9 +85,9 @@ export const config = {
         align: 'center',
         verticalAlign: 'middle',
         offsetX: -120,
-        width: 400
-      }
-    ]
+        width: 400,
+      },
+    ],
   },
   tooltip: { level: 'series' },
   series: {
@@ -121,10 +123,10 @@ export const config = {
           { angle: -40, hits: 7 },
           { angle: -45, hits: 3 },
           { angle: -55, hits: 1 },
-          { angle: -65, hits: 2 }
+          { angle: -65, hits: 2 },
         ],
         style: { stroke: 'none', fill: '#bbb' },
-        tooltipText: '${name}°: ${y}hits'
+        tooltipText: '${name}°: ${y}hits',
       },
       {
         template: 'series',
@@ -139,10 +141,10 @@ export const config = {
           { angle: -5, hits: 2 },
           { angle: -10, hits: 5 },
           { angle: -20, hits: 4 },
-          { angle: -65, hits: 1 }
+          { angle: -65, hits: 1 },
         ],
-        style: { stroke: 'none', fill: 'var(--color-3)' }
-      }
-    ]
-  }
-}
+        style: { stroke: 'none', fill: 'var(--color-3)' },
+      },
+    ],
+  },
+};
