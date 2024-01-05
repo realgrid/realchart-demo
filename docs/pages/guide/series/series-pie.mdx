@@ -9,25 +9,24 @@ Bar, Line 시리즈 등과 달리 축 설정이 필요 없는 시리즈이다.<b
 원호의 시작 및 전체 각도를 지정해서 반원 등으로 표시할 수도 있다.
 또, Funnel 시리즈를 사용하면 원형이 아닌 방식으로 표시할 수 있다.<br/>
 
-
 ## 도넛 차트
 
-[innerRadius](/config/config/series/pie#innerradius) 속성을 지정해서 중심이 빈 
+[innerRadius](/config/config/series/pie#innerradius) 속성을 지정해서 중심이 빈
 도넛 형태의 차트를 표시할 수 있다.
 
-```
+```js
 const config = {
-    series: {
-        type: 'pie',
-        innerRadius: 0.5,
-        data: []
-    }
+  series: {
+    type: 'pie',
+    innerRadius: 0.5,
+    data: [],
+  },
 };
 ```
 
 ## 반원 도넛 차트
 
-[startAngle](/config/config/series/pie#startangle)과 
+[startAngle](/config/config/series/pie#startangle)과
 [totalAngle](/config/config/series/pie#totalangle) 속성들을 지정해서
 반원 또는 반원 도넛 차트를 표시할 수 있다.
 12시 위치가 0도이다.

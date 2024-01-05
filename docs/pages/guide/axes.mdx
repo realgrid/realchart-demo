@@ -3,7 +3,7 @@
 ## 2차원 평면
 
 RealChart를 포함한 차팅 툴들은 기본적으로 2차원 평면 위에 데이터를 표시한다.
-2차원 평면은 X/Y 두 축으로 구성되며, 
+2차원 평면은 X/Y 두 축으로 구성되며,
 두 축이 직각으로 교차하는 직교 좌표, x축의 각도를 기준으로 표시 지점을 결정하는 극좌표가 있다.<br/>
 직교 좌표계에서 x축이 수평, y축이 수직으로 표시되는 것이 기본이지만,
 차트의 [inverted](/config/config#inverted)를 true로 지정하면
@@ -39,22 +39,22 @@ const config = {
 }
 ```
 
-축 연결이 필수적인 시리즈들은 기본적으로 첫번째 x, y 축에 연결되는 데, 
-시리즈의 [xAxis](/config/config/series#xAxis), [yAxis](/config/config/series#yAxis) 속성에 
+축 연결이 필수적인 시리즈들은 기본적으로 첫번째 x, y 축에 연결되는 데,
+시리즈의 [xAxis](/config/config/series#xAxis), [yAxis](/config/config/series#yAxis) 속성에
 축 index를 지정해서 다른 축에 연결할 수 있다. 첫번째 축의 index가 **0**이다.
 
 축의 [type](/config/config/axis#type)이 명시적으로 지정되지 않으면,
-먼저 [categories](/config/config/axis/category#categories) 설정된 경우 'category' 축으로 생성되고, 
+먼저 [categories](/config/config/axis/category#categories) 설정된 경우 'category' 축으로 생성되고,
 그 다음엔 축에 연결된 시리즈 종류에 따라 축의 종류가 결정된다.
 x축인 경우 모두 카테고리 축에 연결 가능한 시리즈이면 'category' 축으로, 아니면 'linear' 축으로 생성된다.
 y축은 'linear' 축으로 기본 생성된다.
 
 ##### 시리즈별 기본 x축 종류
 
-| 시리즈 | x축 |
-|------|------|
+| 시리즈                                                                            | x축                                       |
+| --------------------------------------------------------------------------------- | ----------------------------------------- |
 | [bar], [waterfall], [candlestick], [lollipop], [dumbbell], [equalizer], [heatmap] | [category](/config/config/xAxis/category) |
-| [line]을 포함한 나머지 | [linear](/config/config/xAxis/linear) |
+| [line]을 포함한 나머지                                                            | [linear](/config/config/xAxis/linear)     |
 
 ## 틱(Ticks)
 
@@ -67,7 +67,7 @@ y축은 'linear' 축으로 기본 생성된다.
 ## 라벨(Labels)
 
 tick 배치가 정해지면 기본적으로 tick 위치마다 해당 값을 나타내는 텍스트를 표시한다.
-다만, 수평 축의 경우 표시할 텍스트들이 겹치게 되면 기본 설정에 따라 텍스트를 회전시키거나, 
+다만, 수평 축의 경우 표시할 텍스트들이 겹치게 되면 기본 설정에 따라 텍스트를 회전시키거나,
 label들을 건너띄어 가면서 표시한다.
 자동 설정되는 겹침 방지 방식이 원하는 것이 아니면 명시적으로 속성을 지정해서 겹치지 않도록 할 수 있다.<br/>
 tick 리벨들도 중요한 정보이므로 최대한 정확하게 표시하는 것은 필수적인 일이다.
@@ -82,7 +82,7 @@ tick 위치마다 수평 또는 수직선이 표시된다.
 
 ### See Also
 
-- [시리즈 개요](/series)
+- [시리즈 개요](/guide/series)
 - [API 개요](/docs)
 
 [bar]: /config/config/series/bar
