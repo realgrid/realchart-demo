@@ -79,9 +79,6 @@ const config = {
         fontWeight: 'bold',
       },
     },
-    style: {
-      fill: 'red',
-    },
   },
 };
 

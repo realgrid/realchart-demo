@@ -42,7 +42,7 @@ const config = {
         // position: 'top',
       },
       style: {
-        fill: 'blue',
+        // fill: 'blue',
       },
     },
     {

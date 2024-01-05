@@ -48,10 +48,10 @@ const config = {
       label: {
         text: 'RealChart Linear<br>ver 1.0',
         // position: 'bottom',
-        style: { fill: 'blue' },
+        style: { fill: 'red' },
       },
       style: {
-        fill: 'red',
+        // fill: 'red',
       },
     },
     {
