@@ -6,42 +6,42 @@
 const config = {
   actions: [
     {
-      type: "select",
-      label: "Palette",
-      data: ["default", "warm", "cool", "forest", "gray", "vintage", "unicorn"],
+      type: 'select',
+      label: 'Palette',
+      data: ['default', 'warm', 'cool', 'forest', 'gray', 'vintage', 'unicorn'],
       action: ({ value }) => {
         config.options.palette = value;
         chart.load(config);
       },
     },
   ],
-  type: "bar",
-  title: "월별 매출 현황 분석",
-  subtitle: "1월부터 12월까지의 매출 변화 추적",
+  type: 'bar',
+  title: '월별 매출 현황 분석',
+  subtitle: '1월부터 12월까지의 매출 변화 추적',
   options: {
-    palette: "default",
+    palette: 'default',
   },
   xAxis: {
-    title: "월 (1월 - 12월)",
+    title: '월 (1월 - 12월)',
     categories: [
-      "Jan",
-      "Fed",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Ang",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ],
   },
   yAxis: [],
   series: [
     {
-      name: "월 매출",
+      name: '월 매출',
       colorByPoint: true,
       pointLabel: true,
       pointWidth: 30,
@@ -70,7 +70,7 @@ let chart;
 function setActions(container) {
   createCheckBox(
     container,
-    "Debug",
+    'Debug',
     function (e) {
       RealChart.setDebugging(_getChecked(e));
       chart.refresh();
@@ -79,18 +79,18 @@ function setActions(container) {
   );
   createCheckBox(
     container,
-    "Always Animate",
+    'Always Animate',
     function (e) {
       animate = _getChecked(e);
     },
     false
   );
-  createButton(container, "Test", function (e) {
-    alert("hello");
+  createButton(container, 'Test', function (e) {
+    alert('hello');
   });
   createCheckBox(
     container,
-    "ColorByPoint",
+    'ColorByPoint',
     function (e) {
       config.series.colorByPoint = _getChecked(e);
       chart.load(config, animate);
@@ -99,7 +99,7 @@ function setActions(container) {
   );
   createCheckBox(
     container,
-    "Inverted",
+    'Inverted',
     function (e) {
       chart.inverted = _getChecked(e);
     },
@@ -107,7 +107,7 @@ function setActions(container) {
   );
   createCheckBox(
     container,
-    "X Reversed",
+    'X Reversed',
     function (e) {
       config.xAxis.reversed = _getChecked(e);
       chart.load(config, animate);
@@ -116,7 +116,7 @@ function setActions(container) {
   );
   createCheckBox(
     container,
-    "Y Reversed",
+    'Y Reversed',
     function (e) {
       config.yAxis.reversed = _getChecked(e);
       chart.load(config, animate);
@@ -126,10 +126,10 @@ function setActions(container) {
 }
 
 function init() {
-  console.log("RealChart v" + RealChart.getVersion());
+  console.log('RealChart v' + RealChart.getVersion());
   // RealChart.setDebugging(true);
   RealChart.setLogging(true);
 
-  chart = RealChart.createChart(document, "realchart", config);
-  setActions("actions");
+  chart = RealChart.createChart(document, 'realchart', config);
+  setActions('actions');
 }

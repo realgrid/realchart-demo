@@ -3,14 +3,12 @@ export const config = {
     {
       type: 'select',
       label: 'Palette',
-      data: [
-        'default', 'warm',
-        'cool',    'forest',
-        'gray',    'vintage',
-        'unicorn'
-      ],
-      action: ({ value }) => { config.options.palette = value; chart.load(config); }
-    }
+      data: ['default', 'warm', 'cool', 'forest', 'gray', 'vintage', 'unicorn'],
+      action: ({ value }) => {
+        config.options.palette = value;
+        chart.load(config);
+      },
+    },
   ],
   type: 'bar',
   title: '월별 매출 현황 분석',
@@ -19,11 +17,19 @@ export const config = {
   xAxis: {
     title: '월 (1월 - 12월)',
     categories: [
-      'Jan', 'Fed', 'Mar',
-      'Apr', 'May', 'Jun',
-      'Jul', 'Ang', 'Sep',
-      'Oct', 'Nov', 'Dec'
-    ]
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ],
   },
   yAxis: [],
   series: [
@@ -34,13 +40,19 @@ export const config = {
       pointWidth: 30,
       yAxis: 0,
       data: [
-        [ -130 ], [ -100 ],
-        [ -50 ],  [ 60 ],
-        [ 70 ],   [ 115 ],
-        [ 90 ],   [ 100 ],
-        [ 120 ],  [ 130 ],
-        [ 140 ],  [ 160 ]
-      ]
-    }
-  ]
-}
+        [-130],
+        [-100],
+        [-50],
+        [60],
+        [70],
+        [115],
+        [90],
+        [100],
+        [120],
+        [130],
+        [140],
+        [160],
+      ],
+    },
+  ],
+};
