@@ -861,7 +861,7 @@ ${body.join("\n")}`;
             tableHead.push("Description");
           const tableBody = m.parameters.map((n) => {
             const params = [
-              n.default ? `${escape(n.name)}=${code(escape(n.default))}` : escape(n.name),
+              n.default ? `${escape(n.name)}=${code(n.default)}` : escape(n.name),
               this.linker(n.type || "any", n.rawType || [n.type || "any"])
               //   n.optional ? '✅' : '❌'
             ];
@@ -908,7 +908,7 @@ ${body.join("\n")}`;
           tableHead.push("Description");
         const tableBody = m.parameters.map((n) => {
           const params = [
-            n.default ? `${escape(n.name)}=${code(escape(n.default))}` : escape(n.name),
+            n.default ? `${escape(n.name)}=${code(n.default)}` : escape(n.name),
             this.linker(n.type || "any", n.rawType || [n.type || "any"])
             // n.optional ? '✅' : '❌',
           ];
