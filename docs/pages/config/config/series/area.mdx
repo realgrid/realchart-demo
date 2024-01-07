@@ -4,39 +4,43 @@
 대부분 [<Content type="expression" value="'line'"></Content>](/config/config/series/line) 시리즈와 동일하고 라인 아래 부분을 별도의 색상으로 채운다.
 ## Properties
 
-### areaStyle: `StyleProps{:js}`[#areaStyle]
+### areaStyle: `SVGStyles | string{:js}`[#areaStyle]
 area 영역에 추가적으로 적용되는 스타일셋이나 class selector.  
-- `StyleProps{:js}` 
+- `SVGStyles{:js}` 
 
 | Name | Type | Optional |  
 | ----- | ----- | ----- |  
-| color | `string{:js}` | true |  
 | fill | `string{:js}` | true |  
-| maxHeight | `string{:js}` | true |  
-| maxWidth | `string{:js}` | true |  
-| minHeight | `string{:js}` | true |  
-| minWidth | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
 | strokeDasharray | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### baseValue: `number{:js}`[#baseValue]
 y축 기준 위/아래 구분의 기준이 되는 값.  
 <DefaultValue value="0" contents=""></DefaultValue>
-### belowAreaStyle: `StyleProps{:js}`[#belowAreaStyle]
+### belowAreaStyle: `SVGStyles | string{:js}`[#belowAreaStyle]
 base 아래쪽 area 영역에 추가적으로 적용되는 스타일셋이나 class selector.  
-- `StyleProps{:js}` 
+- `SVGStyles{:js}` 
 
 | Name | Type | Optional |  
 | ----- | ----- | ----- |  
-| color | `string{:js}` | true |  
 | fill | `string{:js}` | true |  
-| maxHeight | `string{:js}` | true |  
-| maxWidth | `string{:js}` | true |  
-| minHeight | `string{:js}` | true |  
-| minWidth | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
 | strokeDasharray | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### belowStyle: `SVGStyles | string{:js}`[#belowStyle]
 [baseValue](#basevalue) 혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.  
 - `SVGStyles{:js}` 

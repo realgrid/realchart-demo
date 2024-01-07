@@ -260,12 +260,17 @@ export class RcChartControl {
      * @param animate 애니메이션 실행 여부.
      * @returns 생성된 시리즈 객체.
      */
-    addSeries(source: any, animate = true): RcChartSeries {
+    addSeries(source: any, animate = true): RcChartSeries | undefined {
         const series = this.$_p.model.addSeries(source, animate);
         return series && getObject(this._objects, series) as RcChartSeries;
     }
 
-    removeSeries(series: string | RcChartSeries, animate = true): boolean {
-        return !!this.$_p.model.removeSeries(series instanceof RcChartSeries ? series.$_p as Series : series, animate);
+    removeSeries(series: string | RcChartSeries, animate = true): RcChartSeries | undefined {
+        const ser = this.$_p.model.removeSeries(series instanceof RcChartSeries ? series.$_p as Series : series, animate);
+        
+        if (ser) {
+            const obj = getObject(this._objects, ser);
+            return obj as RcChartSeries;
+        }
     }
 }

@@ -9,7 +9,7 @@
 import { pickNum, pickProp, assign, minv } from "../../common/Common";
 import { IPoint } from "../../common/Point";
 import { RcElement } from "../../common/RcControl";
-import { Align, IValueRange, SVGStyleOrClass, StyleProps } from "../../common/Types";
+import { Align, IValueRange, SVGStyleOrClass } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { IChart } from "../Chart";
@@ -460,13 +460,13 @@ export class AreaSeries extends LineSeries {
      * 
      * @config
      */
-    areaStyle: StyleProps;
+    areaStyle: SVGStyleOrClass;
     /**
      * base 아래쪽 area 영역에 추가적으로 적용되는 스타일셋이나 class selector.
      * 
      * @config
      */
-    belowAreaStyle: StyleProps;
+    belowAreaStyle: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
     // methods
@@ -652,7 +652,7 @@ export class AreaRangeSeries extends LineSeriesBase {
      * 
      * @config
      */
-    areaStyle: StyleProps;
+    areaStyle: SVGStyleOrClass;
     /**
      * true면 spline 곡선으로 표시한다.
      * <br>

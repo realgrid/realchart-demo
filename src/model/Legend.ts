@@ -129,7 +129,7 @@ export enum LegendItemsAlign {
 /**
  * 차트 범례 설정 모델.
  * visible 기본값이 undefined이고,
- * 따로 지정하지 않으면 시리즈가 둘 이상 포함돼야 legend를 표시한다.
+ * 따로 지정하지 않으면 시리즈가 둘 이상 포함돼야 legend가 표시된다.
  * 
  * @config chart.legend
  */

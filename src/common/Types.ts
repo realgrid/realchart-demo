@@ -161,8 +161,10 @@ export type SVGStyleOrClass = SVGStyles | string;
 
 export const CAMEL2KEBAB = {
     fill: 'fill',
+    fillOpacity: 'fill-opacity',
     stroke: 'stroke',
     strokeWidth: 'stroke-width',
+    strokeDasharray: 'stroke-dasharray',
     fontFamily: 'font-family',
     fontSize: 'font-size',
     fontWeight: 'font-weight',
@@ -281,17 +283,17 @@ export const throwFormat2 = (format: string, value1: any, value2: any) => {
     throw new Error(formatMessage2(format, value1, value2));
 }
 
-export interface StyleProps {
-    fill?: string;
-    stroke?: string;
-    strokeWidth?: string;
-    color?: string;
-    minWidth?: string;
-    maxWidth?: string;
-    minHeight?: string;
-    maxHeight?: string;
-    strokeDasharray?: string;
-}
+// export interface StyleProps {
+//     fill?: string;
+//     stroke?: string;
+//     strokeWidth?: string;
+//     color?: string;
+//     minWidth?: string;
+//     maxWidth?: string;
+//     minHeight?: string;
+//     maxHeight?: string;
+//     strokeDasharray?: string;
+// }
 
 export enum Align {
     /** @config */

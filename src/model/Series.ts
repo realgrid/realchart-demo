@@ -655,6 +655,10 @@ class ValueAnimation extends RcAnimation {
 }
 
 /**
+ * 시리즈는 {@link data}로 지정된 값들을 데이터포인트로 표시하는 차트의 핵심 구성 요소이다.<br/>
+ * 차트 설정의 다른 부분이나 API에 참조하기 위해서는 {@link name}을 반드시 지정해야 햔다.
+ * 차트 생성 시 **'type'**을 지정하지 않으면 **'bar'** 시리즈로 생성된다.
+ * 
  * @config chart.series[base]
  */
 export abstract class Series extends ChartItem implements ISeries, IChartDataListener, ILegendSource, ITooltipContext {
@@ -1805,9 +1809,15 @@ export class PlottingItemCollection  {
 
         if (ser) {
             if (ser.group) {
+                if (ser.group.remove(ser)) {
+                    return ser;
+                }
             } else {
+                this._items.splice(this._items.indexOf(ser), 1);
+                this._series.splice(this._series.indexOf(ser), 1);
+                if (ser.name) delete this._map[ser.name];
+                return ser;
             }
-            return ser;
         }
     }
 
@@ -2623,6 +2633,14 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
 
     seriesChanged(): boolean {
         return this._seriesChanged;
+    }
+
+    remove(series: T): boolean {
+        const i = this._series.indexOf(series);
+        if (i >= 0) {
+            this._series.splice(i, 1);
+            return true;
+        }
     }
 
     //-------------------------------------------------------------------------

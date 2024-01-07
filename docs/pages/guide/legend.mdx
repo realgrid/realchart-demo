@@ -1,8 +1,27 @@
 # 범례(Legend)
 
+차트 시리즈 구성을 직관적으로 이해할 수 있도록
+각 시리즈별 [이름](/config/config/base/series#name)이나 [label](/config/config/base/series#label)을 
+시리즈 종류를 나타내는 아이콘 이미지와 함께 표시하는 구성 요소이다. 
+범례는 기본적으로 차트 하단에 표시되지만 [위치](/config/config/legend#location)를 지정하는 속성으로 다양한 위치에 표시할 수 있다.
+
 ## 설정
+
+```js
+const config = {
+    legend: {
+        location: 'right',
+        alignBase: 'chart',
+        verticalAlign: 'top',
+        offsetY: 10,
+        ...
+    }
+};
+```
 
 ### See Also
 
+- [시리즈 개요](/guide/series)
+- [타이틀](/guide/title)
 - [축 개요](/guide/axes)
 - [API 개요](/docs)

@@ -4,7 +4,7 @@
  */
 const config = {
     options: {},
-    title: 'Add/Remove Series',
+    title: 'Add/Remove Series - Linear Axis',
     legend: true,
     body: {
         style: {
@@ -12,6 +12,7 @@ const config = {
         },
     },
     xAxis: {
+        type: 'linear',
         label: {
             style: {},
         },

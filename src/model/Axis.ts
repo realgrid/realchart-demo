@@ -1465,14 +1465,13 @@ export abstract class Axis extends ChartItem implements IAxis {
     
     zoom(start: number, end: number, minSize = NaN): boolean {
         const zoom = this._prepareZoom();
+        const ret = zoom.resize(start, end, minSize);
 
-        if (zoom.resize(start, end, minSize)) {
-            if (zoom.isFull()) {
-                this._zoom = null;
-            }
-            this._changed();
-            return true;
+        if (zoom.isFull()) {
+            this._zoom = null;
         }
+        this._changed();
+        return ret;
     }
 
     isZoomed(): boolean {

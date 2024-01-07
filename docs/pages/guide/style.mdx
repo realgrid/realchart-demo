@@ -1,8 +1,46 @@
 # 스타일
 
+RealChart는 차트를 2차원 vector 그래픽을 표현하는 [SVG](https://developer.mozilla.org/ko/docs/Web/SVG)를 이용해서 웹 화면에 그린다.
+SVG의 모든 element는 다른 HTML element들과 마찬가지로 [CSS](https://developer.mozilla.org/ko/docs/Glossary/CSS)를 이용해 시각화되므로
+차트 구성 요소들의 색상, 폰트 등의 외형은 CSS로 지정된다. 
+단, SVG에 적용되는 CSS 속성들은 다른 HTML에 적용되는 것과 다소 상이한 것들이 있으므로 주의가 필요하다.<br/>
+크기나 위치를 CSS로 지정할 수 없으며,
+차트 구성 요소에 적용할 수 있는 CSS 속성들은 아래 정도이다.
+
+| css property | chart style | 적용 대상 |
+| ------------ | ----------- | ------- |
+| fill | fill | 글자 색, 도형 내부 채우기 색 |
+| fill-opacity | fillOpacity | fill 투명도. 1이 완전 불투명 |
+| stroke | stroke | 도형 경계 색 |
+| stroke-width | strokeWidth | 선 두께 |
+| stroke-dasharray | strokeDasharray | 점선 표시 |
+| font-family | fontFamily | 폰트 종류 |
+| font-size | fontSize | 폰트 크기 |
+| font-weight | fontWeight | 폰트 굵기 |
+
 ## 설정
+
+```js
+const config = {
+    series[{
+        type: 'line',
+        style: {
+            stroke: 'red',
+            strokeDasharray: '4'
+        }
+    }],
+    title: {
+        style: {
+            fontSize: '20px',
+            fill: '#333'
+        }
+    }
+};
+```
 
 ### See Also
 
+- [애셋 개요](/guide/assets)
+- [시리즈 개요](/guide/series)
 - [축 개요](/guide/axes)
 - [API 개요](/docs)
