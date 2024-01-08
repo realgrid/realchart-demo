@@ -26,7 +26,7 @@ const config = {
     },
     series: [
         {
-            type: 'line',
+            // type: 'line',
             name: '대기질',
             // baseValue: null,
             pointLabel: true,

@@ -460,7 +460,9 @@ export class RcAnnotation extends RcNamedObject {
 }
 
 /**
- * 차트 타이틀 모델.
+ * 차트 타이틀 모델.<br/>
+ * 기본적으로 차트 {@link config.title#align 중앙} 상단에 {@link config.title#text} 문자열을 표시한다.<br/>
+ * 이 타이틀과 함께 {@link rc.RcSubtitle 부제목}을 추가로 표시할 수도 있다.
  */
 export class RcTitle extends RcChartObject {
 }

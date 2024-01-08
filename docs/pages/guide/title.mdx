@@ -1,6 +1,10 @@
 # 타이틀
 
-차트 내용을 요약하는 제목 및 부제목을 차트 상단에 표시할 수 있다.
+차트 내용을 요약하는 [제목](/config/config/title) 및 
+[부제목](/config/config/subtitle)을 차트 상단에 표시할 수 있다.<br/>
+부제목은 제목의 좌우상하 주변에 표시할 수 있는데, [align](/config/config/subtitle#align), 
+[verticalAlign](/config/config/subtitle#verticalAlign)으로 정렬 상태를 지정할 수 있다.<br/>
+실행 중 제목과 부제목은 각각 [RcTitle](/docs/api/classes/RcTitle), [RcSubtitle](/docs/api/classes/RcSubtitle) API 모델로 접근할 수 있다.
 
 ## 설정
 
@@ -11,7 +15,7 @@
 ```js
 const config = {
   title: {
-    text: '... 현황',
+    text: 'RealChart Release 현황',
   },
   subtitle: {
     visible: 'true',
@@ -23,5 +27,4 @@ const config = {
 ### See Also
 
 - [범례](/guide/legend)
-- [축 개요](/guide/axes)
-- [API 개요](/docs)
+- [차트 Configuration](/config)

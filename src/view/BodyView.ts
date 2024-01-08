@@ -780,11 +780,11 @@ class CrosshairView extends PathElement {
 
         if (this._bar) {
             const len = axis._isHorz ? width : height;
-            let xVal = -1;
+            let xVal: number;
 
             if (pv) {
                 xVal = pv.point.xValue;
-            } else if (this.model.showAlways && axis instanceof CategoryAxis) {
+            } else if (this.model.showAlways) {// && (axis instanceof CategoryAxis)) {
                 if (axis.reversed) {
                     xVal = axis.xValueAt(horz ? width - x : y);
                 } else {
@@ -796,12 +796,7 @@ class CrosshairView extends PathElement {
             if (!isNaN(xVal)) {
             // if (xVal >= 0) {
                 const p = axis.getPos(len, xVal);
-                const w = axis.getUnitLen(len, xVal);
-
-                if (isNaN(p)) {
-                    debugger;
-                    console.log(axis.getPos(len, xVal));
-                }
+                let w = axis.getUnitLen(len, xVal);
 
                 if (horz) {
                     pb.rect(p - w / 2, 0, w, height);

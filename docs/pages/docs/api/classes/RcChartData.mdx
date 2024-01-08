@@ -1,5 +1,7 @@
 ## RcChartData
-Char data model.
+차트 전용 데이터 소스 모델.<br/>
+시리즈 [data](/config/config/base/series#data) 속성에 값 배열을 직접 지정하는 대신,
+이 데이터소스를 참조할 수 있다.
 
 
 
@@ -7,26 +9,57 @@
 
 ## Properties
 ### rowCount: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)[#rowCount]
+행 수.
 
 ## Methods
 ### addRow(values, row): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#addRow]
-| Parameter | Type |
-| ----------- | ----------- |
-| values | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |
-| row=`-1` | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
+지정한 필드 값 목록으로 구성된 신규 행을 지정한 위치에 추가한다.<br/>
+이 데이터에 연결된 시리즈의 데이터포인트가 추가된다.
+
+```js
+data.addRow({
+  field1: 'value1',
+  field2: 123,
+  ...
+});
+```
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| values | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 필드 값 목록. |
+| row=`-1` | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | 행 번호. 기본값 -1. 0보다 작은 값이면 마지막 행 다음에 추가한다. |
 ### deleteRow(row): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#deleteRow]
-| Parameter | Type |
-| ----------- | ----------- |
-| row=`-1` | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
+지정한 위치의 행이 삭제된다.<br/>
+이 데이터에 연결된 시리즈의 해당 데이터포인트가 제거된다.
+
+```js
+data.deleteRow(data.rowCount - 1);
+```
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| row=`-1` | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | 행 번호. 기본값 -1. 0보다 작은 값이면 마지막 행이 삭제된다. |
 ### getRow(row): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)[#getRow]
 | Parameter | Type |
 | ----------- | ----------- |
 | row | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
 ### getValue(row, field): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)[#getValue]
-| Parameter | Type |
-| ----------- | ----------- |
-| row | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
-| field | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) |
+지정한 행의 필드 값을 리턴한다.
+
+```js
+console.log(data.getValue(0, 'name'));
+```
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| row | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | 행 번호 |
+| field | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 필드 이름 |
 ### getValues(field, fromRow, toRow): [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) &#124; \< &#124; [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) &#124; >[#getValues]
 | Parameter | Type |
 | ----------- | ----------- |
@@ -34,8 +67,18 @@
 | fromRow=`0` | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
 | toRow=`-1` | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
 ### setValue(row, field, value): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#setValue]
-| Parameter | Type |
-| ----------- | ----------- |
-| row | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
-| field | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) |
-| value | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |
+지정한 행의 필드 값을 변경한다.<br/>
+이 데이터에 연결된 시리즈의 해당 데이터포인트의 값이 변경된다.
+
+```js
+const {row, field} = getField();
+data.setValue(row, field, data.getValue(row, field) + 1);
+```
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| row | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | 행 번호 |
+| field | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 필드 이름 |
+| value | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | N/A |

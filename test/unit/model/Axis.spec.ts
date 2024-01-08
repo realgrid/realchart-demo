@@ -24,6 +24,7 @@ class AxisImpl extends Axis {
     axisMax(): number { return; }
     continuous(): boolean { return false }
     valueAt(length: number, pos: number): number { return; }
+    xValueAt(pos: number): number { return }
 }
 
 /**

@@ -790,6 +790,10 @@ export abstract class ContinuousAxis extends Axis {
         }
     }
 
+    xValueAt(pos: number): number {
+        return this.valueAt(this._vlen, pos);
+    }
+
     getUnitLen(length: number, value: number): number {
         if (isNaN(this._unitLen)) {
             this._unitLen = this.$_calcUnitLength(length);
@@ -893,7 +897,8 @@ export abstract class ContinuousAxis extends Axis {
         const pts: DataPoint[] = [];
 
         this._series.forEach(ser => {
-            if (ser.visible && ser.clusterable()) {
+            if (ser.visible) {
+            // if (ser.visible && ser.clusterable()) {
                 pts.push(...ser.getVisiblePoints());
             }
         })

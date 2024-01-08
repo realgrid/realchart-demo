@@ -12,7 +12,8 @@ import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 
 /**
- * 차트 타이틀 설정 모델.
+ * 차트 타이틀 설정 모델.<br/>
+ * 기본적으로 차트 중앙 상단에 표시되지만 {@link align}으로 위치르 변경할 수 있다.
  * 
  * @config chart.title
  */
@@ -28,7 +29,6 @@ export class Title extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    verticalAlign = VerticalAlign.MIDDLE;
     /**
      * 제목 텍스트.
      * 
@@ -47,6 +47,7 @@ export class Title extends ChartItem {
      * @config
      */
     align = Align.CENTER;
+    verticalAlign = VerticalAlign.MIDDLE;
     /**
      * 배경 스타일 셋.
      * 

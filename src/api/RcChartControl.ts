@@ -130,7 +130,9 @@ export class RcChartControl {
         return getObject(this._objects, this.$_p.model.getYAxis(name)) as RcChartAxis;
     }
     /**
-     * 첫번째 시리즈.
+     * 차트에 설정된 첫번째 시리즈.<br/>
+     * {@link guide.series 시리즈 개요} 및
+     * {@link config.base.series 시리즈 설정}을 참조한다.
      */
     get series(): RcChartSeries {
         return getObject(this._objects, this.$_p.model.firstSeries) as RcChartSeries;
@@ -187,7 +189,7 @@ export class RcChartControl {
         return getObject(this._objects, this.$_p.model.legend) as RcLegend;
     }
     /**
-     * split 모드가 아닐 때, 차트 시리즈들이 그려지는 plotting 영역 모델.
+     * 차트 시리즈, 게이지, annotation들이 그려지는 plotting 영역 모델.
      */
     get body(): RcBody {
         return getObject(this._objects, this.$_p.model.legend) as RcBody;
@@ -217,6 +219,8 @@ export class RcChartControl {
     /**
      * true면 x축과 y축을 뒤바꿔 표시한다.\
      * 즉, true면 x축이 수직, y축이 수평으로 배치된다.
+     * 
+     * @readonly
      */
     get inverted(): boolean {
         return this.$_p.model.inverted;

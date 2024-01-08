@@ -7,13 +7,13 @@
 
 ## Properties
 ### body: [RcBody](../classes/RcBody)[#body]
-split 모드가 아닐 때, 차트 시리즈들이 그려지는 plotting 영역 모델.
+차트 시리즈, 게이지, annotation들이 그려지는 plotting 영역 모델.
 ### gauge: [RcChartGauge](../classes/RcChartGauge)[#gauge]
 첫번째 게이지.
 ### *`<readonly>`* gaugeType: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)[#gaugeType]
 기본 게이지 종류.\
 게이지에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
-### inverted: [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)[#inverted]
+### *`<readonly>`* inverted: [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)[#inverted]
 true면 x축과 y축을 뒤바꿔 표시한다.\
 즉, true면 x축이 수직, y축이 수평으로 배치된다.
 ### legend: [RcLegend](../classes/RcLegend)[#legend]
@@ -28,7 +28,9 @@ x축이 원호에, y축은 방사선에 위치하고, 아래의 제한 사항이
 3. chart, series의 inverted 속성이 무시된다.
 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.
 ### series: [RcChartSeries](../classes/RcChartSeries)[#series]
-첫번째 시리즈.
+차트에 설정된 첫번째 시리즈.<br/>
+[시리즈 개요](/guide/series) 및
+[시리즈 설정](/config/config/base/series)을 참조한다.
 ### subtitle: [RcSubtitle](../classes/RcSubtitle)[#subtitle]
 차트 부제목 모델.
 ### title: [RcTitle](../classes/RcTitle)[#title]

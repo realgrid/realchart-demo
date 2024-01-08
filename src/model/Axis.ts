@@ -53,6 +53,7 @@ export interface IAxis {
     getPos(length: number, value: number): number;
     valueAt(length: number, pos: number): number;
     axisValueAt(length: number, pos: number): any;
+    xValueAt(pos: number): number;
     /**
      * 값(축 상 위치)에 해당하는 축 단위 픽셀 크기. 
      * <br>
@@ -1517,6 +1518,8 @@ export abstract class Axis extends ChartItem implements IAxis {
     prev(len: number): number {
         return isNaN(this._prevRate) ? len : len * this._prevRate;
     }
+
+    abstract xValueAt(pos: number): number;
 
     //-------------------------------------------------------------------------
     // overriden members
