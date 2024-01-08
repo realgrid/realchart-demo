@@ -17,8 +17,8 @@ import { Tooltip } from "../model/Tooltip";
 
 export enum TooltipPosition {
     TOP = 'top',
-    // BOTTOM = 'bottom',
-    // LEFT = 'left',
+    BOTTOM = 'bottom',
+    LEFT = 'left',
     RIGHT = 'right',
 }
 
@@ -81,6 +81,7 @@ export class TooltipView extends RcElement {
         const ch = this.control.contentHeight();
         const tv = this._textView;
         const inverted = series.chart.isInverted();
+        const reversed = series._yAxisObj.reversed;
 
         // text
         this._richText.setFormat(ctx.getTooltipText(series, point));
@@ -88,7 +89,7 @@ export class TooltipView extends RcElement {
 
         const r = tv.getBBox();
         let w = maxv(model.minWidth || 0, r.width + 8 * 2);
-        let h = maxv(model.minHeight || 0, r.height + 6 * 2);
+        let h = maxv(model.minHeight || 0, r.height + 6 * 2) + this._topHeight;
 
         // 시리즈 색은 동적일 수 있다.
         //this._top.setData('index', (series.index % PALETTE_LEN) as any);
@@ -96,20 +97,21 @@ export class TooltipView extends RcElement {
         this._top.setFill(series._calcedColor);
 
         const dur = this.getStyle('visibility') === 'visible' ? 300 : 0;
-        let p: number;
+        let translate: number;
+        const gap = model.offset + this._tailSize;
 
         if (inverted) {
-            h += this._topHeight;
-            p = (y - h / 2) - maxv(0, minv(y - h / 2, ch - h));
-            this.drawTooltip(0, -this._topHeight / 2, w, h, TooltipPosition.RIGHT, p);
-            x = x + model.offset;
-            y = y - h / 2, dur, false;
+            translate = (y - h / 2) - maxv(0, minv(y - h / 2, ch - h));
+            const position = reversed ? TooltipPosition.LEFT : TooltipPosition.RIGHT;
+            this.drawTooltip(0, 0, w, h, position, translate);
+            reversed ? x -= w + gap : x += gap;
+            y -= h / 2;
         } else {
-            h += this._topHeight;
-            p = (x - w / 2) - maxv(0, minv(x - w / 2, cw - w));
-            this.drawTooltip(0, -this._topHeight, w, h, TooltipPosition.TOP, p);
-            x = x - w / 2;
-            y = y - h - model.offset;
+            translate = (x - w / 2) - maxv(0, minv(x - w / 2, cw - w));
+            const position = reversed ? TooltipPosition.BOTTOM : TooltipPosition.TOP;
+            this.drawTooltip(0, 0, w, h, position, translate);
+            x -= w / 2;
+            reversed ? y += gap : y -= h + gap;
         }
 
         x = maxv(0, minv(x, cw - w));
@@ -150,18 +152,15 @@ export class TooltipView extends RcElement {
         });
     }
   
-    private drawTooltip(x: number, y: number, w: number, h: number, position: string, translate: number): void {
+    private drawTooltip(x: number, y: number, w: number, h: number, position: TooltipPosition, translate: number): void {
         const tail = this._tailSize;
         const rd = this._radius;
         const topHeight = this._topHeight;
-        const model = this._model;
-
-        position === TooltipPosition.RIGHT ? (x += tail) : position === TooltipPosition.TOP && (y -= tail);
 
         let backPath = [
             'M', x + rd, y,
-            'L', x + w - (rd * 2), y,
-            'Q', x + w - rd, y, x + w, y + rd,
+            'L', x + w - rd, y,
+            'Q', x + w, y, x + w, y + rd,
             'L', x + w, y + h - rd,
             'Q', x + w, y + h, x + w - rd, y + h,
             'L', x + rd, y + h,
@@ -170,17 +169,46 @@ export class TooltipView extends RcElement {
             'Q', x, y, x + rd, y
         ];
 
-        backPath = position === TooltipPosition.RIGHT ? backPath.concat([
-            'M', x, y + (h / 2) - (tail / 2) + translate,
-            'L', x - tail, y + (h / 2) + translate,
-            'L', x, y + (h / 2) + (tail / 2) + translate
-        ]) : position === TooltipPosition.TOP && backPath.concat([
-            'M', x + (w / 2) - (tail / 2) + translate, y + h,
-            'L', x + (w / 2) + translate, y + h + tail,
-            'L', x + (w / 2) + (tail / 2) + translate, y + h
-        ]);
-
-        const topPath = [
+        switch (position) {
+            case TooltipPosition.TOP:
+                backPath = backPath.concat([
+                    'M', x + (w / 2) - (tail / 2) + translate, y + h,
+                    'L', x + (w / 2) + translate, y + h + tail,
+                    'L', x + (w / 2) + (tail / 2) + translate, y + h
+                ]);
+                break;
+            case TooltipPosition.BOTTOM:
+                backPath = backPath.concat([
+                    'M', x + (w / 2) - (tail / 2) + translate, y,
+                    'L', x + (w / 2) + translate, y - tail,
+                    'L', x + (w / 2) + (tail / 2) + translate, y
+                ]);
+                break;
+            case TooltipPosition.LEFT:
+                backPath = backPath.concat([
+                    'M', x + w, y + (h / 2) - (tail / 2) + translate,
+                    'L', x + w + tail, y + (h / 2) + translate,
+                    'L', x + w, y + (h / 2) + (tail / 2) + translate
+                ]);
+                break;
+            case TooltipPosition.RIGHT:
+                backPath = backPath.concat([
+                    'M', x, y + (h / 2) - (tail / 2) + translate,
+                    'L', x - tail, y + (h / 2) + translate,
+                    'L', x, y + (h / 2) + (tail / 2) + translate
+                ]);
+                break;
+        }
+        
+        const isBottom = position === TooltipPosition.BOTTOM;
+        const topPath = isBottom ? [
+            'M', x , y + h - topHeight,
+            'l', w, 0,
+            'l', 0, topHeight - rd,
+            'q', 0, rd, -rd, rd,
+            'l', (rd * 2) - w, 0,
+            'q', -rd, 0, -rd, -rd,
+        ] : [
             'M', x + rd, y,
             'l', w - (rd * 2), 0,
             'q', rd, 0, rd, rd,
@@ -193,14 +221,16 @@ export class TooltipView extends RcElement {
         const tv = this._textView;
         const r = tv.getBBox();
 
-        tv.trans(x + (w - r.width) / 2, y + (h - r.height + topHeight) / 2);
+        x += (w - r.width) / 2;
+        y += (h - r.height + (isBottom ? -topHeight : topHeight)) / 2;
+        tv.trans(x, y);
         this._top.setPath(topPath);
         this._back.setPath(backPath);
     }
 
     // M402.5,134.5
     // A1,1,0,0,1,401.5,133.5
-    // L401.5,85.5
+    // L401.5,85.5s
     // A1,1,0,0,1,402.5,84.5
     // L513.5,84.5
     // A1,1,0,0,1,514.5,85.5
