@@ -1,9 +1,17 @@
 ## **scrollBar**
-축 스크롤바 모델.
-
+축 스크롤바 모델.<br/>
 축 스크롤 상태를 표시하고, 사용자가 스크롤 범위나 위치를 변경할 수 있다.
 ## Properties
 
+### gap: `number{:js}`[#gap]
+스크롤바와 차트 본체 방향 사이의 간격.  
+<DefaultValue value="3" contents="픽셀"></DefaultValue>
+### gapFar: `number{:js}`[#gapFar]
+스크롤바와 차트 본체 반대 방향 사이의 간격.  
+<DefaultValue value="3" contents="픽셀"></DefaultValue>
+### minThumbSize: `number{:js}`[#minThumbSize]
+최소 thumb 길이.  
+<DefaultValue value="32" contents="픽셀"></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 - `SVGStyles{:js}` 
@@ -21,6 +29,9 @@
 | strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |  
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
+### thickness: `number{:js}`[#thickness]
+스크롤바 두께.  
+<DefaultValue value="10" contents="픽셀"></DefaultValue>
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
 <DefaultValue value="true" contents=""></DefaultValue>

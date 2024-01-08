@@ -91,8 +91,7 @@ export abstract class AxisItem extends ChartItem {
 }
 
 /**
- * 축 선(line) 설정 모델.
- * 
+ * 축 선(line) 설정 모델.<br/>
  * @config
  */
 export class AxisLine extends AxisItem {
@@ -664,13 +663,15 @@ export interface IAxisLabelArgs {
 }
 
 /**
- * [겹치는 경우가 발생할 때]
- * 1. step이 0보다 큰 값으로 설정되면 반영한다.
- * 2. rows가 0보다 큰 값으로 설정되면 반영한다.
- * 3. rotation이 0이 아닌 명시적 값으로 설정되면 반영한다.
- * 4. 1~3 모두 설정되지 않은 경우 autoArrange 설정에 따라 자동 배치한다.
- * 5. 배치 후 공간을 초과하는 label은 wrap 속성에 따라 줄나누기를 하거나, 
- *    ellipsis('...')로 처리해서 표시한다.
+ * 축 label 설정 모델.<br/>
+ * 
+ * //[겹치는 경우가 발생할 때]
+ * //1. step이 0보다 큰 값으로 설정되면 반영한다.
+ * //2. rows가 0보다 큰 값으로 설정되면 반영한다.
+ * //3. rotation이 0이 아닌 명시적 값으로 설정되면 반영한다.
+ * //4. 1~3 모두 설정되지 않은 경우 autoArrange 설정에 따라 자동 배치한다.
+ * //5. 배치 후 공간을 초과하는 label은 wrap 속성에 따라 줄나누기를 하거나, 
+ * //  ellipsis('...')로 처리해서 표시한다.
  */
 export abstract class AxisLabel extends IconedText {
 
@@ -895,7 +896,7 @@ export enum AxisPosition {
 }
 
 /**
- * 축 스크롤바 모델.\
+ * 축 스크롤바 모델.<br/>
  * 축 스크롤 상태를 표시하고, 사용자가 스크롤 범위나 위치를 변경할 수 있다.
  */
 export class AxisScrollBar extends AxisItem {
@@ -920,6 +921,9 @@ export class AxisScrollBar extends AxisItem {
     //-------------------------------------------------------------------------
     /**
      * 스크롤바 두께.
+     * 
+     * @default 10 픽셀
+     * @config
      */
     get thickness(): number {
         return this._thickness;
@@ -929,6 +933,9 @@ export class AxisScrollBar extends AxisItem {
     }
     /**
      * 최소 thumb 길이.
+     * 
+     * @default 32 픽셀
+     * @config
      */
     get minThumbSize(): number {
         return this._minThumbSize;
@@ -938,6 +945,9 @@ export class AxisScrollBar extends AxisItem {
     }
     /**
      * 스크롤바와 차트 본체 방향 사이의 간격.
+     * 
+     * @default 3 픽셀
+     * @config
      */
     get gap(): number {
         return this._gap;
@@ -947,6 +957,9 @@ export class AxisScrollBar extends AxisItem {
     }
     /**
      * 스크롤바와 차트 본체 반대 방향 사이의 간격.
+     * 
+     * @default 3 픽셀
+     * @config
      */
     get gapFar(): number {
         return this._gapFar;
@@ -1018,6 +1031,15 @@ export class AxisZoom {
 }
 
 /**
+ * 부채꼴 polar 좌표계의 X 축일 때 원호의 양 끝과 중심에 연결되는 선분들의 설정모델.<br/>
+ * {@link config.xAxis.category#startAngle startAngle}, {@link config.xAxis.category#totalAngle totalAngle}을 참조한다.
+ * 
+ * @config
+ */
+export class AxisSectorLine extends AxisLine {
+}
+
+/**
  * 축 모델.\
  * 차트에서 축을 명식적으로 지정하지 않으면, 첫번째 시리즈에 합당한 축이 기본 생성된다.\
  * {@link guide.axes 축 개요} 페이지를 참조한다.
@@ -1064,8 +1086,7 @@ export abstract class Axis extends ChartItem implements IAxis {
         this.name = name;
         this.title = new AxisTitle(this);
         this.line = new AxisLine(this, true);
-        this.sectorLine = new AxisLine(this, true);
-        this.baseLine = new AxisLine(this, false);
+        this.sectorLine = new AxisSectorLine(this, true);
         this.tick = this._createTickModel();
         this.label = this._createLabel();
         this.grid = this._createGrid();
@@ -1089,19 +1110,12 @@ export abstract class Axis extends ChartItem implements IAxis {
      */
     readonly line: AxisLine;
     /**
-     * 부채꼴 polar 좌표계의 X 축일 때 원호의 양 끝과 중심에 연결되는 선분들의 설정모델.\
-     * //{@link config.xAxis.category#startAngle startAngle}, {@link config.xAxis.category#totalAngle totalAngle}을 참조한다.
+     * 부채꼴 polar 좌표계의 X 축일 때 원호의 양 끝과 중심에 연결되는 선분들의 설정모델.<br/>
+     * {@link config.xAxis.category#startAngle startAngle}, {@link config.xAxis.category#totalAngle totalAngle}을 참조한다.
      * 
      * @config
      */
-    readonly sectorLine: AxisLine;
-    /**
-     * base value 위치에 표시되는 선분 설정 모델.\
-     * 기본적으로 표시되지 않는다.
-     * 
-     * @config
-     */
-    readonly baseLine: AxisLine;
+    readonly sectorLine: AxisSectorLine;
     /**
      * @config
      */

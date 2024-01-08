@@ -22,7 +22,7 @@ import { Crosshair } from "../model/Crosshair";
 import { DataPoint } from "../model/DataPoint";
 import { Series } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
-import { AxisBreak, LinearAxis } from "../model/axis/LinearAxis";
+import { AxisBreak, ContinuousAxis, LinearAxis } from "../model/axis/LinearAxis";
 import { Gauge, GaugeBase } from "../model/Gauge";
 import { ChartElement } from "./ChartElement";
 import { GaugeView } from "./GaugeView";
@@ -793,7 +793,8 @@ class CrosshairView extends PathElement {
             }
 
             // TODO: scrolling
-            if (xVal >= 0) {
+            if (!isNaN(xVal)) {
+            // if (xVal >= 0) {
                 const p = axis.getPos(len, xVal);
                 const w = axis.getUnitLen(len, xVal);
 
@@ -1163,7 +1164,7 @@ export class BodyView extends ChartElement<Body> {
 
             // base line
             for (const v of this._baseViews.values()) {
-                const axis = v.tag as Axis;
+                const axis = v.tag as ContinuousAxis;
 
                 v.setStyleOrClass(axis.baseLine.style);
                 if (axis._isHorz) { // axis horz
@@ -1247,7 +1248,7 @@ export class BodyView extends ChartElement<Body> {
         }
 
         for (const axis of baseMap.keys()) {
-            if (!needAxes || !chart.containsAxis(axis) || !axis.baseLine.visible || !axis.isBaseVisible()) {
+            if (!needAxes || !chart.containsAxis(axis) || (axis instanceof ContinuousAxis && !axis.baseLine.visible) || !axis.isBaseVisible()) {
                 baseMap.get(axis).remove();
                 baseMap.delete(axis);
             }
@@ -1261,7 +1262,7 @@ export class BodyView extends ChartElement<Body> {
                     gridMap.set(axis, v);
                     gridContainer.add(v);
                 }
-                if (axis.baseLine.visible && axis.isBaseVisible() && !baseMap.has(axis)) {
+                if (axis instanceof ContinuousAxis && axis.baseLine.visible && axis.isBaseVisible() && !baseMap.has(axis)) {
                     const v = new LineElement(doc, 'rct-axis-baseline');
     
                     baseMap.set(axis, v);

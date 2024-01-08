@@ -9,7 +9,6 @@
 import { RcAnimation, RcAnimationEndHandler } from "../../common/RcAnimation";
 import { ClipRectElement, RcElement } from "../../common/RcControl";
 import { pixel } from "../../common/Types";
-import { DataPoint } from "../../model/DataPoint";
 import { Series } from "../../model/Series";
 import { SeriesView } from "../SeriesView";
 

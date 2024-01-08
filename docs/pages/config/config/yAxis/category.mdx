@@ -1,21 +1,9 @@
 ## **yAxis[type=category]**
 지정된 카테고리 개수로 축을 분할해서 각 카테고리에 연결된 데이터포인트들이 표시되게 한다.<br/>
 카테고리 하나가 1의 너비를 갖는다.
-
-1. categories 속성으로 카테고리 목록을 구성한다.
-2. 이 축에 연결된 시리즈들에 포함된 data point들의 문자열인 값들, 혹은 categoryField에 해당하는 값들을 수집한다.
-   수집된 category들 중 숫자가 아닌 것들은 [startValue](#startValue) 부터 시작해서 [valueStep](#valueStep) 속성에 지정된 값씩 차례대로 증가한 값을 갖게된다.
-3. 각 카테고리 영역의 크기는 [categoryStep](#categoryStep) 설정값에 따라 기본적으로 동일하게 배분되고, 
-   카테고리 영역 중간점이 카테고리 값의 위치가 된다. [categories](#categories) 속성으로 카테고리를 지정할 때, 상대적 크기를 width로 지정해서 각 카테고리의 값을 다르게 표시할 수 있다.
-4. tick mark나 label은 기본적으로 카테고리 값 위치(카테고리 중앙)에 표시된다.
-   tick mark는 카테고리 양끝에 표시될 수 있다.
+ [startValue](#startValue) 부터 시작해서 [valueStep](#valueStep) 속성에 지정된 값씩 차례대로 증가한 값을 갖게된다. [categoryStep](#categoryStep) 설정값에 따라 기본적으로 동일하게 배분되고,  [categories](#categories) 속성으로 카테고리를 지정할 때, 상대적 크기를 width로 지정해서 각 카테고리의 값을 다르게 표시할 수 있다.
 ## Properties
 
-### [baseLine](./category/baseLine)
-base value 위치에 표시되는 선분 설정 모델.
-
-기본적으로 표시되지 않는다.  
-<DefaultValue value="undefined" contents=""></DefaultValue>
 ### categories[#categories]
 명시적으로 지정하는 카테고리 목록.
 
@@ -41,7 +29,7 @@ Category 목록을 수집하는 시리즈.
 분할 모드일 때 축이 표시될 pane의 수평 위치.  
 <DefaultValue value="0" contents=""></DefaultValue>
 ### [crosshair](./category/crosshair)
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
+직선 또는 bar 형태로 축 위의 마우스 위치를 표시하는 구성 요소 모델.  
 
 ### [grid](./category/grid)
 visible 기본값이 <Content type="keyword" value="undefined"></Content>이다.
@@ -52,16 +40,10 @@ visible이 <Content type="keyword" value="undefined"></Content>나 <Content type
 col, row를 지정해서 특정 body에만 표시되도록 할 수 있다.  
 
 ### [label](./category/label)
-[겹치는 경우가 발생할 때]
-1. step이 0보다 큰 값으로 설정되면 반영한다.
-2. rows가 0보다 큰 값으로 설정되면 반영한다.
-3. rotation이 0이 아닌 명시적 값으로 설정되면 반영한다.
-4. 1~3 모두 설정되지 않은 경우 autoArrange 설정에 따라 자동 배치한다.
-5. 배치 후 공간을 초과하는 label은 wrap 속성에 따라 줄나누기를 하거나, 
-   ellipsis(<Content type="expression" value="'...'"></Content>)로 처리해서 표시한다.  
+축 label 설정 모델.<br/>  
 
 ### [line](./category/line)
-축 선(line) 설정 모델.  
+축 선(line) 설정 모델.<br/>  
 
 ### marginFar: `number{:js}`[#marginFar]
 차트 경계나 뒤쪽 축 사이의 여백 크기.  
@@ -107,13 +89,11 @@ plot 영역이나 먼저 표시되는 축 사이의 여백 크기.
 분할 모드일 때 축이 표시될 pane의 수직 위치.  
 <DefaultValue value="0" contents=""></DefaultValue>
 ### [scrollBar](./category/scrollBar)
-축 스크롤바 모델.
-
+축 스크롤바 모델.<br/>
 축 스크롤 상태를 표시하고, 사용자가 스크롤 범위나 위치를 변경할 수 있다.  
 
 ### [sectorLine](./category/sectorLine)
-부채꼴 polar 좌표계의 X 축일 때 원호의 양 끝과 중심에 연결되는 선분들의 설정모델.
- [startAngle](/config/config/xAxis/category#startAngle) , [totalAngle](/config/config/xAxis/category#totalAngle) 을 참조한다.  
+부채꼴 polar 좌표계의 X 축일 때 원호의 양 끝과 중심에 연결되는 선분들의 설정모델.<br/> [startAngle](/config/config/xAxis/category#startAngle) , [totalAngle](/config/config/xAxis/category#totalAngle) 을 참조한다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### startAngle: `number{:js}`[#startAngle]
 Polar 차트에서 사용될 때 시작 각도.  

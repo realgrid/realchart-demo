@@ -8,7 +8,7 @@
 
 import { isArray, isObject, pickNum, pickNum3, assign, ceil, floor, log10, maxv, minv } from "../../common/Common";
 import { IPercentSize, RtPercentSize, assert, calcPercent, fixnum, parsePercentSize } from "../../common/Types";
-import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick, AxisGrid } from "../Axis";
+import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick, AxisGrid, AxisLine } from "../Axis";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { SeriesGroup, SeriesGroupLayout } from "../Series";
@@ -384,6 +384,13 @@ export enum AxisFit {
 }
 
 /**
+ * 연속 축의 {@link config.yAxis.linear#baseValue} 위치에 표시되는 선 설정 모델.<br/>
+ * 기본적으로 표시되지 않는다.
+ */
+export class AxisBaseLine extends AxisLine {
+}
+
+/**
  * 연속 축 기반.
  */
 export abstract class ContinuousAxis extends Axis {
@@ -408,12 +415,20 @@ export abstract class ContinuousAxis extends Axis {
     constructor(chart: IChart, isX: boolean, name?: string) {
         super(chart, isX, name);
 
+        this.baseLine = new AxisBaseLine(this, false);
         this.label.numberFormat = '0.##';
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * base value 위치에 표시되는 선분 설정 모델.<br/>
+     * 기본적으로 표시되지 않는다.
+     * 
+     * @config
+     */
+    readonly baseLine: AxisBaseLine;
     /**
      * 명시적으로 지정하는 최소값.\
      * 축에 연결된 data point들의 값으로 계산된 최소값보다 이 속성 값이 작으면 대신 이 값이 축의 최소값이 되고,

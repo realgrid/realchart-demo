@@ -4,8 +4,7 @@
 ## Properties
 
 ### [baseLine](./linear/baseLine)
-base value 위치에 표시되는 선분 설정 모델.
-
+base value 위치에 표시되는 선분 설정 모델.<br/>
 기본적으로 표시되지 않는다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### baseValue: `number{:js}`[#baseValue]
@@ -15,7 +14,7 @@ base value 위치에 표시되는 선분 설정 모델.
 분할 모드일 때 축이 표시될 pane의 수평 위치.  
 <DefaultValue value="0" contents=""></DefaultValue>
 ### [crosshair](./linear/crosshair)
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
+직선 또는 bar 형태로 축 위의 마우스 위치를 표시하는 구성 요소 모델.  
 
 ### endFit[#endFit]
 축 끝 위치에 tick 표시 여부. [strictMax](#strictmax) 가 설정되면 무시되고 `value` 로 적용된다.  
@@ -31,16 +30,10 @@ visible이 <Content type="keyword" value="undefined"></Content>나 <Content type
 col, row를 지정해서 특정 body에만 표시되도록 할 수 있다.  
 
 ### [label](./linear/label)
-[겹치는 경우가 발생할 때]
-1. step이 0보다 큰 값으로 설정되면 반영한다.
-2. rows가 0보다 큰 값으로 설정되면 반영한다.
-3. rotation이 0이 아닌 명시적 값으로 설정되면 반영한다.
-4. 1~3 모두 설정되지 않은 경우 autoArrange 설정에 따라 자동 배치한다.
-5. 배치 후 공간을 초과하는 label은 wrap 속성에 따라 줄나누기를 하거나, 
-   ellipsis(<Content type="expression" value="'...'"></Content>)로 처리해서 표시한다.  
+축 label 설정 모델.<br/>  
 
 ### [line](./linear/line)
-축 선(line) 설정 모델.  
+축 선(line) 설정 모델.<br/>  
 
 ### marginFar: `number{:js}`[#marginFar]
 차트 경계나 뒤쪽 축 사이의 여백 크기.  
@@ -99,13 +92,11 @@ data point의 이 축 값이 <Content type="keyword" value="NaN"></Content>일 �
 분할 모드일 때 축이 표시될 pane의 수직 위치.  
 <DefaultValue value="0" contents=""></DefaultValue>
 ### [scrollBar](./linear/scrollBar)
-축 스크롤바 모델.
-
+축 스크롤바 모델.<br/>
 축 스크롤 상태를 표시하고, 사용자가 스크롤 범위나 위치를 변경할 수 있다.  
 
 ### [sectorLine](./linear/sectorLine)
-부채꼴 polar 좌표계의 X 축일 때 원호의 양 끝과 중심에 연결되는 선분들의 설정모델.
- [startAngle](/config/config/xAxis/category#startAngle) , [totalAngle](/config/config/xAxis/category#totalAngle) 을 참조한다.  
+부채꼴 polar 좌표계의 X 축일 때 원호의 양 끝과 중심에 연결되는 선분들의 설정모델.<br/> [startAngle](/config/config/xAxis/category#startAngle) , [totalAngle](/config/config/xAxis/category#totalAngle) 을 참조한다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### startAngle: `number{:js}`[#startAngle]
 Polar 차트에서 사용될 때 시작 각도.  

@@ -1,5 +1,5 @@
 ## **crosshair**
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
+직선 또는 bar 형태로 축 위의 마우스 위치를 표시하는 구성 요소 모델.
 ## Properties
 
 ### [flag](./crosshair/flag)
@@ -34,9 +34,10 @@ RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 ### timeFormat: `string{:js}`[#timeFormat]
 표시되는 값이 날짜(시간)일 때 사용되는 표시 형식.  
 <DefaultValue value="'yyyy-MM-dd" contents="HH:mm'"></DefaultValue>
-### type: `'auto'|'line'{:js}`[#type]
+### type: `'auto'|'bar'|'line'{:js}`[#type]
 표시 방식.  
 - `'auto'` 카테고리 축이면 bar, 연속 축이면 line으로 표시한다.
+- `'bar'` 항상 bar로 표시한다.
 - `'line'` 항상 line으로 표시한다.
 
 <DefaultValue value="'auto'" contents=""></DefaultValue>
