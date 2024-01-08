@@ -1,9 +1,28 @@
 # 게이지(Gauge)
 
 복수의 값을 표시하는 시리즈와 달리 단일 값을 표시한다.
-2차원 좌표 대신 1차원 척도(자, [scale](/config/config/gauge/bullet/scale))가 값의 배치를 지정하는 용도 등으로 표시될 수 있다.
+2차원 좌표 대신 1차원 척도(자, [scale](/config/config/gauge/bullet/scale))가 값의 배치를 지정하는 용도로 표시될 수 있다.
+표시 형태가 다른 몇 가지 종류의 게이지가 있다.
 
-## 게이지 종류
+### [선형 게이지](/guide/gauges/gauge-linear)
+
+설정 type은 '**linear**'이다.
+현재 값을 선형 막대로 표시한다.
+
+### [Bullet 게이지](/guide/gauges/gauge-bullet)
+
+설정 type은 '**bullet**'이다.
+현재 값을 목표 값과 비교해서 표시한다.
+
+### [원형 게이지](/guide/gauges/gauge-circle)
+
+설정 type은 '**circle**'이다.
+지정된 최대 각도 내에서 현재 값의 비율을 원호로 표시한다.
+
+### [시계](/guide/gauges/gauge-clock)
+
+설정 type은 '**clock**'이다.
+원형 아날로그 시계를 표시한다.
 
 ## 설정
 

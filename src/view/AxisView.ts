@@ -10,7 +10,7 @@ import { absv, cos, maxv, minv, pickNum, pickProp, sin } from "../common/Common"
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { PathElement, RcElement } from "../common/RcControl";
-import { toSize } from "../common/Rectangle";
+import { rectToSize } from "../common/Rectangle";
 import { SvgRichText } from "../common/RichText";
 import { ISize, Size } from "../common/Size";
 import { Align, DEG_RAD } from "../common/Types";
@@ -70,7 +70,7 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
         this._richText.setFormat(model.text);
         this._richText.build(this._textView, hintWidth, hintHeight, null, null);
 
-        const sz = toSize(this._textView.getBBox());
+        const sz = rectToSize(this._textView.getBBox());
 
         if (!model.axis._isHorz && this._angle !== 0) {
             const w = sz.width;

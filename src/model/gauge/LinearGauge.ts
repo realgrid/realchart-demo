@@ -280,9 +280,9 @@ export class LinearValueBar extends ChartItem {
     }}
 
 /**
- * 선형 게이지 모델.
- * 현재 값을 목표 값과 비교해서 표시한다.
- * 또, 여러 값 범위 중 어디에 속한 상태인 지를 나타낸다.
+ * 선형 게이지 모델.<br/>
+ * 현재 값을 선형 막대로 표시한다.
+ * 또, {@link band}를 같이 표시하면, 여러 값 범위 중 어디에 속한 상태인 지를 나타낼 수 있다.
  * 
  * @config chart.gauge[type=linear]
  */

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { toSize } from "../../common/Rectangle";
+import { rectToSize } from "../../common/Rectangle";
 import { ISize } from "../../common/Size";
 import { ImageElement } from "../../common/impl/ImageElement";
 import { RectElement } from "../../common/impl/RectElement";
@@ -43,7 +43,7 @@ export class ImageAnnotationView extends AnnotationView<ImageAnnotation> {
         this._imageView.url = this.model.imageUrl;
         this._imageView.resize(sz.width, sz.height);
 
-        return toSize(this._imageView.getBBox());
+        return rectToSize(this._imageView.getBBox());
     }
 
     protected _doLayout(param: any): void {

@@ -9,7 +9,7 @@
 import { maxv, pickNum } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { RcElement } from "../common/RcControl";
-import { RECT_Z, toSize } from "../common/Rectangle";
+import { RECT_Z, rectToSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
@@ -68,7 +68,7 @@ export class LegendItemView extends ChartElement<LegendItem> {
         this._label.text = model.text();
 
         const rMarker = this._marker.setVis(model.legend.markerVisible) ? this._marker.getBBox() : RECT_Z;
-        const sz = toSize(this._label.getBBox());
+        const sz = rectToSize(this._label.getBBox());
         this._gap = pickNum(model.legend.markerGap, 0);
 
         return Size.create(rMarker.width + this._gap + sz.width, maxv(rMarker.height, sz.height));

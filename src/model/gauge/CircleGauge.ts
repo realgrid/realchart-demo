@@ -391,7 +391,8 @@ export class CircleGaugeScale extends GaugeScale {
 }
 
 /**
- * 원형 게이지 모델.
+ * 원형 게이지 모델.<br/>
+ * 지정된 최대 각도 내에서 현재 값의 비율을 원호로 표시한다.
  * 
  * @config chart.gauge[type=circle]
  */

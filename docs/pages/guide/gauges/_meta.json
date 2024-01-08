@@ -1,5 +1,6 @@
 {
     "gauge-circle": "Circle Gauge",
     "gauge-linear": "Linear Gauge",
+    "gauge-bullet": "Bullet Gauge",
     "gauge-clock": "Clock Gauge"
 }

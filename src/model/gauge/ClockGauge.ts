@@ -206,7 +206,8 @@ export class ClockGaugeLabel extends FormattableText {
 }
 
 /**
- * 시계 게이지 모델.
+ * 시계 게이지 모델.<br/>
+ * 원형 아날로그 시계를 표시한다.
  * 
  * @config chart.gauge[type=clock]
  */

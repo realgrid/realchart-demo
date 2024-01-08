@@ -9,11 +9,11 @@
 import { copyObj, maxv, pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { LayerElement, RcElement } from "../../common/RcControl";
-import { IRect, createRect } from "../../common/Rectangle";
+import { IRect, createRect, isEmptyRect } from "../../common/Rectangle";
 import { ISize } from "../../common/Size";
 import { IValueRange } from "../../common/Types";
 import { RectElement } from "../../common/impl/RectElement";
-import { TextElement } from "../../common/impl/TextElement";
+import { TextAnchor, TextElement } from "../../common/impl/TextElement";
 import { GaugeItemPosition, GaugeRangeBand } from "../../model/Gauge";
 import { LinearGauge, LinearGaugeBase, LinearGaugeGroup, LinearGaugeGroupBase } from "../../model/gauge/LinearGauge";
 import { ChartElement } from "../ChartElement";
@@ -32,6 +32,7 @@ class BandView extends ChartElement<GaugeRangeBand> {
     private _vertical: boolean;
     _thick = 0;
     _gap = 0;
+    _labelGap = 3;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -68,7 +69,7 @@ class BandView extends ChartElement<GaugeRangeBand> {
                     v.text = String(vals[i]);
                     w = maxv(v.getBBox().width);
                 })
-                width += w;
+                width += w + this._labelGap;
             } else {
                 let h = 0;
                 this._labels.forEach((v, i) => {
@@ -97,6 +98,7 @@ class BandView extends ChartElement<GaugeRangeBand> {
 
         if (!this._barViews.isEmpty && sum > 0) {
             const vert = this._vertical;
+            const inside = this.model.position === GaugeItemPosition.INSIDE;
             const opposite = this.model.position === GaugeItemPosition.OPPOSITE;
             const width = this.width;
             const height = this.height;
@@ -109,7 +111,8 @@ class BandView extends ChartElement<GaugeRangeBand> {
                 const w = len * (range.toValue - range.fromValue) / sum;
 
                 if (vert) {
-                    v.setBounds(0, height - p - w, thick, w);
+                    const x = (inside || opposite) ? 0 : width - thick;
+                    v.setBounds(x, height - p - w, thick, w);
                 } else {
                     const y = opposite ? height - thick : 0;
                     v.setBounds(p, y, w, this._thick);
@@ -125,28 +128,33 @@ class BandView extends ChartElement<GaugeRangeBand> {
     }
 
     private $_layoutLabels(gauge: LinearGauge, sum: number, ranges: IValueRange[]): void {
-        const vert = this._vertical;
         const opposite = this.model.position === GaugeItemPosition.OPPOSITE;
-        const width = this.width;
-        const height = this.height;
-        const len = vert ? height : width;
-        const p = opposite ? 0 : this._thick;
-        let v = this._labels.get(0);
 
-        if (vert) {
-            v.trans(p, 0);
+        if (this._vertical) {
+            const len = this.height;
+            const anchor = opposite ? TextAnchor.START : TextAnchor.END;
+            const p = opposite ? this._thick + this._labelGap : this.width - this._thick - this._labelGap;
+            let v = this._labels.get(0);
+    
+            v.anchor = anchor;
+            v.trans(p, len - v.getBBox().height / 2);
+    
+            for (let i = 1; i <= ranges.length; i++) {
+                const y = len - len * ranges[i - 1].toValue / sum;
+                 
+                v = this._labels.get(i);
+                v.anchor = anchor;
+                v.trans(p, y - v.getBBox().height / 2);
+            }
         } else {
+            const len = this.width;            
+            const p = opposite ? 0 : this._thick;
+            let v = this._labels.get(0);
+    
             v.trans(0, p);
-        }
-
-        for (let i = 1; i <= ranges.length; i++) {
-            const xy = len * ranges[i - 1].toValue / sum;
-            const v = this._labels.get(i);
-
-            if (vert) {
-                v.trans(p, xy);
-            } else {
-                v.trans(xy, p);
+            for (let i = 1; i <= ranges.length; i++) {
+                const x = len * ranges[i - 1].toValue / sum;
+                this._labels.get(i).trans(x, p);
             }
         }
     }
@@ -249,7 +257,7 @@ export class LinearGaugeView extends LinearGaugeBaseView<LinearGauge> {
         const scale = m.group ? (m.group as LinearGaugeGroup).scale : m.scale;
 
         // value bar
-        if (v.setVis(bar.visible && !scale.isEmpty() && !isNaN(m.value))) {
+        if (v.setVis(!isEmptyRect(r) && bar.visible && !scale.isEmpty() && !isNaN(m.value))) {
             v.setStyleOrClass(bar.style);
             v.internalSetStyleOrClass(bar.getStyle(value));
 

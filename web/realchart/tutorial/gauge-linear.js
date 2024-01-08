@@ -9,7 +9,7 @@ const config = {
       label: {
         numberFormat: '#.#',
       },
-      width: 50,
+      width: 80,
     },
   },
   title: 'Linear Gauge',
@@ -132,7 +132,7 @@ function setActions(container) {
   createListBox(
     container,
     'band.position',
-    ['default', 'opposite'],
+    ['default', 'opposite', 'inside'],
     function (e) {
       config.gauge[0].band.position = _getValue(e);
       chart.load(config);

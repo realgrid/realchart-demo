@@ -8,7 +8,7 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { LayerElement, RcElement } from "../../common/RcControl";
-import { IRect } from "../../common/Rectangle";
+import { IRect, isEmptyRect } from "../../common/Rectangle";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
 import { BulletGauge, BulletGaugeGroup } from "../../model/gauge/BulletGauge";
@@ -78,7 +78,7 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
         const vActual = this._valueView;
         const vTarget = this._targetView;
 
-        if (this._barContainer.setVis(!scale.isEmpty())) {
+        if (this._barContainer.setVis(!isEmptyRect(r) && !scale.isEmpty())) {
             const ranges = m.getRanges(scale._min, scale._max, false) || group?.getRanges(scale._min, scale._max, false);
 
             if (ranges) {

@@ -25,8 +25,12 @@ export const createRect = function(x: number, y: number, width: number, height: 
     return {x, y, width, height};
 }
 
-export function toSize(r: IRect): ISize {
+export function rectToSize(r: IRect): ISize {
     return { width: r.width, height: r.height };
+}
+
+export function isEmptyRect(r: IRect): boolean {
+    return r.width <= 0 || r.height <= 0;
 }
 
 // export const equalsRect = function (r1: IRect, r2: IRect): boolean {

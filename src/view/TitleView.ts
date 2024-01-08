@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { toSize } from "../common/Rectangle";
+import { rectToSize } from "../common/Rectangle";
 import { SvgRichText } from "../common/RichText";
 import { ISize } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
@@ -53,7 +53,7 @@ export class TitleView extends BoundableElement<Title> {
         this._richText.setFormat(model.text);
         this._richText.build(this._textView, hintWidth, hintHeight, null, null);
 
-        return toSize(this._textView.getBBox());
+        return rectToSize(this._textView.getBBox());
     }
 
     protected _doLayout(): void {

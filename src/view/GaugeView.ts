@@ -13,13 +13,13 @@ import { NumberFormatter } from "../common/NumberFormatter";
 import { IPoint } from "../common/Point";
 import { RcAnimation } from "../common/RcAnimation";
 import { LayerElement, RcElement } from "../common/RcControl";
-import { IRect, createRect, toSize } from "../common/Rectangle";
+import { IRect, createRect, rectToSize } from "../common/Rectangle";
 import { ISize } from "../common/Size";
 import { Align } from "../common/Types";
 import { LabelElement } from "../common/impl/LabelElement";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
-import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
+import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { CircularGauge, GaugeBase, GaugeGroup, GaugeItemPosition, GaugeScale, LinearGaugeScale, ValueGauge } from "../model/Gauge";
 import { LinearGaugeBase, LinearGaugeGroupBase, LinearGaugeLabel } from "../model/gauge/LinearGauge";
 import { ChartElement, ContentView } from "./ChartElement";
@@ -432,7 +432,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
         v.text = label.text;
         label.buildSvg(v, null, width, height, m, label._domain);
 
-        return toSize(v.getBBox());
+        return rectToSize(v.getBBox());
     }
 
     //-------------------------------------------------------------------------
@@ -455,10 +455,10 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
         const rBand = assign({}, this._rBand);
 
         this._renderScale(rBand);
+        this.background().setRect(rBand);
 
         if (rBand.height > 0) {
             // band background
-            this.background().setRect(rBand);
             // band
             this._renderBand(m, rBand, value);
         }
@@ -489,7 +489,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
     protected _measureGauge(m: ValueGauge, label: LinearGaugeLabel, labelView: TextElement, value: number, vertical: boolean, width: number, height: number): void {
         const rBand = this._rBand = createRect(0, 0, width, height);
 
-        this._vertical = m.group ? false : pickProp(vertical, height > width);
+        this._vertical = m.group ? false : vertical;// pickProp(vertical, height > width);
 
         if (label.visible) {
             const pos = label._runPos = pickProp(label.position, this._vertical ? 'top' : 'left');
