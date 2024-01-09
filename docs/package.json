@@ -24,12 +24,15 @@
     "@vercel/analytics": "^1.1.1",
     "common-tags": "^1.8.2",
     "next": "^13.4.19",
-    "nextra": "2.13.1",
-    "nextra-theme-docs": "2.13.1",
+    "nextra": "^2.12.3",
+    "nextra-theme-docs": "^2.12.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "realchart": "^0.9.30",
     "tmp": "^0.2.1"
+  },
+  "resolutions": {
+    "flexsearch": "0.7.31"
   },
   "devDependencies": {
     "@types/common-tags": "^1.8.1",
