@@ -1296,7 +1296,9 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         }
 
         this.$_prepareViewRanges(visPoints);
-        vals.push(this._minY, this._maxY);
+        if (!isNaN(this._minY)) { // #404
+            vals.push(this._minY, this._maxY);
+        }
     }
 
     protected _getRangeMinMax(axis: 'x' | 'y' | 'z'): { min: number, max: number } {

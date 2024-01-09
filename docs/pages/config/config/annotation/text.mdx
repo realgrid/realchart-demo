@@ -32,9 +32,9 @@ Text Annotation 모델.
 <Content type="keyword" value="true"></Content>로 지정하면 시리즈들 위에 표시된다.  
 <DefaultValue value="false" contents=""></DefaultValue>
 ### name: `string{:js}`[#name]
-Annotation 이름.
+어노테이션 이름.
 
-동적으로 Annotation을 다루기 위해서는 반드시 지정해야 한다.  
+동적으로 어노테이션을 다루기 위해서는 반드시 지정해야 한다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### numberFormat: `string{:js}`[#numberFormat]
 [text](#text) 에 동적으로 전달되는 값이 숫자일 때 사용되는 표시 형식.  
@@ -44,11 +44,13 @@ Annotation 이름.
 
 0 ~ 360 사이의 값으로 지정한다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
-### scope[#scope]
-차트 모델에서 지정된 annotationd의 표시 기준 영역.  
+### scope: `'chart'|'container'{:js}`[#scope]
+어노테이션 배치 기준.<br/>
+[주의]body에 설정된 annoation에는 적용되지 않는다.  
+- `'chart'` container에서 padding을 적용한 영역을 기준으로 표시한다.
+- `'container'` container 전체 영역을 기준으로 표시한다.
 
-
-<DefaultValue value="AnnotationScope.CHART" contents=""></DefaultValue>
+<DefaultValue value="'chart'" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 - `SVGStyles{:js}` 

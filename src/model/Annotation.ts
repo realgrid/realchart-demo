@@ -14,9 +14,23 @@ import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 import { ISeries } from "./Series";
 
+/**
+ * 어노테이션 배치 기준.<br/>
+ * [주의]body에 설정된 annoation에는 적용되지 않는다.
+ */
 export enum AnnotationScope {
     // BODY = 'body',
+    /**
+     * container에서 padding을 적용한 영역을 기준으로 표시한다.
+     * 
+     * @config
+     */
     CHART = 'chart',
+    /**
+     * container 전체 영역을 기준으로 표시한다.
+     * 
+     * @config
+     */
     CONTAINER = 'container'
 };
 
@@ -49,8 +63,8 @@ export abstract class Annotation extends ChartItem {
      */
     front = false;
     /**
-     * Annotation 이름.\
-     * 동적으로 Annotation을 다루기 위해서는 반드시 지정해야 한다. 
+     * 어노테이션 이름.\
+     * 동적으로 어노테이션을 다루기 위해서는 반드시 지정해야 한다. 
      * 
      * @config
      */
@@ -77,7 +91,8 @@ export abstract class Annotation extends ChartItem {
      */
     rotation: number;
     /**
-     * 차트 모델에서 지정된 annotationd의 표시 기준 영역.
+     * 어노테이션 배치 기준.<br/>
+     * [주의]body에 설정된 annoation에는 적용되지 않는다.
      * 
      * @config
      */
