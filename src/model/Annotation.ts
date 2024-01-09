@@ -81,7 +81,17 @@ export abstract class Annotation extends ChartItem {
      * @config
      */
     verticalAlign = VerticalAlign.TOP;
+    /**
+     * {@link align}과 {@link verticalAlign}으로 지정된 위치에서 실제 표시될 위치의 수평 간격.
+     * 
+     * @config
+     */
     offsetX = 10;
+    /**
+     * {@link align}과 {@link verticalAlign}으로 지정된 위치에서 실제 표시될 위치의 수직 간격.
+     * 
+     * @config
+     */
     offsetY = 10;
     /**
      * 회전 각도.\
