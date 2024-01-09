@@ -26,7 +26,7 @@
 
 '**type**'이 지정되지 않고, '**colors**' 배열이 존재하면 'colors'로 생성된다.
 
-<img src="/images/guide/asset-colors-01.png" width="70%"/>
+<img src="/images/guide/asset-colors-01.png" width="80%"/>
 
 ## Image List
 
@@ -38,16 +38,77 @@
 시작점과 끝점 사이에 색상이 서서히 변경되는 효과를 표시한다.
 채우기 색이나 선 색으로 사용될 수 있다.
 
+```js
+{
+    assets: [{
+        type: 'lineargradient',
+        id: 'gradient-1',
+        color: '#0088ff',
+        opacity: [1, 0]
+    }],
+    series: {
+        style: {
+            fill: 'url(#gradient-1)',
+            fillOpacity: 1,
+            strokeWidth: '2px'
+        }
+    }
+}
+```
+
+<img src="/images/guide/lineargradient-01.png" width="70%"/>
+
 ## Radial Gradient
 
 에셋 type은 '**radialgradient**'이다.<br/>
 원 중심에서 바깥으로 생상이 변해가는 효과를 표시한다.
 채우기 색이나 선 색으로 사용될 수 있다.
 
+```js
+{
+    assets: [{
+        type: 'radialgradient',
+        id: 'gradient-1',
+        color: '#0088ff',
+        cx: 0.3,
+        cy: 0.3,
+        rd: 0.4
+    }],
+    series: {
+        type: 'bubble',
+        style: {
+            fill: 'url(#gradient-1)'
+        }
+    }
+}
+```
+
+<img src="/images/guide/radialgradient-01.png" width="70%"/>
+
 ## Pattern
 
 에셋 type은 '**pattern**'이다.<br/>
 도형 패턴을 지정해서 채우기(fill) 색상 대신 사용할 수 있다.
+
+```js
+{
+    assets: [{
+        type: 'pattern',
+        id: 'pattern-1',
+        pattern: 0,
+        style: {
+            stroke: 'black',
+        }
+    }],
+    series: {
+        style: {
+            fill: 'url(#pattern-1)'
+        }
+    }
+}
+```
+
+<img src="/images/guide/asset-pattern-01.png" width="80%"/>
 
 ### See Also
 

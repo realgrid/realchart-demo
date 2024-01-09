@@ -44,6 +44,7 @@ export interface IGradient extends IAssetItem {
     /**
      * 0에서 1사이의 불투명도.<br/>
      * 지정하지 않거나 타당한 값이 아니면 1(완전 불투명)로 적용한다.
+     * 또는, 시작/끝 불투명도 두 값을 배열로 지정할 수도 있다. 
      * 
      * @config
      */
