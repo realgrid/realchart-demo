@@ -24,6 +24,7 @@ etc
 web/realchart/docs/
 web/realchart/lib/realchart*.*
 !web/realchart/lib/realchart-lic.js
+!web/realchart/lib/realchart-export.js
 /test-results/
 
 test-results

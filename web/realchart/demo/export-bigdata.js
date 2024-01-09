@@ -49,9 +49,7 @@ const config = {
             imageUrl: '../assets/images/annotation.png'
         }],
     },
-    export: {
-        visible: true,
-    },
+    exportOptions: {},
     title: "Line Big Data",
     xAxis: {
         tick: {
@@ -103,29 +101,29 @@ function setActions(container) {
 			chart.load(config, animate);
 		}, false);
 	line(container);
-	createCheckBox(container, 'export.visible', function (e) {
-			config.export.visible = _getChecked(e);
+	createCheckBox(container, 'exportOptions.visible', function (e) {
+			config.exportOptions.visible = _getChecked(e);
 			chart.load(config, animate);
 		}, true);
-	createCheckBox(container, 'export.hideNavigator', function (e) {
-			config.export.hideNavigator = _getChecked(e);
+	createCheckBox(container, 'exportOptions.hideNavigator', function (e) {
+			config.exportOptions.hideNavigator = _getChecked(e);
 			chart.load(config, animate);
 		}, false);
-	createCheckBox(container, 'export.hideScrollbar', function (e) {
-			config.export.hideScrollbar = _getChecked(e);
+	createCheckBox(container, 'exportOptions.hideScrollbar', function (e) {
+			config.exportOptions.hideScrollbar = _getChecked(e);
 			chart.load(config, animate);
 		}, false);
-	createCheckBox(container, 'export.hideZoomButton', function (e) {
-			config.export.hideZoomButton = _getChecked(e);
+	createCheckBox(container, 'exportOptions.hideZoomButton', function (e) {
+			config.exportOptions.hideZoomButton = _getChecked(e);
 			chart.load(config, animate);
 		}, false);
 	line(container);
-	createListBox(container, "export.width", ['425', '850', '1275'], function (e) {
-        config.export.width = Number(_getValue(e));
+	createListBox(container, "exportOptions.width", ['425', '850', '1275'], function (e) {
+        config.exportOptions.width = Number(_getValue(e));
         chart.load(config);
     }, '850');
-	createListBox(container, "export.scale", ['0.5', '1', '1.5'], function (e) {
-        config.export.scale = Number(_getValue(e));
+	createListBox(container, "exportOptions.scale", ['0.5', '1', '1.5'], function (e) {
+        config.exportOptions.scale = Number(_getValue(e));
         chart.load(config);
     }, '1');
 }

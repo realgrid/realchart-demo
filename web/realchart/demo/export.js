@@ -10,12 +10,7 @@ const config = {
     visible: true,
     text: 'Subtitle',
   },
-  export: {
-    visible: true,
-    // url: 'https://realchart-exporter.5r78gr15g8avq.ap-northeast-2.cs.amazonlightsail.com/api',
-    // url: 'https://realchart-node-exporter.vercel.app/api',
-    // url: 'http://localhost:4080/api',
-  },
+  exportOptions: {},
   options: {
     style: {
       backgroundImage: 'url(../assets/images/mountain.jpeg)',
@@ -214,36 +209,36 @@ function setActions(container) {
   line(container);
   createCheckBox(
     container,
-    'export.visible',
+    'exportOptions.visible',
     function (e) {
-      config.export.visible = _getChecked(e);
+      config.exportOptions.visible = _getChecked(e);
       chart.load(config, animate);
     },
     true
   );
   createCheckBox(
     container,
-    'export.hideNavigator',
+    'exportOptions.hideNavigator',
     function (e) {
-      config.export.hideNavigator = _getChecked(e);
+      config.exportOptions.hideNavigator = _getChecked(e);
       chart.load(config, animate);
     },
     false
   );
   createCheckBox(
     container,
-    'export.hideScrollbar',
+    'exportOptions.hideScrollbar',
     function (e) {
-      config.export.hideScrollbar = _getChecked(e);
+      config.exportOptions.hideScrollbar = _getChecked(e);
       chart.load(config, animate);
     },
     false
   );
   createCheckBox(
     container,
-    'export.hideZoomButton',
+    'exportOptions.hideZoomButton',
     function (e) {
-      config.export.hideZoomButton = _getChecked(e);
+      config.exportOptions.hideZoomButton = _getChecked(e);
       chart.load(config, animate);
     },
     false
@@ -251,20 +246,20 @@ function setActions(container) {
   line(container);
   createListBox(
     container,
-    'export.width',
+    'exportOptions.width',
     ['425', '850', '1275'],
     function (e) {
-      config.export.width = Number(_getValue(e));
+      config.exportOptions.width = Number(_getValue(e));
       chart.load(config);
     },
     '850'
   );
   createListBox(
     container,
-    'export.scale',
+    'exportOptions.scale',
     ['0.5', '1', '1.5'],
     function (e) {
-      config.export.scale = Number(_getValue(e));
+      config.exportOptions.scale = Number(_getValue(e));
       chart.load(config);
     },
     '1'
