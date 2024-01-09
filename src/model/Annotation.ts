@@ -86,13 +86,13 @@ export abstract class Annotation extends ChartItem {
      * 
      * @config
      */
-    offsetX = 10;
+    offsetX = 0;
     /**
      * {@link align}과 {@link verticalAlign}으로 지정된 위치에서 실제 표시될 위치의 수직 간격.
      * 
      * @config
      */
-    offsetY = 10;
+    offsetY = 0;
     /**
      * 회전 각도.\
      * 0 ~ 360 사이의 값으로 지정한다.
