@@ -1,24 +1,27 @@
 ## **title**
-차트 타이틀 설정 모델.<br/>
-기본적으로 차트 중앙 상단에 표시되지만 [align](#align) 으로 위치르 변경할 수 있다.
+차트 제목(title) 설정 모델.<br/>
+기본적으로 차트 중앙 상단에 표시되지만 [align](#align) , [verticalAlign](#verticalalign) 등으로 위치를 변경할 수 있다.
 ## Properties
 
 ### align: `'center'|'left'|'right'{:js}`[#align]
-정렬.  
+수평 정렬.  
 - `'center'` 
 - `'left'` 
 - `'right'` 
 
 <DefaultValue value="'center'" contents=""></DefaultValue>
 ### alignBase: `'chart'|'parent'|'plot'{:js}`[#alignBase]
-정렬 기준.  
+정렬 기준.
+시리즈들이 그려지는 plotting 영역이나,
+차트 전체 영역을 기준으로 할 수 있다. 
+또, [부제목](/config/config/subtitle) 인 경우 제목을 기준으로 위치를 지정할 수 있다.  
 - `'chart'` 
 - `'parent'` 상위 모델이 존재하는 경우 상위 모델 영역 기준.    상위가 없으면 기본값(대부분 <Content type="expression" value="'plot'"></Content>)과 동일.  ex) subtitle인 경우 title 기준.
 - `'plot'` 
 
 <DefaultValue value="'plot'" contents=""></DefaultValue>
 ### backgroundStyle: `SVGStyles | string{:js}`[#backgroundStyle]
-배경 스타일 셋.  
+배경 스타일셋 혹은 css selector.  
 - `SVGStyles{:js}` 
 
 | Name | Type | Optional |  
@@ -35,8 +38,7 @@
 | strokeWidth | `string{:js}` | true |  
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### gap: `number{:js}`[#gap]
-주 제목과 부 제목이 표시되는 영역과 차트 본체 등 과의 간격.
-
+주 제목과 부 제목이 표시되는 영역과 차트 본체 등 과의 간격.<br/>
 주 제목이 표시되면 (부 제목의 값은 무시되고)주 제목의 값을 사용하고,
 부 제목만 표시될 때는 부 제목의 값을 사용한다.  
 <DefaultValue value="10" contents=""></DefaultValue>
@@ -60,6 +62,13 @@
 ### text: `string{:js}`[#text]
 제목 텍스트.  
 <DefaultValue value="'Title'" contents=""></DefaultValue>
+### verticalAlign: `'bottom'|'middle'|'top'{:js}`[#verticalAlign]
+수직 정렬.  
+- `'bottom'` 
+- `'middle'` 
+- `'top'` 
+
+<DefaultValue value="'middle'" contents=""></DefaultValue>
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
 <DefaultValue value="true" contents=""></DefaultValue>

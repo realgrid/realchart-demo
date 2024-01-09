@@ -1,23 +1,27 @@
 ## **subtitle**
-차트 sub 타이틀 설정 모델.
+차트 부제목(subtitle) 설정 모델.<br/>
+기본적으로 주 제목(title)의 설정을 따르고, 몇가지 속성들이 추가된다.
 ## Properties
 
 ### align: `'center'|'left'|'right'{:js}`[#align]
-정렬.  
+수평 정렬.  
 - `'center'` 
 - `'left'` 
 - `'right'` 
 
 <DefaultValue value="'center'" contents=""></DefaultValue>
 ### alignBase: `'chart'|'parent'|'plot'{:js}`[#alignBase]
-정렬 기준.  
+정렬 기준.
+시리즈들이 그려지는 plotting 영역이나,
+차트 전체 영역을 기준으로 할 수 있다. 
+또, [부제목](/config/config/subtitle) 인 경우 제목을 기준으로 위치를 지정할 수 있다.  
 - `'chart'` 
 - `'parent'` 상위 모델이 존재하는 경우 상위 모델 영역 기준.    상위가 없으면 기본값(대부분 <Content type="expression" value="'plot'"></Content>)과 동일.  ex) subtitle인 경우 title 기준.
 - `'plot'` 
 
 <DefaultValue value="'plot'" contents=""></DefaultValue>
 ### backgroundStyle: `SVGStyles | string{:js}`[#backgroundStyle]
-배경 스타일 셋.  
+배경 스타일셋 혹은 css selector.  
 - `SVGStyles{:js}` 
 
 | Name | Type | Optional |  
@@ -34,11 +38,18 @@
 | strokeWidth | `string{:js}` | true |  
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### gap: `number{:js}`[#gap]
-주 제목과 부 제목이 표시되는 영역과 차트 본체 등 과의 간격.
-
+주 제목과 부 제목이 표시되는 영역과 차트 본체 등 과의 간격.<br/>
 주 제목이 표시되면 (부 제목의 값은 무시되고)주 제목의 값을 사용하고,
 부 제목만 표시될 때는 부 제목의 값을 사용한다.  
 <DefaultValue value="10" contents=""></DefaultValue>
+### position: `'bottom'|'left'|'right'|'top'{:js}`[#position]
+표시 위치.  
+- `'bottom'` 주제목 아래쪽에 표시.
+- `'left'` 주제목 왼쪽에 표시.
+- `'right'` 주제목 오른쪽에 표시.
+- `'top'` 주제목 위쪽에 표시.
+
+<DefaultValue value="'bottom'" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 - `SVGStyles{:js}` 
@@ -62,6 +73,13 @@
 ### titleGap: `number{:js}`[#titleGap]
 주 제목과 사이의 간격.  
 <DefaultValue value="2" contents=""></DefaultValue>
+### verticalAlign: `'bottom'|'middle'|'top'{:js}`[#verticalAlign]
+수직 정렬.  
+- `'bottom'` 
+- `'middle'` 
+- `'top'` 
+
+<DefaultValue value="'bottom'" contents=""></DefaultValue>
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
 <DefaultValue value="true" contents=""></DefaultValue>
