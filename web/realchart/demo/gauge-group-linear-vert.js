@@ -22,7 +22,7 @@ const config = {
   gauge: [
     {
       type: 'lineargroup',
-      vertical: false,
+      vertical: true,
       width: 300,
       height: '80%',
       maxValue: 100,

@@ -489,7 +489,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
     protected _measureGauge(m: ValueGauge, label: LinearGaugeLabel, labelView: TextElement, value: number, vertical: boolean, width: number, height: number): void {
         const rBand = this._rBand = createRect(0, 0, width, height);
 
-        this._vertical = m.group instanceof LinearGaugeGroupBase ? !m.group.vertical : vertical;// pickProp(vertical, height > width);
+        this._vertical = m.group instanceof LinearGaugeGroupBase ? m.group.vertical : vertical;
 
         if (label.visible) {
             const pos = label._runPos = pickProp(label.position, this._vertical ? 'top' : 'left');

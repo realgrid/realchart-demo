@@ -50,7 +50,7 @@ class BandView extends ChartElement<GaugeRangeBand> {
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: GaugeRangeBand, hintWidth: number, hintHeight: number, phase: number): ISize {
         const g = model.gauge as LinearGauge | LinearGaugeGroup;
-        const vertical = this._vertical = g instanceof LinearGauge ? g.isVertical() : !g.vertical;
+        const vertical = this._vertical = g instanceof LinearGauge ? g.isVertical() : g.vertical;
         const pos = model.position;
         const thick = this._thick = model.getThickness(vertical ? hintWidth : hintHeight) + (pos === GaugeItemPosition.INSIDE ? 0 : (this._gap = pickNum(model.gap, 0)));
         let width = vertical ? thick : hintWidth;
@@ -347,15 +347,15 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
         const gap = m.itemLabel.gap;
 
         if (m.vertical) {
+            rBody.height -= m._labelHeight + gap;
+            if (!m.itemLabel.opposite) {
+                rBody.y += m._labelHeight + gap;
+            }
+        } else {
             // 자식 label이 left or right
             rBody.width -= m._labelWidth + gap;
             if (!m.itemLabel.opposite) {
                 rBody.x += m._labelWidth + gap;
-            }
-        } else {
-            rBody.height -= m._labelHeight + gap;
-            if (!m.itemLabel.opposite) {
-                rBody.y += m._labelHeight + gap;
             }
         }
 
@@ -374,7 +374,7 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
     protected _renderScale(model: LinearGaugeGroupBase<G>, rGauge: IRect, rBody: IRect): void {
         const scaleView = this._scaleView;
         const scale = model.scale;
-        const len = model.vertical ? rGauge.width : rGauge.height;
+        const len = model.vertical ? rGauge.height : rGauge.width;
         const values: number[] = [];
         let x: number, y: number;
 
@@ -383,26 +383,12 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
         })
 
         scale.buildGroupSteps(len, values);
-        scale._vertical = !model.vertical;
+        scale._vertical = model.vertical;
 
         if (scaleView.setVis(scale.visible)) {
             const sz = scaleView.measure(this.doc, scale, rBody.width, rBody.height, 1);
 
-            if (model.vertical) { // 자식들이 수평 모드
-                const h = sz.height;
-
-                rBody.height -= h;
-                rGauge.height -= h;
-                x = rBody.x;
-
-                if (scale.position === GaugeItemPosition.OPPOSITE) {
-                    y = rBody.y;
-                    rBody.y += h;
-                    rGauge.y += h;
-                } else {
-                    y = rBody.y + rBody.height;
-                }
-            } else { // 자식들이 수직 모드
+            if (model.vertical) {
                 const w = sz.width;
 
                 rBody.width -= w;
@@ -416,14 +402,27 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
                     rBody.x += w;
                     rGauge.x += w;
                 }
+            } else {
+                const h = sz.height;
+
+                rBody.height -= h;
+                rGauge.height -= h;
+                x = rBody.x;
+
+                if (scale.position === GaugeItemPosition.OPPOSITE) {
+                    y = rBody.y;
+                    rBody.y += h;
+                    rGauge.y += h;
+                } else {
+                    y = rBody.y + rBody.height;
+                }
             }
 
             scaleView.resizeByMeasured().layout().trans(x, y);
         }
     }
 
-    // 자식들을 수평으로 배치한다. 자식들은 수직.
-    private $_layoutHorz(doc: Document, model: LinearGaugeGroupBase<G>, views: ElementPool<LinearGaugeBaseView<G>>, bounds: IRect): void {
+    private $_layoutVert(doc: Document, model: LinearGaugeGroupBase<G>, views: ElementPool<LinearGaugeBaseView<G>>, bounds: IRect): void {
         const h = bounds.height;
         const w = (bounds.width - model.itemGap * (views.count - 1)) / views.count;
         const y = bounds.y;
@@ -439,8 +438,7 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
         });
     }
 
-    // 자식들을 수직으로 배치한다. 자식들은 수평.
-    private $_layoutVert(doc: Document, model: LinearGaugeGroupBase<G>, views: ElementPool<LinearGaugeBaseView<G>>, bounds: IRect): void {
+    private $_layoutHorz(doc: Document, model: LinearGaugeGroupBase<G>, views: ElementPool<LinearGaugeBaseView<G>>, bounds: IRect): void {
         const w = bounds.width;
         const h = (bounds.height - model.itemGap * (views.count - 1)) / views.count;
         const x = bounds.x;
@@ -501,21 +499,7 @@ export class LinearGaugeGroupView extends LinearGaugeGroupBaseView<LinearGauge, 
 
             const sz = bandView.measure(this.doc, band, rBody.width, rBody.height, 1);
 
-            if (model.vertical) { // 자식들이 수평 모드
-                const h = sz.height + gap;
-
-                rBody.height -= h;
-                rGauge.height -= h;
-                x = rBody.x;
-
-                if (band.position === GaugeItemPosition.OPPOSITE) {
-                    y = rBody.y;
-                    rBody.y += h;
-                    rGauge.y += h;
-                } else {
-                    y = rBody.y + rBody.height + gap;
-                }
-            } else { // 자식들이 수직 모드
+            if (model.vertical) {
                 const w = sz.width + gap;
 
                 rBody.width -= w;
@@ -528,6 +512,20 @@ export class LinearGaugeGroupView extends LinearGaugeGroupBaseView<LinearGauge, 
                     x = rBody.x;
                     rBody.x += w;
                     rGauge.x += w;
+                }
+            } else {
+                const h = sz.height + gap;
+
+                rBody.height -= h;
+                rGauge.height -= h;
+                x = rBody.x;
+
+                if (band.position === GaugeItemPosition.OPPOSITE) {
+                    y = rBody.y;
+                    rBody.y += h;
+                    rGauge.y += h;
+                } else {
+                    y = rBody.y + rBody.height + gap;
                 }
             }
 
