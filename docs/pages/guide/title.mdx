@@ -1,16 +1,27 @@
 # 타이틀
 
-차트 내용을 요약하는 [제목](/config/config/title) 및 
-[부제목](/config/config/subtitle)을 차트 상단에 표시할 수 있다.<br/>
+차트 내용을 대표하는 [제목](/config/config/title) 및 
+[부제목](/config/config/subtitle)을 차트 상단에 표시할 수 있다.
+
+<img src="/images/guide/title-01.png" class="border-img"/>
+
 부제목은 제목의 좌우상하 주변에 표시할 수 있는데, [align](/config/config/subtitle#align), 
 [verticalAlign](/config/config/subtitle#verticalAlign)으로 정렬 상태를 지정할 수 있다.<br/>
+
+<img src="/images/guide/title-02.png" class="border-img"/>
+<img src="/images/guide/title-03.png" class="border-img"/>
+
+다른 구성 요소들과 마찬가지로 제목, 부제목 모두 스타일링할 수 있다.
+
+<img src="/images/guide/title-04.png" class="border-img"/>
+
 실행 중 제목과 부제목은 각각 [RcTitle](/docs/api/classes/RcTitle), [RcSubtitle](/docs/api/classes/RcSubtitle) API 모델로 접근할 수 있다.
 
 ## 설정
 
 차트 설정의 최상위 [title](/config/config/title), [subtitle](/config/config/subtitle) 항목으로 각각 설정한다.
 '**title**'은 지정하지 않으면 기본 텍스트 "**Title**"이 상단 중앙에 표시된다.
-'**subtitle**'은 지정하지 않으면 표시되지 않는다.
+'**subtitle**'은 visible을 true로 지정하지 않으면 표시되지 않는다.
 
 ```js
 const config = {
@@ -24,7 +35,15 @@ const config = {
 };
 ```
 
+visible 속성을 가진 모델은 boolean값 설정만으로 visible을 지정할 수 있다.
+
+```js
+const config = {
+  title: false
+};
+```
+
 ### See Also
 
-- [범례](/guide/legend)
+- [범례 개요](/guide/legend)
 - [차트 Configuration](/config)

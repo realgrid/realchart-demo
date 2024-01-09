@@ -5,14 +5,25 @@
 const config = {
     title: {
         text: "Chart Title",
+        // style: {
+        //     textDecoration: 'underline',
+        // },
         style: {
-            textDecoration: 'underline'
+            fill: 'white'
+        },
+        backgroundStyle: {
+            fill: '#333',
+            padding: '1px 4px',
+            rx: '4'
         }
     },
     subtitle: {
         text: "Sub Title",
+        text: "2023.01 World Bank.",
         style: {
-            fill: 'red'
+            fill: 'red',
+            fill: 'gray',
+            fontStyle: 'italic'
         },
         // backgroundStyle: {
         //     fill: 'black',

@@ -22,10 +22,10 @@ const config = {
   gauge: [
     {
       type: 'lineargroup',
-      width: '80%',
-      height: 250,
+      vertical: false,
+      width: 300,
+      height: '80%',
       maxValue: 100,
-      vertical: true,
       children: [
         {
           name: 'gauge1',
@@ -40,7 +40,7 @@ const config = {
             style: {
               fill: '#00aaff',
             },
-            text: "<t style='fill:gray'>게이지 101 -</t> ${value}",
+            text: "<t style='fill:gray'>게이지 1</t><br>${value}",
           },
         },
         {
@@ -56,7 +56,7 @@ const config = {
             style: {
               fill: '#ffaa00',
             },
-            text: "<t style='fill:gray'>게이지 202 -</t> ${value}",
+            text: "<t style='fill:gray'>게이지 2</t><br>${value}",
           },
         },
         {
@@ -72,7 +72,7 @@ const config = {
             style: {
               fill: '#88cc00',
             },
-            text: "<t style='fill:gray'>게이지 303 -</t> ${value}",
+            text: "<t style='fill:gray'>게이지 3</t><br>${value}",
           },
         },
         {
@@ -88,7 +88,7 @@ const config = {
             style: {
               fill: '#aa0000',
             },
-            text: "<t style='fill:gray'>게이지 404 -</t> ${value}",
+            text: "<t style='fill:gray'>게이지 4</t><br>${value}",
           },
         },
       ],

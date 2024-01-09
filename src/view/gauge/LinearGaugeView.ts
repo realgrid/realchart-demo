@@ -355,7 +355,7 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
         } else {
             rBody.height -= m._labelHeight + gap;
             if (!m.itemLabel.opposite) {
-                rBody.x += m._labelHeight + gap;
+                rBody.y += m._labelHeight + gap;
             }
         }
 
@@ -383,38 +383,63 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
         })
 
         scale.buildGroupSteps(len, values);
+        scale._vertical = !model.vertical;
 
         if (scaleView.setVis(scale.visible)) {
-            if (model.vertical) { // 자식들이 수평 모드
-                const sz = scaleView.measure(this.doc, scale, rBody.width, rBody.height, 1);
+            const sz = scaleView.measure(this.doc, scale, rBody.width, rBody.height, 1);
 
-                rBody.height -= sz.height;
-                rGauge.height -= sz.height;
+            if (model.vertical) { // 자식들이 수평 모드
+                const h = sz.height;
+
+                rBody.height -= h;
+                rGauge.height -= h;
                 x = rBody.x;
 
                 if (scale.position === GaugeItemPosition.OPPOSITE) {
                     y = rBody.y;
-                    rBody.y += sz.height;
-                    rGauge.y += sz.height;
+                    rBody.y += h;
+                    rGauge.y += h;
                 } else {
                     y = rBody.y + rBody.height;
                 }
             } else { // 자식들이 수직 모드
-                // TODO
+                const w = sz.width;
+
+                rBody.width -= w;
+                rGauge.width -= w;
+                y = rBody.y;
+
+                if (scale.position === GaugeItemPosition.OPPOSITE) {
+                    x = rBody.x + rBody.width;
+                } else {
+                    x = rBody.x;
+                    rBody.x += w;
+                    rGauge.x += w;
+                }
             }
 
             scaleView.resizeByMeasured().layout().trans(x, y);
         }
     }
 
+    // 자식들을 수평으로 배치한다. 자식들은 수직.
     private $_layoutHorz(doc: Document, model: LinearGaugeGroupBase<G>, views: ElementPool<LinearGaugeBaseView<G>>, bounds: IRect): void {
         const h = bounds.height;
-        const w = bounds.width / views.count;
+        const w = (bounds.width - model.itemGap * (views.count - 1)) / views.count;
         const y = bounds.y;
+        let x = bounds.x;
 
-        // TODO
+        views.forEach((v, i) => {
+            v.measure(doc, model.get(i), w, h, 0);
+            v.resize(w, h);
+            v.layout();
+            v.trans(x, y);
+
+            x += w + model.itemGap;
+        });
     }
 
+    // 자식들을 수직으로 배치한다. 자식들은 수평.
     private $_layoutVert(doc: Document, model: LinearGaugeGroupBase<G>, views: ElementPool<LinearGaugeBaseView<G>>, bounds: IRect): void {
         const w = bounds.width;
         const h = (bounds.height - model.itemGap * (views.count - 1)) / views.count;
@@ -474,8 +499,9 @@ export class LinearGaugeGroupView extends LinearGaugeGroupBaseView<LinearGauge, 
         if (bandView.setVis(band.visible)) {
             const gap = +band.gap || 0;
 
+            const sz = bandView.measure(this.doc, band, rBody.width, rBody.height, 1);
+
             if (model.vertical) { // 자식들이 수평 모드
-                const sz = bandView.measure(this.doc, band, rBody.width, rBody.height, 1);
                 const h = sz.height + gap;
 
                 rBody.height -= h;
@@ -490,7 +516,19 @@ export class LinearGaugeGroupView extends LinearGaugeGroupBaseView<LinearGauge, 
                     y = rBody.y + rBody.height + gap;
                 }
             } else { // 자식들이 수직 모드
-                // TODO
+                const w = sz.width + gap;
+
+                rBody.width -= w;
+                rGauge.width -= w;
+                y = rBody.y;
+
+                if (band.position === GaugeItemPosition.OPPOSITE) {
+                    x = rBody.x + rBody.width + gap;
+                } else {
+                    x = rBody.x;
+                    rBody.x += w;
+                    rGauge.x += w;
+                }
             }
 
             bandView.resizeByMeasured().layout().trans(x, y);

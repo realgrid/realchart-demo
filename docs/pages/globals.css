@@ -75,5 +75,9 @@ nav:empty.nx-hidden {
 }
 
 img {
-    margin: auto;
+    margin: 8px auto;
+}
+
+.border-img {
+    border: 1px solid #0088ff15;
 }

@@ -388,17 +388,17 @@ export abstract class LinearGaugeGroupBase<T extends LinearGaugeBase> extends Ga
     // properties
     //-------------------------------------------------------------------------
     /**
-     * true면 자식 게이지들을 수평으로 지정하고(자식 게이지의 vertical 속성과 관계없이), 수직으로 차례대로 배치한다.
-     * false면 자식 게이지들을 수직으로 지정하고, 수평으로 배치한다.\
-     * 이런 배치가 의도와 맞지 않다면 그룹없이 개별적으로 배치해야 한다.
+     * true면 자식 게이지들을 수평으로 지정하고(자식 게이지의 vertical 속성과 관계없이) 위에서 아래로 차례대로 배치한다.<br/>
+     * false면 자식 게이지들을 수직으로 지정하고, 왼쪽에서 오른쪽으로 순서대로 배치한다.<br/>
+     * [주의]이런 배치가 의도와 맞지 않다면 그룹없이 개별적으로 배치해야 한다.
      * 
      * @config
      */
     vertical = true;
-    /**
-     * 자식 게이지들의 {@link LinearGaugeBase.vertical}을 지정한다.
-     */
-    itemVertical: boolean;
+    // /**
+    //  * 자식 게이지들의 {@link LinearGaugeBase.vertical}을 지정한다.
+    //  */
+    // itemVertical: boolean;
     /**
      * label 설정 모델.
      * 

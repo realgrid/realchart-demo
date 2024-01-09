@@ -5,14 +5,13 @@
  */
 const config = {
 	type: 'bar',
+	options: {
+		// animatable: false
+	},
 	title: 'Chat Title',
 	subtitle: {
 		visible: true,
 		text: "Subtitle"
-	},
-	
-	options: {
-		// animatable: false
 	},
 	legend:{
 		visible: true,
@@ -32,11 +31,6 @@ const config = {
 		// reversed: true,
 		// baseValue: -1
 	},
-	body: {
-        style: {
-            // stroke: 'none'
-        },
-    },
 	series: [{
 		colorByPoint: true,
 		pointLabel: true,
