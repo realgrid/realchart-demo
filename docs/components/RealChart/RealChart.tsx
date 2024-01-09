@@ -284,13 +284,13 @@ export function RealChartReact({
             case "select":
               return (
                 <Flex
+                  key={idx}
                   align={"center"}
                   wrap={"wrap"}
                   direction={"row"}
                   gap={"md"}>
                   <label className={classes.label}>{label}</label>
                   <Select
-                    key={idx}
                     data={data}
                     defaultValue={value || data[0]}
                     size={"xs"}
