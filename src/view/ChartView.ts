@@ -1051,7 +1051,7 @@ export class ChartView extends LayerElement {
         if (vLegend.visible) {
             let v: number;
 
-            if (legend.location === LegendLocation.BODY || legend.location === LegendLocation.PLOT) {
+            if (legend.location === LegendLocation.BODY) {
                 let off = +legend.offsetX || 0;
 
                 // x = y = 0;

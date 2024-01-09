@@ -10,7 +10,7 @@
   "title": "title",
   "subtitle": "subtitle",
   "body": "body",
-  "split": "split",
   "legend": "legend",
-  "tooltip": "tooltip"
+  "tooltip": "tooltip",
+  "split": "split"
 }

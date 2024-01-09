@@ -131,7 +131,7 @@ export class LegendView extends BoundableElement<Legend> {
         const vertical = this._vertical = model.getLayout() === LegendLayout.VERTICAL;
         
         this._ipr = pickNum(model.itemsPerLine, Number.MAX_SAFE_INTEGER);
-        this._gap = model.location !== LegendLocation.BODY && model.location !== LegendLocation.PLOT ? pickNum(model.gap, 0) : 0;
+        this._gap = model.location !== LegendLocation.BODY ? pickNum(model.gap, 0) : 0;
 
         if (vertical) {
             hintHeight = model.getMaxHeight(hintHeight);

@@ -52,10 +52,10 @@ function setActions(container) {
         config.legend.location = _getValue(e);
         chart.load(config);
     }, 'bottom');
-    createListBox(container, "alignBase", ['plot', 'chart'], function (e) {
+    createListBox(container, "alignBase", ['body', 'chart'], function (e) {
         config.legend.alignBase = _getValue(e);
         chart.load(config);
-    }, 'plot');
+    }, 'body');
     createListBox(container, "align", ['', 'left', 'center', 'right'], function (e) {
         config.legend.align = _getValue(e);
         chart.load(config);

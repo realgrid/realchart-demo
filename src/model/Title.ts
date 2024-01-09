@@ -13,7 +13,8 @@ import { ChartItem } from "./ChartItem";
 
 /**
  * 차트 제목(title) 설정 모델.<br/>
- * 기본적으로 차트 중앙 상단에 표시되지만 {@link align}, {@link verticalAlign} 등으로 위치를 변경할 수 있다.
+ * 기본적으로 차트 중앙 상단에 표시되지만 {@link align}, {@link verticalAlign} 등으로 위치를 변경할 수 있다.<br/>
+ * {@link guide.title 타이틀 개요} 페이지를 참조한다.
  * 
  * @config chart.title
  */
@@ -43,7 +44,7 @@ export class Title extends ChartItem {
      * 
      * @config
      */
-    alignBase = AlignBase.PLOT;
+    alignBase = AlignBase.BODY;
     /**
      * 수평 정렬.
      * 
@@ -122,7 +123,8 @@ export enum SubtitlePosition {
 
 /**
  * 차트 부제목(subtitle) 설정 모델.<br/>
- * 기본적으로 주 제목(title)의 설정을 따르고, 몇가지 속성들이 추가된다.
+ * 기본적으로 주 제목(title)의 설정을 따르고, 몇가지 속성들이 추가된다.<br/>
+ * {@link guide.subtitle 부제목 개요} 페이지를 참조한다.
  * 
  * @config chart.subtitle
  */

@@ -79,7 +79,6 @@ export enum LegendLocation {
      * 
      * @config
      */
-    PLOT = 'plot', // TODO: 제거
     BODY = 'body',
 }
 
@@ -127,9 +126,10 @@ export enum LegendItemsAlign {
 }
 
 /**
- * 차트 범례 설정 모델.
+ * 차트 시리즈 구성을 직관적으로 이해할 수 있도록 도와주는 범례 설정 모델.<br/>
  * visible 기본값이 undefined이고,
- * 따로 지정하지 않으면 시리즈가 둘 이상 포함돼야 legend가 표시된다.
+ * 따로 지정하지 않으면 시리즈가 둘 이상 포함돼야 legend가 표시된다.<br/>
+ * {@link guide.legend 범례 개요} 페이지를 참조한다.
  * 
  * @config chart.legend
  */
@@ -140,7 +140,6 @@ export class Legend extends Widget {
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // fields
-    //-------------------------------------------------------------------------
     private _items: LegendItem[];
     private _maxWidthDim: IPercentSize;
     private _maxHeightDim: IPercentSize;
@@ -182,9 +181,9 @@ export class Legend extends Widget {
      * 
      * @config
      */
-    alignBase = AlignBase.PLOT;
+    alignBase = AlignBase.BODY;
     /**
-     * {@link location}이 'plot'이 아닐 때,
+     * {@link location}이 'body'가 아닐 때,
      * legend view와 나머지 chart 영역 사이의 gap.
      * 
      * @config
@@ -236,21 +235,21 @@ export class Legend extends Widget {
     lineGap = 4;
     /**
      * 수평 {@link layout 배치}일 때,
-     * 최대 너비를 픽셀 단위의 크기 혹은 plot 너비에 대한 상대 길이를 '%'로 지정한다.
+     * 최대 너비를 픽셀 단위의 크기 혹은 body 너비에 대한 상대 길이를 '%'로 지정한다.
      * 
      * @config
      */
     maxWidth: RtPercentSize;
     /**
      * 수직 {@link layout 배치}일 때,
-     * 최대 높이를 픽셀 단위의 크기 혹은 plot 높이에 대한 상대 길이를 '%'로 지정한다.
+     * 최대 높이를 픽셀 단위의 크기 혹은 body 높이에 대한 상대 길이를 '%'로 지정한다.
      * 
      * @config
      */
     maxHeight: RtPercentSize;
     /**
      * 수평 배치.
-     * 값을 지정하지 않으면, 기본값이 {@link location}이 'plot'일 때는 'left',
+     * 값을 지정하지 않으면, 기본값이 {@link location}이 'body'일 때는 'left',
      * 'left', 'right'일 때는 'center'이다.
      * 
      * @config
@@ -258,7 +257,7 @@ export class Legend extends Widget {
     align: Align;
     /**
      * 수직 배치.
-     * 값을 지정하지 않으면, 기본값이 {@link location}이 'plot'일 때는 'top',
+     * 값을 지정하지 않으면, 기본값이 {@link location}이 'body'일 때는 'top',
      * 'top', 'bottom'일 때는 'middle'이다.
      * 
      * @config
@@ -290,6 +289,8 @@ export class Legend extends Widget {
     useTextColor: boolean;
     /**
      * 시리즈가 연결된 범례 아이템에 마우스가 올라가면 나머지 시리즈들을 반투명 처리해서 연결된 시리즈를 강조한다.
+     * 
+     * @config
      */
     seriesHovering = true;
 
@@ -313,7 +314,7 @@ export class Legend extends Widget {
     }
 
     getLayout(): LegendLayout {
-        if (this.layout === LegendLayout.AUTO && this._location !== LegendLocation.BODY && this._location !== LegendLocation.PLOT) {
+        if (this.layout === LegendLayout.AUTO && this._location !== LegendLocation.BODY) {
             switch (this._location) {
                 case LegendLocation.BOTTOM:
                 case LegendLocation.TOP:
