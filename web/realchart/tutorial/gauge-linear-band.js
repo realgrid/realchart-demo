@@ -3,26 +3,39 @@
  *
  */
 const config = {
-  title: 'Linear Gauge',
-  options: {},
+  title: 'Linear Gauge - Band',
   gauge: [
     {
       type: 'linear',
       name: 'gauge',
       vertical: true,
+      scale: false,
       width: 80,
-      label: {
-        numberFormat: '#.#',
+      band: {
+        visible: true,
+        gap: 3,
+        ranges: [
+          {
+            toValue: 30,
+            color: '#ff0',
+          },
+          {
+            toValue: 60,
+            color: '#fa0',
+          },
+          {
+            color: '#f40',
+          },
+        ],
+      },
+      value: Math.random() * 100,
+      valueBar: {
         style: {
           fill: 'var(--color-1)',
         },
       },
-      scale: {
-        visible: true,
-        stepInterval: 20,
-      },
-      value: Math.random() * 100,
-      valueBar: {
+      label: {
+        numberFormat: '#.#',
         style: {
           fill: 'var(--color-1)',
         },
@@ -63,7 +76,9 @@ function setActions(container) {
   createButton(container, 'Run', function (e) {
     clearInterval(timer);
     timer = setInterval(() => {
-      chart.getGauge('gauge').setValue(Math.random() * 100);
+      for (let i = 1; i <= 4; i++) {
+        chart.getGauge('gauge' + i).setValue(Math.random() * 100);
+      }
     }, 2000);
   });
   createButton(container, 'Stop', function (e) {
@@ -94,6 +109,25 @@ function setActions(container) {
     ['default', 'opposite'],
     function (e) {
       config.gauge[0].scale.position = _getValue(e);
+      chart.load(config);
+    },
+    'default'
+  );
+  createCheckBox(
+    container,
+    'band',
+    function (e) {
+      config.gauge[0].band.visible = _getChecked(e);
+      chart.load(config);
+    },
+    true
+  );
+  createListBox(
+    container,
+    'band.position',
+    ['default', 'opposite', 'inside'],
+    function (e) {
+      config.gauge[0].band.position = _getValue(e);
       chart.load(config);
     },
     'default'
