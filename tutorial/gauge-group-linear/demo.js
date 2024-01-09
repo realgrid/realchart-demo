@@ -16,6 +16,7 @@ const config = {
     width: '80%',
     height: 250,
     maxValue: 100,
+    vertical: false,
     children: [{
       name: 'gauge1',
       template: 'gauge',

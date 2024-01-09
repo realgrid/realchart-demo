@@ -42,7 +42,7 @@ const config = {
       textAlign: 'center'
     }
   }, {
-    imageUrl: '../assets/images/seoul.png',
+    imageUrl: 'https://www.realchart.co.kr/demo/assets/images/seoul.png',
     front: true,
     width: 260,
     align: 'center',
