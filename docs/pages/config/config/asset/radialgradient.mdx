@@ -1,8 +1,11 @@
 ## **asset[type=radialgradient]**
-
+원 중심에서 바깥으로 생상이 변해가는 효과를 표시한다.<br/>
+채우기 색이나 선 색으로 사용될 수 있다.
 ## Properties
 
 ### color: `string | string[]{:js}`[#color]
+양끝 색을 두 개의 색이 포함된 배열로 지정하거나, 
+끝 값을 <Content type="expression" value="'white'"></Content>로 전제하고 시작 색 값 하나만 지정할 수 있다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### cx: `string | number{:js}`[#cx]
 <DefaultValue value="undefined" contents=""></DefaultValue>
@@ -14,6 +17,8 @@
 차트 내에서 유일한 문자열로 반드시 지정해야 한다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### opacity: `number | number[]{:js}`[#opacity]
+0에서 1사이의 불투명도.<br/>
+지정하지 않거나 타당한 값이 아니면 1(완전 불투명)로 적용한다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### rd: `string | number{:js}`[#rd]
 <DefaultValue value="undefined" contents=""></DefaultValue>

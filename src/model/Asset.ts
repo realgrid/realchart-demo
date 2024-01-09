@@ -34,11 +34,26 @@ abstract class AssetItem<T extends IAssetItem> {
 
 export interface IGradient extends IAssetItem {
 
+    /**
+     * 양끝 색을 두 개의 색이 포함된 배열로 지정하거나, 
+     * 끝 값을 'white'로 전제하고 시작 색 값 하나만 지정할 수 있다.
+     * 
+     * @config
+     */
     color: string[] | string;
+    /**
+     * 0에서 1사이의 불투명도.<br/>
+     * 지정하지 않거나 타당한 값이 아니면 1(완전 불투명)로 적용한다.
+     * 
+     * @config
+     */
     opacity?: number[] | number;
 }
 
 /**
+ * 시작점과 끝점 사이에 색상이 서서히 변경되는 효과를 표시한다.<br/>
+ * 채우기 색이나 선 색으로 사용될 수 있다.
+ * 
  * @config chart.asset[type=lineargradient]
  */
 export interface ILinearGradient extends IGradient {
@@ -112,6 +127,9 @@ export class LinearGradient extends Gradient<ILinearGradient> {
 }
 
 /**
+ * 원 중심에서 바깥으로 생상이 변해가는 효과를 표시한다.<br/>
+ * 채우기 색이나 선 색으로 사용될 수 있다.
+ * 
  * @config chart.asset[type=radialgradient]
  */
 export interface IRadialGradient extends IGradient {
@@ -143,6 +161,9 @@ export class RadialGradient extends Gradient<IRadialGradient> {
     }
 }
 
+/**
+ * 도형 패턴을 지정해서 채우기(fill) 색상 대신 사용할 수 있다.<br/>
+ */
 export interface IPattern extends IAssetItem {
     /**
      * 문자열로 지정하면 path 'd', 숫자로 지정하면 stock pattern index.
@@ -292,8 +313,8 @@ export class Pattern extends AssetItem<IPattern> {
 }
 
 /**
- * 색상 목록을 미리 지정하고 series.pointColors 등에 적용할 수 있다.<br>
- * 목록에서 색상을 꺼내오는 방식은 {@link model} 속성으로 지정한다.
+ * 색상 목록을 미리 지정하고 {@link config.base.series#pointcolors} 등에 적용할 수 있다.<br/>
+ * 목록에서 색상을 꺼내오는 방식은 {@link mode} 속성으로 지정한다.
  * 
  * @config chart.asset[type=colors]
  */

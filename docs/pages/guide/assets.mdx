@@ -4,7 +4,29 @@
 
 ## Color List
 
-차트 설정에서 에셋 type은 '**colors**'이다.
+차트 설정에서 에셋 type은 '**colors**'이다.<br/>
+사용할 색상 목록을 보관하고 실행 중 
+[series.pointColors](/config/config/base/series#pointcolors) 등에서 사용할 수 있도록 한다.<br/>
+
+최상위 '**asset**' 항목의 자식 아이템으로 설정한다.
+
+```js
+{
+    assets: [{
+        type: 'colors',
+        id: 'color1',
+        colors: ['#88f', '#aaf', '#bbf', '#ddf', '#eef'],
+        mode: 'suffle'
+    }],
+    series: {
+        pointsColors: 'color1',
+    }
+}
+```
+
+'**type**'이 지정되지 않고, '**colors**' 배열이 존재하면 'colors'로 생성된다.
+
+<img src="/images/guide/asset-colors-01.png" width="70%"/>
 
 ## Image List
 
@@ -12,15 +34,20 @@
 
 ## Linear Gradient
 
-에셋 type은 '**lineargradient**'이다.
+에셋 type은 '**lineargradient**'이다.<br/>
+시작점과 끝점 사이에 색상이 서서히 변경되는 효과를 표시한다.
+채우기 색이나 선 색으로 사용될 수 있다.
 
 ## Radial Gradient
 
-에셋 type은 '**radialgradient**'이다.
+에셋 type은 '**radialgradient**'이다.<br/>
+원 중심에서 바깥으로 생상이 변해가는 효과를 표시한다.
+채우기 색이나 선 색으로 사용될 수 있다.
 
 ## Pattern
 
-에셋 type은 '**pattern**'이다.
+에셋 type은 '**pattern**'이다.<br/>
+도형 패턴을 지정해서 채우기(fill) 색상 대신 사용할 수 있다.
 
 ### See Also
 
