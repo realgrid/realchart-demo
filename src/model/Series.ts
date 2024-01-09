@@ -804,14 +804,16 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     abstract _type(): string; // for debugging, ...
 
     /**
-     * 시리즈 이름.\
-     * 시리즈 생성시 지정되고 변경할 수 없다.
+     * 시리즈 이름.<br/>
+     * 시리즈 생성시 지정된 후 변경할 수 없다.
+     * 차트의 다른 구성 요소에서 이 시리즈를 참조할 때 사용되며,
+     * 레전드나 툴팁에서 시리즈를 나타내는 텍스트로도 사용된다.
      * 
      * @config
      */
     readonly name: string;
     /**
-     * 이 시리즈를 나타내는 텍스트.\
+     * 이 시리즈를 나타내는 텍스트.<br/>
      * 레전드나 툴팁에서 시리즈를 대표한다.
      * 이 속성이 지정되지 않으면 {@link name}이 사용된다.
      * 

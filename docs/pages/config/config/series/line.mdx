@@ -26,7 +26,7 @@ Line 시리즈.<br/>
 y축 기준 위/아래 구분의 기준이 되는 값.  
 <DefaultValue value="0" contents=""></DefaultValue>
 ### belowStyle: `SVGStyles | string{:js}`[#belowStyle]
-[baseValue](#basevalue) 혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.  
+[baseValue](/config/config/series/line#basevalue) 혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.  
 - `SVGStyles{:js}` 
 
 | Name | Type | Optional |  
@@ -62,8 +62,7 @@ y축 기준 위/아래 구분의 기준이 되는 값.
 시리즈의 마지막 데이터포인트 옆에 표시되는 아이콘과 텍스트 설정 모델.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### label: `string{:js}`[#label]
-이 시리즈를 나타내는 텍스트.
-
+이 시리즈를 나타내는 텍스트.<br/>
 레전드나 툴팁에서 시리즈를 대표한다.
 이 속성이 지정되지 않으면 [name](#name) 이 사용된다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
@@ -77,9 +76,8 @@ y축 기준 위/아래 구분의 기준이 되는 값.
 데이터 포인트 maker 설정 정보.  
 
 ### name: `string{:js}`[#name]
-시리즈 이름.
-
-시리즈 생성시 지정되고 변경할 수 없다.  
+시리즈 이름.<br/>
+시리즈 생성시 지정된 후 변경할 수 없다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### noClip: `boolean{:js}`[#noClip]
 <Content type="keyword" value="true"></Content>로 지정하면 body를 벗어난 data point 영역도 표시된다.

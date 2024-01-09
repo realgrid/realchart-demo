@@ -29,12 +29,12 @@ export enum CrosshairType {
      * @config
      */
     LINE = 'line',
-    /**
-     * 항상 bar로 표시한다.
-     * 
-     * @config
-     */
-    BAR = 'bar'
+    // /**
+    //  * 항상 bar로 표시한다.
+    //  * 
+    //  * @config
+    //  */
+    // BAR = 'bar'
 }
 
 /**
@@ -143,7 +143,8 @@ export class Crosshair extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     isBar(): boolean {
-        return this.type === CrosshairType.BAR || !this.axis.continuous() && this.type === CrosshairType.AUTO;
+        return !this.axis.continuous() && this.type === CrosshairType.AUTO;
+        // return this.type === CrosshairType.BAR || !this.axis.continuous() && this.type === CrosshairType.AUTO;
     }
 
     getFlag(length: number, pos: number): string {
