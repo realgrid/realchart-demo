@@ -1,9 +1,4 @@
 const config = {
-  assets: [{
-    id: 'brown-mint',
-    type: 'colors',
-    colors: ['#009D92', '#47AFA8', '#835337', '#593219', '#937B6F']
-  }],
   title: {
     align: 'left',
     text: '2023년 11월',
@@ -24,7 +19,7 @@ const config = {
     }
   },
   annotations: [{
-    text: `<t>긍정적으로 평가한다</t><br><b style="font-size:20pt">32.5</b>`,
+    text: `긍정적으로 평가한다<br><b>42.5</b>`,
     offsetX: 160,
     offsetY: 50,
     align: 'center',
@@ -33,8 +28,8 @@ const config = {
       textAlign: 'center'
     }
   }, {
-    text: `<t>부정적으로 평가한다</t><br><b style="font-size:30pt">60.5</b>`,
-    offsetX: -250,
+    text: `부정적으로 평가한다<br><b>49.9</b>`,
+    offsetX: -240,
     verticalAlign: 'bottom',
     align: 'center',
     style: {
@@ -44,7 +39,7 @@ const config = {
   }, {
     imageUrl: 'https://www.realchart.co.kr/demo/assets/images/seoul.png',
     front: true,
-    width: 260,
+    width: 240,
     align: 'center',
     verticalAlign: 'middle',
     offsetX: -10,
@@ -60,16 +55,16 @@ const config = {
       value: 11.1
     }, {
       label: '어느 정도 긍정',
-      value: 21.4
+      value: 31.4
     }, {
       label: '어느 정도 부정',
-      value: 16.9
+      value: 33.5
     }, {
       label: '매우 부정',
-      value: 43.6
+      value: 16.4
     }, {
       label: '모름|무응답',
-      value: 7.1
+      value: 7.6
     }],
     pointLabel: {
       visible: true,
@@ -81,7 +76,7 @@ const config = {
       },
       text: '${x}<br>${y}'
     },
-    pointColors: 'brown-mint'
+    pointColors: ['#009D92', '#47AFA8', '#835337', '#593219', '#937B6F']
   }
 };
 let animate = false;
