@@ -62,7 +62,7 @@ const config = {
 		name: 'Air Quality',
         baseValue: NaN,
         xStart: 1940,
-        tooltipText: '<b style="font-size: 18px">${series}</b><br>Year, ${x}<br>Temperature anomaly, ${yValue}℃',
+        tooltipText: '<b style="font-size: 18px">${series}</b><br>Year, ${xValue}<br>Temperature anomaly, ${yValue}℃',
 		data: [
             15.78, 15.68, 15.5, 15.48, 15.64, 15.6, 15.61, 15.7, 15.64, 15.69,
             15.48, 15.46, 15.41, 15.64, 15.635, 15.5, 15.47, 15.44, 15.68, 15.75, 15.78, 15.77,
