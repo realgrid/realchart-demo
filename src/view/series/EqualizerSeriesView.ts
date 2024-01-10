@@ -40,7 +40,7 @@ class BarElement extends GroupElement implements IPointView {
         super(doc, SeriesView.POINT_CLASS);
 
         this.add(this._back = new RectElement(doc));
-        this._back.setTransparent();
+        this._back.setTransparent(true);
     }
 
     //-------------------------------------------------------------------------

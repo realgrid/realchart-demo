@@ -793,6 +793,9 @@
 .rct-ohlc-series .rct-point[data-decline] {
     stroke: #00f;
 }
+.rct-ohlc-series .rct-point[data-focus] .rct-ohlc-point-back {
+    fill: #0088ff20 !important;
+}
 .rct-ohlc-point-back {
     stroke: none;
 }

@@ -84,7 +84,7 @@ export class TooltipView extends RcElement {
         const reversed = series._yAxisObj.reversed;
 
         // text
-        this._richText.setFormat(ctx.getTooltipText(series, point) || model.text);
+        this._richText.setFormat(model.text || ctx.getTooltipText(series, point));
         this._richText.build(tv, NaN, NaN, null, model.getTextDomain());
 
         const r = tv.getBBox();

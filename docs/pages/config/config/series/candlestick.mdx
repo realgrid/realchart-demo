@@ -59,7 +59,7 @@ json 객체나 배열로 전달되는 데이터포인트 정보에서 종료(clo
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### highField: `string{:js}`[#highField]
 json 객체나 배열로 전달되는 데이터포인트 정보에서 최고(high) 값을 지정하는 속성명이나 인덱스.<br/>
-<Content type="keyword" value="undefined"></Content>이면, [yField](#yfield) 값으로 대체된다.  
+<Content type="keyword" value="undefined"></Content>이면, [yField](#yfield) 값으로 대체되거나 data point의 값이 array일 때는 항목 수가 5이상이면 4, 아니면 3, 객체이면 <Content type="expression" value="'high'"></Content>.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### label: `string{:js}`[#label]
 이 시리즈를 나타내는 텍스트.<br/>

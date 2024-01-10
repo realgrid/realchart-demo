@@ -6,15 +6,15 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, assign } from "../../common/Common";
+import { pickNum, pickProp, assign, pickNum3, pickProp3 } from "../../common/Common";
 import { RcElement } from "../../common/RcControl";
 import { RectElement } from "../../common/impl/RectElement";
 import { DataPoint } from "../DataPoint";
 import { RangedSeries, Series } from "../Series";
 
 /**
- * [min, rlow, mid, high, y]
- * [x, min, rlow, mid, high, y]
+ * [min, low, mid, high, max|y]
+ * [x, min, low, mid, high, max|y]
  */
 export class BoxPlotSeriesPoint extends DataPoint {
 
@@ -22,9 +22,10 @@ export class BoxPlotSeriesPoint extends DataPoint {
     // property fields
     //-------------------------------------------------------------------------
     min: any;
-    low: any;    // first quartile(q1, 25th percentile)
-    mid: any;    // median (q2, 50th percentile)
-    high: any;   // third quartile (q3 75th percentile)
+    low: any;   // first quartile(q1, 25th percentile)
+    mid: any;   // median (q2, 50th percentile)
+    high: any;  // third quartile (q3 75th percentile)
+    max: any;   // q4 or 100th percentile
 
     //-------------------------------------------------------------------------
     // fields
@@ -33,6 +34,7 @@ export class BoxPlotSeriesPoint extends DataPoint {
     lowValue: number;
     midValue: number;
     highValue: number;
+    get maxValue(): number { return this.yValue; }
 
     lowPos: number;
     midPos: number;
@@ -66,6 +68,7 @@ export class BoxPlotSeriesPoint extends DataPoint {
             lowValue: this.lowValue,
             midValue: this.midValue,
             highValue: this.highValue,
+            maxValue: this.maxValue
         });
     }
 
@@ -82,7 +85,7 @@ export class BoxPlotSeriesPoint extends DataPoint {
             this.low = v[pickNum(series.lowField, 1 + d)];
             this.mid = v[pickNum(series.midField, 2 + d)];
             this.high = v[pickNum(series.highField, 3 + d)];
-            this.y = v[pickNum(series.yField, 4 + d)];
+            this.y = v[pickNum3(series.maxField, series.yField, 4 + d)];
         }
     }
 
@@ -93,7 +96,7 @@ export class BoxPlotSeriesPoint extends DataPoint {
             this.min = pickProp(v[series.minField], v.min);
             this.low = pickProp(v[series.lowField], v.low);
             this.mid = pickProp(v[series.midField], v.mid);
-            this.high = pickProp(v[series.highField], v.high);
+            this.y = pickProp3(v[series.highField], v.high, this.y);
         }
     }
 
@@ -105,6 +108,8 @@ export class BoxPlotSeriesPoint extends DataPoint {
 
     parse(series: BoxPlotSeries): void {
         super.parse(series);
+
+        this.max = this.y;
 
         this.minValue = parseFloat(this.min);
         this.lowValue = parseFloat(this.low);
@@ -150,32 +155,39 @@ export class BoxPlotSeries extends RangedSeries {
     //-------------------------------------------------------------------------
     /**
      * json 객체나 배열로 전달되는 데이터포인트 정보에서 min값을 지정하는 속성명이나 인덱스.<br/>
-     * undefined이면, data point의 값이 array일 때는 1, 객체이면 'min'.
+     * undefined이면, data point의 값이 array일 때는 항목 수가 6이상이면 1 아니면 0, 객체이면 'min'.
      * 
      * @config
      */
     minField: string;
     /**
      * json 객체나 배열로 전달되는 데이터포인트 정보에서 low값을 지정하는 속성명이나 인덱스.<br/>
-     * undefined이면, data point의 값이 array일 때는 2, 객체이면 'low'.
+     * undefined이면, data point의 값이 array일 때는 항목 수가 6이상이면 2 아니면 1, 객체이면 'low'.
      * 
      * @config
      */
     lowField: string;
     /**
      * json 객체나 배열로 전달되는 데이터포인트 정보에서 mid값을 지정하는 속성명이나 인덱스.<br/>
-     * undefined이면, data point의 값이 array일 때는 3, 객체이면 'mid'.
+     * undefined이면, data point의 값이 array일 때는 항목 수가 6이상이면 3 아니면  2, 객체이면 'mid'.
      * 
      * @config
      */
     midField: string;
     /**
      * json 객체나 배열로 전달되는 데이터포인트 정보에서 high값을 지정하는 속성명이나 인덱스.<br/>
-     * undefined이면, data point의 값이 array일 때는 4, 객체이면 'high'.
+     * undefined이면, data point의 값이 array일 때는 항목 수가 6이상이면 4 아니면 3, 객체이면 'high'.
      * 
      * @config
      */
     highField: string;
+    /**
+     * json 객체나 배열로 전달되는 데이터포인트 정보에서 max값을 지정하는 속성명이나 인덱스.<br/>
+     * undefined이면, {@link yField} 값으로 대체되거나 data point의 값이 array일 때는 항목 수가 6이상이면 5 아니면 4, 객체이면 'max'.
+     * 
+     * @config
+     */
+    maxField: string;
 
     //-------------------------------------------------------------------------
     // fields
@@ -192,7 +204,7 @@ export class BoxPlotSeries extends RangedSeries {
         return 'boxplot';
     }
 
-    tooltipText = '<b>${name}</b><br>min: <b>${minValue}</b><br>low: <b>${lowValue}</b><br>mid: <b>${midValue}</b><br>high: <b>${highValue}</b><br>y: <b>${yValue}</b>';
+    tooltipText = '<b>${name}</b><br>min: <b>${minValue}</b><br>low: <b>${lowValue}</b><br>mid: <b>${midValue}</b><br>high: <b>${highValue}</b><br>max: <b>${maxValue}</b>';
 
     pointLabelCount(): number {
         return 2;

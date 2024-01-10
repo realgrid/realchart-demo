@@ -1223,9 +1223,9 @@ export class RcElement extends RcObject {
         this._styles['stroke'] = color;
     }
 
-    setTransparent(): void {
-        (this.dom as SVGElement | HTMLElement).style.setProperty('fill', 'transparent', 'important');
-        (this.dom as SVGElement | HTMLElement).style.setProperty('stroke', 'none', 'important');
+    setTransparent(important: boolean): void {
+        (this.dom as SVGElement | HTMLElement).style.setProperty('fill', 'transparent', important ? 'important' : '');
+        (this.dom as SVGElement | HTMLElement).style.setProperty('stroke', 'none', important ? 'important' : '');
     }
 
     textAlign(): Align {

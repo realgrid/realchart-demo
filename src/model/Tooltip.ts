@@ -80,7 +80,9 @@ export class Tooltip extends ChartItem {
     html: string;
     /**
      * 툴팁에 표시할 텍스트 형식.<br/>
-     * 시리즈에 {@link config.base.series#tooltiptext tooltipText}가 설정되지 않은 경우 대신 사용된다.<br/>
+     * 시리즈에 {@link config.base.series#tooltiptext tooltipText}가 시리즈 별 tooltip을 제공하지만,
+     * 이 속성이 지정된 경우 우선 사용된다.<br/>
+     * 
      * `${param;default;format}` 형식으로 아래과 같은 변수로 데이터 포인트 및 시리즈 값을 지정할 수 있다.
      * |변수|설명|
      * |---|---|
@@ -93,7 +95,12 @@ export class Tooltip extends ChartItem {
      * 
      * @config
      */
-    text = '<b>${name}</b><br>${series}:<b> ${yValue}</b>';
+    text: string;
+    /**
+     * 목표 지점과 tooltip 사이의 간격.
+     * 
+     * @config
+     */
     offset = 8;
     /**
      * 툴팁이 점진적으로 닫히는 시간을 밀리초 단위로 지정한다.

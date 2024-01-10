@@ -14,8 +14,8 @@ import { DataPoint } from "../DataPoint";
 import { RangedSeries, Series } from "../Series";
 
 /**
- * [low, open, close, high | y]
- * [x, low, open, close, high | y]
+ * [low, open, close, high|y]
+ * [x, low, open, close, high|y]
  */
 export class CandlestickSeriesPoint extends DataPoint {
 
@@ -38,24 +38,16 @@ export class CandlestickSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    parse(series: CandlestickSeries): void {
-        super.parse(series);
-
-        this.high = this.y;
-
-        this.lowValue = parseFloat(this.low);
-        this.openValue = parseFloat(this.open);
-        this.closeValue = parseFloat(this.close);
-
-        this.isNull ||= isNaN(this.lowValue) || isNaN(this.openValue) || isNaN(this.closeValue);
-    }
-
     protected _assignTo(proxy: any): any {
         return assign(super._assignTo(proxy), {
             low: this.low,
             close: this.close,
             open: this.open,
-            high: this.high
+            high: this.high,
+            lowValue: this.lowValue,
+            closeValue: this.closeValue,
+            openValue: this.openValue,
+            highValue: this.highValue
         });
     }
 
@@ -88,6 +80,18 @@ export class CandlestickSeriesPoint extends DataPoint {
         super._readSingle(v);
 
         this.low = this.close = this.open = this.y;
+    }
+
+    parse(series: CandlestickSeries): void {
+        super.parse(series);
+
+        this.high = this.y;
+
+        this.lowValue = parseFloat(this.low);
+        this.openValue = parseFloat(this.open);
+        this.closeValue = parseFloat(this.close);
+
+        this.isNull ||= isNaN(this.lowValue) || isNaN(this.openValue) || isNaN(this.closeValue);
     }
 }
 
@@ -154,7 +158,7 @@ export class CandlestickSeries extends RangedSeries {
     closeField: string;
     /**
      * json 객체나 배열로 전달되는 데이터포인트 정보에서 최고(high) 값을 지정하는 속성명이나 인덱스.<br/>
-     * undefined이면, {@link yField} 값으로 대체된다.
+     * undefined이면, {@link yField} 값으로 대체되거나 data point의 값이 array일 때는 항목 수가 5이상이면 4, 아니면 3, 객체이면 'high'.
      * 
      * @config
      */

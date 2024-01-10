@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { maxv, minv } from "../../common/Common";
-import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { LineElement } from "../../common/impl/PathElement";
@@ -51,7 +50,7 @@ class StickView extends RangeElement implements IPointView {
 
         this._back.setBox(x1, 0, w, h);
         this._tickOpen.setHLine(yOpen, x1, x);
-        this._tickClose.setHLine(yClose, x, this.width);
+        this._tickClose.setHLine(yClose, x, w / 2);
         this._bar.setVLine(x, y, y + h);
         //this._bar.setBounds(0, minv(yClose, yOpen), w, maxv(1, absv(yOpen - yClose)));
         this.setBoolData('decline', decline);
@@ -66,7 +65,7 @@ class StickView extends RangeElement implements IPointView {
         this.add(this._bar = new LineElement(doc));
         this.add(this._back = new RectElement(doc, 'rct-ohlc-point-back'));
 
-        this._back.setTransparent();
+        this._back.setTransparent(false);
     }
 }
 

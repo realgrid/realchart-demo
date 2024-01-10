@@ -37,7 +37,7 @@
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### highField: `string{:js}`[#highField]
 json 객체나 배열로 전달되는 데이터포인트 정보에서 high값을 지정하는 속성명이나 인덱스.<br/>
-<Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 4, 객체이면 <Content type="expression" value="'high'"></Content>.  
+<Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 항목 수가 6이상이면 4 아니면 3, 객체이면 <Content type="expression" value="'high'"></Content>.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### label: `string{:js}`[#label]
 이 시리즈를 나타내는 텍스트.<br/>
@@ -46,15 +46,19 @@ json 객체나 배열로 전달되는 데이터포인트 정보에서 high값을
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### lowField: `string{:js}`[#lowField]
 json 객체나 배열로 전달되는 데이터포인트 정보에서 low값을 지정하는 속성명이나 인덱스.<br/>
-<Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 2, 객체이면 <Content type="expression" value="'low'"></Content>.  
+<Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 항목 수가 6이상이면 2 아니면 1, 객체이면 <Content type="expression" value="'low'"></Content>.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### maxField: `string{:js}`[#maxField]
+json 객체나 배열로 전달되는 데이터포인트 정보에서 max값을 지정하는 속성명이나 인덱스.<br/>
+<Content type="keyword" value="undefined"></Content>이면, [yField](#yfield) 값으로 대체되거나 data point의 값이 array일 때는 항목 수가 6이상이면 5 아니면 4, 객체이면 <Content type="expression" value="'max'"></Content>.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### midField: `string{:js}`[#midField]
 json 객체나 배열로 전달되는 데이터포인트 정보에서 mid값을 지정하는 속성명이나 인덱스.<br/>
-<Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 3, 객체이면 <Content type="expression" value="'mid'"></Content>.  
+<Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 항목 수가 6이상이면 3 아니면  2, 객체이면 <Content type="expression" value="'mid'"></Content>.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### minField: `string{:js}`[#minField]
 json 객체나 배열로 전달되는 데이터포인트 정보에서 min값을 지정하는 속성명이나 인덱스.<br/>
-<Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 1, 객체이면 <Content type="expression" value="'min'"></Content>.  
+<Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 항목 수가 6이상이면 1 아니면 0, 객체이면 <Content type="expression" value="'min'"></Content>.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### name: `string{:js}`[#name]
 시리즈 이름.<br/>
@@ -120,7 +124,7 @@ point가 차지할 원래 크기에 대한 상대 값으로서,
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### tooltipText: `string{:js}`[#tooltipText]
 데이터포인트 툴팁 텍스트.  
-<DefaultValue value="'<b>${name}</b><br>min:" contents="<b>${minValue}</b><br>low: <b>${lowValue}</b><br>mid: <b>${midValue}</b><br>high: <b>${highValue}</b><br>y: <b>${yValue}</b>'"></DefaultValue>
+<DefaultValue value="'<b>${name}</b><br>min:" contents="<b>${minValue}</b><br>low: <b>${lowValue}</b><br>mid: <b>${midValue}</b><br>high: <b>${highValue}</b><br>max: <b>${maxValue}</b>'"></DefaultValue>
 ### [trendline](./boxplot/trendline)
 추세선 설정 모델.  
 <DefaultValue value="undefined" contents=""></DefaultValue>

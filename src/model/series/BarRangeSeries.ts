@@ -48,15 +48,16 @@ export class BarRangeSeriesPoint extends DataPoint {
     }
 
     protected _readArray(series: BarRangeSeries, v: any[]): void {
-        if (v.length > 2) {
-            this.x = v[pickNum(series.xField, 0)];
-            this.low = v[pickNum(series.lowField, 1)];
-            this.y = v[pickNum(series.yField, 2)];
-        } else if (v.length == 2) {
-            this.low = v[pickNum(series.lowField, 0)];
-            this.y = v[pickNum(series.yField, 1)];
+        if (v.length <= 1) {
+            this.isNull = true;
         } else {
-            this.y = this.low = v[0];
+            const d = v.length > 2 ? 1 : 0;
+
+            if (d > 0) {
+                this.x = v[pickNum(series.xField, 0)];
+            }
+            this.low = v[pickNum(series.lowField, 0 + d)];
+            this.y = v[pickNum(series.yField, 1 + d)];
         }
     }
 
