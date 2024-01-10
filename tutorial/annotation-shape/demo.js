@@ -5,11 +5,12 @@
 const config = {
   templates: {
     shape: {
+      shape: 'rectangle',
       width: 100,
       height: 100,
       style: {
         fill: 'none',
-        stroke: 'red',
+        stroke: 'var(--color-1)',
         strokeWidth: '5px'
       }
     }
@@ -30,26 +31,22 @@ const config = {
     template: 'shape',
     type: 'shape',
     style: {
-      stroke: 'var(--color-1)'
+      fill: 'var(--color-2)'
     },
-    offsetY: 100
+    offsetY: 110
   }, {
     template: 'shape',
     type: 'shape',
-    //   shape: 'circle',
+    shape: 'circle',
     align: 'center',
     verticalAlign: 'middle'
   }, {
     template: 'shape',
     type: 'shape',
-    //   shape: 'star',
+    shape: 'triangle',
     align: 'center',
     verticalAlign: 'middle',
-    offsetX: 100,
-    style: {
-      // fill: 'var(--color-2)',
-      stroke: 'var(--color-1)'
-    }
+    offsetX: 100
   }, {
     template: 'shape',
     type: 'shape',
