@@ -18,8 +18,10 @@ x, y로 지정되는 위치와 z로 지정되는 크기 사이의 관계를 표�
 ###### json 배열
 |Series 속성|설명|
 |---|---|
-| [xField](#xfield) |x 값. 기본값은 **<Content type="expression" value="'x'"></Content>**.|
-| [yField](#yfield) |y 값. 기본값은 **<Content type="expression" value="'y'"></Content>**.|
+| [xField](#xfield) |속성 값, 또는 <Content type="expression" value="'x', 'name', 'label'"></Content> 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
+| [yField](#yfield) |속성 값, 또는 <Content type="expression" value="'y', 'value'"></Content> 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
+| [ㅋField](#ㅋField) |속성 값, 또는 <Content type="expression" value="'z'"></Content> 속성 값이 z 값이 된다.|
+| [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
 ## Properties
 
 ### col: `number{:js}`[#col]
@@ -145,10 +147,10 @@ json 객체나 배열로 전달되는 데이터포인트 정보에서 y 값을 �
 
 <Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 1, 객체이면 <Content type="expression" value="'y'"></Content>.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
-### zField: `string{:js}`[#zField]
+### zField: `string | number | Function{:js}`[#zField]
 json 객체나 배열로 전달되는 데이터포인트 정보에서 z 값을 지정하는 속성명이나 인덱스.
 
-<Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 항목 수가 3이상일 때 2, 객체이면 <Content type="expression" value="'z'"></Content>.  
+<Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 2, 객체이면 <Content type="expression" value="'z'"></Content>.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### zOrder: `number{:js}`[#zOrder]
 <DefaultValue value="0" contents=""></DefaultValue>

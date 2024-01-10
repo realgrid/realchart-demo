@@ -88,9 +88,9 @@ export class PointLabelContainer extends LayerElement {
         view.point = p;
         view.setModel(doc, model, null, null);
 
-        view.internalClearStyleAndClass();
-        view.internalSetStyleOrClass(styles);
-        view.internalSetStyleOrClass(series.getPointLabelStyle(p));
+        view._text.internalClearStyleAndClass();
+        view._text.internalSetStyleOrClass(styles);
+        view._text.internalSetStyleOrClass(series.getPointLabelStyle(p));
 
         if (richFormat) {
             model.prepareRich(richFormat);

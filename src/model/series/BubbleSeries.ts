@@ -75,7 +75,7 @@ export class BubbleSeriesPoint extends DataPoint {
         super._readObject(series, v);
 
         if (!this.isNull) {
-            this.z = pickProp(v[series.zField], v.z);
+            this.y = pickProp(series._zFielder(v), v.z);
         }
     }
 
@@ -120,9 +120,11 @@ export enum BubbleSizeMode {
  * ###### json 배열
  * |Series 속성|설명|
  * |---|---|
- * |{@link xField}|x 값. 기본값은 **'x'**.|
- * |{@link yField}|y 값. 기본값은 **'y'**.|
-  
+ * |{@link xField}|속성 값, 또는 'x', 'name', 'label' 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
+ * |{@link yField}|속성 값, 또는 'y', 'value' 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
+ * |{@link ㅋField}|속성 값, 또는 'z' 속성 값이 z 값이 된다.|
+ * |{@link colorField}|속성 값, 또는 'color' 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
+ *  
  * @config chart.series[type=bubble]
  */
 export class BubbleSeries extends MarkerSeries {
@@ -146,13 +148,6 @@ export class BubbleSeries extends MarkerSeries {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /**
-     * json 객체나 배열로 전달되는 데이터포인트 정보에서 z 값을 지정하는 속성명이나 인덱스.\
-     * undefined이면, data point의 값이 array일 때는 항목 수가 3이상일 때 2, 객체이면 'z'.
-     * 
-     * @config
-     */
-    zField: string;
     sizeMode = BubbleSizeMode.AREA;
     minSize: RtPercentSize = 8;
     maxSize: RtPercentSize = '20%';
