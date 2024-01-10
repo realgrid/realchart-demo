@@ -37,10 +37,12 @@ export class BubbleSeriesPoint extends DataPoint {
         return this.zValue;
     }
 
-    parse(series: BubbleSeries): void {
-        super.parse(series);
+    getValue(): number {
+        return this.zValue;
+    }
 
-        this.zValue = parseFloat(this.z);
+    getZValue(): number {
+        return this.zValue;
     }
 
     protected _assignTo(proxy: any): any {
@@ -51,23 +53,16 @@ export class BubbleSeriesPoint extends DataPoint {
     }
 
     protected _readArray(series: BubbleSeries, v: any[]): void {
-        if (v === null) {
+        if (v.length <= 1) {
             this.isNull = true;
         } else {
-            const len = v.length;
+            const d = v.length > 2 ? 1 : 0;
 
-            if (len > 2) {
+            if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
-                this.y = v[pickNum(series.yField, 1)];
-                this.z = v[pickNum(series.zField, 2)];
-            } else if (len == 2) {
-                this.y = v[pickNum(series.yField, 0)];
-                this.z = v[pickNum(series.zField, 1)];
-            } else if (len === 1) {
-                this.y = this.z = v[0];
-            } else {
-                this.isNull = true;
             }
+            this.y = v[pickNum(series.yField, 0 + d)];
+            this.z = v[pickNum(series.zField, 1 + d)];
         }
     }
 
@@ -85,12 +80,12 @@ export class BubbleSeriesPoint extends DataPoint {
         this.z = this.y;
     }
 
-    getValue(): number {
-        return this.zValue;
-    }
+    parse(series: BubbleSeries): void {
+        super.parse(series);
 
-    getZValue(): number {
-        return this.zValue;
+        this.zValue = parseFloat(this.z);
+        
+        this.isNull ||= isNaN(this.zValue);
     }
 }
 
@@ -107,6 +102,7 @@ export enum BubbleSizeMode {
  * 이 시리즈를 기준으로 생성되는 x축은 [linear](/config/config/xAxis/linear)이다.<br/>
  * 
  * *{@link data}는 아래 형식들로 전달할 수 있다.
+ * [주의] 데이터포인트 구성에 필요한 모든 값을 제공하지 않으면 null이 된다.
  * 
  * ###### 단일 값 및 값 배열
  * |형식|설명|
@@ -122,7 +118,7 @@ export enum BubbleSizeMode {
  * |---|---|
  * |{@link xField}|속성 값, 또는 'x', 'name', 'label' 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
  * |{@link yField}|속성 값, 또는 'y', 'value' 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
- * |{@link ㅋField}|속성 값, 또는 'z' 속성 값이 z 값이 된다.|
+ * |{@link zField}|속성 값, 또는 'z' 속성 값이 z 값이 된다.|
  * |{@link colorField}|속성 값, 또는 'color' 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
  *  
  * @config chart.series[type=bubble]

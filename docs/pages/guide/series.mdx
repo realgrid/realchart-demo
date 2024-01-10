@@ -1,11 +1,12 @@
-# 차트 시리즈(Series)
+# 시리즈(Series)
 
 ## 차트 종류
 
 X/Y 두 축으로 구성되는 2차원 평면 위에서 데이터는 여러가지 방식으로 표시할 수 있다.
 여러 값을 비교하거나, 값이 변경되는 경향을 유추할 수 있도록 표시할 수도 있는데,
 이런 차트의 종류를 시리즈(Series)라고 하며, RealChart에서는 널리 쓰이는 시리즈들을 표함해서
-여러 종류의 시리즈 타입을 제공한다.
+여러 종류의 시리즈 타입을 제공한다.<br/>
+차트 하나에 여러 개의 시리즈가 동시에 표시될 수 있다.
 
 ## 데이터포인트(DataPoint)
 
@@ -62,7 +63,53 @@ color 값은 [colorField](/config/config/base/series#colorField), 또는 'color'
 
 몇몇 종류의 시리즈들은 group으로 묶어서 별도의 방식으로 표시할 수 있다.
 
+#### [BarSeriesGroup](/guide/series/series-bargroup)
+
+#### [LineSeriesGroup](/guide/series/series-linegroup)
+
+#### [AreaSeriesGroup](/guide/series/series-areagroup)
+
+#### [BumpSeriesGroup](/guide/series/series-bumpgroup)
+
+#### [CircleBarSeriesGroup](/guide/series/series-circlebargroup)
+
+#### [PieSeriesGroup](/guide/series/series-piegroup)
+
 ## 설정
+
+차트 설정의 최상위 [series](/config/config/series) 항목으로 설정한다.
+시리즈들의 설정을 배열로 지정하는데,
+시리즈가 하나이면 설정 json을 바로 지정할 수 있다.
+
+```
+const config = {
+    series: [{
+    }, {
+    }]
+}
+```
+
+```
+const config = {
+    series: {
+    }
+}
+```
+
+시리즈그룹도 유사하게 설정한다. 
+그룹 type을 지정하지 않는 경우 '**children**' 배열이 있으면 시리즈그룹으로 생성된다.
+
+```
+const config = {
+    series: {
+        type: 'bargroup',
+        layout: 'stack',
+        children: [{
+        }, {
+        }]
+    }
+}
+```
 
 ### See Also
 

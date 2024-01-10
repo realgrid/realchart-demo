@@ -39,7 +39,7 @@ export enum PaletteMode {
  */
 export enum LineType {
     /**
-     * 직선.
+     * 시리즈 종류에 따라 직선이거나 곡선일 수 있다.
      * 
      * @config
      */

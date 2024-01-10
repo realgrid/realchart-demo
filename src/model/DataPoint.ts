@@ -115,8 +115,14 @@ export class DataPoint {
     parse(series: ISeries): void {
         const v = this.source;
 
-        if (isArray(v)) {
-            this._readArray(series, v);
+        if (v == null) {
+            this.isNull = true;
+        } else if (isArray(v)) {
+            if (v.length === 0) {
+                this.isNull = true;
+            } else {
+                this._readArray(series, v);
+            }
         } else if (isObject(v)) {
             this._readObject(series, v);
             if ((isArray(v.drillDown) || isObject(v.drillDown))) {
@@ -177,41 +183,25 @@ export class DataPoint {
         });
     }
 
-    // protected _colorIndex(): number {
-    //     return 2;
-    // }
-
     protected _readArray(series: ISeries, v: any[]): void {
-        if (v == null) {
-            this.isNull = true;
+        const f = +series.colorField;
+
+        if (v.length > 1) {
+            this.x = v[pickNum(series.xField, 0)];
+            this.y = v[pickNum(series.yField, 1)];
         } else {
-            const f = +series.colorField;
+            this.y = v[0];
+        }
 
-            if (!isNaN(f)) {
-                this.color = v[f];
-            }
-
-            const len = v.length;
-
-            if (len > 1) {
-                this.x = v[pickNum(series.xField, 0)];
-                this.y = v[pickNum(series.yField, 1)];
-            } else if (len === 0) {
-                this.isNull = true;
-            } else {
-                this.y = v[0];
-            }
+        if (!isNaN(f)) {
+            this.color = v[f];
         }
     }
 
     protected _readObject(series: ISeries, v: any): void {
-        if (v == null) {
-            this.isNull = true;
-        } else {
-            this.x = pickProp4(series._xFielder(v), v.x, v.name, v.label);
-            this.y = pickProp3(series._yFielder(v), v.y, v.value);
-            this.color = pickProp(series._colorFielder(v), v.color);
-        }
+        this.x = pickProp4(series._xFielder(v), v.x, v.name, v.label);
+        this.y = pickProp3(series._yFielder(v), v.y, v.value);
+        this.color = pickProp(series._colorFielder(v), v.color);
     }
 
     protected _readSingle(v: any): void {

@@ -40,7 +40,7 @@ class StickView extends RangeElement implements IPointView {
         const p = this.point;
         const w = this.width;
         const h = this.height;
-        const len = p.highValue - p.lowValue;
+        const len = p.yValue - p.lowValue;
         const x = 0;
         let y = 0;
         const yOpen = y + h - h * (minv(p.openValue, p.closeValue) - p.lowValue) / len;

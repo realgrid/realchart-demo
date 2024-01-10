@@ -1,26 +1,25 @@
-## **series[type=bubble]**
-버블 시리즈.<br/>
-x, y로 지정되는 위치와 z로 지정되는 크기 사이의 관계를 표시한다.
-주로 원의 크기가 데이터포인트의 중요도를 나타낸다.<br/>
-이 시리즈를 기준으로 생성되는 x축은 [linear](/config/config/xAxis/linear)이다.<br/>
-
-* [data](#data) 는 아래 형식들로 전달할 수 있다.
+## **series[type=barrange]**
+BarRange 시리즌.<br/>
+수평 또는 수직 막대로 여러 값들의 범위들을 **비교**하는 데 사용한다.
+막대의 길이가 값의 범위를 표시한다.<br/>
+이 시리즈를 기준으로 생성되는 x축은 [category](/config/config/xAxis/category)이다.<br/> [data](#data) 는 아래 형식들로 전달할 수 있다.
+[주의] 데이터포인트 구성에 필요한 모든 값을 제공해야 한다.
 
 ###### 단일 값 및 값 배열
 |형식|설명|
 |---|---|
-|y|단일 숫자면 y, z값. x 값은 순서에 따라 자동 결정.|
-|[]|빈 배열이면 <Content type="keyword" value="null"></Content>. x 값은 순서에 따라 자동 결정.|
-|[z]|단일 값 배열이면 y, z값. x 값은 순서에 따라 자동 결정.|
-|[y, z]|두 값 배열이면 y값과 z값. x 값은 순서에 따라 자동 결정.|
-|[x, y, z,]|세 값 이상이면 순서대로 x, y, z값.<br/> 또는 [xField](#xfield) 속성이 숫자이면 x값의 index. [yField](#yfield) 는 y값의 index. [zField](#zfield) 는 z값의 index.|
+|y|단일 숫자면 low, y값. x 값은 순서에 따라 자동 결정.|
+|[]|빈 배열이면 <Content type="keyword" value="null"></Content>. x 값은 데이터포인트 순서에 따라 자동 결정.|
+|[z]|단일 값 배열이면 low, y값. x 값은 데이터포인트 순서에 따라 자동 결정.|
+|[low, y]|두 값 배열이면 low값과 y값. x 값은 데이터포인트 순서에 따라 자동 결정.|
+|[x, low, y,]|세 값 이상이면 순서대로 x, low, y값.<br/> 또는 [xField](#xfield) 속성이 숫자이면 x값의 index. [lowField](#lowfield) 는 low값의 index. [yField](#yfield) 는 y값의 index.|
 
 ###### json 배열
 |Series 속성|설명|
 |---|---|
 | [xField](#xfield) |속성 값, 또는 <Content type="expression" value="'x', 'name', 'label'"></Content> 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
 | [yField](#yfield) |속성 값, 또는 <Content type="expression" value="'y', 'value'"></Content> 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
-| [zField](#zfield) |속성 값, 또는 <Content type="expression" value="'z'"></Content> 속성 값이 z 값이 된다.|
+| [lowField](#lowfield) |속성 값, 또는 <Content type="expression" value="'low'"></Content> 속성 값이 low 값이 된다.|
 | [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
 ## Properties
 
@@ -33,6 +32,11 @@ x, y로 지정되는 위치와 z로 지정되는 크기 사이의 관계를 표�
 ### colorField: `string{:js}`[#colorField]
 <Content type="keyword" value="undefined"></Content>이면, data point의 값이 객체일 때 <Content type="expression" value="'color'"></Content>.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
+### cornerRadius: `number{:js}`[#cornerRadius]
+지정한 반지름 크기로 데이터포인트 bar의 모서리를 둥글게 표시한다.
+
+최대값이 bar 폭으로 절반으로 제한되므로 아주 큰 값을 지정하면 반원으로 표시된다.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### data: `any{:js}`[#data]
 데이터포인터들을 생성하는 데 사용되는 값 목록.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
@@ -40,6 +44,10 @@ x, y로 지정되는 위치와 z로 지정되는 크기 사이의 관계를 표�
 이 시리즈를 나타내는 텍스트.<br/>
 레전드나 툴팁에서 시리즈를 대표한다.
 이 속성이 지정되지 않으면 [name](#name) 이 사용된다.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### lowField: `string{:js}`[#lowField]
+json 객체나 배열로 전달되는 데이터포인트 정보에서 low 값을 지정하는 속성명이나 인덱스.<br/>
+<Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 1, 객체이면 <Content type="expression" value="'low'"></Content>.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### name: `string{:js}`[#name]
 시리즈 이름.<br/>
@@ -62,19 +70,29 @@ group에 포함되면 group의 noClip 설정을 따른다.
 
 색 배열로 지정하거나, <Content type="expression" value="'colors'"></Content> asset으로 등록된 이름을 지정할 수 있다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
-### [pointLabel](./bubble/pointLabel)
+### [pointLabel](./barrange/pointLabel)
 데이터포인트 label 설정 모델.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
+### pointPadding: `number{:js}`[#pointPadding]
+이 시리즈의 point가 차지하는 영역 중에서 point bar 양쪽 끝에 채워지는 빈 영역의 크기.
+
+
+point가 차지할 원래 크기에 대한 상대 값으로서,
+0 ~ 1 사이의 비율 값으로 지정한다.  
+<DefaultValue value="undefined" contents="한 카테고리에 cluster 가능한 시리즈가 하나만 표시되면 0.25, group에 포함된 경우 0.1, 여러 시리즈와 같이 표시되면 0.2."></DefaultValue>
 ### pointStyleCallback[#pointStyleCallback]
 데이터 point의 동적 스타일 콜백.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
+### pointWidth: `number{:js}`[#pointWidth]
+시리즈가 그룹에 포함되지 않거나,
+포함된 그룹의 layout이 `default` 이거나 특별히 설정되지 않아서,
+그룹에 포함된 시리즈들의 data point가 옆으로 나열되어 표시될 때,
+포인트 표시 영역 내에서 이 시리즈의 포인트가 차지하는 영역의 상대 크기.
+예를 들어 이 시리즈의 속성값이 1이고 다른 시리즈의 값이 2이면 다른 시리즈의 data point가 두 배 두껍게 표시된다.
+또, 그룹에 포함되고 그룹의 layout이 `default`  
+<DefaultValue value="1" contents=""></DefaultValue>
 ### row: `number{:js}`[#row]
 분할 모드일 때 시리즈가 표시될 pane의 수직 위치.  
-<DefaultValue value="undefined" contents=""></DefaultValue>
-### shape[#shape]
-명시적으로 지정하지 않으면 typeIndex에 따라 Shapes 중 하나로 돌아가면서 설정된다.  
-
-
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
@@ -95,8 +113,8 @@ group에 포함되면 group의 noClip 설정을 따른다.
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### tooltipText: `string{:js}`[#tooltipText]
 데이터포인트 툴팁 텍스트.  
-<DefaultValue value="'<b>${name}</b><br>${series}:<b>" contents="${yValue}</b>'"></DefaultValue>
-### [trendline](./bubble/trendline)
+<DefaultValue value="'<b>${name}</b><br>${series}:" contents="<b>${lowValue}</b> ~ <b>${yValue}</b>'"></DefaultValue>
+### [trendline](./barrange/trendline)
 추세선 설정 모델.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### viewRangeValue: `'x' | 'y' | 'z'{:js}`[#viewRangeValue]
