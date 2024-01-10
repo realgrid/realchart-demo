@@ -5,13 +5,6 @@
  */
 const config = {
   title: '시도별 대기정보(PM-2.5)',
-  options: {
-    // animatable: false
-  },
-  tooltip: {
-    // level: 'series',
-    text: 'hello ${xValue}',
-  },
   xAxis: {
     categories: [
       '서울',

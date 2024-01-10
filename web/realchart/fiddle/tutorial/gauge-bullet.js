@@ -3,7 +3,7 @@
  *
  */
 const config = {
-  title: 'Linear Gauge',
+  title: 'Bullet Gauge',
   options: {},
   gauge: [
     {
@@ -28,15 +28,15 @@ const config = {
       ranges: [
         {
           toValue: 40,
-          color: "#777",
+          color: '#777',
         },
         {
           toValue: 70,
-          color: "#aaa",
+          color: '#aaa',
         },
         {
           toValue: 100,
-          color: "#ddd",
+          color: '#ddd',
         },
       ],
     },
