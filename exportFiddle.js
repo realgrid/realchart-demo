@@ -1,25 +1,25 @@
-import jsdomGlobal from "jsdom-global";
-import fs from "fs";
-import path from "path";
-import * as parser from "@babel/parser";
-import generator from "@babel/generator";
-import _traverse from "@babel/traverse";
-import chokidar from "chokidar";
-import { load } from "cheerio";
+import jsdomGlobal from 'jsdom-global';
+import fs from 'fs';
+import path from 'path';
+import * as parser from '@babel/parser';
+import generator from '@babel/generator';
+import _traverse from '@babel/traverse';
+import chokidar from 'chokidar';
+import { load } from 'cheerio';
 
 const traverse = _traverse.default;
-const SOURCE_ROOT = "web/realchart/fiddle";
-const DEST_ROOT = "fiddle";
+const SOURCE_ROOT = 'web/realchart/fiddle';
+const DEST_ROOT = 'fiddle';
 
 function getDepth(depth) {
-  let src = "";
+  let src = '';
   for (let i = 0; i < depth; i++) {
-    src += "../";
+    src += '../';
   }
   return src;
 }
 function readFile(file) {
-  return fs.readFileSync(file, "utf-8");
+  return fs.readFileSync(file, 'utf-8');
 }
 function writeFile(file, s) {
   fs.writeFileSync(file, s);
@@ -30,14 +30,14 @@ function createHTML(leafName) {
   const htmlWithoutBOM = originHtml.replace(/^\uFEFF/, '');
   const $ = load(htmlWithoutBOM);
 
-  const scripts = $("script");
-  const links = $("link");
+  const scripts = $('script');
+  const links = $('link');
 
   for (let link of links) {
-    if (link.attribs.href.includes("realchart-style.css")) {
+    if (link.attribs.href.includes('realchart-style.css')) {
       $(link).attr(
-        "href",
-        "https://unpkg.com/realchart/dist/realchart-style.css"
+        'href',
+        'https://unpkg.com/realchart/dist/realchart-style.css'
       );
     } else {
       $(link).remove();
@@ -45,19 +45,19 @@ function createHTML(leafName) {
   }
 
   for (let script of scripts) {
-    const src = $(script).attr("src");
-    if (src && src.includes("realchart.js")) {
-      $(script).attr("src", "https://unpkg.com/realchart");
+    const src = $(script).attr('src');
+    if (src && src.includes('realchart.js')) {
+      $(script).attr('src', 'https://unpkg.com/realchart');
       continue;
     }
     if (src) $(script).remove();
   }
   const licScriptContent = `
   <script>
-    var realChartLic = 'upVcPE+wPOkOR/egW8JuxkM/nBOseBrflwxYpzGZyYkhw7qfHRQ+GiF0lY62mJi5KBwoSJHOA48O5+/xJSE3Lms4sjcl83Pgkn/JIEkiRbk=';
+    var realChartLic = 'upVcPE+wPOkOR/egW8JuxkM/nBOseBrflwxYpzGZyYkhw7qfHRQ+GiF0lY62mJi5KBwoSJHOA48O5+/xJSE3LvHO53IK9OZRkn/JIEkiRbk=';
   </script>
 `;
-  $("body").append(licScriptContent);
+  $('head').append(licScriptContent);
   return $.html({ pretty: true });
 }
 
@@ -84,7 +84,7 @@ async function copyFolderStructure(src, dest) {
     persistent: false,
   });
 
-  watcher.on("change", async (changedFilePath) => {
+  watcher.on('change', async (changedFilePath) => {
     // 변경된 파일의 경로를 얻어온 후 해당 파일을 처리
     const relativePath = path.relative(SOURCE_ROOT, changedFilePath);
     const destPath = path.join(DEST_ROOT, relativePath);
@@ -96,14 +96,14 @@ async function copyFolderStructure(src, dest) {
 async function handleFileCreation(srcPath, destPath) {
   const extname = path.extname(srcPath);
   switch (extname) {
-    case ".js":
+    case '.js':
       const js = createJs(srcPath);
-      const destJsPath = path.join(destPath, "demo.js");
+      const destJsPath = path.join(destPath, 'demo.js');
       await fs.promises.writeFile(destJsPath, js);
       break;
-    case ".html":
+    case '.html':
       const htmlContent = createHTML(srcPath);
-      const destHTMLPath = path.join(destPath, "demo.html");
+      const destHTMLPath = path.join(destPath, 'demo.html');
       await fs.promises.writeFile(destHTMLPath, htmlContent);
       break;
   }
@@ -114,8 +114,8 @@ function createJs(leafName) {
   try {
     const originJs = readFile(leafName);
     const ast = parser.parse(originJs, {
-      sourceType: "module",
-      plugins: ["jsx", "flow"],
+      sourceType: 'module',
+      plugins: ['jsx', 'flow'],
     });
     traverse(ast, {
       Program(path) {
@@ -130,5 +130,5 @@ function createJs(leafName) {
 }
 
 copyFolderStructure(SOURCE_ROOT, DEST_ROOT)
-  .then(() => console.log("Structure copied successfully!"))
-  .catch((error) => console.error("Error copying structure:", error));
+  .then(() => console.log('Structure copied successfully!'))
+  .catch((error) => console.error('Error copying structure:', error));
