@@ -186,6 +186,7 @@
     --rct-linear-gauge-background-fill: #eee;
     --rct-linear-gauge-value-fill: green;
     --rct-linear-gauge-band-tick-labels-stroke: #333;
+    --rct-linear-gauge-group-label-fill: #333;
     /** bullet gauge */
     --rct-bullet-gauge-background-fill: #eee;
     --rct-bullet-gauge-value-fill: #333;
@@ -248,6 +249,8 @@
     --rct-polar-yaxis-grid-line-stroke: #fff;
     --rct-polar-axis-labels-fill: #fff;
 
+    /* linear gauge */
+    --rct-linear-gauge-group-label-fill: #eee;
     /* circle gauge */
     --rct-circle-gauge-rim-fill: #515151;
     --rct-circle-gauge-label-fill: #fff;
@@ -1008,6 +1011,7 @@
 
 /** linear gauge group */
 .rct-linear-gauge-group-label {
+    fill: var(--rct-linear-gauge-group-label-fill);
     font-size: 1.5em;
 }
 
@@ -1062,10 +1066,12 @@
 }
 
 /** annotation */
+.rct-annotation-background {
+    fill: none;
+    stroke: none;
+}
 .rct-text-annotation {
     font-size: 20px;
-}
-.rct-shape-annotation {
     stroke: #333;
     stroke-width: 3px;
 }
