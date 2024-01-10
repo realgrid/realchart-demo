@@ -27,13 +27,13 @@ const config = {
       value: 11.1
     }, {
       label: '어느 정도 긍정',
-      value: 21.4
+      value: 31.4
     }, {
       label: '어느 정도 부정',
-      value: 16.9
+      value: 33.5
     }, {
       label: '매우 부정',
-      value: 43.6
+      value: 16.5
     }, {
       label: '모름|무응답',
       value: 7.1
