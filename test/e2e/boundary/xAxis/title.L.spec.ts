@@ -75,8 +75,6 @@ test.describe("xAxis, title test", () => {
       return title[0].textContent;
     }, title);
 
-    console.log(titleText);
-
     expect(titleText).is.not.true;
   });
 
@@ -118,5 +116,143 @@ test.describe("xAxis, title test", () => {
     expect(titleText).is.equal("title 22");
   });
 
-  // 계속 작성
+  test("title length", async ({ page }) => {
+    // 최대 길이를 초과하는 타이틀로 설정한 경우의 테스트
+    const maxLengthTitle = "x".repeat(500);
+    config.xAxis.title.text = maxLengthTitle;
+
+    await page.evaluate((newConfig) => {
+      chart.load(newConfig, false);
+    }, config);
+
+    // 너비는 #realchart보다 넓어야한다.
+
+    const xAxis = await PWTester.getAxis(page, "x");
+    const title = await xAxis.$$(".rct-axis-title");
+
+    const titleText = await page.evaluate((title) => {
+      return title[0].textContent;
+    }, title);
+
+    const rect = await page.evaluate((title) => {
+      return title[0].getBoundingClientRect();
+    }, title);
+
+    expect(titleText).is.equal("x".repeat(500));
+    // #Realchart보다 길어야한다.
+    expect(rect.width).is.greaterThan(850);
+  });
+
+  test("empty value", async ({ page }) => {
+    config.xAxis.title.text = null;
+
+    await page.evaluate((newConfig) => {
+      return chart.load(newConfig, false);
+    }, config);
+
+    // 너비는 #realchart보다 넓어야한다.
+
+    const xAxis = await PWTester.getAxis(page, "x");
+    const title = await xAxis.$$(".rct-axis-title");
+    const titleText = await page.evaluate((title) => {
+      //@ts-ignore
+      window.title = title;
+      return title[0].textContent;
+    }, title);
+
+    expect(titleText).is.equal("");
+  });
+
+  test("align", async ({ page }) => {
+    config.xAxis.title = {
+      visible: true,
+      text: "TITLE",
+      align: "middle",
+    };
+
+    await page.evaluate((newConfig) => {
+      return chart.load(newConfig, false);
+    }, config);
+
+    // 너비는 #realchart보다 넓어야한다.
+
+    const xAxis = await PWTester.getAxis(page, "x");
+    let title = await xAxis.$$(".rct-axis-title");
+    const defaultTranslate = await PWTester.getTranslate(title[0]);
+    await PWTester.sleep(500);
+
+    // align end
+    config.xAxis.title.align = "end";
+    await page.evaluate((newConfig) => {
+      return chart.load(newConfig, false);
+    }, config);
+    title = await xAxis.$$(".rct-axis-title");
+    const endTranslate = await PWTester.getTranslate(title[0]);
+    await PWTester.sleep(500);
+
+    // align start
+    config.xAxis.title.align = "start";
+    await page.evaluate((newConfig) => {
+      return chart.load(newConfig, false);
+    }, config);
+    title = await xAxis.$$(".rct-axis-title");
+    const startTranslate = await PWTester.getTranslate(title[0]);
+    await PWTester.sleep(500);
+
+    expect(endTranslate.x)
+      .is.greaterThan(defaultTranslate.x)
+      .and.is.greaterThan(startTranslate.x);
+    expect(defaultTranslate.x)
+      .is.greaterThan(startTranslate.x)
+      .and.is.lessThan(endTranslate.x);
+    expect(startTranslate.x)
+      .is.lessThan(defaultTranslate.x)
+      .and.is.lessThan(endTranslate.x);
+  });
+
+  test("gap", async ({ page }) => {
+    config.xAxis.title.text = "TITLE";
+    config.xAxis.title.gap = "";
+
+    await page.evaluate((newConfig) => {
+      return chart.load(newConfig, false);
+    }, config);
+
+    // 너비는 #realchart보다 넓어야한다.
+
+    const xAxis = await PWTester.getAxis(page, "x");
+    let title = await xAxis.$$(".rct-axis-title");
+    const defaultTranslate = await PWTester.getTranslate(title[0]);
+    await PWTester.sleep(500);
+
+    // positive gap
+    config.xAxis.title.text = "TITLE";
+    config.xAxis.title.gap = 100;
+    await page.evaluate((newConfig) => {
+      return chart.load(newConfig, false);
+    }, config);
+    title = await xAxis.$$(".rct-axis-title");
+    const positiveTranslate = await PWTester.getTranslate(title[0]);
+    await PWTester.sleep(500);
+
+    // negative gap
+    config.xAxis.title.text = "TITLE";
+    config.xAxis.title.gap = -100;
+    await page.evaluate((newConfig) => {
+      return chart.load(newConfig, false);
+    }, config);
+    title = await xAxis.$$(".rct-axis-title");
+    const negativeTranslate = await PWTester.getTranslate(title[0]);
+    await PWTester.sleep(500);
+
+    expect(positiveTranslate.y)
+      .is.greaterThan(defaultTranslate.y)
+      .and.is.greaterThan(negativeTranslate.y);
+    expect(defaultTranslate.y)
+      .is.greaterThan(negativeTranslate.y)
+      .and.is.lessThan(positiveTranslate.y);
+    expect(negativeTranslate.y)
+      .is.lessThan(defaultTranslate.y)
+      .and.is.lessThan(positiveTranslate.y);
+  });
 });
