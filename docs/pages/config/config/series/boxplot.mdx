@@ -1,7 +1,7 @@
 ## **series[type=boxplot]**
 **[BoxPlot](https://en.wikipedia.org/wiki/Box_plot)** 시리즈.<br/>
 주요 값들의 대략적인 범위 및 분포를 표시하는 시리즈.<br/> [data](#data) 는 아래 형식들로 전달할 수 있다.
-[주의] 데이터포인트 구성에 필요한 모든 값을 제공해야 한다.
+[주의] 데이터포인트 구성에 필요한 모든 값을 제공하지 않으면 <Content type="keyword" value="null"></Content>이 된다.
 
 ###### 단일 값 및 값 배열
 |형식|설명|
@@ -17,8 +17,8 @@
 | [xField](#xfield) |속성 값, 또는 <Content type="expression" value="'x', 'name', 'label'"></Content> 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
 | [minField](#minfield) |속성 값, 또는 <Content type="expression" value="'min'"></Content> 속성 값이 min 값이 된다.|
 | [lowField](#lowfield) |속성 값, 또는 <Content type="expression" value="'low'"></Content> 속성 값이 low 값이 된다.|
-| [midField](#midfield) |속성 값, 또는 <Content type="expression" value="'mid'"></Content> 속성 값이 min 값이 된다.|
-| [highField](#highfield) |속성 값, 또는 <Content type="expression" value="'high'"></Content> 속성 값이 min 값이 된다.|
+| [midField](#midfield) |속성 값, 또는 <Content type="expression" value="'mid'"></Content> 속성 값이 mid 값이 된다.|
+| [highField](#highfield) |속성 값, 또는 <Content type="expression" value="'high'"></Content> 속성 값이 high 값이 된다.|
 | [yField](#yfield) |속성 값, 또는 <Content type="expression" value="'y', 'value'"></Content> 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
 | [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
 ## Properties
@@ -120,7 +120,7 @@ point가 차지할 원래 크기에 대한 상대 값으로서,
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### tooltipText: `string{:js}`[#tooltipText]
 데이터포인트 툴팁 텍스트.  
-<DefaultValue value="'min:" contents="<b>${min}</b><br>low: <b>${low}</b><br>mid: <b>${mid}</b><br>high: <b>${high}</b><br>y: <b>${y}</b>'"></DefaultValue>
+<DefaultValue value="'<b>${name}</b><br>min:" contents="<b>${minValue}</b><br>low: <b>${lowValue}</b><br>mid: <b>${midValue}</b><br>high: <b>${highValue}</b><br>y: <b>${yValue}</b>'"></DefaultValue>
 ### [trendline](./boxplot/trendline)
 추세선 설정 모델.  
 <DefaultValue value="undefined" contents=""></DefaultValue>

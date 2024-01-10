@@ -1,10 +1,31 @@
 ## **series[type=candlestick]**
+Candlestick 시리즈.<br/>
+주식을 비롯한 유가증권과 파생상품, 환율 등의 가격 움직임을 보여주는 시리즈. [data](#data) 는 아래 형식들로 전달할 수 있다.
+[주의] 데이터포인트 구성에 필요한 모든 값을 제공하지 않으면 <Content type="keyword" value="null"></Content>이 된다.
+[주의] high와 y값은 동일한 값이다.
 
+###### 단일 값 및 값 배열
+|형식|설명|
+|---|---|
+|y|단일 숫자면 low, y값. x 값은 순서에 따라 자동 결정.|
+|[]|빈 배열이면 <Content type="keyword" value="null"></Content>. x 값은 순서에 따라 자동 결정.|
+|[min, low, mid, high | y]|형식 설명 순서대로 값 결정. x 값은 데이터포인트 순서에 따라 자동 결정.|
+|[x, min, low, mid, high | y]|형깃 설명 순서대로 값 결정.<br/> 또는 [xField](#xfield) 속성이 숫자이면 x값, [minField](#minField) 는 min값,<br/> [lowField](#lowfield) 는 low값, [midField](#midField) 는 mid값,<br/> [highField](#highfield) 는 high값, [yField](#yfield) 는 y값의 index.|
+
+###### json 배열
+|Series 속성|설명|
+|---|---|
+| [xField](#xfield) |속성 값, 또는 <Content type="expression" value="'x', 'name', 'label'"></Content> 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
+| [lowField](#lowfield) |속성 값, 또는 <Content type="expression" value="'low'"></Content> 속성 값이 low 값이 된다.|
+| [openField](#openfield) |속성 값, 또는 <Content type="expression" value="'open'"></Content> 속성 값이 open 값이 된다.|
+| [closeField](#closefield) |속성 값, 또는 <Content type="expression" value="'mid'"></Content> 속성 값이 close 값이 된다.|
+| [highField](#highfield) |속성 값, 또는 <Content type="expression" value="'high'"></Content> 속성 값이 high 값이 된다. 지정하지 않으면 yField 값이 사용된다.|
+| [yField](#yfield) |속성 값, 또는 <Content type="expression" value="'y', 'value'"></Content> 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
+| [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
 ## Properties
 
 ### closeField: `string{:js}`[#closeField]
-json 객체나 배열로 전달되는 데이터포인트 정보에서 종료(close) 값을 지정하는 속성명이나 인덱스.
-
+json 객체나 배열로 전달되는 데이터포인트 정보에서 종료(close) 값을 지정하는 속성명이나 인덱스.<br/>
 <Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 항목 수가 5이상이면 3, 아니면 2, 객체이면 <Content type="expression" value="'close'"></Content>.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### col: `number{:js}`[#col]
@@ -37,9 +58,8 @@ json 객체나 배열로 전달되는 데이터포인트 정보에서 종료(clo
 | strokeWidth | `string{:js}` | true |  
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### highField: `string{:js}`[#highField]
-json 객체나 배열로 전달되는 데이터포인트 정보에서 최고(high) 값을 지정하는 속성명이나 인덱스.
-
-<Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 항목 수가 5이상이면 4, 아니면 3, 객체이면 <Content type="expression" value="'high'"></Content>.  
+json 객체나 배열로 전달되는 데이터포인트 정보에서 최고(high) 값을 지정하는 속성명이나 인덱스.<br/>
+<Content type="keyword" value="undefined"></Content>이면, [yField](#yfield) 값으로 대체된다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### label: `string{:js}`[#label]
 이 시리즈를 나타내는 텍스트.<br/>
@@ -47,8 +67,7 @@ json 객체나 배열로 전달되는 데이터포인트 정보에서 최고(hig
 이 속성이 지정되지 않으면 [name](#name) 이 사용된다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### lowField: `string{:js}`[#lowField]
-json 객체나 배열로 전달되는 데이터포인트 정보에서 최저(low) 값을 지정하는 속성명이나 인덱스.
-
+json 객체나 배열로 전달되는 데이터포인트 정보에서 최저(low) 값을 지정하는 속성명이나 인덱스.<br/>
 <Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 항목 수가 5이상이면 1, 아니면 0, 객체이면 <Content type="expression" value="'low'"></Content>.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### name: `string{:js}`[#name]
@@ -68,8 +87,7 @@ group에 포함되면 group의 noClip 설정을 따른다.
 명시적 <Content type="keyword" value="true"></Content>를 리턴하면 기본 동작이 진행되지 않는다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### openField: `string{:js}`[#openField]
-json 객체나 배열로 전달되는 데이터포인트 정보에서 시작(open) 값을 지정하는 속성명이나 인덱스.
-
+json 객체나 배열로 전달되는 데이터포인트 정보에서 시작(open) 값을 지정하는 속성명이나 인덱스.<br/>
 <Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 항목 수가 5이상이면 2, 아니면 1, 객체이면 <Content type="expression" value="'open'"></Content>.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### pointColors: `string | string[]{:js}`[#pointColors]
@@ -120,7 +138,7 @@ point가 차지할 원래 크기에 대한 상대 값으로서,
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### tooltipText: `string{:js}`[#tooltipText]
 데이터포인트 툴팁 텍스트.  
-<DefaultValue value="'<b>${name}</b><br>${series}:<b>" contents="${yValue}</b>'"></DefaultValue>
+<DefaultValue value="'<b>${name}</b><br>최저:" contents="<b>${lowValue}</b><br>시가: <b>${openValue}</b><br>종가: <b>${closeValue}</b><br>고가: <b>${highValue}</b>'"></DefaultValue>
 ### [trendline](./candlestick/trendline)
 추세선 설정 모델.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
