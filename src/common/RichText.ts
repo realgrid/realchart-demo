@@ -16,6 +16,7 @@ import { TextAnchor, TextElement } from "./impl/TextElement";
 
 const HEIGHT = '$_TH';
 const WIDTH = '$_TW';
+// const PARAM_REG = /[\$\%]\{/;
 
 export type RichTextParamCallback = (target: any, param: string) => any;
 
@@ -97,8 +98,14 @@ class Word {
         let x = 0;
 
         while (x < str.length) {
-            const i = str.indexOf('${', x) || str.indexOf('%{');
-            if (i < 0) break;
+            let i = str.indexOf('${', x);
+            
+            if (i < 0) {
+                i = str.indexOf('%{', x);
+            }
+            if (i < 0) {
+                break;
+            }
 
             const j = str.indexOf('}', i + 2);
             if (j < 0) break;
