@@ -135,6 +135,9 @@ const config = {
       },
     },
   ],
+  tooltip: {
+    visible: false
+  },
   series: [
     {
       visible: true,
@@ -152,9 +155,6 @@ const config = {
         style: {},
       },
       colorByPoint: false,
-      tooltip: {
-        visible: false,
-      },
     },
     {
       visible: true,
@@ -172,9 +172,6 @@ const config = {
         style: {},
       },
       colorByPoint: false,
-      tooltip: {
-        visible: false,
-      },
     },
     {
       visible: true,
@@ -192,9 +189,6 @@ const config = {
         style: {},
       },
       colorByPoint: false,
-      tooltip: {
-        visible: false,
-      },
     },
   ],
 };

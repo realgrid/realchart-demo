@@ -86,9 +86,7 @@ const config = {
                 }
             }
         },
-        tooltip: {
-            text: '<b>종가: ${close}</b>'
-        },
+        tooltipText: '<b>종가: ${close}</b>',
         padding: 1,
         pointPadding: 0.1,
         type: 'candlestick',

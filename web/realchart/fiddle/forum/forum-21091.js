@@ -10,9 +10,7 @@ const config = {
     series: {
         type: 'ohlc',
         pointLabel: true,
-        tooltip: {
-            text: 'open: ${open}<br>High: ${high}<br>Low: ${low}<br>Close: ${close}'
-        },
+        tooltipText:'open: ${open}<br>High: ${high}<br>Low: ${low}<br>Close: ${close}',        
         data: [
             [301, 348, 395, 465],
             [353, 439, 480, 580],

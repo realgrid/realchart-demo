@@ -83,16 +83,17 @@ const config = {
       visible: true,
       numberFormat: '#.00',
       suffix: '%',
-      position: 'inside',
+      position: 'outside',
       style: {
         fill: '#fff'
       },
       styleCallback: args => {
+        console.log(args);
         return args.index == 4 && {
-          fill: '#000'
+          fill: 'red'
         };
       },
-      text: '${x}<br>${y}'
+      text: '${x}<br>${y}%'
     },
     pointStyleCallback: args => {
       return args.index == 4 && {
