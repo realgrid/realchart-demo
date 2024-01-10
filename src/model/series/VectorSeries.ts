@@ -7,9 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum, pickProp, pickProp3, assign, maxv } from "../../common/Common";
-import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
-import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { Series } from "../Series";
 

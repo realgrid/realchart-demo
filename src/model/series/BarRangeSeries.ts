@@ -6,81 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, assign } from "../../common/Common";
-import { DataPoint } from "../DataPoint";
-import { CorneredSeries } from "../Series";
-
-/**
- * [low, y],
- * [x, low, y]
- */
-export class BarRangeSeriesPoint extends DataPoint {
-
-    //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
-    low: any;
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    lowValue: number;
-
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    labelCount(): number {
-        return 2;
-    }
-
-    getLabel(index: number) {
-        return index === 1 ? this.lowValue : this.yValue;
-    }
-
-    protected _assignTo(proxy: any): any {
-        return assign(super._assignTo(proxy), {
-            low: this.low,
-            lowValue: this.lowValue
-        });
-    }
-
-    protected _readArray(series: BarRangeSeries, v: any[]): void {
-        if (v.length <= 1) {
-            this.isNull = true;
-        } else {
-            const d = v.length > 2 ? 1 : 0;
-
-            if (d > 0) {
-                this.x = v[pickNum(series.xField, 0)];
-            }
-            this.low = v[pickNum(series.lowField, 0 + d)];
-            this.y = v[pickNum(series.yField, 1 + d)];
-        }
-    }
-
-    protected _readObject(series: BarRangeSeries, v: any): void {
-        super._readObject(series, v);
-
-        if (!this.isNull) {
-            this.low = pickProp(series._lowFielder(v), v.low);
-        }
-    }
-
-    protected _readSingle(v: any): void {
-        super._readSingle(v);
-
-        this.low = this.y;
-    }
-
-    parse(series: BarRangeSeries): void {
-        super.parse(series);
-
-        this.lowValue = parseFloat(this.low);
-    }
-}
+import { RcElement } from "../../common/RcControl";
+import { RectElement } from "../../common/impl/RectElement";
+import { DataPoint, RangedPoint } from "../DataPoint";
+import { LowRangedSeries, Series } from "../Series";
 
 /**
  * BarRange 시리즌.<br/>
@@ -88,7 +17,7 @@ export class BarRangeSeriesPoint extends DataPoint {
  * 막대의 길이가 값의 범위를 표시한다.<br/>
  * 이 시리즈를 기준으로 생성되는 x축은 [category](/config/config/xAxis/category)이다.<br/>
  * 
- * {@link data}는 아래 형식들로 전달할 수 있다.
+ * {@link data}는 아래 형식들로 전달할 수 있다.<br/>
  * [주의] 데이터포인트 구성에 필요한 모든 값을 제공해야 한다.
  * 
  * ###### 단일 값 및 값 배열
@@ -110,10 +39,15 @@ export class BarRangeSeriesPoint extends DataPoint {
  * 
  * @config chart.series[type=barrange]
  */
-export class BarRangeSeries extends CorneredSeries {
+export class BarRangeSeries extends LowRangedSeries {
 
     //-------------------------------------------------------------------------
-    // property fields
+    // fields
+    //-------------------------------------------------------------------------
+    _lowFielder: (src: any) => any;
+
+    //-------------------------------------------------------------------------
+    // properties
     //-------------------------------------------------------------------------
     /**
      * json 객체나 배열로 전달되는 데이터포인트 정보에서 low 값을 지정하는 속성명이나 인덱스.<br/>
@@ -123,10 +57,13 @@ export class BarRangeSeries extends CorneredSeries {
      */
     lowField: string;
 
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    _lowFielder: (src: any) => any;
+    /**
+     * 지정한 반지름 크기로 데이터포인트 bar의 모서리를 둥글게 표시한다.\
+     * 최대값이 bar 폭으로 절반으로 제한되므로 아주 큰 값을 지정하면 반원으로 표시된다.
+     * 
+     * @config
+     */
+    cornerRadius: number;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -139,7 +76,11 @@ export class BarRangeSeries extends CorneredSeries {
         return 2;
     }
 
-    tooltipText = '<b>${name}</b><br>${series}: <b>${lowValue}</b> ~ <b>${yValue}</b>';
+    tooltipText = '<b>${name}</b><br>${series}: <b>${lowValue}</b> ~ <b>${highValue}</b>';
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return RectElement.create(doc, Series.LEGEND_MARKER, 0, 0, size, size, 2);
+    }
 
     protected _createFielders(): void {
         super._createFielders();
@@ -148,10 +89,10 @@ export class BarRangeSeries extends CorneredSeries {
     }
 
     protected _createPoint(source: any): DataPoint {
-        return new BarRangeSeriesPoint(source);
+        return new RangedPoint(source);
     }
 
-    protected _getBottomValue(p: BarRangeSeriesPoint): number {
+    protected _getBottomValue(p: RangedPoint): number {
         return p.lowValue;
     }
 }

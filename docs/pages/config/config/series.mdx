@@ -2,7 +2,7 @@
 BarRange 시리즌.<br/>
 수평 또는 수직 막대로 여러 값들의 범위들을 **비교**하는 데 사용한다.
 막대의 길이가 값의 범위를 표시한다.<br/>
-이 시리즈를 기준으로 생성되는 x축은 [category](/config/config/xAxis/category)이다.<br/> [data](#data) 는 아래 형식들로 전달할 수 있다.
+이 시리즈를 기준으로 생성되는 x축은 [category](/config/config/xAxis/category)이다.<br/> [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
 [주의] 데이터포인트 구성에 필요한 모든 값을 제공해야 한다.
 
 ###### 단일 값 및 값 배열
@@ -25,9 +25,7 @@ BarRange 시리즌.<br/>
 Bar 시리즈.<br/>
 수평 또는 수직 막대로 여러 값들을 **비교**하는 데 사용한다.
 막대의 길이가 y값을 나타낸다.<br/>
-이 시리즈를 기준으로 생성되는 x축은 [category](/config/config/xAxis/category)이다.<br/>
-
-* [data](#data) 는 아래 형식들로 전달할 수 있다.
+이 시리즈를 기준으로 생성되는 x축은 [category](/config/config/xAxis/category)이다.<br/> [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
 
 ###### 단일 값 및 값 배열
 |형식|설명|
@@ -47,7 +45,7 @@ Bar 시리즈.<br/>
 ## [series[type=bargroup]](./series/bargroup)
 
 ## [series[type=bellcurve]](./series/bellcurve)
-BellCurve 시리즈.<br/> [source](#source) 시리즈 데이터포인트들의 값을 바탕으로 **[정규분포](https://ko.wikipedia.org/wiki/정규_분포)** 곡선을 표시한다.<br/> [data](#data) 는 아래 형식들로 전달할 수 있다.
+BellCurve 시리즈.<br/> [source](#source) 시리즈 데이터포인트들의 값을 바탕으로 **[정규분포](https://ko.wikipedia.org/wiki/정규_분포)** 곡선을 표시한다.<br/> [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
 
 ###### 단일 값 및 값 배열
 |형식|설명|
@@ -66,7 +64,7 @@ BellCurve 시리즈.<br/> [source](#source) 시리즈 데이터포인트들의 �
 | [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
 ## [series[type=boxplot]](./series/boxplot)
 **[BoxPlot](https://en.wikipedia.org/wiki/Box_plot)** 시리즈.<br/>
-주요 값들의 대략적인 범위 및 분포를 표시하는 시리즈.<br/> [data](#data) 는 아래 형식들로 전달할 수 있다.
+주요 값들의 대략적인 범위 및 분포를 표시하는 시리즈.<br/> [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
 [주의] 데이터포인트 구성에 필요한 모든 값을 제공하지 않으면 <Content type="keyword" value="null"></Content>이 된다.
 
 ###### 단일 값 및 값 배열
@@ -93,7 +91,7 @@ x, y로 지정되는 위치와 z로 지정되는 크기 사이의 관계를 표�
 주로 원의 크기가 데이터포인트의 중요도를 나타낸다.<br/>
 이 시리즈를 기준으로 생성되는 x축은 [linear](/config/config/xAxis/linear)이다.<br/>
 
-* [data](#data) 는 아래 형식들로 전달할 수 있다.
+* [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
 [주의] 데이터포인트 구성에 필요한 모든 값을 제공하지 않으면 <Content type="keyword" value="null"></Content>이 된다.
 
 ###### 단일 값 및 값 배열
@@ -119,7 +117,7 @@ x, y로 지정되는 위치와 z로 지정되는 크기 사이의 관계를 표�
 포함된 시리즈들의 x값이 동일한 data point y값들을 비교해서 순위를 yValue로 재설정한다.
 ## [series[type=candlestick]](./series/candlestick)
 Candlestick 시리즈.<br/>
-주식을 비롯한 유가증권과 파생상품, 환율 등의 가격 움직임을 보여주는 시리즈. [data](#data) 는 아래 형식들로 전달할 수 있다.
+주식을 비롯한 유가증권과 파생상품, 환율 등의 가격 움직임을 보여주는 시리즈. [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
 [주의] 데이터포인트 구성에 필요한 모든 값을 제공하지 않으면 <Content type="keyword" value="null"></Content>이 된다.
 [주의] high와 y값은 동일한 값이다.
 
@@ -147,7 +145,7 @@ CirleBar 시리즈.<br/>
 원 지름이 y값을 나타낸다.<br/>
 이 시리즈를 기준으로 생성되는 x축은 [category](/config/config/xAxis/category)이다.<br/>
 
-* [data](#data) 는 아래 형식들로 전달할 수 있다.
+* [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
 
 ###### 단일 값 및 값 배열
 |형식|설명|
@@ -169,27 +167,105 @@ CirleBar 시리즈.<br/>
 ## [series[type=dumbbell]](./series/dumbbell)
 BarRange 시리즈 변종.
 ## [series[type=equalizer]](./series/equalizer)
-Bar 시리즈 변종.
-## [series[type=errorbar]](./series/errorbar)
+Bar를 여러 개의 segment로 나눠 표시하는 시리즈.<br/>
+수평 또는 수직 막대로 여러 값들을 **비교**하는 데 사용한다.
+막대의 길이가 y값을 나타낸다.<br/>
+이 시리즈를 기준으로 생성되는 x축은 [category](/config/config/xAxis/category)이다.<br/>
 
+* [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
+
+###### 단일 값 및 값 배열
+|형식|설명|
+|---|---|
+|y|단일 숫자면 y값. x 값은 순서에 따라 자동 결정.|
+|[]|빈 배열이면 <Content type="keyword" value="null"></Content>. x 값은 순서에 따라 자동 결정.|
+|[y]|값 하나인 배열이면 y값. x 값은 순서에 따라 자동 결정.|
+|[x, y,]|두 값 이상이면 순서대로 x, y값.<br/> 또는 [xField](#xfield) 속성이 숫자이면 x값의 index. [yField](#yfield) 는 y값의 index.
+ [colorField](#colorfield) 는 color값의 index.|
+
+###### json 배열
+|Series 속성|설명 |
+|---|---|
+| [xField](#xfield) |속성 값, 또는 <Content type="expression" value="'x', 'name', 'label'"></Content> 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
+| [yField](#yfield) |속성 값, 또는 <Content type="expression" value="'y', 'value'"></Content> 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
+| [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
+## [series[type=errorbar]](./series/errorbar)
+ErrorBar 시리즈.<br/>
+오류(차) 표시 막대를 표시한다. [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
+[주의] 데이터포인트 구성에 필요한 모든 값을 제공해야 한다.
+
+###### 단일 값 및 값 배열
+|형식|설명|
+|---|---|
+|y|단일 숫자면 low, y값. x 값은 순서에 따라 자동 결정.|
+|[]|빈 배열이면 <Content type="keyword" value="null"></Content>. x 값은 데이터포인트 순서에 따라 자동 결정.|
+|[z]|단일 값 배열이면 low, y값. x 값은 데이터포인트 순서에 따라 자동 결정.|
+|[low, y]|두 값 배열이면 low값과 y값. x 값은 데이터포인트 순서에 따라 자동 결정.|
+|[x, low, y,]|세 값 이상이면 순서대로 x, low, y값.<br/> 또는 [xField](#xfield) 속성이 숫자이면 x값의 index. [lowField](#lowfield) 는 low값의 index. [yField](#yfield) 는 y값의 index.|
+
+###### json 배열
+|Series 속성|설명|
+|---|---|
+| [xField](#xfield) |속성 값, 또는 <Content type="expression" value="'x', 'name', 'label'"></Content> 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
+| [yField](#yfield) |속성 값, 또는 <Content type="expression" value="'y', 'value'"></Content> 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
+| [lowField](#lowfield) |속성 값, 또는 <Content type="expression" value="'low'"></Content> 속성 값이 low 값이 된다.|
+| [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
 ## [series[type=funnel]](./series/funnel)
 
 ## [series[type=heatmap]](./series/heatmap)
-heatmap 시리즈.
-
+Heatmap 시리즈.<br/>
+숫자 대신 색상으로 값들을 table에 표시한다.<br/>
 차트나 split pane에 하나의 heatmap만 존재할 수 있다.
 
 [셀 색상]
 1. color-axis가 연결되면 거기에서 색을 가져온다.
 2. series의 minColor, maxColor 사이의 색으로 가져온다.
 3. series의 기본 색상과 흰색 사이의 색으로 가져온다.
+
+* [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
+[주의] 데이터포인트 구성에 필요한 모든 값을 제공하지 않으면 <Content type="keyword" value="null"></Content>이 된다.
+
+###### 단일 값 및 값 배열
+|형식|설명|
+|---|---|
+|y|단일 숫자면 y, z값. x 값은 순서에 따라 자동 결정.|
+|[]|빈 배열이면 <Content type="keyword" value="null"></Content>. x 값은 순서에 따라 자동 결정.|
+|[z]|단일 값 배열이면 y, z값. x 값은 순서에 따라 자동 결정.|
+|[y, z]|두 값 배열이면 y값과 z값. x 값은 순서에 따라 자동 결정.|
+|[x, y, z,]|세 값 이상이면 순서대로 x, y, z값.<br/> 또는 [xField](#xfield) 속성이 숫자이면 x값의 index. [yField](#yfield) 는 y값의 index. [zField](#zfield) 는 z값의 index.|
+
+###### json 배열
+|Series 속성|설명|
+|---|---|
+| [xField](#xfield) |속성 값, 또는 <Content type="expression" value="'x', 'name', 'label'"></Content> 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
+| [yField](#yfield) |속성 값, 또는 <Content type="expression" value="'y', 'value'"></Content> 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
+| [zField](#zfield) |속성 값, 또는 <Content type="expression" value="'z'"></Content> 속성 값이 z 값이 된다.|
+| [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
 ## [series[type=histogram]](./series/histogram)
 각 bin은 하한값을 포함하고 상한값은 포함하지 않는다. 마지막 bin은 상한값을 포함한다.
 X축이 <Content type="expression" value="'linear'"></Content>이어야 한다.
 ## [series[type=arearange]](./series/arearange)
+AreaRange 시리즈.<br/> [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
+[주의] 데이터포인트 구성에 필요한 모든 값을 제공해야 한다.
 
+###### 단일 값 및 값 배열
+|형식|설명|
+|---|---|
+|y|단일 숫자면 low, y값. x 값은 순서에 따라 자동 결정.|
+|[]|빈 배열이면 <Content type="keyword" value="null"></Content>. x 값은 데이터포인트 순서에 따라 자동 결정.|
+|[z]|단일 값 배열이면 low, y값. x 값은 데이터포인트 순서에 따라 자동 결정.|
+|[low, y]|두 값 배열이면 low값과 y값. x 값은 데이터포인트 순서에 따라 자동 결정.|
+|[x, low, y,]|세 값 이상이면 순서대로 x, low, y값.<br/> 또는 [xField](#xfield) 속성이 숫자이면 x값의 index. [lowField](#lowfield) 는 low값의 index. [yField](#yfield) 는 y값의 index.|
+
+###### json 배열
+|Series 속성|설명|
+|---|---|
+| [xField](#xfield) |속성 값, 또는 <Content type="expression" value="'x', 'name', 'label'"></Content> 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
+| [yField](#yfield) |속성 값, 또는 <Content type="expression" value="'y', 'value'"></Content> 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
+| [lowField](#lowfield) |속성 값, 또는 <Content type="expression" value="'low'"></Content> 속성 값이 low 값이 된다.|
+| [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
 ## [series[type=area]](./series/area)
-영역 시리즈.<br/>
+Area 시리즈.<br/>
 대부분 [<Content type="expression" value="'line'"></Content>](/config/config/series/line) 시리즈와 동일하고 라인 아래 부분을 별도의 색상으로 채운다.
 
 * [data](#data) 는 아래 형식들로 전달할 수 있다.
@@ -238,8 +314,26 @@ Line 시리즈.<br/>
 ## [series[type=linegroup]](./series/linegroup)
 
 ## [series[type=lollipop]](./series/lollipop)
-Bar 시리즈 변종.
-bar가 겹치더라도 데이터포인트들이 구분된다.
+Lollipop(막대 사탕) 시리즈.<br/>
+기능적으로는 bar 시리즈와 동일하지만, 대부분의 데이터포인트 값들이 최대값에 가까운 곳에 몰려 있는 경우에 
+활용 가능하다. bar 시리즈 표현하면 시각적으로 구분하기 쉽지 않기 때문이다.
+특히, bar가 겹치더라도 데이터포인트들이 쉽게 구분된다. [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
+
+###### 단일 값 및 값 배열
+|형식|설명|
+|---|---|
+|y|단일 숫자면 y값. x 값은 순서에 따라 자동 결정.|
+|[]|빈 배열이면 <Content type="keyword" value="null"></Content>. x 값은 순서에 따라 자동 결정.|
+|[y]|값 하나인 배열이면 y값. x 값은 순서에 따라 자동 결정.|
+|[x, y,]|두 값 이상이면 순서대로 x, y값.<br/> 또는 [xField](#xfield) 속성이 숫자이면 x값의 index. [yField](#yfield) 는 y값의 index.
+ [colorField](#colorfield) 는 color값의 index.|
+
+###### json 배열
+|Series 속성|설명 |
+|---|---|
+| [xField](#xfield) |속성 값, 또는 <Content type="expression" value="'x', 'name', 'label'"></Content> 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
+| [yField](#yfield) |속성 값, 또는 <Content type="expression" value="'y', 'value'"></Content> 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
+| [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
 ## [series[type=ohlc]](./series/ohlc)
 Ohlc 시리즈.<br/>
 
@@ -273,7 +367,23 @@ Ohlc 시리즈.<br/>
 ## [series[type=piegroup]](./series/piegroup)
 
 ## [series[type=scatter]](./series/scatter)
+Scatter 시리즈.<br/> [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
 
+###### 단일 값 및 값 배열
+|형식|설명|
+|---|---|
+|y|단일 숫자면 y값. x 값은 순서에 따라 자동 결정.|
+|[]|빈 배열이면 <Content type="keyword" value="null"></Content>. x 값은 순서에 따라 자동 결정.|
+|[y]|값 하나인 배열이면 y값. x 값은 순서에 따라 자동 결정.|
+|[x, y,]|두 값 이상이면 순서대로 x, y값.<br/> 또는 [xField](#xfield) 속성이 숫자이면 x값의 index. [yField](#yfield) 는 y값의 index.
+ [colorField](#colorfield) 는 color값의 index.|
+
+###### json 배열
+|Series 속성|설명 |
+|---|---|
+| [xField](#xfield) |속성 값, 또는 <Content type="expression" value="'x', 'name', 'label'"></Content> 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
+| [yField](#yfield) |속성 값, 또는 <Content type="expression" value="'y', 'value'"></Content> 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
+| [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
 ## [series[type=treemap]](./series/treemap)
 treemap 시리즈.
 

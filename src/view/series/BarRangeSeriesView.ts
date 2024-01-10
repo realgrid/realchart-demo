@@ -8,8 +8,8 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
-import { DataPoint } from "../../model/DataPoint";
-import { BarRangeSeries, BarRangeSeriesPoint } from "../../model/series/BarRangeSeries";
+import { DataPoint, RangedPoint } from "../../model/DataPoint";
+import { BarRangeSeries } from "../../model/series/BarRangeSeries";
 import { BarElement, RangedSeriesView } from "../SeriesView";
 
 export class BarRangeSeriesView extends RangedSeriesView<BarRangeSeries> {
@@ -51,7 +51,7 @@ export class BarRangeSeriesView extends RangedSeriesView<BarRangeSeries> {
         });
     }
 
-    protected _getLowValue(p: BarRangeSeriesPoint): number {
+    protected _getLowValue(p: RangedPoint): number {
         return p.lowValue;
     }
 

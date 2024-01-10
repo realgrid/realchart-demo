@@ -48,7 +48,7 @@ const config = {
     seriesNavigator: {
         visible: true,
         series: {
-            type: "bar",
+            type: "box",
             pointStyleCallback: (args) => {
                 // console.log(args);
                 

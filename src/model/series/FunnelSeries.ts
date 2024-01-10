@@ -12,8 +12,7 @@ import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize2 } from "../
 import { Utils } from "../../common/Utils";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { ILegendSource } from "../Legend";
-import { PointItemPosition, WidgetSeries, WidgetSeriesPoint } from "../Series";
+import { WidgetSeries, WidgetSeriesPoint } from "../Series";
 
 export class FunnelSeriesPoint extends WidgetSeriesPoint {
 

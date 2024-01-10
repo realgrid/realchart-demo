@@ -11,7 +11,7 @@ import { IPoint } from "../common/Point";
 import { RcAnimation } from "../common/RcAnimation";
 import { IValueRange, _undef } from "../common/Types";
 import { AxisZoom, IAxis } from "./Axis";
-import { ISeries } from "./Series";
+import { ISeries, LowRangedSeries, Series } from "./Series";
 
 let __point_id__ = 0;
 
@@ -358,5 +358,152 @@ export class DataPointCollection {
         } else {
             return this._points;
         }
+    }
+}
+
+/**
+ * [y, z]
+ * [x, y, z]
+ */
+export class ZValuePoint extends DataPoint {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    z: any;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    zValue: number;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    getLabel(index: number) {
+        return this.zValue;
+    }
+
+    getValue(): number {
+        return this.zValue;
+    }
+
+    getZValue(): number {
+        return this.zValue;
+    }
+
+    protected _assignTo(proxy: any): any {
+        return assign(super._assignTo(proxy), {
+            z: this.z,
+            zValue: this.zValue
+        });
+    }
+
+    protected _readArray(series: Series, v: any[]): void {
+        if (v.length <= 1) {
+            this.isNull = true;
+        } else {
+            const d = v.length > 2 ? 1 : 0;
+
+            if (d > 0) {
+                this.x = v[pickNum(series.xField, 0)];
+            }
+            this.y = v[pickNum(series.yField, 0 + d)];
+            this.z = v[pickNum(series.zField, 1 + d)];
+        }
+    }
+
+    protected _readObject(series: Series, v: any): void {
+        super._readObject(series, v);
+
+        if (!this.isNull) {
+            this.z = pickProp(series._zFielder(v), v.z);
+        }
+    }
+
+    protected _readSingle(v: any): void {
+        super._readSingle(v);
+
+        this.z = this.y;
+    }
+
+    parse(series: Series): void {
+        super.parse(series);
+
+        this.zValue = parseFloat(this.z);
+        
+        this.isNull ||= isNaN(this.zValue);
+    }
+}
+
+/**
+ * [low, y]
+ * [x, low, y]
+ */
+export class RangedPoint extends DataPoint {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    low: any;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    lowValue: number;
+    get highValue(): number { return this.yValue; }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    labelCount(): number {
+        return 2;
+    }
+
+    getLabel(index: number) {
+        return index === 1 ? this.lowValue : this.yValue;
+    }
+
+    protected _assignTo(proxy: any): any {
+        return assign(super._assignTo(proxy), {
+            low: this.low,
+            lowValue: this.lowValue,
+            highValue: this.yValue,
+        });
+    }
+
+    protected _readArray(series: LowRangedSeries, v: any[]): void {
+        const d = v.length > 2 ? 1 : 0;
+
+        this.low = v[pickNum(series.lowField, 0 + d)];
+        this.y = v[pickNum(series.yField, 1 + d)];
+        if (d > 0) {
+            this.x = v[pickNum(series.xField, 0)];
+        }
+    }
+
+    protected _readObject(series: LowRangedSeries, v: any): void {
+        super._readObject(series, v);
+
+        if (!this.isNull) {
+            this.low = pickProp(v[series.lowField], v.low);
+            this.y = pickProp3(series._yFielder(v), v.y, v.value);
+        }
+    }
+
+    protected _readSingle(v: any): void {
+        super._readSingle(v);
+
+        this.low = this.y;
+    }
+
+    parse(series: LowRangedSeries): void {
+        super.parse(series);
+
+        this.lowValue = parseFloat(this.low);
+        this.isNull ||= isNaN(this.lowValue);
     }
 }

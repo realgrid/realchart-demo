@@ -9,84 +9,20 @@
 import { pickNum, pickProp, assign, maxv, minv } from "../../common/Common";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
-import { DataPoint } from "../DataPoint";
+import { DataPoint, ZValuePoint } from "../DataPoint";
 import { MarkerSeries } from "../Series";
 
 /**
  * [y, z]
  * [x, y, z]
  */
-export class BubbleSeriesPoint extends DataPoint {
+export class BubbleSeriesPoint extends ZValuePoint {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    z: any;
     radius: number;
     shape: Shape;
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    zValue: number;
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    getLabel(index: number) {
-        return this.zValue;
-    }
-
-    getValue(): number {
-        return this.zValue;
-    }
-
-    getZValue(): number {
-        return this.zValue;
-    }
-
-    protected _assignTo(proxy: any): any {
-        return assign(super._assignTo(proxy), {
-            z: this.z,
-            zValue: this.zValue
-        });
-    }
-
-    protected _readArray(series: BubbleSeries, v: any[]): void {
-        if (v.length <= 1) {
-            this.isNull = true;
-        } else {
-            const d = v.length > 2 ? 1 : 0;
-
-            if (d > 0) {
-                this.x = v[pickNum(series.xField, 0)];
-            }
-            this.y = v[pickNum(series.yField, 0 + d)];
-            this.z = v[pickNum(series.zField, 1 + d)];
-        }
-    }
-
-    protected _readObject(series: BubbleSeries, v: any): void {
-        super._readObject(series, v);
-
-        if (!this.isNull) {
-            this.z = pickProp(series._zFielder(v), v.z);
-        }
-    }
-
-    protected _readSingle(v: any): void {
-        super._readSingle(v);
-
-        this.z = this.y;
-    }
-
-    parse(series: BubbleSeries): void {
-        super.parse(series);
-
-        this.zValue = parseFloat(this.z);
-        
-        this.isNull ||= isNaN(this.zValue);
-    }
 }
 
 export enum BubbleSizeMode {
@@ -101,7 +37,7 @@ export enum BubbleSizeMode {
  * 주로 원의 크기가 데이터포인트의 중요도를 나타낸다.<br/>
  * 이 시리즈를 기준으로 생성되는 x축은 [linear](/config/config/xAxis/linear)이다.<br/>
  * 
- * *{@link data}는 아래 형식들로 전달할 수 있다.
+ * *{@link data}는 아래 형식들로 전달할 수 있다.<br/>
  * [주의] 데이터포인트 구성에 필요한 모든 값을 제공하지 않으면 null이 된다.
  * 
  * ###### 단일 값 및 값 배열
@@ -176,6 +112,8 @@ export class BubbleSeries extends MarkerSeries {
     _type(): string {
         return 'bubble';
     }
+
+    tooltipText = 'x: <b>${x}</b><br>y: <b>${y}</b><br>volume: <b>${z}</b>';
 
     protected _createPoint(source: any): DataPoint {
         return new BubbleSeriesPoint(source);

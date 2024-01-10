@@ -15,7 +15,7 @@ import { BarSeriesBase, BarSeriesGroupBase } from "./BarSeries";
  * 원 지름이 y값을 나타낸다.<br/>
  * 이 시리즈를 기준으로 생성되는 x축은 [category](/config/config/xAxis/category)이다.<br/>
  * 
- * *{@link data}는 아래 형식들로 전달할 수 있다.
+ * *{@link data}는 아래 형식들로 전달할 수 있다.<br/>
  * 
  * ###### 단일 값 및 값 배열
  * |형식|설명|

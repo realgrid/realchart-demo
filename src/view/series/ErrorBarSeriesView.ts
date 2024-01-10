@@ -9,7 +9,9 @@
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { LineElement } from "../../common/impl/PathElement";
-import { ErrorBarSeries, ErrorBarSeriesPoint } from "../../model/series/ErrorBarSeries";
+import { RectElement } from "../../common/impl/RectElement";
+import { RangedPoint } from "../../model/DataPoint";
+import { ErrorBarSeries } from "../../model/series/ErrorBarSeries";
 import { IPointView, RangeElement, RangedSeriesView, SeriesView } from "../SeriesView";
 
 class BarElement extends RangeElement implements IPointView {
@@ -17,8 +19,9 @@ class BarElement extends RangeElement implements IPointView {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    point: ErrorBarSeriesPoint;
+    point: RangedPoint;
 
+    private _back: RectElement;
     private _whiskerUp: LineElement;
     private _whiskerDown: LineElement;
     private _stem: LineElement;
@@ -28,15 +31,20 @@ class BarElement extends RangeElement implements IPointView {
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, SeriesView.POINT_CLASS);
-
-        this.add(this._stem = new LineElement(doc));
-        this.add(this._whiskerUp = new LineElement(doc));
-        this.add(this._whiskerDown = new LineElement(doc));
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doInitChildren(doc: Document): void {
+        this.add(this._stem = new LineElement(doc));
+        this.add(this._whiskerUp = new LineElement(doc));
+        this.add(this._whiskerDown = new LineElement(doc));
+        this.add(this._back = new RectElement(doc, 'rct-errorbar-point-back'));
+
+        this._back.setTransparent(false);
+    }
+
     layout(): void {
         const w = this.width
         const h = this.height;
@@ -45,6 +53,7 @@ class BarElement extends RangeElement implements IPointView {
         this._stem.setVLine(x, 0, h);
         this._whiskerUp.setHLine(0, 0, w);
         this._whiskerDown.setHLine(h, 0, w);
+        this._back.setBox(0, 0, w, h);
     }
 }
 
@@ -69,11 +78,11 @@ export class ErrorBarSeriesView extends RangedSeriesView<ErrorBarSeries> {
         return this._bars;
     }
 
-    protected _getLowValue(p: ErrorBarSeriesPoint): number {
+    protected _getLowValue(p: RangedPoint): number {
         return p.lowValue;
     }
 
-    protected _preparePointViews(doc: Document, model: ErrorBarSeries, points: ErrorBarSeriesPoint[]): void {
+    protected _preparePointViews(doc: Document, model: ErrorBarSeries, points: RangedPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
 

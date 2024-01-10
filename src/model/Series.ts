@@ -2317,27 +2317,12 @@ export abstract class RangedSeries extends ClusterableSeries {
     protected abstract _getBottomValue(p: DataPoint): number;
 }
 
-/**
- */
-export abstract class CorneredSeries extends RangedSeries {
+export abstract class LowRangedSeries extends RangedSeries {
 
     //-------------------------------------------------------------------------
-    // property fields
+    // properties
     //-------------------------------------------------------------------------
-    /**
-     * 지정한 반지름 크기로 데이터포인트 bar의 모서리를 둥글게 표시한다.\
-     * 최대값이 bar 폭으로 절반으로 제한되므로 아주 큰 값을 지정하면 반원으로 표시된다.
-     * 
-     * @config
-     */
-    cornerRadius: number;
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
-        return RectElement.create(doc, Series.LEGEND_MARKER, 0, 0, size, size, 2);
-    }
+    lowField: string;
 }
 
 export enum SeriesGroupLayout {

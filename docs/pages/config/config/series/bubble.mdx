@@ -4,7 +4,7 @@ x, y로 지정되는 위치와 z로 지정되는 크기 사이의 관계를 표�
 주로 원의 크기가 데이터포인트의 중요도를 나타낸다.<br/>
 이 시리즈를 기준으로 생성되는 x축은 [linear](/config/config/xAxis/linear)이다.<br/>
 
-* [data](#data) 는 아래 형식들로 전달할 수 있다.
+* [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
 [주의] 데이터포인트 구성에 필요한 모든 값을 제공하지 않으면 <Content type="keyword" value="null"></Content>이 된다.
 
 ###### 단일 값 및 값 배열
@@ -96,7 +96,7 @@ group에 포함되면 group의 noClip 설정을 따른다.
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### tooltipText: `string{:js}`[#tooltipText]
 데이터포인트 툴팁 텍스트.  
-<DefaultValue value="'<b>${name}</b><br>${series}:<b>" contents="${yValue}</b>'"></DefaultValue>
+<DefaultValue value="'x:" contents="<b>${x}</b><br>y: <b>${y}</b><br>volume: <b>${z}</b>'"></DefaultValue>
 ### [trendline](./bubble/trendline)
 추세선 설정 모델.  
 <DefaultValue value="undefined" contents=""></DefaultValue>

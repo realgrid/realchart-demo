@@ -171,26 +171,27 @@ export class SeriesNavigator extends ChartItem {
     protected _doLoad(src: any): void {
         super._doLoad(src);
 
-        const chart = this.chart;
         const config: any = {
         }
 
         // series
         if (isObject(src.series)) {
-            config.series = assign((SERIES[src.series.type] || SERIES['area'])(), src.series);
+            let t = src.series.type;
+            if (t !== 'area' && t !== 'line' && t !== 'bar') t = 'area';
+            config.series = assign({}, src.series, (SERIES[t])());
         } else {
             config.series = SERIES['area']();
         }
         // x-axis
         if (isObject(src.xAxis)) {
-            config.xAxis = assign((AXES[src.xAxis.type] || AXES['linear'])(), src.xAxis, AXIS);
+            config.xAxis = assign({}, src.xAxis, (AXES[src.xAxis.type] || AXES['linear'])(), AXIS);
         } else {
             config.xAxis = assign(AXES['linear'](), AXIS);
         }
 
         // y-axis
         if (isObject(src.yAxis)) {
-            config.yAxis = assign((AXES[src.yAxis.type] || AXES['linear'])(), src.yAxis, AXIS);
+            config.yAxis = assign({}, src.yAxis, (AXES[src.yAxis.type] || AXES['linear'])(), AXIS);
         } else {
             config.yAxis = assign(AXES['linear'](), AXIS);
         }

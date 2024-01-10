@@ -1,5 +1,21 @@
 ## **series[type=scatter]**
+Scatter 시리즈.<br/> [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
 
+###### 단일 값 및 값 배열
+|형식|설명|
+|---|---|
+|y|단일 숫자면 y값. x 값은 순서에 따라 자동 결정.|
+|[]|빈 배열이면 <Content type="keyword" value="null"></Content>. x 값은 순서에 따라 자동 결정.|
+|[y]|값 하나인 배열이면 y값. x 값은 순서에 따라 자동 결정.|
+|[x, y,]|두 값 이상이면 순서대로 x, y값.<br/> 또는 [xField](#xfield) 속성이 숫자이면 x값의 index. [yField](#yfield) 는 y값의 index.
+ [colorField](#colorfield) 는 color값의 index.|
+
+###### json 배열
+|Series 속성|설명 |
+|---|---|
+| [xField](#xfield) |속성 값, 또는 <Content type="expression" value="'x', 'name', 'label'"></Content> 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
+| [yField](#yfield) |속성 값, 또는 <Content type="expression" value="'y', 'value'"></Content> 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
+| [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
 ## Properties
 
 ### col: `number{:js}`[#col]

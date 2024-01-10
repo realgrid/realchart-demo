@@ -83,7 +83,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
         this._cells.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
 
-            obj[0].fill = color.brighten(1 - p.heatValue / model._heatMax).toString();
+            obj[0].fill = color.brighten(1 - p.zValue / model._heatMax).toString();
             this._setPointStyle(v, model, p, obj);
         });
     }

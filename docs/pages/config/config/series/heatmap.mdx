@@ -1,12 +1,32 @@
 ## **series[type=heatmap]**
-heatmap 시리즈.
-
+Heatmap 시리즈.<br/>
+숫자 대신 색상으로 값들을 table에 표시한다.<br/>
 차트나 split pane에 하나의 heatmap만 존재할 수 있다.
 
 [셀 색상]
 1. color-axis가 연결되면 거기에서 색을 가져온다.
 2. series의 minColor, maxColor 사이의 색으로 가져온다.
 3. series의 기본 색상과 흰색 사이의 색으로 가져온다.
+
+* [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
+[주의] 데이터포인트 구성에 필요한 모든 값을 제공하지 않으면 <Content type="keyword" value="null"></Content>이 된다.
+
+###### 단일 값 및 값 배열
+|형식|설명|
+|---|---|
+|y|단일 숫자면 y, z값. x 값은 순서에 따라 자동 결정.|
+|[]|빈 배열이면 <Content type="keyword" value="null"></Content>. x 값은 순서에 따라 자동 결정.|
+|[z]|단일 값 배열이면 y, z값. x 값은 순서에 따라 자동 결정.|
+|[y, z]|두 값 배열이면 y값과 z값. x 값은 순서에 따라 자동 결정.|
+|[x, y, z,]|세 값 이상이면 순서대로 x, y, z값.<br/> 또는 [xField](#xfield) 속성이 숫자이면 x값의 index. [yField](#yfield) 는 y값의 index. [zField](#zfield) 는 z값의 index.|
+
+###### json 배열
+|Series 속성|설명|
+|---|---|
+| [xField](#xfield) |속성 값, 또는 <Content type="expression" value="'x', 'name', 'label'"></Content> 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
+| [yField](#yfield) |속성 값, 또는 <Content type="expression" value="'y', 'value'"></Content> 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
+| [zField](#zfield) |속성 값, 또는 <Content type="expression" value="'z'"></Content> 속성 값이 z 값이 된다.|
+| [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
 ## Properties
 
 ### col: `number{:js}`[#col]
@@ -75,7 +95,7 @@ group에 포함되면 group의 noClip 설정을 따른다.
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### tooltipText: `string{:js}`[#tooltipText]
 데이터포인트 툴팁 텍스트.  
-<DefaultValue value="'<b>${name}</b><br>${series}:<b>" contents="${yValue}</b>'"></DefaultValue>
+<DefaultValue value="'x:" contents="<b>${x}</b><br>y: <b>${y}</b><br>heat: <b>${z}</b>'"></DefaultValue>
 ### [trendline](./heatmap/trendline)
 추세선 설정 모델.  
 <DefaultValue value="undefined" contents=""></DefaultValue>

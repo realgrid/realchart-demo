@@ -823,6 +823,9 @@
     stroke: #008;
     stroke-width: 2px;
 }
+.rct-errorbar-series .rct-point[data-focus] .rct-errorbar-point-back {
+    fill: #0088ff20 !important;
+}
 
 /** lollipop series */
 .rct-lollipop-series {

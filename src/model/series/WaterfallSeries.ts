@@ -6,9 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { RcElement } from "../../common/RcControl";
+import { RectElement } from "../../common/impl/RectElement";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { CorneredSeries, RangedSeries } from "../Series";
+import { RangedSeries, Series } from "../Series";
 
 export class WaterfallSeriesPoint extends DataPoint {
 
@@ -38,7 +40,7 @@ export class WaterfallSeriesPoint extends DataPoint {
  * 
  * @config chart.series[type=waterfall]
  */
-export class WaterfallSeries extends CorneredSeries {
+export class WaterfallSeries extends RangedSeries {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -54,6 +56,17 @@ export class WaterfallSeries extends CorneredSeries {
     }
 
     //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 지정한 반지름 크기로 데이터포인트 bar의 모서리를 둥글게 표시한다.\
+     * 최대값이 bar 폭으로 절반으로 제한되므로 아주 큰 값을 지정하면 반원으로 표시된다.
+     * 
+     * @config
+     */
+    cornerRadius: number;
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     _type(): string {
@@ -66,6 +79,10 @@ export class WaterfallSeries extends CorneredSeries {
 
     protected _createPoint(source: any): DataPoint {
         return new WaterfallSeriesPoint(source);
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return RectElement.create(doc, Series.LEGEND_MARKER, 0, 0, size, size, 2);
     }
 
     protected _doPrepareRender(): void {
