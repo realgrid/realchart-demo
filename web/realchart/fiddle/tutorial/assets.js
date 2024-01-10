@@ -87,6 +87,7 @@ const config = {
           fill: '#fff',
         },
         styleCallback: (args) => {
+          console.log(args);
           return args.index == 4 && { fill: '#000' };
         },
         text: '${x}<br>${y}',
