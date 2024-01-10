@@ -13,13 +13,15 @@ Bar 시리즈.<br/>
 |y|단일 숫자면 y값. x 값은 순서에 따라 자동 결정.|
 |[]|빈 배열이면 <Content type="keyword" value="null"></Content>. x 값은 순서에 따라 자동 결정.|
 |[y]|값 하나인 배열이면 y값. x 값은 순서에 따라 자동 결정.|
-|[x, y,]|두 값 이상이면 순서대로 x, y값.<br/> 또는 [xField](#xfield) 속성이 숫자이면 x값의 index. [yField](#yfield) 는 y값의 index.|
+|[x, y,]|두 값 이상이면 순서대로 x, y값.<br/> 또는 [xField](#xfield) 속성이 숫자이면 x값의 index. [yField](#yfield) 는 y값의 index.
+ [colorField](#colorfield) 는 color값의 index.|
 
 ###### json 배열
 |Series 속성|설명 |
 |---|---|
-| [xField](#xfield) |x 값. 기본값은 **<Content type="expression" value="'x'"></Content>**.|
-| [yField](#yfield) |y 값. 기본값은 **<Content type="expression" value="'y'"></Content>**.|
+| [xField](#xfield) |속성 값, 또는 <Content type="expression" value="'x', 'name', 'label'"></Content> 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
+| [yField](#yfield) |속성 값, 또는 <Content type="expression" value="'y', 'value'"></Content> 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
+| [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
 ## Properties
 
 ### baseValue: `number{:js}`[#baseValue]
@@ -191,6 +193,11 @@ time 축일 때, 정수 값 대신 시간 단위(<Content type="expression" valu
 json 객체나 배열로 전달되는 데이터포인트 정보에서 y 값을 지정하는 속성명이나 인덱스.
 
 <Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 1, 객체이면 <Content type="expression" value="'y'"></Content>.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### zField: `string | number | Function{:js}`[#zField]
+json 객체나 배열로 전달되는 데이터포인트 정보에서 z 값을 지정하는 속성명이나 인덱스.
+
+<Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 2, 객체이면 <Content type="expression" value="'z'"></Content>.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### zOrder: `number{:js}`[#zOrder]
 <DefaultValue value="0" contents=""></DefaultValue>

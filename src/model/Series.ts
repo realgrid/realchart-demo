@@ -590,6 +590,7 @@ export interface ISeries extends IPlottingItem {
     yField: string | number | Function;
     _xFielder: (src: any) => any;
     _yFielder: (src: any) => any;
+    _zFielder: (src: any) => any;
     _colorFielder: (src: any) => any;
     colorField: string | number;
 
@@ -707,6 +708,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     _yAxisObj: IAxis;
     _xFielder: (src: any) => any;
     _yFielder: (src: any) => any;
+    _zFielder: (src: any) => any;
     _colorFielder: (src: any) => any;
     _dataDirty: boolean;
     _cdata: ChartData;
@@ -876,6 +878,13 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      * @config
      */
     yField: string | number | Function;
+    /**
+     * json 객체나 배열로 전달되는 데이터포인트 정보에서 z 값을 지정하는 속성명이나 인덱스.\
+     * undefined이면, data point의 값이 array일 때는 2, 객체이면 'z'.
+     * 
+     * @config
+     */
+    zField: string | number | Function;
     /**
      * undefined이면, data point의 값이 객체일 때 'color'.
      * 
@@ -1540,14 +1549,15 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         return false;
     }
 
-    protected _createFilder(f: any): (v: any) => any {
+    protected _createFielder(f: any): (v: any) => any {
         return isFunc(f) ? (v => f(v)) :  isString(f) ? v => v[f] : v => _undef;
     }
 
     protected _createFielders(): void {
-        this._xFielder = this._createFilder(this.xField);
-        this._yFielder = this._createFilder(this.yField);
-        this._colorFielder = this._createFilder(this.colorField);
+        this._xFielder = this._createFielder(this.xField);
+        this._yFielder = this._createFielder(this.yField);
+        this._zFielder = this._createFielder(this.zField);
+        this._colorFielder = this._createFielder(this.colorField);
     }
 
     protected _doLoad(src: any): void {
