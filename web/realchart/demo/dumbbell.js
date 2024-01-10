@@ -17,7 +17,7 @@ const config = {
     },
     series: {
         type: 'dumbbell',
-		tooltipText: 'low: ${low}<br>y: ${y}<br>',
+		tooltipText: 'low: ${low}<br>high: ${yValue}<br>',
         pointLabel: {
             visible: true,
             // format: '${x}'

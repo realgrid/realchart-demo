@@ -682,15 +682,12 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
                 return series.displayName();
             case 'name':
                 return series._xAxisObj.getXValue(point.xValue);
-            case 'x':
-                return series._xAxisObj.value2Tooltip(point.x || (series._xAxisObj instanceof CategoryAxis ? series._xAxisObj.getCategory(point.index) : point.xValue));
             case 'xValue':
-                return series._xAxisObj.value2Tooltip(point[param]);
-            case 'y':
+                return series._xAxisObj.value2Tooltip(point.xValue);
             case 'yValue':
                 return series._yAxisObj.value2Tooltip(point[param]);
             default:
-                return param in point ? point[param] : point.source?.[param];
+                return point.getTooltip(param);
         }
     }
 

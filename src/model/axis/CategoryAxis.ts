@@ -447,12 +447,8 @@ export class CategoryAxis extends Axis {
         }
     }
 
-    value2Tooltip(value: number): any {
-        return this._cats[value] || value;
-    }
-
-    getXValue(value: number) {
-        return this.getCategory(value - this._catMin);
+    getXValue(value: number): any {
+        return this._cats[value - this._catMin] || value;
     }
 
     //-------------------------------------------------------------------------

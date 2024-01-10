@@ -54,12 +54,19 @@ export class BubbleSeriesPoint extends DataPoint {
         if (v === null) {
             this.isNull = true;
         } else {
-            const d = v.length > 2 ? 1 : 0;
+            const len = v.length;
 
-            this.y = v[pickNum(series.yField, 0 + d)];
-            this.z = v[pickNum(series.zField, 1 + d)];
-            if (d > 0) {
+            if (len > 2) {
                 this.x = v[pickNum(series.xField, 0)];
+                this.y = v[pickNum(series.yField, 1)];
+                this.z = v[pickNum(series.zField, 2)];
+            } else if (len == 2) {
+                this.y = v[pickNum(series.yField, 0)];
+                this.z = v[pickNum(series.zField, 1)];
+            } else if (len === 1) {
+                this.y = this.z = v[0];
+            } else {
+                this.isNull = true;
             }
         }
     }
@@ -94,6 +101,28 @@ export enum BubbleSizeMode {
 }
 
 /**
+ * 버블 시리즈.<br/>
+ * x, y로 지정되는 위치와 z로 지정되는 크기 사이의 관계를 표시한다.
+ * 주로 원의 크기가 데이터포인트의 중요도를 나타낸다.<br/>
+ * 이 시리즈를 기준으로 생성되는 x축은 [linear](/config/config/xAxis/linear)이다.<br/>
+ * 
+ * *{@link data}는 아래 형식들로 전달할 수 있다.
+ * 
+ * ###### 단일 값 및 값 배열
+ * |형식|설명|
+ * |---|---|
+ * |y|단일 숫자면 y, z값. x 값은 순서에 따라 자동 결정.|
+ * |[]|빈 배열이면 null. x 값은 순서에 따라 자동 결정.|
+ * |[z]|단일 값 배열이면 y, z값. x 값은 순서에 따라 자동 결정.|
+ * |[y, z]|두 값 배열이면 y값과 z값. x 값은 순서에 따라 자동 결정.|
+ * |[x, y, z,]|세 값 이상이면 순서대로 x, y, z값.<br/> 또는 {@link xField} 속성이 숫자이면 x값의 index. {@link yField}는 y값의 index. {@link zField}는 z값의 index.|
+ *
+ * ###### json 배열
+ * |Series 속성|설명|
+ * |---|---|
+ * |{@link xField}|x 값. 기본값은 **'x'**.|
+ * |{@link yField}|y 값. 기본값은 **'y'**.|
+  
  * @config chart.series[type=bubble]
  */
 export class BubbleSeries extends MarkerSeries {

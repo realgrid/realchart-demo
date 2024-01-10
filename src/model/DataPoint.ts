@@ -157,6 +157,10 @@ export class DataPoint {
         delete this.yNew;
     }
 
+    getTooltip(param: string): any {
+        return param in this ? this[param] : this.source?.[param];
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -187,11 +191,15 @@ export class DataPoint {
                 this.color = v[f];
             }
 
-            if (v.length > 1) {
+            const len = v.length;
+
+            if (len > 1) {
                 this.x = v[pickNum(series.xField, 0)];
                 this.y = v[pickNum(series.yField, 1)];
+            } else if (len === 0) {
+                this.isNull = true;
             } else {
-                this.y = v[pickNum(series.yField, 0)];
+                this.y = v[0];
             }
         }
     }

@@ -78,13 +78,13 @@ export abstract class BarSeriesBase extends BasedSeries {
  * ###### 단일 값 및 값 배열
  * |형식|설명|
  * |---|---|
- * |y|단일 숫자면 y값.|
- * |[y]|값 하나인 배열이면 y값.|
- * |[x, y]|두 값 배열이면 순서대로 x, y값|
- * |[...]|시리즈 속성 값이 숫자인 경우 {@link xField}는 x값의 index. {@link yField}는 y값의 index.|
-
+ * |y|단일 숫자면 y값. x 값은 순서에 따라 자동 결정.|
+ * |[]|빈 배열이면 null. x 값은 순서에 따라 자동 결정.|
+ * |[y]|값 하나인 배열이면 y값. x 값은 순서에 따라 자동 결정.|
+ * |[x, y,]|두 값 이상이면 순서대로 x, y값.<br/> 또는 {@link xField} 속성이 숫자이면 x값의 index. {@link yField}는 y값의 index.|
+ *
  * ###### json 배열
-*  |Series 속성|설명|
+ * |Series 속성|설명 |
  * |---|---|
  * |{@link xField}|x 값. 기본값은 **'x'**.|
  * |{@link yField}|y 값. 기본값은 **'y'**.|

@@ -547,7 +547,7 @@ export class TimeAxis extends ContinuousAxis {
     }
 
     getXValue(value: number) {
-        return this.date(value);
+        return isNaN(value) ? NaN : new Date(value);
     }
 
     //-------------------------------------------------------------------------
