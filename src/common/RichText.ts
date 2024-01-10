@@ -97,7 +97,7 @@ class Word {
         let x = 0;
 
         while (x < str.length) {
-            const i = str.indexOf('${', x);
+            const i = str.indexOf('${', x) || str.indexOf('%{');
             if (i < 0) break;
 
             const j = str.indexOf('}', i + 2);

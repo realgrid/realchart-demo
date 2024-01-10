@@ -75,7 +75,7 @@ export class BubbleSeriesPoint extends DataPoint {
         super._readObject(series, v);
 
         if (!this.isNull) {
-            this.y = pickProp(series._zFielder(v), v.z);
+            this.z = pickProp(series._zFielder(v), v.z);
         }
     }
 
