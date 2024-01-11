@@ -59,7 +59,7 @@ class CategoryAxisLabel extends AxisLabel {
     //-------------------------------------------------------------------------
     getTick(index: number, v: any): string {
         if (v != null) {
-            return this._getText(v, v, false);
+            return this._getText(v, v, false, false);
         } else {
             return '';
         }

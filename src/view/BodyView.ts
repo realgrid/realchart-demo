@@ -422,7 +422,8 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
             const p = m.axis.getPos(width, m.value);
 
             if (labelView.setVis(line.setVis(!isNaN(p)))) {
-                line.setVLineC(p, 0, height);
+                // line.setVLineC(p, 0, height);
+                line.setVLine(p, 0, height);
 
                 if (labelView) {
                     switch (label.align) {
@@ -456,7 +457,8 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
             const p = height - m.axis.getPos(height, m.value);
 
             if (labelView.setVis(line.setVis(!isNaN(p)))) {
-                line.setHLineC(p, 0, width);
+                // line.setHLineC(p, 0, width);
+                line.setHLine(p, 0, width);
 
                 if (labelView) {
                     switch (label.align) {

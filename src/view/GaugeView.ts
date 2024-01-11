@@ -336,7 +336,8 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
         // line
         if (line.setVis(m.line.visible)) {
             line.setStyleOrClass(m.line.style);
-            line.setHLineC(y, 0, width);
+            // line.setHLineC(y, 0, width);
+            line.setHLine(y, 0, width);
         }
 
         // ticks
@@ -379,7 +380,8 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
         // line
         if (line.setVis(m.line.visible)) {
             line.setStyleOrClass(m.line.style);
-            line.setVLineC(x, 0, height);
+            // line.setVLineC(x, 0, height);
+            line.setVLine(x, 0, height);
         }
 
         // ticks

@@ -808,10 +808,12 @@ export class Utils {
         const abs = absv(value);
         
         if (abs >= 1000) {
-            let i = symbols.length - 1;
-            while (i) {
+            let i = symbols.length;
+
+            while (i > 0) {
                 const m = Math.pow(1000, i--);
                 const v = Math.pow(10, Math.log(abs) * Math.LOG10E);
+
                 if (m <= v && (force || (abs * 10) % m === 0)) {
                     return { value: value / m, symbol: symbols[i] };
                 }

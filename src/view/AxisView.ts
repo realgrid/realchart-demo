@@ -133,11 +133,11 @@ class AxisTickMarkView extends ChartElement<AxisTick> {
     //-------------------------------------------------------------------------
     protected _doLayout(param: any): void {
         if (this.model.axis._isHorz) {
-            // this._lineView.setVLine(0, 0, this.height);
-            this._lineView.setVLineC(0, 0, this.height);
+            this._lineView.setVLine(0, 0, this.height);
+            // this._lineView.setVLineC(0, 0, this.height);
         } else {
-            // this._lineView.setHLine(0, 0, this.width);
-            this._lineView.setHLineC(0, 0, this.width);
+            this._lineView.setHLine(0, 0, this.width);
+            // this._lineView.setHLineC(0, 0, this.width);
         }
     }
 }
@@ -622,18 +622,20 @@ export class AxisView extends ChartElement<Axis> {
         // line
         if (this._lineView.visible) {
             if (horz) {
-                // this._lineView.setHLine(opp ? h : 0, 0, w);
-                this._lineView.setHLineC(opp ? h : 0, 0, w);
+                this._lineView.setHLine(opp ? h : 0, 0, w);
+                // this._lineView.setHLineC(opp ? h : 0, 0, w);
             } else {
-                // this._lineView.setVLine(opp ? 0 : w, 0, h);
-                this._lineView.setVLineC(opp ? 0 : w, 0, h);
+                this._lineView.setVLine(opp ? 0 : w, 0, h);
+                // this._lineView.setVLineC(opp ? 0 : w, 0, h);
             }
 
             if (this._lineView2) { // when between
                 if (horz) {
-                    this._lineView2.setHLineC(h, 0, w);
+                    this._lineView2.setHLine(h, 0, w);
+                    // this._lineView2.setHLineC(h, 0, w);
                 } else {
-                    this._lineView2.setVLineC(0, 0, h);
+                    this._lineView2.setVLine(0, 0, h);
+                    // this._lineView2.setVLineC(0, 0, h);
                 }
             }
         }

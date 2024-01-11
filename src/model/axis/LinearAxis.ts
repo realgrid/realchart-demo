@@ -308,7 +308,7 @@ export class LinearAxisLabel extends AxisLabel {
     // overriden members
     //-------------------------------------------------------------------------
     getTick(index: number, v: any): string {
-        return this._getText(null, v, this.useSymbols && (this.axis.tick as ContinuousAxisTick)._step > 100);
+        return this._getText(null, v, this.useSymbols && (this.axis.tick as ContinuousAxisTick)._step > 100, true);
     }
 }
 
