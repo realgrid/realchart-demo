@@ -8,6 +8,7 @@ export const config = {
     {
       type: 'arearange',
       name: '11월 최고,최저 기온',
+      tooltipText: '${xValue}<br>최저온도 ${y}, 최고온도 ${low}',
       data: [
         [ 20.6, 17.2 ], [ 25.9, 18.7 ], [ 22.4, 17.7 ],
         [ 20.9, 14.1 ], [ 20.4, 15.1 ], [ 19.3, 6.6 ],

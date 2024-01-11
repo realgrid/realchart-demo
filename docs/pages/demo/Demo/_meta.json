@@ -166,5 +166,11 @@
 		"theme": {
 			"toc": false
 		}
+	},
+	"export": {
+		"title": "Export",
+		"theme": {
+			"toc": false
+		}
 	}
 }

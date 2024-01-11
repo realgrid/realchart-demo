@@ -6,7 +6,6 @@ const config = {
   title: 'Circle Gauge',
   gauge: [{
     name: 'gauge1',
-    template: 'gauge',
     value: Math.random() * 100,
     valueRim: {
       style: {

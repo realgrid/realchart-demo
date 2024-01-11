@@ -1,6 +1,13 @@
 export const config = {
-  title: { text: 'Chart Title', style: { textDecoration: 'underline' } },
-  subtitle: { text: 'Sub Title', style: { fill: 'red' } },
+  title: {
+    text: 'Chart Title',
+    style: { fill: 'white' },
+    backgroundStyle: { fill: '#333', padding: '1px 4px', rx: '4' }
+  },
+  subtitle: {
+    text: '2023.01 World Bank.',
+    style: { fill: 'gray', fontStyle: 'italic' }
+  },
   xAxis: { title: 'X Axis', grid: true },
   yAxis: { title: 'Y Axis' },
   series: {

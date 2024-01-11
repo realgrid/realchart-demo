@@ -16,7 +16,10 @@ export default class _Document extends Document {
             type="image/x-icon"
             sizes="any"
           />
+          {/* <link rel="stylesheet" href="https://unpkg.com/realchart/dist/realchart-style.css" /> */}
+          <link rel="stylesheet" href="/realchart/realchart-export.css"/>
           <script src="/realchart/realchart-lic.js"></script>
+          <script src="/realchart/realchart-export.js"></script>
         </Head>
         <body>
           <Main />

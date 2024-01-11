@@ -20,5 +20,6 @@ export const config = {
       3.8, 4.1,   1, 1.9, 3.2, 3.8,
       4.2
     ]
-  }
+  },
+  tooltip: { timeFormat: 'yyyy-MM-dd HH:mm' }
 }

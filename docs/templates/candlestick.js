@@ -44,7 +44,6 @@ export const config = {
   yAxis: { crosshair: true, tick: { stepInterval: 1000 } },
   series: {
     template: '',
-    tooltipText: '<b>종가: ${close}</b>',
     padding: 1,
     pointPadding: 0.1,
     type: 'candlestick',

@@ -1,14 +1,13 @@
 export const config = {
   options: {},
   title: 'Line Series 01',
-  xAxis: { type: 'category' },
+  xAxis: { type: 'category', crosshair: true },
   yAxis: {},
   series: {
     type: 'line',
     marker: true,
     pointLabel: true,
     data: [
-      [ -1.1, 7 ],
       [ 'home', 7 ],
       [ 'sky', 11 ],
       [ '카눈', 8 ],

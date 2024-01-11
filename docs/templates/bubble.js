@@ -6,7 +6,6 @@ export const config = {
   series: {
     type: 'bubble',
     pointLabel: { visible: true, suffix: 'm', effect: 'outline' },
-    tooltipText: 'x: ${x}<br>y: ${y}<br>z: ${z}',
     sizeMode: 'width',
     shape: 'rectangle',
     radius: 0.1,

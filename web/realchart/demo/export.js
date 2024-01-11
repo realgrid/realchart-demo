@@ -10,7 +10,7 @@ const config = {
     visible: true,
     text: 'Subtitle',
   },
-  exportOptions: {},
+  exportOptions: { visible: true },
   options: {
     style: {
       backgroundImage: 'url(../assets/images/mountain.jpeg)',
