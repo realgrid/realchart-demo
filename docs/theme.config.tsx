@@ -42,10 +42,10 @@ const config: DocsThemeConfig = {
     }
   },
   banner: {
-    key: "1.0-release",
-    text: (
-      <a href="/guide/release/v1.0">🎉 RealChart 1.0 is released. Read more →</a>
-    ),
+    // key: "1.0-release",
+    // text: (
+    //   <a href="/guide/release/v1.0">🎉 RealChart 1.0 is released. Read more →</a>
+    // ),
   },
   editLink: {
     component: () => null

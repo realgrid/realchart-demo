@@ -8,10 +8,6 @@ const config = {
   options: {
     // animatable: false
   },
-  tooltip: {
-    // level: 'series',
-    text: 'hello ${xValue}',
-  },
   xAxis: {
     categories: [
       '서울',

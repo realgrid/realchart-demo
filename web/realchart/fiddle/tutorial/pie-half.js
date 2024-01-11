@@ -14,15 +14,15 @@ const config = {
     type: 'pie',
     totalAngle: 180,
     startAngle: 270,
-    legendByPoint: true,
     radius: '70%',
     centerY: '80%',
     innerRadius: '50%',
     innerText: '<b>Number of Mobile Users</b><br>in the world',
     pointLabel: {
       visible: true,
-      text: '${y}',
+      // text: '${y}',
     },
+    legendByPoint: true,
     pointColors: [
       '#002F5C',
       '#004987',
