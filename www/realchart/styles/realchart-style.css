@@ -793,6 +793,9 @@
 .rct-ohlc-series .rct-point[data-decline] {
     stroke: #00f;
 }
+.rct-ohlc-series .rct-point[data-focus] .rct-ohlc-point-back {
+    fill: #0088ff20 !important;
+}
 .rct-ohlc-point-back {
     stroke: none;
 }
@@ -819,6 +822,9 @@
 .rct-errorbar-series .rct-point {
     stroke: #008;
     stroke-width: 2px;
+}
+.rct-errorbar-series .rct-point[data-focus] .rct-errorbar-point-back {
+    fill: #0088ff20 !important;
 }
 
 /** lollipop series */
