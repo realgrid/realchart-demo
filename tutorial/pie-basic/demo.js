@@ -2,10 +2,8 @@ const config = {
   title: {
     align: 'left',
     text: '2023년 11월',
-    gap: 10,
     style: {
-      fontSize: '16px',
-      padding: '2px 5px'
+      fontSize: '16px'
     }
   },
   subtitle: {
@@ -14,8 +12,7 @@ const config = {
     style: {
       fill: 'black',
       fontSize: '32px',
-      fontWeight: 'bold',
-      marginBottom: '10px'
+      fontWeight: 'bold'
     }
   },
   series: {
