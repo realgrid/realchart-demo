@@ -36,9 +36,8 @@ export class OhlcSeriesPoint extends CandlestickSeriesPoint {
 
 /**
  * Ohlc 시리즈.<br/>
- * 
  * 시가-고가-저가-종가 차트.
- * 시간 경과에 따른 가격의 움직임을 설명하는 데 사용된다.
+ * 시간 경과에 따른 가격의 움직임을 설명하는 데 사용된다.<br/><br/>
  * 
  * {@link data}는 아래 형식들로 전달할 수 있다.
  * [주의] 데이터포인트 구성에 필요한 모든 값을 제공하지 않으면 null이 된다.

@@ -313,7 +313,7 @@ export class LineSeriesFlag extends IconedText {
  * 
  * 주로 시간이나 다른 축 변수에 의한 데이터의 **변화** 또는 **경향**(pattern)을 보여주는 데 사용한다.
  * 데이터포인트의 값에 해당하는 지점에 표시되는 데이터포인트 마커들을 연결한 선으로 표시되며,
- * 기본 x축은 [linear](/config/config/xAxis/linear)이다.<br/>
+ * 기본 x축은 [linear](/config/config/xAxis/linear)이다.<br/><br/>
  * 
  * *{@link data}는 아래 형식들로 전달할 수 있다.
  * 
@@ -640,6 +640,7 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
 /**
  * AreaRange 시리즈.<br/>
  * 
+ * <br/>
  * {@link data}는 아래 형식들로 전달할 수 있다.<br/>
  * [주의] 데이터포인트 구성에 필요한 모든 값을 제공해야 한다.
  * 

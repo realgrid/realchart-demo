@@ -45,13 +45,17 @@ export class VectorSeriesPoint extends DataPoint {
     }
 
     protected _readArray(series: VectorSeries, v: any[]): void {
-        const d = v.length > 3 ? 1 : 0;
+        if (v.length <= 2) {
+            this.isNull = true;
+        } else {
+            const d = v.length > 3 ? 1 : 0;
 
-        this.y = v[pickNum(series.yField, 0 + d)];
-        this.length = v[pickNum(series.lengthField, 1 + d)];
-        this.angle = v[pickNum(series.angleField, 2 + d)];
-        if (d > 0) {
-            this.x = v[pickNum(series.xField, 0)];
+            if (d > 0) {
+                this.x = v[pickNum(series.xField, 0)];
+            }
+            this.y = v[pickNum(series.yField, 0 + d)];
+            this.length = v[pickNum(series.lengthField, 1 + d)];
+            this.angle = v[pickNum(series.angleField, 2 + d)];
         }
     }
 
@@ -79,37 +83,125 @@ export class VectorSeriesPoint extends DataPoint {
     }
 }
 
+/**
+ * vector 화살표 회전 중심.
+ */
 export enum VectorOrigin {
+    /**
+     * 데이터포인트 (x, y) 위치가 vector 화살표의 중점이 되게 회전한다.
+     * 
+     * @config
+     */
     CENTER = 'center',
+    /**
+     * 데이터포인트 (x, y) 위치가 vector 화살표의 시작점이 되게 회전한다.
+     * 
+     * @config
+     */
     START = 'start',
+    /**
+     * 데이터포인트 (x, y) 위치가 vector 화살표의 끝점이 되게 회전한다.
+     * 
+     * @config
+     */
     END = 'end'
 }
 
+/**
+ * 화살 머리 종류.
+ */
 export enum ArrowHead {
+    /**
+     * 머리를 따로 표시하지 않는다.
+     * 
+     * @config
+     */
     NONE = 'none',
+    /**
+     * 닫힌 삼각형.
+     * 
+     * @config
+     */
     CLOSE = 'close',
+    /**
+     * 열린 삼각형.
+     * 
+     * @config
+     */
     OPEN = 'open',
 }
 
 /**
+ * Vector 시리즈.<br/>
+ * x, y로 지정된 데이터포인트에 길이과 방향을 갖는 화살표를 표시한다.<br/><br/>
+ * 
+ * {@link data}는 아래 형식들로 전달할 수 있다.<br/>
+ * [주의] 데이터포인트 구성에 필요한 모든 값을 제공하지 않으면 null이 된다.
+ * 
+ * ###### 단일 값 및 값 배열
+ * |형식|설명|
+ * |---|---|
+ * |y|단일 숫자면 low, y값. x 값은 순서에 따라 자동 결정.|
+ * |[]|빈 배열이면 null. x 값은 순서에 따라 자동 결정.|
+ * |[y, length, angle]|형식 설명 순서대로 값 결정. x 값은 데이터포인트 순서에 따라 자동 결정.|
+ * |[x, y, length, angle]|형깃 설명 순서대로 값 결정.<br/> 또는 {@link xField} 속성이 숫자이면 x값, {@link yField}는 y값,<br/> {@link lengthField}는 length값, {@link angleField}는 angle값,<br/>.|
+ *
+ * ###### json 배열
+ * |Series 속성|설명|
+ * |---|---|
+ * |{@link xField}|속성 값, 또는 'x', 'name', 'label' 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
+ * |{@link yField}|속성 값, 또는 'y', 'value' 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
+ * |{@link lengthField}|속성 값, 또는 'length' 속성 값이 length 값이 된다.|
+ * |{@link angleField}|속성 값, 또는 'angle' 속성 값이 angle 값이 된다.|
  * 
  * @config chart.series[type=vector]
  */
 export class VectorSeries extends Series {
 
     //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
-    lengthField: string;
-    angleField: string;
-    origin = VectorOrigin.CENTER;
-    maxLength = 20;
-    startAngle = 0;
-    arrowHead = ArrowHead.CLOSE;
-
-    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * json 객체나 배열로 전달되는 데이터포인트 정보에서 길이(length) 값을 지정하는 속성명이나 인덱스.<br/>
+     * undefined이면, data point의 값이 array일 때는 항목 수가 3이상이면 1, 아니면 0, 객체이면 'length'.
+     * 
+     * @config
+     */
+    lengthField: string;
+    /**
+     * json 객체나 배열로 전달되는 데이터포인트 정보에서 각도(angle) 값을 지정하는 속성명이나 인덱스.<br/>
+     * undefined이면, data point의 값이 array일 때는 항목 수가 3이상이면 2, 아니면 1, 객체이면 'angle'.
+     * 
+     * @config
+     */
+    angleField: string;
+    /**
+     * vector 화살표 회전 중심.
+     */
+    origin = VectorOrigin.CENTER;
+    /**
+     * 최대 길이.
+     * 
+     * @config
+     */
+    maxLength = 20;
+    /**
+     * 시작 각도.
+     * 12시 위치가 0도.
+     * 
+     * @config
+     */
+    startAngle = 0;
+    /**
+     * 화살 머리 타입.
+     * 
+     * @config
+     */
+    arrowHead = ArrowHead.CLOSE;
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -142,9 +234,10 @@ export class VectorSeries extends Series {
                 const f = p.length / max;
                 
                 p._len = f * len;
+
                 switch (org) {
                     case VectorOrigin.START:
-                        p._off =  p._len / 2;
+                        p._off = -p._len / 2;
                         break;
                     case VectorOrigin.END:
                         p._off = p._len / 2;

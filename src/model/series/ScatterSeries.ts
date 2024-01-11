@@ -23,6 +23,7 @@ export class ScatterSeriesPoint extends DataPoint {
 
 /**
  * Scatter 시리즈.<br/>
+ * 데이터포인트를 shape로 표시되는 점 하나로 표시한다.<br/><br/>
  * 
  * {@link data}는 아래 형식들로 전달할 수 있다.<br/>
  * 

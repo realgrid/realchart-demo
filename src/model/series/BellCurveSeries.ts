@@ -19,7 +19,7 @@ export class BellCurveSeriesPoint extends AreaSeriesPoint {
 /**
  * BellCurve 시리즈.<br/>
  * {@link source} 시리즈 데이터포인트들의 값을 바탕으로
- * {@link https://ko.wikipedia.org/wiki/정규_분포 정규분포} 곡선을 표시한다.<br/>
+ * {@link https://ko.wikipedia.org/wiki/정규_분포 정규분포} 곡선을 표시한다.<br/><br/>
  * 
  * {@link data}는 아래 형식들로 전달할 수 있다.<br/>
  * 

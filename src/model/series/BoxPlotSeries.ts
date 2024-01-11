@@ -92,12 +92,10 @@ export class BoxPlotSeriesPoint extends DataPoint {
     protected _readObject(series: BoxPlotSeries, v: any): void {
         super._readObject(series, v);
 
-        if (!this.isNull) {
-            this.min = pickProp(v[series.minField], v.min);
-            this.low = pickProp(v[series.lowField], v.low);
-            this.mid = pickProp(v[series.midField], v.mid);
-            this.y = pickProp3(v[series.highField], v.high, this.y);
-        }
+        this.min = pickProp(v[series.minField], v.min);
+        this.low = pickProp(v[series.lowField], v.low);
+        this.mid = pickProp(v[series.midField], v.mid);
+        this.y = pickProp3(v[series.highField], v.high, this.y);
     }
 
     protected _readSingle(v: any): void {
@@ -122,11 +120,12 @@ export class BoxPlotSeriesPoint extends DataPoint {
 
 /**
  * {@link https://en.wikipedia.org/wiki/Box_plot BoxPlot} 시리즈.<br/>
- * 주요 값들의 대략적인 범위 및 분포를 표시하는 시리즈.<br/>
+ * 주요 값들의 대략적인 범위 및 분포를 표시하는 시리즈.<br/><br/>
  * 
  * {@link data}는 아래 형식들로 전달할 수 있다.<br/>
  * [주의] 데이터포인트 구성에 필요한 모든 값을 제공하지 않으면 null이 된다.
  * 
+ * <br/>
  * ###### 단일 값 및 값 배열
  * |형식|설명|
  * |---|---|

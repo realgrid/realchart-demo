@@ -14,7 +14,7 @@ import { LowRangedSeries, Series } from "../Series";
 
 /**
  * ErrorBar 시리즈.<br/>
- * 오류(차) 표시 막대를 표시한다.
+ * 오류(차) 표시 막대를 표시한다.<br/><br/>
  * 
  * {@link data}는 아래 형식들로 전달할 수 있다.<br/>
  * [주의] 데이터포인트 구성에 필요한 모든 값을 제공해야 한다.

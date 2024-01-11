@@ -20,14 +20,14 @@ export class HeatmapSeriesPoint extends ZValuePoint {
 /**
  * Heatmap 시리즈.<br/>
  * 숫자 대신 색상으로 값들을 table에 표시한다.<br/>
- * 차트나 split pane에 하나의 heatmap만 존재할 수 있다.
+ * 차트나 split pane에 하나의 heatmap만 존재할 수 있다.<br/><br/>
  * 
- * [셀 색상]
- * 1. color-axis가 연결되면 거기에서 색을 가져온다.
- * 2. series의 minColor, maxColor 사이의 색으로 가져온다.
- * 3. series의 기본 색상과 흰색 사이의 색으로 가져온다.
+ * //[셀 색상]
+ * //1. color-axis가 연결되면 거기에서 색을 가져온다.
+ * //2. series의 minColor, maxColor 사이의 색으로 가져온다.
+ * //3. series의 기본 색상과 흰색 사이의 색으로 가져온다.
  * 
- * *{@link data}는 아래 형식들로 전달할 수 있다.<br/>
+ * {@link data}는 아래 형식들로 전달할 수 있다.<br/>
  * [주의] 데이터포인트 구성에 필요한 모든 값을 제공하지 않으면 null이 된다.
  * 
  * ###### 단일 값 및 값 배열

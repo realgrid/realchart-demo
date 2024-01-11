@@ -166,6 +166,7 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
 
             let x = m.x + m.width / 2;
             let y = m.y + m.height / 2;
+            
             p.xPos = inverted ? -m.y - (m.height / 2) : x;
             p.yPos = inverted ? xLen - m.x - (m.width / 2) : y;
 
