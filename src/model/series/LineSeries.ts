@@ -315,7 +315,7 @@ export class LineSeriesFlag extends IconedText {
  * 데이터포인트의 값에 해당하는 지점에 표시되는 데이터포인트 마커들을 연결한 선으로 표시되며,
  * 기본 x축은 [linear](/config/config/xAxis/linear)이다.<br/><br/>
  * 
- * *{@link data}는 아래 형식들로 전달할 수 있다.
+ * {@link data}는 아래 형식들로 전달할 수 있다.
  * 
  * ###### 단일 값 및 값 배열
  * |형식|설명|

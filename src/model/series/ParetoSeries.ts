@@ -27,7 +27,9 @@ export class ParetoSeriesPoint extends DataPoint {
 }
 
 /**
- * 참조하는 원본 시리즈의 누적 비율을 표시한다.
+ * Pareto 시리즈<br/>
+ * 참조하는 원본 시리즈의 누적 비율을 표시한다.<br/>
+ * {@link source}로 지정된 시리즈의 데이터포인트 값들로 부터 누적 포인트들을 계산해서 표시한다.
  * 
  * @config chart.series[type=pareto]
  */

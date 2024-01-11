@@ -63,9 +63,25 @@ const binsNumberFunc = {
 }
 
 /**
- * 각 bin은 하한값을 포함하고 상한값은 포함하지 않는다. 마지막 bin은 상한값을 포함한다.
- * https://en.wikipedia.org/wiki/Histogram
- * X축이 'linear'이어야 한다.
+ * [Histogram](https://en.wikipedia.org/wiki/Histogram) 시리즈<br/>
+ * //각 bin은 하한값을 포함하고 상한값은 포함하지 않는다. 마지막 bin은 상한값을 포함한다.<br/>
+ * [주의] x축이 '**linear**' 축이어야 한다.<br/><br/>
+ * 
+ * {@link data}는 아래 형식들로 전달할 수 있다.
+ * [주의] y값만 계산해서 histogram bin에 해당하는 데이터포인트들을 생성한다.
+ * 
+ * ###### 단일 값 및 값 배열
+ * |형식|설명|
+ * |---|---|
+ * |y|단일 숫자면 y값. x 값은 순서에 따라 자동 결정.|
+ * |[]|빈 배열이면 null. x 값은 순서에 따라 자동 결정.|
+ * |[y,]|{@link yField} 속성이 숫자이면 y값의 index. 아니면 첫번째 값이 y값.
+ *
+ * ###### json 배열
+ * |Series 속성|설명 |
+ * |---|---|
+ * |{@link yField}|속성 값, 또는 'y', 'value' 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
+ * 
  * 
  * @config chart.series[type=histogram]
  */
