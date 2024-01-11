@@ -2335,17 +2335,20 @@ export enum SeriesGroupLayout {
      * pie 종류인 경우 {@link FILL}과 동일하다.
      * <br>
      * 기본 값이다.
+     * @config
      */
     DEFAULT = 'default',
     /**
      * 포인트들을 순서대로 겹쳐서 표시한다.
      * <br>
-     * bar 종류의 시리지은 경우, 
+     * bar 종류의 시리즈이고, 
      * 마지막 시리즈의 포인트 값이 큰 경우 이전 포인트들은 보이지 않을 수 있다.
+     * @config
      */
     OVERLAP = 'overlap',
     /**
      * 포인트 그룹 내에서 각 포인트들을 순서대로 쌓아서 표시한다.
+     * @config
      */
     STACK = 'stack',
     /**
@@ -2357,6 +2360,7 @@ export enum SeriesGroupLayout {
      * 포인트들은 baseValue 아래쪽에 표시된다.
      * <br>
      * Pie 시리즈에서는 {@link FILL}과 동일하다.
+     * @config
      */
     FILL = 'fill',
 }

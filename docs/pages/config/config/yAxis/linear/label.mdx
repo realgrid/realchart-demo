@@ -53,10 +53,12 @@ darkStyle이 지정되지 않으면 <Content type="expression" value="'rct-text-
 | strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |  
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
-### effect[#effect]
+### effect: `'background'|'none'|'outline'{:js}`[#effect]
+- `'background'` 텍스트 배경 상자를 표시한다.      배경 상자에 [backgroundStyle](#backgroundStyle) 이 적용된다.  스타일이 적용되지 않으면 기본 <Content type="expression" value="'rct-text-background'"></Content>이 적용된다.
+- `'none'` 효과 없음.
+- `'outline'` 텍스트 색상과 대조되는 색상으로 텍스트 외곽을 구분 표시한다.
 
-
-<DefaultValue value="ChartTextEffect.NONE" contents=""></DefaultValue>
+<DefaultValue value="'none'" contents=""></DefaultValue>
 ### firstStyle: `SVGStyles | string{:js}`[#firstStyle]
 첫번째 tick 라벨에 추가로 적용되는 스타일.  
 - `SVGStyles{:js}` 

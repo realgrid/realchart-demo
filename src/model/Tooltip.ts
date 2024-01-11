@@ -88,7 +88,7 @@ export class Tooltip extends ChartItem {
      * |---|---|
      * |series|시리즈 이름|
      * |name|포인트 이름. 포인트가 속한 카테고리 이름이거나, 'x' 속성으로 지정한 값|
-     * |x|'x' 속성으로 지정한 값이거나 카테고리 이름|
+     * |x|'x' 속성으로 지정한 값|
      * |y|'y' 속성으로 지정한 값|
      * |xValue|계산된 x값|
      * |yValue|계산된 y값|

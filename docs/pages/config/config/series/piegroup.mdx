@@ -9,10 +9,13 @@ Pie 시리즈들의 그룹이고, [layout](#layout) 이 `fill` 이나 `stack` �
 
 포함된 pie 시리즈들의 innerSize는 무시된다.  
 <DefaultValue value="0" contents=""></DefaultValue>
-### layout[#layout]
+### layout: `'default'|'fill'|'overlap'|'stack'{:js}`[#layout]
+- `'default'` 시리즈 종류에 따른 기본 표시 방식.      bar 종류의 시리즈인 경우 포인트들을 순서대로 옆으로 배치하고,  line 종류인 경우 [OVERLAP](#overlap) 과 동일하게 순서대로 표시된다.  pie 종류인 경우 [FILL](#fill) 과 동일하다.      기본 값이다.
+- `'fill'` 포인트 그룹 내에서 각 포인트의 비율을 표시한다.      그룹 합은 SeriesGroup.max로 지정한다.  각 포인트들은 STACK과 마찬가지로 순서대로 쌓여서 표시된다.  SeriesGroup.baseValue 보다 값이 큰 point는 baseValue 위쪽에 작은 값을 가진  포인트들은 baseValue 아래쪽에 표시된다.      Pie 시리즈에서는 [FILL](#fill) 과 동일하다.
+- `'overlap'` 포인트들을 순서대로 겹쳐서 표시한다.      bar 종류의 시리즈이고,   마지막 시리즈의 포인트 값이 큰 경우 이전 포인트들은 보이지 않을 수 있다.
+- `'stack'` 포인트 그룹 내에서 각 포인트들을 순서대로 쌓아서 표시한다.
 
-
-<DefaultValue value="SeriesGroupLayout.DEFAULT" contents=""></DefaultValue>
+<DefaultValue value="'default'" contents=""></DefaultValue>
 ### layoutMax: `number{:js}`[#layoutMax]
 [layout](#layout) 이 `fill` 일 때 상대적 최대값.  
 <DefaultValue value="100" contents=""></DefaultValue>

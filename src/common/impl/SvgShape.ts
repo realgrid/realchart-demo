@@ -13,12 +13,36 @@ import { PathValue, fixAngle } from '../Types';
 import { Utils } from '../Utils';
 
 export enum Shape {
+    /**
+     * 원
+     * @config
+     */
     CIRCLE = 'circle',
+    /**
+     * 다아이몬드
+     * @config
+     */
     DIAMOND = 'diamond',
+    /**
+     * 정사각형
+     * @config
+     */
     SQUARE = 'square',
+    /**
+     * 삼각형
+     * @config
+     */
     TRIANGLE = 'triangle',
+    /**
+     * 별 모양
+     * @config
+     */
     STAR = 'star',
     ITRIANGLE = 'itriangle',
+    /**
+     * 사각형
+     * @config
+     */
     RECTANGLE = 'rectangle'
 }
 

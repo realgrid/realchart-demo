@@ -240,9 +240,14 @@ export const BRIGHT_COLOR = 'white';
 export const DARK_COLOR = 'black';
 
 export enum ChartTextEffect {
+    /**
+     * 효과 없음.
+     * @config
+     */
     NONE = 'none',
     /**
      * 텍스트 색상과 대조되는 색상으로 텍스트 외곽을 구분 표시한다.
+     * @config
      */
     OUTLINE = 'outline',
     /**
@@ -250,6 +255,7 @@ export enum ChartTextEffect {
      * <br>
      * 배경 상자에 {@link backgroundStyle}이 적용된다.
      * 스타일이 적용되지 않으면 기본 'rct-text-background'이 적용된다.
+     * @config
      */
     BACKGROUND = 'background'
 }
