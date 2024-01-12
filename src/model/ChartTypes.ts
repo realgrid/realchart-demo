@@ -31,7 +31,6 @@ export enum PaletteMode {
      */
     RANDOM = 'random'
 }
-
 /**
  * 선 표시 방식.
  * 
@@ -56,4 +55,16 @@ export enum LineType {
      * @config
      */
     STEP = 'step'
+}
+/**
+ * 시리즈 load animation 타입.
+ * 
+ * @config
+ */
+export enum SeriesLoadAnimation {
+    DEFAULT = 'default',
+    REVEAL = 'reveal',
+    GROW = 'grow',
+    SPREAD = 'spread',
+    FADEIN = 'fadein'
 }

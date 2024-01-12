@@ -424,27 +424,26 @@ export class SvgRichText {
         } 
     }
 
-    layout(view: TextElement, align: Align, width: number, height: number, padding: Sides): void {
-        const r = view.getBBox();
+    layout(tv: TextElement, align: Align, width: number, height: number, pad: Sides): void {
+        const r = tv.getBBox();
+        let y = pad.top + (height - pad.top - pad.bottom - r.height) / 2;
         let x: number;
-        let y = maxv(padding.top, padding.top + (height - r.height) / 2);
 
         switch (align) {
             case Align.CENTER:
-                view.anchor = TextAnchor.MIDDLE;
-                x = padding.left + (width - padding.left - padding.right) / 2;
+                tv.anchor = TextAnchor.MIDDLE;
+                x = pad.left + (width - pad.left - pad.right) / 2;
                 break;
             case Align.RIGHT:
-                view.anchor = TextAnchor.END;
-                x = view.getBBox().width - padding.right;
+                tv.anchor = TextAnchor.END;
+                x = r.width - pad.right;
                 break;
             default:
-                view.anchor = TextAnchor.START;
-                x = padding.left;
+                tv.anchor = TextAnchor.START;
+                x = pad.left;
                 break;
         }
-
-        view.trans(x, y);
+        tv.trans(x, y);
     }
 
 	//-------------------------------------------------------------------------

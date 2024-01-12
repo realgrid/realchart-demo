@@ -1,11 +1,40 @@
 # Text Annotation
 
+[텍스트](/config/config/annotation/text#text)를 
+차트나 [body](/config/config/body)(시리즈가 표시되는 plotting 영역)의 지정한 위치에 표시한다.
+
+<img src="/images/guide/annotation-text-01.png" width="80%" class="border-img"/>
+
+text를 [rich text](/guide/style#rich-text)로 설정할 수 있다.<br/>
+또, 다른 어노테이션과 마찬가지로
+[front](/config/config/base/annotation#front) 설정에 따라 
+시리즈 등 기존 구성 요소들 아래 또는 위에 표시될 수 있으며, 
+[rotation](/config/config/base/annotation#rotatio)을 지정해서 회전 시킬 수도 있다.
+[align](/config/config/base/annotation#align), [verticalAlign](/config/config/base/annotation#verticalAlign)으로 수평 수직 위치를 지정하고,
+[offsetX](/config/config/base/annotation#offsetX), [offsetY](/config/config/base/annotation#offsetY)로 간격을 설정한다.<br/>
+'Text Annotation 4'는 align이 '**right**'이다.
+'Text Annotation 5'는 align이 'right'이고, verticalAlign이 '**bottom**'이다.<br/>
+'Text Annotation 10'은 차트의 annotation이고, 나머지는 body의 annotation들이다.
+
 ## 설정
+
+'**type**'을 'text'로 지정한다.
+
+```js
+    anntations: [{
+        type: 'text',
+        text: 'Text 어노테이션',
+        rotation: -20,
+        style: {
+        }
+    }]
+```
 
 ### See Also
 
-- [Annoation 개요](/annotations)
+- [Image Annotation](/guide/annotation-image)
+- [Shape Annotation](/guide/annotation-shape)
+- [Annoation 개요](/guide/annotations)
 - [게이지 개요](/guide/gauges)
 - [시리즈 개요](/guide/series)
-- [축 개요](/guide/axes)
-- [API 개요](/docs)
+- [차트 Configuration](/config)

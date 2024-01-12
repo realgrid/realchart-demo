@@ -79,7 +79,6 @@ function setActions(container) {
         alert('hello');
     });
     createCheckBox(container, 'inverted', function (e) {
-        RealChart.setDebugging(_getChecked(e));
         config.inverted = _getChecked(e);
         chart.load(config);
     }, false);   

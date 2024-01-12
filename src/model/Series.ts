@@ -20,6 +20,7 @@ import { ColorList } from "./Asset";
 import { IAxis } from "./Axis";
 import { IChart } from "./Chart";
 import { ChartItem, IconedText, LabelIconPostion } from "./ChartItem";
+import { SeriesLoadAnimation } from "./ChartTypes";
 import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource, LegendItem } from "./Legend";
 import { ITooltipContext } from "./Tooltip";
@@ -983,6 +984,10 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      */
     tooltipText = '<b>${name}</b><br>${series}:<b> ${yValue}</b>';
     /**
+     * 차트 설정 로드 시 실행되는 animation 종류.
+     */
+    loadAnimation = SeriesLoadAnimation.DEFAULT;
+    /**
      * 데이터 point의 동적 스타일 콜백.
      * 
      * @config
@@ -1558,6 +1563,10 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         this._yFielder = this._createFielder(this.yField);
         this._zFielder = this._createFielder(this.zField);
         this._colorFielder = this._createFielder(this.colorField);
+    }
+
+    protected _defaultLoadAnimation(): SeriesLoadAnimation {
+        return SeriesLoadAnimation.REVEAL;
     }
 
     protected _doLoad(src: any): void {

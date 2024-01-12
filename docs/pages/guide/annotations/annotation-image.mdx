@@ -1,11 +1,27 @@
 # Image Annotation
 
+[imageUrl](/config/config/annotation/text#imgUrl)로 지정한 이미지를 
+차트나 [body](/config/config/body)(시리즈가 표시되는 plotting 영역)의 지정한 위치에 표시한다.
+
+<img src="/images/guide/annotation-image-01.png" width="80%" class="border-img"/>
+
 ## 설정
+
+'**type**'을 'image'로 지정한다.
+
+```js
+    anntations: [{
+        type: 'image',
+        imageUrl: '/images/chart.png',
+        rotation: -20
+    }]
+```
 
 ### See Also
 
-- [Annoation 개요](/annotations)
+- [Shape Annotation](/guide/annotation-shape)
+- [Text Annotation](/guide/annotation-text)
+- [Annoation 개요](/guide/annotations)
 - [게이지 개요](/guide/gauges)
 - [시리즈 개요](/guide/series)
-- [축 개요](/guide/axes)
-- [API 개요](/docs)
+- [차트 Configuration](/config)
