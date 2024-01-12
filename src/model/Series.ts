@@ -2164,7 +2164,7 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
      * 이 시리즈의 point가 차지하는 영역 중에서 point bar 양쪽 끝에 채워지는 빈 영역의 크기.
      * <br>
      * point가 차지할 원래 크기에 대한 상대 값으로서,
-     * 0 ~ 1 사이의 비율 값으로 지정한다.
+     * 0 ~ 0.5 사이의 비율 값으로 지정한다.
      * 
      * @default undefined 한 카테고리에 cluster 가능한 시리즈가 하나만 표시되면 0.25, group에 포함된 경우 0.1, 여러 시리즈와 같이 표시되면 0.2.
      * @config
@@ -2230,7 +2230,7 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
     protected _doPrepareRender(): void {
         super._doPrepareRender();
 
-        this._pointPad = isNaN(this.pointPadding) ? (this._single ? 0.25 : this.group ? 0.1 : 0.2) : this.pointPadding;
+        this._pointPad = isNaN(this.pointPadding) ? (this._single ? 0.25 : this.group ? 0.1 : 0.2) : Math.max(0, Math.min(0.5, this.pointPadding));
     }
 }
 

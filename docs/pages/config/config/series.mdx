@@ -162,7 +162,29 @@ CirleBar 시리즈.<br/>
 ## [series[type=circlebargroup]](./series/circlebargroup)
 
 ## [series[type=dumbbell]](./series/dumbbell)
-BarRange 시리즈 변종.
+Dumbbell 시리즈.<br/>
+Lollipop 시리즈의 변종으로 시간에 따른 두 값의 변화를 표시하는 등,
+두 그룹 간의 차이나 관계를 표시하는 데 사용될 수 있다.
+예를 들어, 두 기간 동안의 성장률, 두 그룹 간의 판매량 차이 변화 등을 보여 주는데 유용하다.<br/>
+양 끝 두 개의 원이나 점 등을 선분으로 연결하여 표시한다.<br/><br/> [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
+[주의] 데이터포인트 구성에 필요한 모든 값을 제공해야 한다.
+
+###### 단일 값 및 값 배열
+|형식|설명|
+|---|---|
+|y|단일 숫자면 low, y값. x 값은 순서에 따라 자동 결정.|
+|[]|빈 배열이면 <Content type="keyword" value="null"></Content>. x 값은 데이터포인트 순서에 따라 자동 결정.|
+|[z]|단일 값 배열이면 low, y값. x 값은 데이터포인트 순서에 따라 자동 결정.|
+|[low, y]|두 값 배열이면 low값과 y값. x 값은 데이터포인트 순서에 따라 자동 결정.|
+|[x, low, y,]|세 값 이상이면 순서대로 x, low, y값.<br/> 또는 [xField](#xfield) 속성이 숫자이면 x값의 index. [lowField](#lowfield) 는 low값의 index. [yField](#yfield) 는 y값의 index.|
+
+###### json 배열
+|Series 속성|설명|
+|---|---|
+| [xField](#xfield) |속성 값, 또는 <Content type="expression" value="'x', 'name', 'label'"></Content> 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
+| [yField](#yfield) |속성 값, 또는 <Content type="expression" value="'y', 'value'"></Content> 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
+| [lowField](#lowfield) |속성 값, 또는 <Content type="expression" value="'low'"></Content> 속성 값이 low 값이 된다.|
+| [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
 ## [series[type=equalizer]](./series/equalizer)
 Bar를 여러 개의 segment로 나눠 표시하는 시리즈.<br/>
 수평 또는 수직 막대로 여러 값들을 **비교**하는 데 사용한다.
@@ -231,8 +253,20 @@ Heatmap 시리즈.<br/>
 | [zField](#zfield) |속성 값, 또는 <Content type="expression" value="'z'"></Content> 속성 값이 z 값이 된다.|
 | [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
 ## [series[type=histogram]](./series/histogram)
-각 bin은 하한값을 포함하고 상한값은 포함하지 않는다. 마지막 bin은 상한값을 포함한다.
-X축이 <Content type="expression" value="'linear'"></Content>이어야 한다.
+[주의] x축이 <Content type="expression" value="'**linear**'"></Content> 축이어야 한다.<br/><br/> [data](#data) 는 아래 형식들로 전달할 수 있다.
+[주의] y값만 계산해서 histogram bin에 해당하는 데이터포인트들을 생성한다.
+
+###### 단일 값 및 값 배열
+|형식|설명|
+|---|---|
+|y|단일 숫자면 y값. x 값은 순서에 따라 자동 결정.|
+|[]|빈 배열이면 <Content type="keyword" value="null"></Content>. x 값은 순서에 따라 자동 결정.|
+|[y,]| [yField](#yfield) 속성이 숫자이면 y값의 index. 아니면 첫번째 값이 y값.
+
+###### json 배열
+|Series 속성|설명 |
+|---|---|
+| [yField](#yfield) |속성 값, 또는 <Content type="expression" value="'y', 'value'"></Content> 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
 ## [series[type=arearange]](./series/arearange)
 AreaRange 시리즈.<br/>
 
@@ -283,9 +317,7 @@ Line 시리즈.<br/>
 
 주로 시간이나 다른 축 변수에 의한 데이터의 **변화** 또는 **경향**(pattern)을 보여주는 데 사용한다.
 데이터포인트의 값에 해당하는 지점에 표시되는 데이터포인트 마커들을 연결한 선으로 표시되며,
-기본 x축은 [linear](/config/config/xAxis/linear)이다.<br/><br/>
-
-* [data](#data) 는 아래 형식들로 전달할 수 있다.
+기본 x축은 [linear](/config/config/xAxis/linear)이다.<br/><br/> [data](#data) 는 아래 형식들로 전달할 수 있다.
 
 ###### 단일 값 및 값 배열
 |형식|설명|
@@ -351,9 +383,27 @@ Ohlc 시리즈.<br/>
 | [yField](#yfield) |속성 값, 또는 <Content type="expression" value="'y', 'value'"></Content> 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
 | [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
 ## [series[type=pareto]](./series/pareto)
-참조하는 원본 시리즈의 누적 비율을 표시한다.
+Pareto 시리즈<br/>
+참조하는 원본 시리즈의 누적 비율을 표시한다.<br/> [source](#source) 로 지정된 시리즈의 데이터포인트 값들로 부터 누적 포인트들을 계산해서 표시한다.
 ## [series[type=pie]](./series/pie)
+Pie 시리즈<br/>
+모든 데이터포인트 값들의 합에 대한 데이터포인트의 상대적 값 비율을 원호로 표시한다.<br/> [data](#data) 는 아래 형식들로 전달할 수 있다.<br/>
 
+###### 단일 값 및 값 배열
+|형식|설명|
+|---|---|
+|y|단일 숫자면 y값. x 값은 순서에 따라 자동 결정.|
+|[]|빈 배열이면 <Content type="keyword" value="null"></Content>. x 값은 순서에 따라 자동 결정.|
+|[y]|값 하나인 배열이면 y값. x 값은 순서에 따라 자동 결정.|
+|[x, y,]|두 값 이상이면 순서대로 x, y값.<br/> 또는 [xField](#xfield) 속성이 숫자이면 x값의 index. [yField](#yfield) 는 y값의 index.
+ [colorField](#colorfield) 는 color값의 index.|
+
+###### json 배열
+|Series 속성|설명 |
+|---|---|
+| [xField](#xfield) |속성 값, 또는 <Content type="expression" value="'x', 'name', 'label'"></Content> 속성들 중 순서대로 값이 설정된 것이 x 값이 된다.|
+| [yField](#yfield) |속성 값, 또는 <Content type="expression" value="'y', 'value'"></Content> 속성들 중 순서대로 값이 설정된 것이 y 값이 된다.|
+| [colorField](#colorfield) |속성 값, 또는 <Content type="expression" value="'color'"></Content> 속성 값으로 데이터포인트의 개별 색상으로 지정된다.|
 ## [series[type=piegroup]](./series/piegroup)
 
 ## [series[type=scatter]](./series/scatter)

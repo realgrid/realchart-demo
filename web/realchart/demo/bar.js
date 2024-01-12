@@ -31,6 +31,7 @@ const config = {
       // pointWidth: '100%',
       // colorByPoint: true,
       data: [155, 138, 122, 133, 114, 113, 123],
+      pointPadding: 1,
     },
   ],
 };
