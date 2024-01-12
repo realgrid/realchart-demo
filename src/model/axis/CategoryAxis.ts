@@ -96,6 +96,9 @@ class CategoryAxisGrid extends AxisGrid {
 /**
  * 지정된 카테고리 개수로 축을 분할해서 각 카테고리에 연결된 데이터포인트들이 표시되게 한다.<br/>
  * 카테고리 하나가 1의 너비를 갖는다.
+ * 주로 x축으로 사용되며, 선형(linear)축과 달리 축을 분할한 각 카테고리는 서로 격리되어 있으며, 
+ * 개별 축의 너비(간격)나 축들 사이의 순서가 의미가 없다.<br/>
+ * 또, 축 label에 카테고리를 대표하는 이름을 표시할 필요한 경우 먼저 카테고리 축을 고려해야 한다.
  * 
  * //1. categories 속성으로 카테고리 목록을 구성한다.
  * //2. 이 축에 연결된 시리즈들에 포함된 data point들의 문자열인 값들, 혹은 categoryField에 해당하는 값들을 수집한다.
@@ -147,21 +150,21 @@ export class CategoryAxis extends Axis {
     //  */
     // valueStep = 1;
     /**
-     * Category 목록을 수집하는 시리즈.\
+     * Category 목록을 수집하는 시리즈.<br/>
      * 지정하지 않으면 모든 시리즈에서 카테고리를 수집한다.
      * 
      * @config
      */
     categorySeries: string;
     /**
-     * 카테고리로 사용되는 dataPoint 속성.\
+     * 카테고리로 사용되는 dataPoint 속성.<br/>
      * {@link categories}가 지정되면 이 속성은 무시된다.
      * 
      * @config
      */
     categoryField: string | number;
     /**
-     * 명시적으로 지정하는 카테고리 목록.\
+     * 명시적으로 지정하는 카테고리 목록.<br/>
      * 문자열로 카테고리 항목을 지정하거나,
      * object로 지정할 때에는 name(혹은 label) 속성에 카테고리 이름을 문자열로,
      * width 속성에 상대 너비(1이 기본 너비)를 숫자로 지정한다.
@@ -177,7 +180,7 @@ export class CategoryAxis extends Axis {
      */
     weightSeries: string;
     /**
-     * weightSeries data에서 weight를 제공하는 필드.
+     * weightSeries data에서 weight를 제공하는 필드.<br/>
      * // TODO: 구현할 것! (시리즈가 아니라 여기서 지정한 게 맞나?)
      */
     wieghtField: number | string;
@@ -186,7 +189,7 @@ export class CategoryAxis extends Axis {
     //  */
     // categoryStep = 1;
     /**
-     * 축의 양 끝 카테고리 위치 전후에 여백으로 추가되는 크기.\
+     * 축의 양 끝 카테고리 위치 전후에 여백으로 추가되는 크기.<br/>
      * 각각 시작/끝 카테고리에 대한 상대적 크기로 지정한다.
      * {@link minPadding}, {@link maxPadding}으로 별도 지정할 수 있다.
      * 
@@ -194,7 +197,7 @@ export class CategoryAxis extends Axis {
      */
     padding = 0;
     /**
-     * 축의 시작 카테고리 위치 이 전에 여백으로 추가되는 크기.\
+     * 축의 시작 카테고리 위치 이 전에 여백으로 추가되는 크기.<br/>
      * 카테고리 기본 너비(1)에 대한 상대적 크기로 지정한다.
      * {@link padding} 속성으로 양끝 padding을 한꺼번에 지정할 수 있다.
      * 
@@ -202,7 +205,7 @@ export class CategoryAxis extends Axis {
      */
     minPadding: number;
     /**
-     * 축의 끝 카테고리 위치 이 후에 여백으로 추가되는 크기.\
+     * 축의 끝 카테고리 위치 이 후에 여백으로 추가되는 크기.<br/>
      * 카테고리 기본 너비(1)에 대한 상대적 크기로 지정한다.
      * {@link padding} 속성으로 양끝 padding을 한꺼번에 지정할 수 있다.
      * 
@@ -210,13 +213,14 @@ export class CategoryAxis extends Axis {
      */
     maxPadding: number;
     /**
-     * 각 카테고리의 양 끝에 추가되는 여백의 카테고리에 너비에 대한 상대적 크기.
+     * 각 카테고리의 양 끝에 추가되는 여백의 카테고리에 너비에 대한 상대적 크기.<br/>
+     * 0 ~ 0.5 사이의 값으로 지정한다.
      * 
      * @config
      */
     categoryPadding = 0.1;
     /**
-     * polar 축일 때 시작 위치 간격.\
+     * polar 축일 때 시작 위치 간격.<br/>
      * 첫번째 카테고리 너비(각도)에 대한 상대값으로 0~1 사이의 값을 지정한다.
      * ex) 0.5로 지정하면 bar 시리즈의 첫 째 bar가 12시 위치에 표시된다.
      * 
@@ -312,7 +316,7 @@ export class CategoryAxis extends Axis {
             this._minPad = pickNum3(this.minPadding, this.padding, 0);
             this._maxPad = pickNum3(this.maxPadding, this.padding, 0);
             // category padding
-            this._catPad = pickNum(this.categoryPadding, 0);
+            this._catPad = Math.max(0, Math.min(0.5, pickNum(this.categoryPadding, 0)));
         }
     }
 
