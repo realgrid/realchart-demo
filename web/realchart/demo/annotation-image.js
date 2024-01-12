@@ -6,92 +6,55 @@
 const config = {
 	type: 'bar',
 	title: 'Title',
-	subtitle: {
-		
-	},
-	options: {
-
-	},
-	legend:{
-		
-	},
 	xAxis: {
-        grid: {
-           
-        },
-	
-		title: {
-
-		},
-		categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+		categories: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
 		label: {
 			step: 1,
 		},
 	},
 	yAxis: {
-		title: {
-
-		},
 	},
 	body: {
         style: {
-
+            fill: '#0088ff20'
 		},
 		annotations: [{
-            offsetX: 30,
-            offsetY: 25,
-            rotation: 5,
-            text: 'Annotation Sample',
-            style: {
-                fill: 'white'
-            },
-            backgroundStyle: {
-                padding: '3px 5px',
-                fill: '#333',
-                rx: 5,
-                fillOpacity: 0.7
-            }
-        }, 
-		{
-            offsetX: 260,
-            offsetY: 25,
-            rotation: -5,
-            text: 'Text',
-            style: {
-                fill: 'white'
-            },
-            backgroundStyle: {
-                padding: '3px 5px',
-                fill: 'blue',
-                rx: 5,
-                fillOpacity: 0.7
-            }
-        },{
             type: 'image',
-            align: 'right',
-            offsetX: 50,
-            offsetY: 50,
+            offsetX: 30,
+            offsetY: 5,
             width: 100,
             imageUrl: '../assets/images/annotation.png'
+        }, {
+            align: 'right',
+            offsetX: 20,
+            offsetY: 10,
+            width: 90,
+            imageUrl: '../assets/images/insta.png'
+        }, {
+            align: 'right',
+            offsetX: 120,
+            offsetY: 20,
+            rotation: -20,
+            width: 90,
+            imageUrl: '../assets/images/insta.png'
+        }, {
+            align: 'right',
+            offsetX: 220,
+            offsetY: 20,
+            rotation: -45,
+            width: 150,
+            imageUrl: '../assets/images/insta.png'
         }]
     },
 	series: [{
-		colorByPoint: true,
-		pointLabel: true,
-		pointWidth: 30,
+		pointLabel: {
+            visible: true,
+            style: {
+                fill: '#777'
+            }
+        },
 		data: [
-			[150], // 1월은 -2°C
-			[140], // 2월은 -1°C
-			[130], // 3월은 1°C
-			[120], // 4월은 5°C
-			[110], // 5월은 10°C
-			[90], // 6월은 14°C
-			[80], // 7월은 16°C
-			[70], // 8월은 15°C
-			[60], // 9월은 10°C
-			[50], 
-			[40], 
-		 	[30], 
+			120, 140, 130, 120, 110, 90, 80, 70, 110, 150, 140, 30, 
 		],
 	},
 		

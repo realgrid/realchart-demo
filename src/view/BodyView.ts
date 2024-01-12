@@ -1398,9 +1398,11 @@ export class BodyView extends ChartElement<Body> {
     }
 
     protected _layoutAnnotations(inverted: boolean, w: number, h: number): void {
-        this._annotationViews.forEach(v => {
-            v.resizeByMeasured();
-            v.layout().transp(v.model.getPosition(inverted, 0, 0, w, h, v.width, v.height));
-        });
+        if (this._annotationViews.length > 0) {
+            this._annotationViews.forEach(v => {
+                v.resizeByMeasured();
+                v.layout().transp(v.model.getPosition(inverted, 0, 0, w, h, v.width, v.height));
+            });
+        }
     }
 }

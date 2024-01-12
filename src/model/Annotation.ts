@@ -123,6 +123,7 @@ export abstract class Annotation extends ChartItem {
      * @config
      */
     backgroundStyle: SVGStyleOrClass;
+    noClip: boolean;
 
     //-------------------------------------------------------------------------
     // methods

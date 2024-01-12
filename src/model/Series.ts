@@ -850,6 +850,9 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      */
     visibleThreshold: number;
     /**
+     * 시리즈 표시 순서를 지정할 수 있다.<br/>
+     * 값이 클 수록 나중에(위에) 표시된다.
+     * 
      * @config
      */
     zOrder = 0;
@@ -866,21 +869,21 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      */
     yAxis: string | number;
     /**
-     * json 객체나 배열로 전달되는 데이터포인트 정보에서 x 값을 지정하는 속성명이나 인덱스.\
+     * json 객체나 배열로 전달되는 데이터포인트 정보에서 x 값을 지정하는 속성명이나 인덱스.<br/>
      * undefined이면, data point의 값이 array일 때는 0, 객체이면 'x'.
      * 
      * @config
      */
     xField: string | number;
     /**
-     * json 객체나 배열로 전달되는 데이터포인트 정보에서 y 값을 지정하는 속성명이나 인덱스.\
+     * json 객체나 배열로 전달되는 데이터포인트 정보에서 y 값을 지정하는 속성명이나 인덱스.<br/>
      * undefined이면, data point의 값이 array일 때는 1, 객체이면 'y'.
      * 
      * @config
      */
     yField: string | number | Function;
     /**
-     * json 객체나 배열로 전달되는 데이터포인트 정보에서 z 값을 지정하는 속성명이나 인덱스.\
+     * json 객체나 배열로 전달되는 데이터포인트 정보에서 z 값을 지정하는 속성명이나 인덱스.<br/>
      * undefined이면, data point의 값이 array일 때는 2, 객체이면 'z'.
      * 
      * @config
@@ -907,7 +910,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         }
     }
     /**
-     * x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.\
+     * x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.<br/>
      * 이 후에는 {@link xStep}씩 증가시키면서 설정한다.
      * 이 속성이 지징되지 않은 경우 {@link ChartOptions.xStart}가 적용된다.
      * 
@@ -915,7 +918,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      */
     xStart: any;
     /**
-     * x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\
+     * x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.<br/>
      * 첫번째 값은 {@link xStart}로 설정한다.
      * time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'w', 'd', 'h', 'n', 's')로 지정할 수 있다.
      * 이 속성이 지정되지 않으면 {@link ChartOptions.xStep}이 적용된다.
@@ -924,7 +927,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      */
     xStep: number | string;
     /**
-     * 모든 데이터포인트에 적용되는 inline 스타일셋.\
+     * 모든 데이터포인트에 적용되는 inline 스타일셋.<br/>
      * {@link Series.style}로 설정되는 시리즈의 inline 스타일이
      * 데이터포인터에 적용되지 않는 경우 이 속성을 사용할 수 있다.
      */
@@ -936,14 +939,14 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      */
     color: string;
     /**
-     * 데이터 포인트별 색들을 지정한다.\
+     * 데이터 포인트별 색들을 지정한다.<br/>
      * 색 배열로 지정하거나, 'colors' asset으로 등록된 이름을 지정할 수 있다.
      * 
      * @config
      */
     pointColors: string[] | string;
     /**
-     * 값 범위 목록.\
+     * 값 범위 목록.<br/>
      * 범위별로 다른 스타일을 적용할 수 있다.
      * 범위들은 중첩될 수 없다.
      * 
@@ -951,7 +954,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      */
     viewRanges: IValueRange[] | IValueRanges;
     /**
-     * ranges가 적용되는 값.\
+     * ranges가 적용되는 값.<br/>
      * 지정하지 않으면 시리즈 종류에 띠라 자동 적용된다.
      * 'line' 시리즈 계열은 'x', 나머지는 'y'가 된다.
      * 현재 'z'은 range는 bubble 시리즈에만 적용할 수 있다.
@@ -960,7 +963,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      */
     viewRangeValue: 'x' | 'y' | 'z';
     /**
-     * true로 지정하면 body를 벗어난 data point 영역도 표시된다.\
+     * true로 지정하면 body를 벗어난 data point 영역도 표시된다.<br/>
      * 값을 지정하지 않으면 polar 차트에서는 true, 직교 차트에서는 false이다.
      * group에 포함되면 group의 noClip 설정을 따른다.
      * 
@@ -994,7 +997,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      */
     pointStyleCallback: PointStyleCallback;
     /**
-     * 데이터 point가 클릭될 때 발생하는 이벤트 콜백.
+     * 데이터 point가 클릭될 때 발생하는 이벤트 콜백.<br/>
      * 명시적 true를 리턴하면 기본 동작이 진행되지 않는다.
      * 
      * @config

@@ -14,6 +14,7 @@ text를 [rich text](/guide/style#rich-text)로 설정할 수 있다.<br/>
 [offsetX](/config/config/base/annotation#offsetX), [offsetY](/config/config/base/annotation#offsetY)로 간격을 설정한다.<br/>
 'Text Annotation 4'는 align이 '**right**'이다.
 'Text Annotation 5'는 align이 'right'이고, verticalAlign이 '**bottom**'이다.<br/>
+'Text Annotation 3', 'Text Annotation 5'는 [front](/config/config/base/annotation#front)가 true로 지정돼서 시리즈 위에 표시된다.<br/>
 'Text Annotation 10'은 차트의 annotation이고, 나머지는 body의 annotation들이다.
 
 ## 설정
@@ -30,11 +31,21 @@ text를 [rich text](/guide/style#rich-text)로 설정할 수 있다.<br/>
     }]
 ```
 
+'**type**'을 지정하지 않고, 
+[shape](/config/config/annotation/shape#shape)나 [imageUrl](/config/config/annotation/image#imageurl) 지정이 없으면
+'text'로 지정한 것과 동일하다.
+
+```js
+    anntations: [{
+        text: 'Text 어노테이션',
+    }]
+```
+
 ### See Also
 
 - [Image Annotation](/guide/annotation-image)
 - [Shape Annotation](/guide/annotation-shape)
-- [Annoation 개요](/guide/annotations)
+- [Annotation 개요](/guide/annotations)
 - [게이지 개요](/guide/gauges)
 - [시리즈 개요](/guide/series)
 - [차트 Configuration](/config)
