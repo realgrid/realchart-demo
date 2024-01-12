@@ -15,6 +15,9 @@ const config = {
   },
   yAxis: {
     title: '수출량',
+    label: {
+      numberSymbols: 'k,M',
+    },
   },
   templates: {
     line: {

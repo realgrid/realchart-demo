@@ -14,7 +14,10 @@ const config = {
     type: 'date'
   },
   yAxis: {
-    title: '수출량'
+    title: '수출량',
+    label: {
+      numberSymbols: 'k,M'
+    }
   },
   templates: {
     line: {
