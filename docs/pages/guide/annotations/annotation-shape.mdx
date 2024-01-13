@@ -1,9 +1,21 @@
 # Shape Annotation
 
-[shape](/config/config/annotation/text#shape) 속성으로 지정한 도형을 
+[shape](/config/config/annotation/shape#shape) 속성으로 지정한 도형을 
 차트나 [body](/config/config/body)(시리즈가 표시되는 plotting 영역)의 지정한 위치에 표시한다.
 
 <img src="/images/guide/annotation-shape-01.png" width="80%" class="border-img"/>
+
+[shape](/config/config/annotation/shape#shape) 속성으로 표시할 도형을.
+'circle', 'diamond', 'square', 'triangle', 'star', 'rectangle' 등으로 설정할 수 있다.<br/>
+위 쪽 큰 별은 [noClip](/config/config/annotation/shape#noclip)이 true로 설정돼서 body 영역 바깥까지 표시되고 있다.<br/>
+아래쪽 쪽 큰 별은 [noClip](/config/config/annotation/shape#noclip)이 설정되지 않아 body 영역에 클립되고 있다.<br/>
+중간의 긴 직사각형은 [front](/config/config/annotation/shape#front)가 true로 설정돼서 시리즈 위에 표시되고 있다.
+'fill'을 'white'로 지정해서 아래쪽 시리즈 부분이 표시되지 않는다.<br/>
+또, 이 직사각형과 오른쪽 점선 사각형은 [x1](/config/config/annotation/shape#x1), [x2](/config/config/annotation/shape#x2), 
+[y1](/config/config/annotation/shape#y1), [y2](/config/config/annotation/shape#y2)로 위치와 크기가 설정돼서
+차트 [inverted](/config/config#inverted)를 true로 지정해도 아래 그림처럼 위치가 유지된다.<br/>
+
+<img src="/images/guide/annotation-shape-02.png" width="80%" class="border-img"/>
 
 ## 설정
 

@@ -8,14 +8,14 @@
 
 import { isString } from "../../common/Common";
 import { isNull } from "../../common/Types";
-import { SizableAnnotation } from "../Annotation";
+import { Annotation } from "../Annotation";
 
 /**
  * 이미지 Annotation 모델.
  * 
  * @config chart.annotation[type=image]
  */
-export class ImageAnnotation extends SizableAnnotation {
+export class ImageAnnotation extends Annotation {
 
     //-------------------------------------------------------------------------
     // properties

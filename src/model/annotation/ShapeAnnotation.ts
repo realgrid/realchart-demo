@@ -6,12 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { absv, isArray, isArrayEx, isString, maxv, minv } from "../../common/Common";
-import { IPoint } from "../../common/Point";
-import { ISize } from "../../common/Size";
+import { isString } from "../../common/Common";
 import { Shape } from "../../common/impl/SvgShape";
-import { SizableAnnotation } from "../Annotation";
-import { Axis } from "../Axis";
+import { Annotation } from "../Annotation";
 import { IChart } from "../Chart";
 import { ISeries, Series } from "../Series";
 
@@ -20,7 +17,7 @@ import { ISeries, Series } from "../Series";
  * 
  * @config chart.annotation[type=shape]
  */
-export class ShapeAnnotation extends SizableAnnotation {
+export class ShapeAnnotation extends Annotation {
 
     //-------------------------------------------------------------------------
     // consts
@@ -34,17 +31,14 @@ export class ShapeAnnotation extends SizableAnnotation {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _series: ISeries;
     private _xRange: number[];
     private _yRange: number[];
-    private _x: number;
-    private _y: number;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart) {
-        super(chart);
+    constructor(chart: IChart, inBody: boolean) {
+        super(chart, inBody);
 
         this.width = this.height = 64;
     }
@@ -97,46 +91,53 @@ export class ShapeAnnotation extends SizableAnnotation {
         return super._doLoadSimple(source);
     }
 
-    protected _doLoad(source: any): void {
-        super._doLoad(source);
+    // protected _doLoad(source: any): void {
+    //     super._doLoad(source);
 
-        if (isArrayEx(source.xRange, 2) && !isNaN(+source.xRange[0]) && !isNaN(+source.xRange[1]) &&
-            isArrayEx(source.yRange, 2) && !isNaN(+source.yRange[0]) && !isNaN(+source.yRange[1])) {
-                this._xRange = [+source.xRange[0], +source.xRange[1]];
-                this._yRange = [+source.yRange[0], +source.yRange[1]];
-        }
-    }
+    //     if (isArrayEx(source.xRange, 2) && !isNaN(+source.xRange[0]) && !isNaN(+source.xRange[1]) &&
+    //         isArrayEx(source.yRange, 2) && !isNaN(+source.yRange[0]) && !isNaN(+source.yRange[1])) {
+    //             this._xRange = [+source.xRange[0], +source.xRange[1]];
+    //             this._yRange = [+source.yRange[0], +source.yRange[1]];
+    //     }
+    // }
 
-    getSize(wDomain: number, hDomain: number): ISize {
-        const ser = this.getSeries();
+    // getSize(wDomain: number, hDomain: number, inverted: boolean): ISize {
+    //     const ser = this.getSeries();
 
-        if (ser) {
-            const series = this._series = ser.series as Series;
-            const xAxis = series._xAxisObj;
-            const yAxis = series._yAxisObj;
-            const x1 = xAxis.getPos(wDomain, this._xRange[0]);
-            const x2 = xAxis.getPos(wDomain, this._xRange[1]);
-            const y1 = yAxis.getPos(hDomain, this._yRange[0]);
-            const y2 = yAxis.getPos(hDomain, this._yRange[1]);
+    //     if (ser) {
+    //         if (inverted) {
+    //             const t = wDomain;
+    //             wDomain = hDomain;
+    //             hDomain = t;
+    //         }
 
-            this._x = minv(x1, x2);
-            this._y = maxv(y1, y2);
-            return { width: absv(x1 - x2), height: absv(y1 - y2)};
-        }
-        return super.getSize(wDomain, hDomain);
-    }
+    //         // const series = this._series = ser.series as Series;
+    //         const series = ser.series as Series;
+    //         const xAxis = series._xAxisObj;
+    //         const yAxis = series._yAxisObj;
+    //         const x1 = xAxis.getPos(wDomain, this._xRange[0]);
+    //         const x2 = xAxis.getPos(wDomain, this._xRange[1]);
+    //         const y1 = yAxis.getPos(hDomain, this._yRange[0]);
+    //         const y2 = yAxis.getPos(hDomain, this._yRange[1]);
 
-    getPosition(inverted: boolean, left: number, top: number, wDomain: number, hDomain: number, width: number, height: number): IPoint {
-        const ser = this.getSeries();
+    //         this._x = minv(x1, x2);
+    //         this._y = maxv(y1, y2);
+    //         return { width: absv(x1 - x2), height: absv(y1 - y2)};
+    //     }
+    //     return super.getSize(wDomain, hDomain, inverted);
+    // }
 
-        if (ser) {
-            if (inverted) {
-                return { x: wDomain - this._y, y: this._x };
-            } else {
-                return { x: this._x, y: hDomain - this._y };
-            }
-        } else {
-            return super.getPosition(inverted, left, top, wDomain, hDomain, width, height);
-        }
-    }
+    // getPosition(inverted: boolean, left: number, top: number, wDomain: number, hDomain: number, width: number, height: number): IPoint {
+    //     const ser = this.getSeries();
+
+    //     if (ser) {
+    //         if (inverted) {
+    //             return { x: wDomain - this._y, y: this._x };
+    //         } else {
+    //             return { x: this._x, y: hDomain - this._y };
+    //         }
+    //     } else {
+    //         return super.getPosition(inverted, left, top, wDomain, hDomain, width, height);
+    //     }
+    // }
 }

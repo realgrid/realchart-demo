@@ -905,7 +905,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._body.load(source.body || source.plot); // TODO: plot 제거
 
         // annotations
-        this._annotations.load(source.annotations || source.annotation);
+        this._annotations.load(source.annotations || source.annotation, false);
 
         // series navigator
         this._navigator.load(source.seriesNavigator);

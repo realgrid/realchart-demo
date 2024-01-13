@@ -1554,9 +1554,7 @@ export class ChartView extends LayerElement {
                     break;
             }
 
-            v.resizeByMeasured();
-            const p = v.model.getPosition(inverted, x, y, w, h, v.width, v.height);
-            v.layout(p);//.transp();
+            v._layoutView(inverted, x, y, w, h);
         });
     }
 }

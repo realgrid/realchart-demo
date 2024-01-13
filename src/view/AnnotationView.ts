@@ -38,7 +38,13 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
     //-------------------------------------------------------------------------
     update(hintWidth: number, hintHeight: number): void {
         this.measure(this.doc, this.model, hintWidth, hintHeight, 0);
-        this.layout();
+        this._layoutView(this.chart().isInverted(), 0, 0, hintWidth, hintHeight);
+    }
+
+    _layoutView(invertd: boolean, x: number, y: number, w: number, h: number): void {
+        this.resizeByMeasured();
+        const p = this.model.getPosition(this.chart().isInverted(), x, y, w, h, this.width, this.height);
+        this.layout(p);//.transp();
     }
 
     //-------------------------------------------------------------------------

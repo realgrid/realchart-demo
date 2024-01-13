@@ -10,6 +10,7 @@ import { isArray, isObject, isString } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { ISize } from "../common/Size";
 import { Align, IAnnotationAnimation, IPercentSize, RtPercentSize, SVGStyleOrClass, VerticalAlign, calcPercent, parsePercentSize } from "../common/Types";
+import { Axis } from "./Axis";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 import { ISeries } from "./Series";
@@ -41,14 +42,25 @@ export enum AnnotationScope {
 export abstract class Annotation extends ChartItem {
 
     //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _width: RtPercentSize;
+    private _height: RtPercentSize;
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    _seriesObj: ISeries;
+    private _widthDim: IPercentSize;
+    private _heightDim: IPercentSize;
+    _x: number;
+    _y: number;
+    _w: number;
+    _h: number;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart) {
+    constructor(chart: IChart, public inBody: boolean) {
         super(chart, true);
     }
 
@@ -108,11 +120,6 @@ export abstract class Annotation extends ChartItem {
      */
     scope = AnnotationScope.CHART;
     /**
-     * 연관 시리즈.\
-     * 이 시리즈가 감춰질 때 같이 감춰진다.
-     */
-    series: string;
-    /**
      * 처음 표시될 때 실행될 에니메이션 설정 정보.
      */
     loadAnimation: IAnnotationAnimation;
@@ -131,42 +138,177 @@ export abstract class Annotation extends ChartItem {
      * @config
      */
     noClip: boolean;
+    /**
+     * body 어노테이션일 경우,
+     * x 축을 기준으로 지정하는 수평(inverted일 때 수직) 위치.<br/>
+     */
+    x1: number | Date;
+    /**
+     * body 어노테이션일 경우,
+     * x 축을 기준으로 지정하는 수평(inverted일 때 수직) 위치.<br/>
+     */
+    x2: number | Date;
+    /**
+     * body 어노테이션일 경우,
+     * y 축을 기준으로 지정하는 수직(inverted일 때 수평) 위치.<br/>
+     */
+    y1: number | Date;
+    /**
+     * body 어노테이션일 경우,
+     * y 축을 기준으로 지정하는 수직(inverted일 때 수평) 위치.<br/>
+     */
+    y2: number | Date;
+    /**
+     * Annotation 너비.
+     * 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
+     * 
+     * @config
+     */
+    get width(): RtPercentSize {
+        return this._width;
+    }
+    set width(value: RtPercentSize) {
+        if (value !== this._width) {
+            this._widthDim = parsePercentSize(this._width = value, true);
+        }
+    }
+    /**
+     * Annotation 높이.
+     * 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
+     * 
+     * @config
+     */
+    get height(): RtPercentSize {
+        return this._height;
+    }
+    set height(value: RtPercentSize) {
+        if (value !== this._height) {
+            this._heightDim = parsePercentSize(this._height = value, true);
+        }
+    }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getSize(wDomain: number, hDomain: number): ISize {
+        const inverted = this.chart.isInverted();
+        const x1 = +this.x1;
+        const x2 = +this.x2;
+        const y1 = +this.y1;
+        const y2 = +this.y2;
+        let width: number;
+        let height: number;
+
+        this._x = this._y = this._w = this._h = NaN;
+
+        if (!isNaN(x1)){
+            const axis = this.chart.xAxis;
+
+            if (inverted) {
+                this._y = hDomain - axis.getPos(hDomain, x1);
+            } else {
+                this._x = axis.getPos(wDomain, x1);
+            }
+            if (!isNaN(x2)) {
+                if (inverted) {
+                    height = this._h = hDomain - axis.getPos(hDomain, x2) - this._y;
+                } else {
+                    width = this._w = axis.getPos(wDomain, x2) - this._x;
+                }
+            }
+        }
+
+        if (!isNaN(y1)){
+            const axis = this.chart.yAxis;
+
+            if (inverted) {
+                this._x = axis.getPos(wDomain, y1);
+            } else {
+                this._y = hDomain - axis.getPos(hDomain, y1);
+            }
+            if (!isNaN(y2)) {
+                if (inverted) {
+                    width = this._w = axis.getPos(wDomain, y2) - this._x;
+                } else {
+                    height = this._h = hDomain - axis.getPos(hDomain, y2) - this._y;
+                }
+            }
+        }
+        if (isNaN(width)) {
+            width = calcPercent(this._widthDim, wDomain);
+        } else if (width < 0) {
+            this._x += width;
+            width = -width;
+        }
+        if (isNaN(height)) {
+            height = calcPercent(this._heightDim, hDomain);
+        } else if (height < 0) {
+            this._y += height;
+            height = -height;
+        }
+        return { width, height }
+    }
+
     getPosition(inverted: boolean, left: number, top: number, wDomain: number, hDomain: number, width: number, height: number): IPoint {
-        let x = left;
-        let y = top;
+        let x: number;
+        let y: number;
 
-        switch (this.align) {
-            case Align.CENTER:
-                x += (wDomain - width) / 2 + this.offsetX;
-                break;
+        // if (this.inBody) {
+        //     if (!isNaN(this.x1)) {
+        //         const axis = this.chart.xAxis;
 
-            case Align.RIGHT:
-                x += wDomain - this.offsetX - width;
-                break;
+        //         if (inverted) {
+        //             y = hDomain - axis.getPos(hDomain, this.x1);
+        //         } else {
+        //             x = axis.getPos(wDomain, this.x1);
+        //         }
+        //     } 
+        //     if (!isNaN(this.y1)) {
+        //         const axis = this.chart.yAxis;
 
-            default:
-                x += this.offsetX;
-                break;
+        //         if (inverted) {
+        //             x = axis.getPos(wDomain, this.y1);
+        //         } else {
+        //             y = hDomain - axis.getPos(hDomain, this.y1);
+        //         }
+        //     } 
+        // }
+
+        if (isNaN(x = this._x)) {
+            x = left;
+
+            switch (this.align) {
+                case Align.CENTER:
+                    x += (wDomain - width) / 2 + this.offsetX;
+                    break;
+    
+                case Align.RIGHT:
+                    x += wDomain - this.offsetX - width;
+                    break;
+    
+                default:
+                    x += this.offsetX;
+                    break;
+            }
         }
 
-        switch (this.verticalAlign) {
-            case VerticalAlign.MIDDLE:
-                y += (hDomain - height) / 2 - this.offsetY;
-                break;
+        if (isNaN(y = this._y)) {
+            y = top;
 
-            case VerticalAlign.BOTTOM:
-                y += hDomain - this.offsetY - height;
-                break;
-
-            default:
-                y += this.offsetY;
-                break;
+            switch (this.verticalAlign) {
+                case VerticalAlign.MIDDLE:
+                    y += (hDomain - height) / 2 - this.offsetY;
+                    break;
+    
+                case VerticalAlign.BOTTOM:
+                    y += hDomain - this.offsetY - height;
+                    break;
+    
+                default:
+                    y += this.offsetY;
+                    break;
+            }
         }
-
         return { x, y };
     }
 
@@ -178,7 +320,7 @@ export abstract class Annotation extends ChartItem {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doPrepareRender(chart: IChart): void {
-        this._seriesObj = chart.seriesByName(this.series);
+        // this._seriesObj = chart.seriesByName(this.series);
     }
 }
 
@@ -229,17 +371,17 @@ export class AnnotationCollection {
         return isString(name) ? this._map[name] : this._items[name];
     }
 
-    load(src: any): void {
+    load(src: any, inBody: boolean): void {
         const chart = this.chart;
         const items: Annotation[] = this._items = [];
         const map = this._map = {};
 
         if (isArray(src)) {
             src.forEach((s, i) => {
-                items.push(this.$_loadItem(chart, s, i));
+                items.push(this.$_loadItem(chart, s, i, inBody));
             });
         } else if (isObject(src)) {
-            items.push(this.$_loadItem(chart, src, 0));
+            items.push(this.$_loadItem(chart, src, 0, inBody));
         }
 
         items.forEach(a => {
@@ -257,7 +399,7 @@ export class AnnotationCollection {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_loadItem(chart: IChart, src: any, index: number): Annotation {
+    private $_loadItem(chart: IChart, src: any, index: number, inBody: boolean): Annotation {
         let t = src.type;
 
         if (!t) {
@@ -272,83 +414,10 @@ export class AnnotationCollection {
             throw new Error('Invalid annotation type: ' + src.type);
         }
 
-        const g = new cls(chart, src.name || `annotation ${index + 1}`);
+        const g = new cls(chart, src.name || `annotation ${index + 1}`, inBody);
 
         g.load(src);
         g.index = index;
         return g;
     }
-}
-
-/**
- * Annotation 모델.
- */
-export abstract class SizableAnnotation extends Annotation {
-
-    //-------------------------------------------------------------------------
-    // consts
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // static members
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
-    private _width: RtPercentSize;
-    private _height: RtPercentSize;
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    private _widthDim: IPercentSize;
-    private _heightDim: IPercentSize;
-    
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    /**
-     * Annotation 너비.
-     * 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
-     * 
-     * @config
-     */
-    get width(): RtPercentSize {
-        return this._width;
-    }
-    set width(value: RtPercentSize) {
-        if (value !== this._width) {
-            this._widthDim = parsePercentSize(this._width = value, true);
-        }
-    }
-    /**
-     * Annotation 높이.
-     * 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
-     * 
-     * @config
-     */
-    get height(): RtPercentSize {
-        return this._height;
-    }
-    set height(value: RtPercentSize) {
-        if (value !== this._height) {
-            this._heightDim = parsePercentSize(this._height = value, true);
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    getSize(width: number, height: number): ISize {
-        return {
-            width: calcPercent(this._widthDim, width),
-            height: calcPercent(this._heightDim, height)
-        };
-    }
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
 }

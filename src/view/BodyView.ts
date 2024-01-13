@@ -1431,9 +1431,7 @@ export class BodyView extends ChartElement<Body> {
     protected _layoutAnnotations(inverted: boolean, w: number, h: number): void {
         if (this._annotationViews.length > 0) {
             this._annotationViews.forEach(v => {
-                v.resizeByMeasured();
-                const p = v.model.getPosition(inverted, 0, 0, w, h, v.width, v.height);
-                v.layout(p);//.transp();
+                v._layoutView(inverted, 0, 0, w, h);
                 v.setClip(v.model.noClip ? _undef : this._bodyClip);
             });
         }

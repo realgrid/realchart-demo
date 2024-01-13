@@ -263,6 +263,6 @@ export class Body extends ChartItem {
     // internal members
     //-------------------------------------------------------------------------
     private $_loadAnnotations(source: any[]): void {
-        this._annotations.load(source);
+        this._annotations.load(source, true);
     }
 }

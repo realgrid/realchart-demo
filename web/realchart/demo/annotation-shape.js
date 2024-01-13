@@ -5,7 +5,7 @@
 const config = {
     options: {},
     title: {
-        text: "전국아파트 실거래 지수",
+        text: "Shape Annotations",
         style: {
             fontSize: '40px'
         }
@@ -37,6 +37,9 @@ const config = {
         marker: false,
         xStart: '2020-01',
         xStep: '2m',
+        marker: {
+            visible: true
+        },
         data: [
             101, 103, 105, 109, 113, 115, 120, 125, 131, 136, 139, 143, 141, 140, 139, 138, 130, 125, 120, 119, 119, 120, 122, 123    
         ],
@@ -45,21 +48,70 @@ const config = {
         }
     },
     body: {
-        annotations: {
+        annotations: [{
             type: 'shape',
             shape: 'rectangle',
             front: true,
             series: 'main',
-            // width: 100,
-            // height: 100,
-            xRange: [new Date(2022, 8), new Date(2023, 3)],
-            yRange: [95, 145],
+            x1: new Date(2022, 8), 
+            x2: new Date(2023, 4),
+            y1: 65, 
+            y2: 145,
             style: {
                 fill: 'none',
-                stroke: 'red',
-                strokeWidth: '5px'
+                stroke: 'var(--color-1)',
+                strokeWidth: '5px',
+                strokeDasharray: '5'
             }
-        }
+        }, {
+            type: 'shape',
+            shape: 'rectangle',
+            front: true,
+            series: 'main',
+            x1: new Date(2021, 9), 
+            x2: new Date(2021, 11),
+            y1: 0, 
+            y2: 200,
+            style: {
+                fill: 'white',
+                stroke: 'var(--color-1)',
+                strokeWidth: '1px',
+            }
+        }, {
+            type: 'shape',
+            shape: 'star',
+            width: 200,
+            height: 200,
+            offsetY: -70,
+            noClip: true,
+            style: {
+                fill: '#00884440'
+            }
+        }, {
+            type: 'shape',
+            shape: 'star',
+            offsetX: 130,
+            offsetY: 50,
+            width: 100,
+            height: 100,
+            rotation: -21,
+            front: true,
+            style: {
+                fill: '#00884490',
+                stroke: 'blue'
+            }
+        }, {
+            type: 'shape',
+            shape: 'star',
+            verticalAlign: 'bottom',
+            offsetX: -50,
+            offsetY: -50,
+            width: 200,
+            height: 200,
+            style: {
+                fill: '#ff000030'
+            }
+        }]
     }
 }
 

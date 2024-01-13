@@ -5,7 +5,7 @@
 const config = {
     options: {},
     title: {
-        text: "전국아파트 실거래 지수",
+        text: "Shape Annotations with Axis",
         style: {
             fontSize: '40px'
         }
@@ -37,6 +37,9 @@ const config = {
         marker: false,
         xStart: '2020-01',
         xStep: '2m',
+        marker: {
+            visible: true
+        },
         data: [
             101, 103, 105, 109, 113, 115, 120, 125, 131, 136, 139, 143, 141, 140, 139, 138, 130, 125, 120, 119, 119, 120, 122, 123    
         ],
@@ -45,21 +48,26 @@ const config = {
         }
     },
     body: {
-        annotations: {
-            type: 'shape',
+        annotations: [{
             shape: 'rectangle',
-            front: true,
-            series: 'main',
-            x1: new Date(2022, 8), 
-            x2: new Date(2023, 3),
-            y1: 95, 
-            y2: 145,
+            x1: new Date(2020, 0),
+            y1: 160,
+            width: 200,
+            height: 200,
             style: {
-                fill: 'none',
-                stroke: 'red',
-                strokeWidth: '5px'
+                fill: '#0000ff30'
             }
-        }
+        }, {
+            shape: 'rectangle',
+            x1: new Date(2021, 0),
+            x2: new Date(2021, 5),
+            y1: 0,
+            y2: 160,
+            style: {
+                fill: '#00880030',
+                stroke: 'green'
+            }
+        }]
     }
 }
 
