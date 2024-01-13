@@ -43,8 +43,6 @@ export abstract class GaugeBase extends Widget {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    row = 0;
-    col = 0;
     index = -1;
     private _sizeDim: IPercentSize;
     private _widthDim: IPercentSize;
@@ -75,6 +73,18 @@ export abstract class GaugeBase extends Widget {
      */
     name: string;
     /**
+     * 분할 모드일 때 게이지가 표시될 pane의 수직 index.
+     * 
+     * @config
+     */
+    row: number;
+    /**
+     * 분할 모드일 때 게이지가 표시될 pane의 수평 index.
+     * 
+     * @config
+     */
+    col: number;
+    /**
      * plot 영역의 왼쪽 모서리와 widget 사이의 간격.
      * 
      * @config
@@ -88,7 +98,8 @@ export abstract class GaugeBase extends Widget {
         }
     }
     /**
-     * plot 영역의 오른쪽 모서리와 widget 사이의 간격.
+     * plot 영역의 오른쪽 모서리와 widget 사이의 간격.<br/>
+     * {@link left}가 설정되면 이 속성은 무시된다.
      * 
      * @config
      */
@@ -114,7 +125,8 @@ export abstract class GaugeBase extends Widget {
         }
     }
     /**
-     * plot 영역의 아래쪽 모서리와 widget 사이의 간격.
+     * plot 영역의 아래쪽 모서리와 widget 사이의 간격.<br/>
+     * {@link bottom}이 설정되면 이 속성은 무시된다.
      * 
      * @config
      */
@@ -393,8 +405,8 @@ export class GaugeCollection {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    get count(): number {
-        return this._items.length;
+    isEmpty(): boolean {
+        return this._items.length < 1;
     }
 
     get firstGauge(): Gauge {
@@ -468,16 +480,17 @@ export class GaugeCollection {
     private $_loadItem(chart: IChart, src: any, index: number): Gauge {
         let cls = isArray(src.children) && chart._getGaugeGroupType(src.type || chart.gaugeType);
 
-        if (cls) {
-            const g = new cls(chart);
+        // if (cls) {
+        //     const g = new cls(chart);
 
-            g.load(src);
-            g.index = index;
-            return g;
+        //     g.load(src);
+        //     g.index = index;
+        //     return g;
+        // }
+        
+        if (!cls) {
+            cls = chart._getGaugeType(src.type || chart.gaugeType);
         }
-
-        cls = chart._getGaugeType(src.type || chart.gaugeType);
-
         if (!cls) {
             throw new Error('Invalid gauge type: ' + src.type);
         }

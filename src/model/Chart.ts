@@ -724,7 +724,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     isEmpty(): boolean {
-        return this._series.isEmpty() && this._gauges.count === 0;
+        return this._series.isEmpty() && this._gauges.isEmpty();
     }
 
     //-------------------------------------------------------------------------
@@ -892,7 +892,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._series.load(source.series);
 
         this._gauges.load(source.gauges || source.gauge);
-        this._gaugeOnly = this._series.count == 0 && this._gauges.count > 0;
+        this._gaugeOnly = this._series.isEmpty() && !this._gauges.isEmpty();
 
         if (!this._gaugeOnly) {
             // axes

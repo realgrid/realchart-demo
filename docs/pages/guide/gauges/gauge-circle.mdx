@@ -1,6 +1,22 @@
 # Circle 게이지
 
+원형 게이지.<br/>
+지정된 최대 각도(기본 360°) 내에서 [현재 값(value)](/config/config/gauge/circle#value)의 비율에 맞는 각도의 원호로 표시한다.
+기본 시작 각도는 12시 위치이다.<br/>
+현재 값의 위치(각도)는 [최소값](/config/config/gauge/circle#minvalue)과 [최대값](/config/config/gauge/circle#maxvalue)에 따라 정해진다. 
+기본값은 각각 0, 100이다.<br/>
+
 ## 설정
+
+type은 '**circle**'로 지정하고, 반드시 현재 값을 [value](/config/config/gauge/circle#value) 속성에 지정해야 한다.
+
+```js
+{
+    type: 'circle',
+    value: 121,
+    maxValue: 200
+}
+```
 
 ### See Also
 

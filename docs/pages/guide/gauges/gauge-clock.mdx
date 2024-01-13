@@ -1,6 +1,21 @@
 # Clock 게이지
 
+현재 시각을 표시하는 게이지.<br/>
+
 ## 설정
+
+type은 '**clock**'으로 지정하고, 
+현재 시각 대신 특정한 시각을 표시하고 싶은 경우 [time](/config/config/gauge/clock#time) 속성에 
+[밀리초 기준 숫자](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime)나, 
+[Date](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Date)형 값, 
+혹은 javascript가 해석할 수 있는 문자열로 시간을 지정한다.
+
+```js
+{
+    type: 'clock',
+    time: '2024-01-11T11:12:13'
+}
+```
 
 ### See Also
 
