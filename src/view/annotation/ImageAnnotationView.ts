@@ -6,10 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { IPoint } from "../../common/Point";
 import { rectToSize } from "../../common/Rectangle";
 import { ISize } from "../../common/Size";
 import { ImageElement } from "../../common/impl/ImageElement";
-import { RectElement } from "../../common/impl/RectElement";
 import { ImageAnnotation } from "../../model/annotation/ImageAnnotation";
 import { AnnotationView } from "../AnnotationView";
 
@@ -46,9 +46,14 @@ export class ImageAnnotationView extends AnnotationView<ImageAnnotation> {
         return rectToSize(this._imageView.getBBox());
     }
 
-    protected _doLayout(param: any): void {
-        this._imageView.trans(this._paddings.left, this._paddings.top);
+    protected _doLayout(p: IPoint): void {
+        //this._imageView.trans(this._paddings.left, this._paddings.top);
+        this._imageView.trans(p.x + this._paddings.left, p.y + this._paddings.top);
 
-        super._doLayout(param);
+        super._doLayout(p);
+    }
+
+    protected _setRotation(originX: number, originY: number, rotation: number): void {
+        this._imageView.setRotation(originX, originY, rotation);
     }
 }

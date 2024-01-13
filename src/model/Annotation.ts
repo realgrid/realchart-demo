@@ -123,6 +123,13 @@ export abstract class Annotation extends ChartItem {
      * @config
      */
     backgroundStyle: SVGStyleOrClass;
+    /**
+     * true로 지정하면 상위 영역을 벗어난 부분도 표시되게 한다.<br/>
+     * body에 포함된 경우 body 영역,
+     * chart에 포함되고 scope이 'chart'일 때 chart 영역.
+     * 
+     * @config
+     */
     noClip: boolean;
 
     //-------------------------------------------------------------------------

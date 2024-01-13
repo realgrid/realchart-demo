@@ -126,7 +126,7 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _background: RectElement;
+    protected _background: RectElement;
     protected _margins = new Sides();
     protected _paddings = new Sides();
 
@@ -191,7 +191,7 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
                 this.width - margin.left - margin.right,
                 this.height - margin.top - margin.bottom
             );
-        } else {
+        } else if (this._resetBackBounds()) {
             this._background.setBounds(0, 0, this.width, this.height);
         }
         return this;
@@ -203,6 +203,10 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
     protected abstract _setBackgroundStyle(back: RectElement): void;
     
     protected _marginable(): boolean {
+        return true;
+    }
+
+    protected _resetBackBounds(): boolean {
         return true;
     }
 

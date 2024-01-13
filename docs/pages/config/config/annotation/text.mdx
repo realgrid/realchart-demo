@@ -36,6 +36,11 @@ Text Annotation 모델.
 
 동적으로 어노테이션을 다루기 위해서는 반드시 지정해야 한다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
+### noClip: `boolean{:js}`[#noClip]
+<Content type="keyword" value="true"></Content>로 지정하면 상위 영역을 벗어난 부분도 표시되게 한다.<br/>
+body에 포함된 경우 body 영역,
+chart에 포함되고 scope이 <Content type="expression" value="'chart'"></Content>일 때 chart 영역.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### numberFormat: `string{:js}`[#numberFormat]
 [text](#text) 에 동적으로 전달되는 값이 숫자일 때 사용되는 표시 형식.  
 <DefaultValue value="undefined" contents=""></DefaultValue>

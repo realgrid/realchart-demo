@@ -832,7 +832,7 @@ export class ZoomButton extends ButtonElement {
 
 export interface IPlottingOwner {
 
-    clipSeries(view: RcElement, view2: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void;
+    // clipSeries(view: RcElement, view2: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void;
     showTooltip(series: Series, point: DataPoint, body: RcElement, p: IPoint): void;
     hideTooltip(): void;
 }
@@ -891,6 +891,11 @@ export class BodyView extends ChartElement<Body> {
     private _inverted: boolean;
     private _zoomRequested: boolean;
     protected _animatable: boolean;
+
+    private _seriesClip: ClipRectElement;
+    // private _seriesClip2: ClipRectElement; // bubble, scatter처럼 transform으로 inverted를 하지 않는 시리즈를 위한.
+    // private _lineSeriesClip: ClipRectElement;
+    private _bodyClip: ClipRectElement;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1086,6 +1091,13 @@ export class BodyView extends ChartElement<Body> {
         this._polar = chart.isPolar();
         this._zoomRequested = false;
 
+        if (!this._seriesClip) {
+            this._seriesClip = this.control.clipBounds();
+            // this._seriesClip2 = this.control.clipBounds();
+            // this._lineSeriesClip = this.control.clipBounds();
+            this._bodyClip = this.control.clipBounds();
+        }
+
         // background
         this._background.setStyleOrClass(model.style);
         this._background.setBoolData('polar', this._polar || chart.isWidget());
@@ -1125,10 +1137,28 @@ export class BodyView extends ChartElement<Body> {
         return Size.create(hintWidth, hintHeight);
     }
     
+    protected _clipSeries(view: RcElement, view2: RcElement, invertable: boolean): void {
+        // const sc = invertable ? this._seriesClip : this._seriesClip2;
+        // view && view.setClip(sc);
+        // view2 && view2.setClip(sc);
+
+        view && view.setClip(this._seriesClip);
+        view2 && view2.setClip(this._seriesClip);
+    }
+
     protected _doLayout(): void {
         const w = this.width;
         const h = this.height;
         const img = this._image;
+
+        if (this._inverted) {
+            this._seriesClip.setBounds(0, -w, h, w);
+            // this._seriesClip2.setBounds(0, -w, h, w);
+        } else {
+            this._seriesClip.setBounds(0, 0, w, h);
+            // this._seriesClip2.setBounds(0, 0, w, h);
+        }
+        this._bodyClip.setBounds(0, 0, w, h);
 
         // background
         this._hitTester.resize(w, h);
@@ -1141,7 +1171,8 @@ export class BodyView extends ChartElement<Body> {
         // series
         this._seriesViews.forEach(v => {
             if (v.model.needClip(false)) {
-                this._owner.clipSeries(v.getClipContainer(), v.getClipContainer2(), 0, 0, w, h, v.clipInvertable());
+                // this._owner.clipSeries(v.getClipContainer(), v.getClipContainer2(), 0, 0, w, h, v.clipInvertable());
+                this._clipSeries(v.getClipContainer(), v.getClipContainer2(), v.clipInvertable());
             }
             v.resize(w, h);
             v.trans(0, 0);
@@ -1401,7 +1432,9 @@ export class BodyView extends ChartElement<Body> {
         if (this._annotationViews.length > 0) {
             this._annotationViews.forEach(v => {
                 v.resizeByMeasured();
-                v.layout().transp(v.model.getPosition(inverted, 0, 0, w, h, v.width, v.height));
+                const p = v.model.getPosition(inverted, 0, 0, w, h, v.width, v.height);
+                v.layout(p);//.transp();
+                v.setClip(v.model.noClip ? _undef : this._bodyClip);
             });
         }
     }

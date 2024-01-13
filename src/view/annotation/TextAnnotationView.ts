@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { IPoint } from "../../common/Point";
 import { rectToSize } from "../../common/Rectangle";
 import { SvgRichText } from "../../common/RichText";
 import { ISize } from "../../common/Size";
@@ -50,9 +51,16 @@ export class TextAnnotationView extends AnnotationView<TextAnnotation> {
         return rectToSize(this._textView.getBBox());
     }
 
-    protected _doLayout(param: any): void {
+    protected _doLayout(p: IPoint): void {
+        // this._paddings.left += p.x;
+        // this._paddings.top += p.y;
         this._richText.layout(this._textView, this.textAlign(), this.width, this.height, this._paddings);
+        this._textView.trans(p.x + this._textView.tx, p.y + this._textView.ty);
 
-        super._doLayout(param);
+        super._doLayout(p);
+    }
+
+    protected _setRotation(originX: number, originY: number, rotation: number): void {
+        this._textView.setRotation(originX, originY, rotation);
     }
 }

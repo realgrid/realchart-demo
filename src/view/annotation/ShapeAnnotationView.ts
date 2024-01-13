@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { IPoint } from "../../common/Point";
 import { PathElement } from "../../common/RcControl";
 import { ISize } from "../../common/Size";
 import { SvgShapes } from "../../common/impl/SvgShape";
@@ -44,9 +45,13 @@ export class ShapeAnnotationView extends AnnotationView<ShapeAnnotation> {
         return sz;
     }
 
-    protected _doLayout(param: any): void {
-        this._shapeView.trans(this._paddings.left, this._paddings.top);
+    protected _doLayout(p: IPoint): void {
+        this._shapeView.trans(this._paddings.left + p.x, this._paddings.top + p.y);
 
-        super._doLayout(param);
+        super._doLayout(p);
+    }
+
+    protected _setRotation(originX: number, originY: number, rotation: number): void {
+        this._shapeView.setRotation(originX, originY, rotation);
     }
 }

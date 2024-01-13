@@ -7,24 +7,24 @@ const config = {
     options: {
     },
     title: "Text Annotations",
-    annotations: [{
-        offsetX: 0,
-        offsetY: 0,
-        verticalAlign: 'bottom',
-        text: '출처: Text 어노테이션10, <t style="font-size:15px">우리테크 Inc.</t>',
-        style: {
-            fontSize: '17px',
-            fill: 'black'
-        },
-        backgroundStyle: {
-            padding: '3px 5px',
-            fill: '#0088ff23',
-            stroke: '#008',
-            strokeWidth: '1px',
-            rx: 5,
-        }
+    // annotations: [{
+    //     offsetX: 0,
+    //     offsetY: 0,
+    //     verticalAlign: 'bottom',
+    //     text: '출처: Text 어노테이션10, <t style="font-size:15px">우리테크 Inc.</t>',
+    //     style: {
+    //         fontSize: '17px',
+    //         fill: 'black'
+    //     },
+    //     backgroundStyle: {
+    //         padding: '3px 5px',
+    //         fill: '#0088ff23',
+    //         stroke: '#008',
+    //         strokeWidth: '1px',
+    //         rx: 5,
+    //     }
 
-    }],
+    // }],
     xAxis: {
         // type: 'category',
         tick: true,

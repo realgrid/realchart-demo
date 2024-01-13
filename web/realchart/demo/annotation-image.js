@@ -5,7 +5,7 @@
  */
 const config = {
 	type: 'bar',
-	title: 'Title',
+	title: 'Image Annotations',
 	xAxis: {
 		categories: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
 		label: {
@@ -20,18 +20,25 @@ const config = {
 		},
 		annotations: [{
             type: 'image',
-            offsetX: 30,
-            offsetY: 5,
+            offsetX: 10,
+            offsetY: 10,
             width: 100,
-            imageUrl: '../assets/images/annotation.png'
+            imageUrl: '../assets/images/annotation.png',
+            backgroundStyle: {
+                stroke: 'blue',
+                strokeWidth: '2px',
+                strokeDasharray: '2',
+                rx: 5
+            }
         }, {
             align: 'right',
             offsetX: 20,
-            offsetY: 10,
+            offsetY: 50,
             width: 90,
             imageUrl: '../assets/images/insta.png'
         }, {
             align: 'right',
+            front: true,
             offsetX: 120,
             offsetY: 20,
             rotation: -20,
@@ -39,11 +46,26 @@ const config = {
             imageUrl: '../assets/images/insta.png'
         }, {
             align: 'right',
+            noClip: true,
             offsetX: 220,
-            offsetY: 20,
+            offsetY: 10,
             rotation: -45,
             width: 150,
-            imageUrl: '../assets/images/insta.png'
+            imageUrl: '../assets/images/insta.png',
+            style: {
+                opacity: 0.5
+            }
+        }, {
+            verticalAlign: 'bottom',
+            front: true,
+            offsetX: -90,
+            offsetY: -100,
+            rotation: 45,
+            width: 250,
+            imageUrl: '../assets/images/insta.png',
+            style: {
+                opacity: 0.7
+            }
         }]
     },
 	series: [{
@@ -99,7 +121,8 @@ function setActions(container) {
 		container,
 		'Inverted',
 		function (e) {
-            chart.inverted = _getChecked(e);
+            config.inverted = _getChecked(e);
+			chart.load(config, animate);
 		},
 		false
 	);

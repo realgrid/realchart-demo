@@ -624,8 +624,8 @@ export class ChartView extends LayerElement {
     private _creditView: CreditView;
     private _historyView: HistoryView;
     private _tooltipView: TooltipView;
-    private _seriesClip: ClipRectElement;
-    private _seriesClip2: ClipRectElement; // bubble, scatter처럼 transform으로 inverted를 하지 않는 시리즈를 위한.
+    // private _seriesClip: ClipRectElement;
+    // private _seriesClip2: ClipRectElement; // bubble, scatter처럼 transform으로 inverted를 하지 않는 시리즈를 위한.
     // private _lineSeriesClip: ClipRectElement;
 
     _org: IPoint;
@@ -1196,24 +1196,24 @@ export class ChartView extends LayerElement {
         return this._creditView.dom.contains(dom) ? this._creditView : null;
     }
 
-    clipSeries(view: RcElement, view2: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void {
+    // clipSeries(view: RcElement, view2: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void {
 
-        function clip(v: RcElement): void {
-            if (inverted) {
-                sc.setBounds(0, -w, h, w);
-            } else {
-                sc.setBounds(0, 0, w, h);
-            }
-            v.setClip(sc);
-        }
+    //     function clip(v: RcElement): void {
+    //         if (inverted) {
+    //             sc.setBounds(0, -w, h, w);
+    //         } else {
+    //             sc.setBounds(0, 0, w, h);
+    //         }
+    //         v.setClip(sc);
+    //     }
 
-        const inverted = this._model.inverted && invertable;
-        let sc = invertable ? this._seriesClip : this._seriesClip2;
+    //     const inverted = this._model.inverted && invertable;
+    //     const sc = invertable ? this._seriesClip : this._seriesClip2;
 
-        // TODO: pane 단위로 -> body로 가야하나?
-        view && clip(view);
-        view2 && clip(view2);
-    }
+    //     // TODO: pane 단위로 -> body로 가야하나?
+    //     view && clip(view);
+    //     view2 && clip(view2);
+    // }
 
     bodyOf(elt: Element): BodyView {
         if (this._model.isSplitted()) {
@@ -1309,8 +1309,8 @@ export class ChartView extends LayerElement {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doAttached(parent: RcElement): void {
-        this._seriesClip = this.control.clipBounds();
-        this._seriesClip2 = this.control.clipBounds();
+        // this._seriesClip = this.control.clipBounds();
+        // this._seriesClip2 = this.control.clipBounds();
         // this._lineSeriesClip = this.control.clipBounds();
     }
 
@@ -1555,7 +1555,8 @@ export class ChartView extends LayerElement {
             }
 
             v.resizeByMeasured();
-            v.layout().transp(v.model.getPosition(inverted, x, y, w, h, v.width, v.height));
+            const p = v.model.getPosition(inverted, x, y, w, h, v.width, v.height);
+            v.layout(p);//.transp();
         });
     }
 }
