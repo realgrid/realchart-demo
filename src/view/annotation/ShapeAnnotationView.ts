@@ -40,8 +40,8 @@ export class ShapeAnnotationView extends AnnotationView<ShapeAnnotation> {
     protected _doMeasure(doc: Document, model: ShapeAnnotation, hintWidth: number, hintHeight: number, phase: number): ISize {
         const sz = model.getSize(hintWidth, hintHeight);
 
+        this._deflatePaddings(sz);
         SvgShapes.setShape(this._shapeView, model.shape, sz.width / 2, sz.height / 2);
-
         return sz;
     }
 

@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum } from "../../common/Common";
 import { IPoint } from "../../common/Point";
 import { rectToSize } from "../../common/Rectangle";
 import { SvgRichText } from "../../common/RichText";
@@ -43,13 +44,26 @@ export class TextAnnotationView extends AnnotationView<TextAnnotation> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: TextAnnotation, hintWidth: number, hintHeight: number, phase: number): ISize {
+        const sz = model.getSize(hintWidth, hintHeight);
         const tv = this._textView;
 
+        this._deflatePaddings(sz);
         this._richText.setFormat(model.text);
         this._richText.build(tv, hintWidth, hintHeight, null, model._domain);
+        // this._richText.build(tv, pickNum(sz.width, hintWidth), pickNum(sz.height, hintHeight), null, model._domain);
 
-        return rectToSize(this._textView.getBBox());
+        const sz2 = rectToSize(this._textView.getBBox());
+        return { width: pickNum(sz.width, sz2.width), height: pickNum(sz.height, sz2.height) };
     }
+
+    // protected _doMeasure(doc: Document, model: TextAnnotation, hintWidth: number, hintHeight: number, phase: number): ISize {
+    //     const tv = this._textView;
+
+    //     this._richText.setFormat(model.text);
+    //     this._richText.build(tv, hintWidth, hintHeight, null, model._domain);
+
+    //     return rectToSize(this._textView.getBBox());
+    // }
 
     protected _doLayout(p: IPoint): void {
         // this._paddings.left += p.x;

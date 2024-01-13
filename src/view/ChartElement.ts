@@ -150,16 +150,20 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
         this._prepareStyleOrClass(model);
         this.setModel(model);
 
-        this._background.internalClearStyleAndClass();
+        // this._background.internalClearStyleAndClass();
         this._setBackgroundStyle(this._background);
-
-        const sz = this._doMeasure(doc, model, hintWidth, hintHeight, phase);
 
         // TODO: 캐쉬!
         let cs = getComputedStyle(this._background.dom);
         const padding = this._paddings;
-
         padding.applyPadding(cs);
+
+        const sz = this._doMeasure(doc, model, hintWidth, hintHeight, phase);
+
+        // // TODO: 캐쉬!
+        // let cs = getComputedStyle(this._background.dom);
+        // const padding = this._paddings;
+        // padding.applyPadding(cs);
 
         sz.width += padding.left + padding.right;
         sz.height += padding.top + padding.bottom;
@@ -212,6 +216,13 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
 
     protected _getBackOffset(): number {
         return 0;
+    }
+
+    protected _deflatePaddings(size: ISize): void {
+        const pad = this._paddings;
+
+        size.width -= pad.left + pad.right;
+        size.height -= pad.top + pad.bottom;
     }
 }
 

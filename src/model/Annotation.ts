@@ -253,27 +253,6 @@ export abstract class Annotation extends ChartItem {
         let x: number;
         let y: number;
 
-        // if (this.inBody) {
-        //     if (!isNaN(this.x1)) {
-        //         const axis = this.chart.xAxis;
-
-        //         if (inverted) {
-        //             y = hDomain - axis.getPos(hDomain, this.x1);
-        //         } else {
-        //             x = axis.getPos(wDomain, this.x1);
-        //         }
-        //     } 
-        //     if (!isNaN(this.y1)) {
-        //         const axis = this.chart.yAxis;
-
-        //         if (inverted) {
-        //             x = axis.getPos(wDomain, this.y1);
-        //         } else {
-        //             y = hDomain - axis.getPos(hDomain, this.y1);
-        //         }
-        //     } 
-        // }
-
         if (isNaN(x = this._x)) {
             x = left;
 

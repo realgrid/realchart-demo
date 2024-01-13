@@ -59,7 +59,7 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
     }
 
     protected _setBackgroundStyle(back: RectElement): void {
-        back.internalSetStyleOrClass(this.model.backgroundStyle);
+        back.setStyleOrClass(this.model.backgroundStyle);
     }
 
     protected _doLayout(p: IPoint): void {

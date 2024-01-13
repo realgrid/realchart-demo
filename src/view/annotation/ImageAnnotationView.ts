@@ -40,6 +40,7 @@ export class ImageAnnotationView extends AnnotationView<ImageAnnotation> {
     protected _doMeasure(doc: Document, model: ImageAnnotation, hintWidth: number, hintHeight: number, phase: number): ISize {
         const sz = model.getSize(hintWidth, hintHeight);
 
+        this._deflatePaddings(sz);
         this._imageView.url = this.model.imageUrl;
         this._imageView.resize(sz.width, sz.height);
 
