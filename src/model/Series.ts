@@ -2627,7 +2627,15 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
 
     getLegendSources(list: ILegendSource[]) {
         if (this.visibleInLegend !== false) {
-            this._series.forEach(ser => ser.getLegendSources(list));
+            const series = this._series;
+
+            if (!this._yAxisObj.reversed && (this.layout === SeriesGroupLayout.FILL || this.layout === SeriesGroupLayout.STACK)) { //#422
+                for (let i = series.length - 1; i >= 0; i--) {
+                    series[i].getLegendSources(list);
+                }
+            } else {
+                series.forEach(ser => ser.getLegendSources(list));
+            }
         }
     }
 

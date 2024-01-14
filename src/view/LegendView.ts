@@ -9,7 +9,7 @@
 import { maxv, pickNum } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { RcElement } from "../common/RcControl";
-import { RECT_Z, rectToSize } from "../common/Rectangle";
+import { IRect, RECT_Z, rectToSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
@@ -32,6 +32,8 @@ export class LegendItemView extends ChartElement<LegendItem> {
     _marker: RcElement;
     _label: TextElement;
     _gap: number;
+    _rMarker: IRect;
+    _col: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -67,19 +69,20 @@ export class LegendItemView extends ChartElement<LegendItem> {
 
         this._label.text = model.text();
 
-        const rMarker = this._marker.setVis(model.legend.markerVisible) ? this._marker.getBBox() : RECT_Z;
+        const rMarker = this._rMarker = this._marker.setVis(model.legend.markerVisible) ? this._marker.getBBox() : RECT_Z;
         const sz = rectToSize(this._label.getBBox());
         this._gap = pickNum(model.legend.markerGap, 0);
 
         return Size.create(rMarker.width + this._gap + sz.width, maxv(rMarker.height, sz.height));
     }
 
-    protected _doLayout(): void {
-        const rMarker = this._marker.visible ? this._marker.getBBox() : RECT_Z;
+    protected _doLayout(wMarker: number): void {
+        const rMarker = this._rMarker;// this._marker.visible ? this._marker.getBBox() : RECT_Z;
+        const w = pickNum(wMarker, rMarker.width);
 
         this._back.setBounds(0, 0, this.width, this.height);
-        this._marker.visible && this._marker.trans(0, (this.height - rMarker.height) / 2);
-        this._label.trans(rMarker.width + this._gap, (this.height - this._label.getBBox().height) / 2);
+        this._marker.visible && this._marker.trans((w - rMarker.width) / 2, (this.height - rMarker.height) / 2);
+        this._label.trans(w + this._gap, (this.height - this._label.getBBox().height) / 2);
     }
 }
 
@@ -100,6 +103,7 @@ export class LegendView extends BoundableElement<Legend> {
     private _vertical: boolean;
     private _rowViews: LegendItemView[][];
     private _sizes: number[];
+    private _wMarkers: number[];
     _gap: number;
     _ipr: number;
 
@@ -173,11 +177,15 @@ export class LegendView extends BoundableElement<Legend> {
             } else {
                 v._label.setFill('');
             }
-            v.resizeByMeasured().layout();
+            // v.resizeByMeasured().layout();
         });
 
         rowViews.forEach((views, i) => {
             if (vertical) {
+                views.forEach(v => {
+                    v.mw = sizes[i];
+                    v.resizeByMeasured().layout(this._wMarkers[i]);
+                })
                 y = y1;
                 if (align === LegendItemsAlign.CENTER || align === LegendItemsAlign.END) {
                     sum = views.map(v => v.height).reduce((a, c) => a + c) + itemGap * (views.length - 1) + margin.top + margin.bottom + pad.top + pad.bottom;
@@ -190,6 +198,9 @@ export class LegendView extends BoundableElement<Legend> {
                 })
                 x += sizes[i] + lineGap;
             } else {
+                views.forEach(v => {
+                    v.resizeByMeasured().layout(NaN);
+                })
                 x = x1;
                 if (align === LegendItemsAlign.CENTER || align === LegendItemsAlign.END) {
                     sum = views.map(v => v.width).reduce((a, c) => a + c) + itemGap * (views.length - 1) + margin.left + margin.right + pad.left + pad.right;
@@ -253,20 +264,28 @@ export class LegendView extends BoundableElement<Legend> {
                 }
             }
 
+            this._wMarkers = [];
             w = h = 0;
-            rowViews.forEach(views => {
+
+            rowViews.forEach((views, i) => {
                 let wRow = 0;
                 let hRow = 0;
+                let wMarker = 0;
+
                 views.forEach(v => {
                     hRow += v.mh;
                     wRow = maxv(wRow, v.mw);
+                    wMarker = maxv(wMarker, v._rMarker.width);
+                    v._col = i;
                 })
                 hRow += itemGap * (views.length - 1);
                 h = maxv(h, hRow);
                 w += wRow;
                 sizes.push(wRow);
+                this._wMarkers.push(wMarker);
             });
             w += lineGap * (rowViews.length - 1);
+
         } else {
             while (i < n) {
                 view = views.get(i);

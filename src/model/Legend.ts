@@ -166,6 +166,10 @@ export class Legend extends Widget {
      */
     '@config visible': boolean;
     /**
+     * true면 나중에 배치되는 시리즈가 먼저 표시된다.<br/>
+     */
+    reversed: boolean;
+    /**
      * 표시 위치.
      * 
      * @config
@@ -351,6 +355,7 @@ export class Legend extends Widget {
 
         this._location = Utils.checkEnumValue(LegendLocation, this.location, LegendLocation.BOTTOM);
         this._items = this.$_collectItems();
+        if (this.reversed) this._items = this._items.reverse();
     }
 
     //-------------------------------------------------------------------------

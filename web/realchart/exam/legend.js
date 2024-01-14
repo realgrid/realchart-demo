@@ -77,6 +77,7 @@
     ],
     legend: {
       location: "right",
+    //   reversed: true
     },
   };
   
