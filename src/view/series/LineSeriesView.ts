@@ -85,8 +85,16 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     decoreateLegend(legendView: LegendItemView): void {
         const cs = getComputedStyle(this._line.dom);
-        (legendView._marker as LineLegendMarkerView)._line.setStyle('strokeWidth', cs.strokeWidth);
-        (legendView._marker as LineLegendMarkerView)._line.setStyle('strokeDasharray', cs.strokeDasharray);
+        const marker = legendView._marker as LineLegendMarkerView;
+
+        marker._line.setStyle('strokeWidth', cs.strokeWidth);
+        if (marker._shape) {
+            marker._marker.internalSetStyles(this.model.marker.style);
+            // marker 오른쪽 line이 표시되지 않을 수 있다.
+            marker._line.setStyle('strokeDasharray', '');
+        } else {
+            marker._line.setStyle('strokeDasharray', cs.strokeDasharray);
+        }
     }
 
     protected _prepareSeries(doc: Document, model: T): void {

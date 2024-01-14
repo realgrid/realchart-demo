@@ -171,7 +171,6 @@ export class LegendView extends BoundableElement<Legend> {
 
             // [주의] source가 getComputedStyle()로 색상을 가져온다. measure 시점에는 안된다.
             v._marker.setColor(color);
-            src.styleLegendMarker(v._marker);
             if (textColor && src.visible) {
                 v._label.setFill(color);
             } else {
