@@ -49,7 +49,7 @@ const config = {
         style: {
             padding: '10px'
         },
-        paneStyle: {
+        backgroundStyle: {
             stroke: 'lightblue',
             borderRadius: '10px'
         }

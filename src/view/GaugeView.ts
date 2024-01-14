@@ -98,7 +98,7 @@ export abstract class GaugeView<T extends GaugeBase> extends ContentView<T> {
     //-------------------------------------------------------------------------
     protected _prepareStyleOrClass(model: T): void {
         // super._prepareStyleOrClass(model);
-        this._paneElement.setStyleOrClass(model.paneStyle);
+        this._paneElement.setStyleOrClass(model.backgroundStyle);
     }
 
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {

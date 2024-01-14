@@ -73,7 +73,7 @@ const config = {
                 strokeLinecap: 'round'
             }
         },
-        paneStyle: {
+        backgroundStyle: {
             stroke: 'lightblue',
             strokeWidth: '2px',
             borderRadius: '10px'

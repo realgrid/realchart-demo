@@ -20,7 +20,17 @@ type은 '**clock**'으로 지정하고,
 ```js
 {
     type: 'clock',
-    time: '2024-01-11T11:12:13'
+    time: '2024-01-11T11:12:13', // 지정하지 않으면 현재 시간
+    tick: {},
+    minorTick: {},      // 시간 사이에 표시되는 작은 tick
+    rim: {},            // 테두리
+    hourHand: {},       // 시침
+    minuteHand: {},     // 분침
+    secondeHand: {},    // 초침
+    pin: {},            // 중심 핀
+    tickLabel: {},
+    label: {},
+    style: {}
 }
 ```
 

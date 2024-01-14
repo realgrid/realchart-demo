@@ -89,7 +89,7 @@ const config = {
       // style: {
       //     fill: 'blue'
       // },
-      paneStyle: {
+      backgroundStyle: {
         stroke: 'lightblue',
       },
     },

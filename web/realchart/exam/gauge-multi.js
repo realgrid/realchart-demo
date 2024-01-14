@@ -60,6 +60,13 @@ const config = {
         left: '66%',
         top: 0,
         value: Math.random() * 100,
+        valueRim: {
+            ranges: null,
+            style: {
+                stroke: 'black',
+                fill: 'lightgray'
+            }
+        },
     }, {
         template: "gauge",
         name: 'gauge4',
@@ -73,7 +80,7 @@ const config = {
                 strokeLinecap: 'round'
             }
         },
-        paneStyle: {
+        backgroundStyle: {
             stroke: 'lightblue',
             strokeWidth: '2px',
             borderRadius: '10px'

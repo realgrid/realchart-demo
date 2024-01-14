@@ -112,7 +112,7 @@ const config = {
       label: {
         text: 'Linear Gauges',
       },
-      paneStyle: {
+      backgroundStyle: {
         stroke: 'lightblue',
         borderRadius: '10px',
       },

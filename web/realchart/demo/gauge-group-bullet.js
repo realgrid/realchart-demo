@@ -101,7 +101,7 @@ const config = {
         label: {
             text: 'Bullet Gauges'
         },
-        paneStyle: {
+        backgroundStyle: {
             stroke: 'lightblue',
             borderRadius: '10px'
         }

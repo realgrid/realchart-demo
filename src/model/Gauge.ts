@@ -179,11 +179,10 @@ export abstract class GaugeBase extends Widget {
             this._sizeDim = parsePercentSize(this._size = value, true);
         }
     }
-
     /**
-     * 게이지나 게이지그룹의 배경 pane에 대한 스타일.
+     * 게이지나 게이지그룹의 배경에 대한 스타일.
      */
-    paneStyle: SVGStyleOrClass;
+    backgroundStyle: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
     // methods
