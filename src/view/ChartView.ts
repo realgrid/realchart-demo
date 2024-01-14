@@ -8,8 +8,8 @@
 
 import { ButtonElement } from "../common/ButtonElement";
 import { maxv, pickNum } from "../common/Common";
-import { IPoint, Point } from "../common/Point";
-import { ClipRectElement, LayerElement, RcElement } from "../common/RcControl";
+import { IPoint } from "../common/Point";
+import { LayerElement, RcElement } from "../common/RcControl";
 import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { Align, AlignBase, SectionDir, VerticalAlign, _undef } from "../common/Types";
@@ -116,7 +116,7 @@ class TitleSectionView extends SectionView {
         const title = vTitle.model;
         const sub = vSub.model as Subtitle;
         const dTitle = (title && title.visible) ? (this._wTitle > domain.wPlot || title.alignBase === AlignBase.CHART) ? domain.wChart : domain.wPlot : 0; 
-        const dSub = (sub && sub.visible) ? (this._wSub > domain.wPlot || title.alignBase === AlignBase.CHART) ? domain.wChart : domain.wPlot : 0; 
+        const dSub = (sub && sub.visible) ? (this._wSub > domain.wPlot || sub.alignBase === AlignBase.CHART) ? domain.wChart : domain.wPlot : 0; 
         let pTitle = (this._wTitle > domain.wPlot || (title && title.alignBase === AlignBase.CHART)) ? 0 : domain.xPlot;
         let pSub = (this._wSub > domain.wPlot || (sub && sub.alignBase === AlignBase.CHART)) ? 0 : domain.xPlot;
 
@@ -148,7 +148,21 @@ class TitleSectionView extends SectionView {
             };
             const calcXs = () => {
                 xTitle = maxv(xTitle, xTitle + getX(title, dTitle, this._wTitle));
-                xSub = maxv(xSub, xSub + getX(sub, dSub, this._wSub));
+                if (sub.alignBase === AlignBase.PARENT) {
+                    switch (sub.align) {
+                        case Align.CENTER:
+                            xSub = xTitle + (this._wTitle - this._wSub) / 2;
+                            break;
+                        case Align.RIGHT:
+                            xSub = xTitle + this._wTitle - this._wSub;
+                            break;
+                        default:
+                            xSub = xTitle;
+                            break;
+                    }
+                } else {
+                    xSub = maxv(xSub, xSub + getX(sub, dSub, this._wSub));
+                }
             };
             const gap = pickNum(sub.titleGap, 0);
             let yTitle = 0;
@@ -177,12 +191,12 @@ class TitleSectionView extends SectionView {
                             calcYs();
                             break;
                         case SubtitlePosition.TOP:
-                            yTitle = ySub + this._hSub + gap;
                             calcXs();
+                            yTitle = ySub + this._hSub + gap;
                             break;
                         default:
-                            ySub = yTitle + this._hTitle + gap;
                             calcXs();
+                            ySub = yTitle + this._hTitle + gap;
                             break;
                     }
                     break;
