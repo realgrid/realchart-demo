@@ -16,7 +16,6 @@ import { LabelElement } from "../../common/impl/LabelElement";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
-import { LabelIconPostion } from "../../model/ChartItem";
 import { LineType } from "../../model/ChartTypes";
 import { PointItemPosition } from "../../model/Series";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
@@ -577,8 +576,6 @@ export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
             v.setModel(this.doc, flag, null, null);
             v.layout(Align.LEFT);
             
-            const xAxis = m._xAxisObj;
-            const yAxis = m._yAxisObj; 
             const r = v.getBBox();
             let x: number;
             let y: number;

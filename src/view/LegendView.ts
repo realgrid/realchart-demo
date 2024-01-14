@@ -162,11 +162,13 @@ export class LegendView extends BoundableElement<Legend> {
         let sum: number;
 
         this._itemViews.forEach(v => {
-            const color = v.model.source.legendColor();
+            const src = v.model.source;
+            const color = src.legendColor();
 
             // [주의] source가 getComputedStyle()로 색상을 가져온다. measure 시점에는 안된다.
             v._marker.setColor(color);
-            if (textColor && v.model.source.visible) {
+            src.styleLegendMarker(v._marker);
+            if (textColor && src.visible) {
                 v._label.setFill(color);
             } else {
                 v._label.setFill('');

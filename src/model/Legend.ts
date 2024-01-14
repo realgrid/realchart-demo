@@ -22,6 +22,7 @@ export interface ILegendSource {
     legendMarker(doc: Document, size: number): RcElement;
     legendColor(): string;
     legendLabel(): string;
+    styleLegendMarker(marker: RcElement): void;
 }
 
 /**

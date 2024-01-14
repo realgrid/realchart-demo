@@ -233,6 +233,10 @@ export abstract class LineSeriesBase extends Series {
         return m;
     }
 
+    styleLegendMarker(marker: RcElement): void {
+        marker.internalSetStyles(this.marker.style);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

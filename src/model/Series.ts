@@ -1081,6 +1081,9 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         return this.label || this.name;
     }
 
+    styleLegendMarker(marker: RcElement): void {
+    }
+
     canMixWith(other: IPlottingItem): boolean {
         return true;
     }
@@ -1965,6 +1968,9 @@ export class WidgetSeriesPoint extends DataPoint implements ILegendSource {
 
     legendLabel(): string {
         return pickProp(this.x, this.y);
+    }
+
+    styleLegendMarker(marker: RcElement): void {
     }
 }
 
