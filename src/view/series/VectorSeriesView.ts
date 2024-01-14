@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
-import { PathElement, RcElement } from "../../common/RcControl";
+import { RcElement } from "../../common/RcControl";
 import { ArrowHead, VectorSeries, VectorSeriesPoint } from "../../model/series/VectorSeries";
 import { IPointView, PointElement, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
@@ -25,9 +25,9 @@ class ArrowView extends PointElement implements IPointView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    layout(headType: ArrowHead, rotation: number, inverted: boolean): void {
-        const len = this.point._len;
-        const off = this.point._off;
+    layout(headType: ArrowHead, rotation: number, inverted: boolean, gr: number): void {
+        const len = this.point._len * gr;
+        const off = this.point._off * gr;
         const body = 1 / 2;
         let pts: any[];
 
@@ -106,7 +106,7 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
 
     protected _renderSeries(width: number, height: number): void {
         const series = this.model;
-        const start = series.startAngle;
+        let start = series.startAngle;
         const head = series.arrowHead;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
@@ -115,6 +115,11 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
         const xLen = inverted ? height : width;
         const gr = this._getGrowRate();
         const org = inverted ? 0 : height;
+        const reversed = xAxis.reversed ? -1 : 1;
+
+        if (yAxis.reversed) {
+            start += 180;
+        }
 
         this._pointContainer.invert(inverted, height);
 
@@ -122,21 +127,26 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
             const p = v.point;
 
             if (v.setVis(!p.isNull)) {
-                const wUnit = xAxis.getUnitLen(xLen, p.xValue) * gr;
-                const hUnit = yAxis.getUnitLen(yLen, p.yValue) * gr;
-                let x = xAxis.getPos(xLen, p.xValue) - wUnit / 2;
-                let y = org - yAxis.getPos(yLen, p.yValue) - hUnit / 2;
-                p.xPos = inverted ? org + yAxis.getPos(yLen, p.yValue) : x + (wUnit / 2);
-                p.yPos = inverted ? xLen - xAxis.getPos(xLen, p.xValue) + (wUnit / 2): y + (hUnit / 2);
+                // const wUnit = xAxis.getUnitLen(xLen, p.xValue) * gr;
+                // const hUnit = yAxis.getUnitLen(yLen, p.yValue) * gr;
+                const x = xAxis.getPos(xLen, p.xValue);// - wUnit / 2;
+                const y = org - yAxis.getPos(yLen, p.yValue);// - hUnit / 2;
+
+                // p.xPos = inverted ? org + yAxis.getPos(yLen, p.yValue) : x + (wUnit / 2);
+                // p.yPos = inverted ? xLen - xAxis.getPos(xLen, p.xValue) + (wUnit / 2): y + (hUnit / 2);
+                p.xPos = inverted ? org + yAxis.getPos(yLen, p.yValue) : x;
+                p.yPos = inverted ? xLen - xAxis.getPos(xLen, p.xValue) : y;
     
                 v.trans(x, y);
-                v.layout(head, p.angleValue + start, false);
+                v.layout(head, start + p.angleValue * reversed, false, gr);
             };
         });
     }
 
     protected _runShowEffect(firstTime: boolean): void {
         firstTime && SeriesAnimation.fadeIn(this);
+        // TODO: 
+        // firstTime && SeriesAnimation.grow(this);
     }
 
     //-------------------------------------------------------------------------
