@@ -1,6 +1,13 @@
 # Clock 게이지
 
-현재 시각을 표시하는 게이지.<br/>
+현재 시각이나 지정한 시간을 표시하는 아날로그 시계 게이지.<br/>
+기본적으로 현재 시간을 표시하지만, [시간](/config/config/gauge/clock#time)을 직접 지정할 수 있다.
+[시간대(timezone)](/config/config/gauge/clock#timezon)을 설정할 수도 있다.<br/>
+아래 그림처럼 시계 [테두리(rim)](/config/config/gauge/clock/rim)나 
+[침(hand)](/config/config/gauge/clock/hourhand), 
+[틱(tick)](/config/config/gauge/clock/tick) 등을 개별적으로 스타일링 할 수 있다.
+
+<img src="/images/guide/gauge-clock-01.png" width="80%" class="border-img"/>
 
 ## 설정
 
@@ -20,6 +27,9 @@ type은 '**clock**'으로 지정하고,
 ### See Also
 
 - [게이지 개요](/guide/gauges)
+- [Circle Gauge](/guide/gauges/gauge-circle)
+- [Linear Gauge](/guide/gauges/gauge-linear)
+- [Bullet Gauge](/guide/gauges/gauge-bullet)
 - [시리즈 개요](/guide/series)
 - [축 개요](/guide/axes)
-- [API 개요](/docs)
+- [차트 Configuration](/config)

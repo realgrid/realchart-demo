@@ -12,6 +12,9 @@ import { IChart } from "../Chart";
 import { ChartItem, FormattableText } from "../ChartItem";
 import { CircularGauge, Gauge } from "../Gauge";
 
+/**
+ * Clock 게이지 테두리(rim) 설정 모델.<br/>
+ */
 export class ClockGaugeRim extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -61,6 +64,9 @@ export class ClockGaugeRim extends ChartItem {
     }
 }
 
+/**
+ * Clock 게이지 시/분침(hand) 설정 모델.<br/>
+ */
 export class ClockGaugeHand extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -93,7 +99,6 @@ export class ClockGaugeHand extends ChartItem {
      * @config
      */
     thickness: number;
-
     /**
      * 바늘 길이.
      * 픽셀 단위로 직접 지정하거나 시계 반지름에 대한 상대 크기로 지정할 수 있다.
@@ -119,6 +124,9 @@ export class ClockGaugeHand extends ChartItem {
     }
 }
 
+/**
+ * Clock 게이지 초침(hand) 설정 모델.<br/>
+ */
 export class ClockGaugeSecondHand extends ClockGaugeHand {
 
     //-------------------------------------------------------------------------
@@ -139,6 +147,9 @@ export class ClockGaugeSecondHand extends ClockGaugeHand {
     duration = 200;
 }
 
+/**
+ * Clock 게이지 tick 설정 모델.<br/>
+ */
 export class ClockGaugeTick extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -153,6 +164,9 @@ export class ClockGaugeTick extends ChartItem {
     //-------------------------------------------------------------------------
 }
 
+/**
+ * Clock 게이지 tick 라벨 설정 모델.<br/>
+ */
 export class ClockGaugeTickLabel extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -169,6 +183,9 @@ export class ClockGaugeTickLabel extends ChartItem {
     offset = 1;
 }
 
+/**
+ * Clock 게이지 중심 pin 설정 모델.<br/>
+ */
 export class ClockGaugePin extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -179,6 +196,9 @@ export class ClockGaugePin extends ChartItem {
     }
 }
 
+/**
+ * Clock 게이지 내부에 표시되는 라벨 설정 모델.<br/>
+ */
 export class ClockGaugeLabel extends FormattableText {
 
     //-------------------------------------------------------------------------
@@ -197,6 +217,7 @@ export class ClockGaugeLabel extends FormattableText {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    '@config text' = 'RealChart Clock<br>ver1.0';
     /**
      * 라벨 표시 위치.
      * 

@@ -3,7 +3,10 @@
 ## Properties
 
 ### bottom: `string | number{:js}`[#bottom]
-plot 영역의 아래쪽 모서리와 widget 사이의 간격.  
+plot 영역의 아래쪽 모서리와 widget 사이의 간격.<br/> [bottom](#bottom) 이 설정되면 이 속성은 무시된다.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### col: `number{:js}`[#col]
+분할 모드일 때 게이지가 표시될 pane의 수평 index.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### duration: `number{:js}`[#duration]
 Animation duration.  
@@ -20,7 +23,10 @@ plot 영역의 왼쪽 모서리와 widget 사이의 간격.
 동적으로 게이지를 다루기 위해서는 반드시 지정해야 한다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### right: `string | number{:js}`[#right]
-plot 영역의 오른쪽 모서리와 widget 사이의 간격.  
+plot 영역의 오른쪽 모서리와 widget 사이의 간격.<br/> [left](#left) 가 설정되면 이 속성은 무시된다.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### row: `number{:js}`[#row]
+분할 모드일 때 게이지가 표시될 pane의 수직 index.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### size: `string | number{:js}`[#size]
 [width](#width) 와 [height](#height) 를 동시에 설정한다.  
