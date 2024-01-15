@@ -108,8 +108,7 @@ export class DataPoint {
     }
 
     getProp(fld: string | number): any {
-        if (isNone(this.source)) return this.source;
-        else return this.source[fld];
+        return this.source !== null && this.source[fld];
     }
 
     parse(series: ISeries): void {

@@ -96,9 +96,13 @@ export class DataPointLabel extends IconedText {
      */
     distance = 25;
     /**
-     * 계산되는 기본 text 대신, data point label로 표시될 text 리턴.\
-     * undefined나 null을 리턴하면 {@link text} 속성 등에 설정된 값으로 표시하거나,
-     * 값에 따라 자동 생성되는 텍스트를 사용한다.
+     * 계산되는 기본 text 대신, data point label로 표시될 field.<br/>
+     * {@link textCallback}이 설정되고 콜백에서 null이나 undefined를 리턴하지 않으면 이 속성은 무시된다.
+     */
+    textField: string;
+    /**
+     * 계산되는 기본 text 대신, data point label로 표시될 text 리턴.</br>
+     * undefined나 null을 리턴하면 {@link textField} 등을 사용한 기존에 표시될 텍스트를 사용한다.
      * 빈 문자열 등 정상적인 문자열을 리턴하면 그 문자열대로 표시된다. 
      * {@link prefix}나 포맷 속성 등은 적용되지 않는다.
      */
@@ -730,6 +734,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     _simpleMode = false;
     private _legendMarker: RcElement;
     private _pointLabelCallback: (point: any) => string;
+    private _pointLabelField: string;
     protected _pointArgs: IDataPointCallbackArgs;
     private _argsPoint: DataPoint;
 
@@ -1399,6 +1404,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
 
     protected _preparePointArgs(args: IDataPointCallbackArgs): void {
         this._pointLabelCallback = this.pointLabel.textCallback;
+        this._pointLabelField = this.pointLabel.textField;
         this._argsPoint = null;
 
         args.series = this.chart._proxy?.getChartObject(this);
@@ -1416,6 +1422,10 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         if (this._pointLabelCallback) {
             this._getPointCallbackArgs(this._pointArgs, p);
             const s = this._pointLabelCallback(this._pointArgs);
+            if (s != null) return s;
+        }
+        if (this._pointLabelField) {
+            const s = p.getProp(this._pointLabelField);
             if (s != null) return s;
         }
         return label;

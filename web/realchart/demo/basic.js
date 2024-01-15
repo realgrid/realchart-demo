@@ -43,9 +43,10 @@ const config = {
   series: {
     pointLabel: {
       visible: true,
-      // textCallback: ({index, y}) => {
-      //     return index === 0 ? y + '%' : y;
-      // },
+    //   textField: 'label',
+    //   textCallback: ({index, y}) => {
+    //       return index === 0 ? y + '%' : y;
+    //   },
     },
     onPointClick: (args) => {
       // alert(JSON.stringify(args));
@@ -58,6 +59,7 @@ const config = {
       );
     },
     data: [
+        // { name: 'xxx', value: 11111, label: 3333},
       ['신흥1동', 12904],
       ['신흥2동', 19796],
       ['신흥3동', 10995],
