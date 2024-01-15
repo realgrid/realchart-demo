@@ -43,7 +43,7 @@ const config = {
     },
     {
       type: "line",
-      data: now.map((e,i) => {return e - 3}),
+      data: prev.map((e,i) => {return e - 3}),
 	  pointLabel: {
 		visible: true,
 		effect: 'background',
@@ -51,8 +51,7 @@ const config = {
 		suffix: ")",
 		prefix: '(',
 		textCallback: (args) => {
-			console.log(args)
-			return Math.abs(args.yValue).toFixed(2)
+			return Math.abs(now[args.index] - prev[args.index]).toFixed(2)
 		},
 		style: {
 			fill: "#fff",
