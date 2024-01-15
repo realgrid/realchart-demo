@@ -725,7 +725,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     _yFielder: (src: any) => any;
     _zFielder: (src: any) => any;
     _colorFielder: (src: any) => any;
-    _dataDirty: boolean;
+    _dataSourceDirty: boolean;
     _cdata: ChartData;
     protected _points: DataPointCollection;
     _runPoints: DataPoint[];
@@ -920,7 +920,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     set data(value: any) {
         if (value !== this._data) {
             this._data = value;
-            this._dataDirty = true;
+            this._dataSourceDirty = true;
         }
     }
     /**
@@ -1182,10 +1182,10 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         this._yAxisObj = this.group ? this.group._yAxisObj : this.chart._connectSeries(this, false);
         this._calcedColor = void 0;
 
-        if (this._dataDirty) {
+        if (this._dataSourceDirty) {
             const data = this._doLoadData(this._data);
             this._loadPoints(data);
-            this._dataDirty = false;
+            this._dataSourceDirty = false;
         }
 
         this._runPoints = this._points.getPoints(this._xAxisObj, this._yAxisObj);

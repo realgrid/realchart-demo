@@ -112,6 +112,8 @@ export class SeriesNavigator extends ChartItem {
     //-------------------------------------------------------------------------
     /**
      * Navigator 시리즈의 data나 축 범위를 제공하는 본 시리즈의 이름이나 index.
+     * 
+     * @config
      */
     source: string;
     handle: NavigiatorHandle;
@@ -200,8 +202,13 @@ export class SeriesNavigator extends ChartItem {
     }
 
     protected _doPrepareRender(chart: IChart): void {
-        if (this._source = chart._getSeries().getSeries(this.source) || chart.firstSeries) {
-            this._naviChart.firstSeries._loadPoints(this._source.getPoints().getProxies());
+        const source = chart._getSeries().getSeries(this.source) || chart.firstSeries;
+
+        // TODO: 데이터 변경
+        if (source !== this._source) {
+            this._source = source;
+            // this._naviChart.firstSeries._loadPoints(this._source.getPoints().getProxies());
+            this._naviChart.firstSeries._loadPoints(this._source.getPoints()['_points'].map(p => p.source));
         }
 
         this._vertical = false;
