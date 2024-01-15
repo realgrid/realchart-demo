@@ -93,11 +93,12 @@ export class Globals {
      * @param container 컨트롤이 생성되는 div 엘리먼트나 id
      * @param config 차트 모델 설정 JSON
      * @param animate 첫 로딩 animation을 실행한다.
+     * @param calllback 차트가 모두 로드되고 첫 렌더링이 완료된 후 호출되는 콜백 함수.
      * @returns 생성된 차트 컨트롤 객체
      */
-    static createChart(doc: Document, container: string | HTMLDivElement, config: any, animate = true): RcChartControl {
+    static createChart(doc: Document, container: string | HTMLDivElement, config: any, animate = true, callback?: () => void): RcChartControl {
         const c =  new (RcChartControl as any)(new ChartControl(doc, container));
-        c.load(config, true);
+        c.load(config, animate, callback);
         return c;
     }
     /**

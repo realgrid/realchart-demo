@@ -9,6 +9,7 @@
 import { isObject } from "./common/Common";
 import { RcControl, RcElement } from "./common/RcControl";
 import { IRect } from "./common/Rectangle";
+import { _undef } from "./common/Types";
 import { Annotation } from "./model/Annotation";
 import { Axis } from "./model/Axis";
 import { Chart, IChartEventListener } from "./model/Chart";
@@ -28,6 +29,7 @@ export class ChartControl extends RcControl implements IChartEventListener {
     //-------------------------------------------------------------------------
     private _model: Chart;
     private _chartView: ChartView;
+    private _loadCallback: () => void;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -93,11 +95,13 @@ export class ChartControl extends RcControl implements IChartEventListener {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    load(config: any, loadAnimation = false): void {
+    load(config: any, loadAnimation = false, callback?: () => void): void {
         this.clearAssetDefs();
         // this.clearClipDefs();
         this.model = new Chart(config);
         this.model._loadAnimatable = loadAnimation;
+        this._loadCallback = callback;
+
     }
 
     refresh(now: boolean): void {
@@ -132,6 +136,10 @@ export class ChartControl extends RcControl implements IChartEventListener {
         view.setRect(bounds);
         view.layout();
         model && model.afterRender();
+        if (this._loadCallback) {
+            setTimeout(this._loadCallback, 0);
+            this._loadCallback = _undef;
+        }
     }
 
     protected _doRenderBackground(elt: HTMLDivElement, root: RcElement, width: number, height: number): void {

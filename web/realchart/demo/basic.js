@@ -60,7 +60,7 @@ const config = {
     },
     data: [
         // { name: 'xxx', value: 11111, label: 3333},
-      ['신흥1동', 12904],
+      ['신흥1동', 13904],
       ['신흥2동', 19796],
       ['신흥3동', 10995],
       ['태평1동', 14625],
@@ -189,6 +189,8 @@ function init() {
   // RealChart.setDebugging(true);
   RealChart.setLogging(true);
 
-  chart = RealChart.createChart(document, 'realchart', config);
+  chart = RealChart.createChart(document, 'realchart', config, true, () => {
+    console.log('LoADED!')
+  });
   setActions('actions');
 }

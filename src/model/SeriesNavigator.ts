@@ -73,10 +73,11 @@ const AXIS = {
 }
 
 /**
- * 시리즈 내비게이터 모델.\
+ * 시리즈 내비게이터 모델.<br/>
+ * 내비게이터에 표시되는 시리즈는 기본적으로 'area' 시리즈로 표시되지만,
+ * 'line', 'area', 'bar' 시리즈로 지정할 수도 있다.
  * 
- * 1. 기본적으로 'area' 시리즈로 표시한다.
- * 2. 'line', 'area', 'bar' 시리즈나 원본 시리즈 타입으로 표시할 수 있다.
+ * @config chart.seriesNavigator
  */
 export class SeriesNavigator extends ChartItem {
 
@@ -119,6 +120,14 @@ export class SeriesNavigator extends ChartItem {
     handle: NavigiatorHandle;
     mask: NavigatorMask;
     borderLine: ChartItem;
+    /**
+     * Navigator에 표시되는 시리즈 모델<br/>
+     * 기본적으로 'area' 시리즈로 표시되지만,
+     * 'line', 'area', 'bar' 시리즈로 지정할 수도 있다.
+     * data는 {@link source 원본}에서 가져온다.
+     * 
+     * @config
+     */
     series: any;
     xAxis: any;
     yAxis: any;

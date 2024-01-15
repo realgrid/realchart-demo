@@ -75,8 +75,8 @@ export class RcChartControl {
     /**
      * 기존 설정 모델을 제거하고 새로운 설정으로 차트를 재구성한다.
      */
-    load(config: any, animate?: boolean): void {
-        this.$_p.load(config, animate);
+    load(config: any, animate?: boolean, callback?: () => void): void {
+        this.$_p.load(config, animate, callback);
         const model = this.$_p.model;
         model._proxy = this._proxy;
 

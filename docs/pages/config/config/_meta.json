@@ -12,5 +12,6 @@
   "body": "body",
   "legend": "legend",
   "tooltip": "tooltip",
+  "seriesNavigator": "seriesNavigator",
   "split": "split"
 }

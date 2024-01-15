@@ -1319,6 +1319,10 @@ export class ChartView extends LayerElement {
         }
     }
 
+    isAnimating(): boolean {
+        return this._bodyView.animating();
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

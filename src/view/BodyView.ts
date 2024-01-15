@@ -1077,6 +1077,17 @@ export class BodyView extends ChartElement<Body> {
         }
     }
 
+    animating(): boolean {
+        let ani = false;
+        for (const sv of this._seriesViews) {
+            if (sv.visible && sv._animating()) {
+                ani = true;
+                break;
+            }
+        }
+        return ani;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
