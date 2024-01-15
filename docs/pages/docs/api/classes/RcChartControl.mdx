@@ -95,7 +95,7 @@ name 매개변수가 문자열이면 지정한 이름의 y 축을,
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | name | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | 이름이나 index |
-### load(config, animate?): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#load]
+### load(config, animate?, callback?): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#load]
 기존 설정 모델을 제거하고 새로운 설정으로 차트를 재구성한다.
 
 
@@ -104,6 +104,7 @@ name 매개변수가 문자열이면 지정한 이름의 y 축을,
 | ----------- | ----------- |
 | config | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |
 | animate | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) |
+| callback | ( &#124; ...args &#124; [unknown](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-0.html#new-unknown-top-type) &#124; \[ &#124; ] &#124; ) &#124;   &#124; => &#124;   &#124; [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined) |
 ### removeSeries(series, animate): [RcChartSeries](../classes/RcChartSeries)[#removeSeries]
 | Parameter | Type |
 | ----------- | ----------- |

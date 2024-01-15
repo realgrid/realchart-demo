@@ -46,15 +46,21 @@ export class ContinuousAxisTick extends AxisTick {
     /**
      * tick들 사이의 대략적인 픽셀 간격.<br/>
      * 다른 설정이 없다면 이 값을 기준으로 tick 개수가 결정된다.
+     * 
+     * @config
      */
     stepPixels = 72;
     stepCount: number;
     /**
+     * 명시적으로 설정하는 스텝 목록<br/>
      * 양 끝을 NaN으로 지정하면 계산된 min/max로 설정된다.
+     * 이 목록이 설정되면 스텝 설정과 관련된 다른 속성들은 무시된다.
+     * 
+     * @config
      */
     steps: number[];
     /**
-     * tick 개수를 맞춰야 하는 대상 axis.
+     * tick 개수를 맞춰야 하는 대상 axis.<br/>
      * base의 strictMin, strictMax가 설정되지 않아야 한다.
      * base의 startFit, endFilt의 {@link AxisFit.TICK}으로 설정되어야 한다.
      * 
@@ -306,6 +312,11 @@ export class LinearAxisLabel extends AxisLabel {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * true로 지정하면 label 끝에 단위 문자를 추가한다.<br/>
+     * 
+     * @config
+     */
     useSymbols = true;
 
     //-------------------------------------------------------------------------
@@ -549,6 +560,17 @@ export abstract class ContinuousAxis extends Axis {
     getEndFit(): AxisFit {
         return this.endFit === AxisFit.DEFAULT ? (this._isX ? AxisFit.VALUE : AxisFit.TICK) : this.endFit;
     }
+
+    /**
+     * @override
+     * @config
+     */
+    readonly tick: ContinuousAxisTick;
+    /**
+     * @override
+     * @config
+     */
+    readonly grid: ContinuousAxisGrid;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -1000,6 +1022,12 @@ export class LinearAxis extends ContinuousAxis {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * @override
+     * @config
+     */
+    readonly label: LinearAxisLabel;
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
