@@ -257,9 +257,36 @@ export class TimeAxisTick extends ContinuousAxisTick {
             this.scale = time_periods[scale];
             interval = time_scales[this.scale];
 
-            // 정규화하지 않는다. [검토 필요]
-            //min = this._normalizeMin(min, interval) + (this.axis as TimeAxis)._offset;
-            min += (this.axis as TimeAxis)._offset;
+            // scale의 첫날 부터 시작되도록 한다.
+            const d = new Date(min += (this.axis as TimeAxis)._offset);
+
+            switch (this.scale) {
+                case TimeScale.YEAR:
+                    // t.setFullYear(t.getFullYear() + delta);
+                    break;
+                case TimeScale.MONTH:
+                    // t.setMonth(t.getMonth() + delta);
+                    break;
+                case TimeScale.WEEK:
+                    d.setDate(d.getDate() + (7 - d.getDay() + this.chart.startOfWeek) % 7);
+                    break;
+                case TimeScale.DAY:
+                    // t.setDate(t.getDate() + delta);
+                    break;
+                case TimeScale.HOUR:
+                    // t.setHours(t.getHours() + delta);
+                    break;
+                case TimeScale.MIN:
+                    // t.setMinutes(t.getMinutes() + delta);
+                    break;
+                case TimeScale.SEC:
+                    // t.setSeconds(t.getSeconds() + delta);
+                    break;
+                case TimeScale.MS:
+                    // t.setMilliseconds(t.getMilliseconds() + delta);
+                    break;
+            }
+            min = +d;
 
             if (!isNaN(base)) {
                 steps.push(v = base);
@@ -291,7 +318,7 @@ const FORMATS = [
     { format: "mm:ss", beginningFormat: 'HH:mm:ss'},        // m
     { format: "HH:mm", beginningFormat: 'MM-dd' },          // H
     { format: "MM-dd", beginningFormat: 'yyyy-MM' },        // d
-    { format: "W주 w", beginningFormat: 'yyyy-MM' },        // w
+    { format: "MM W주", beginningFormat: 'yyyy-MM-dd' },        // w
     { format: "yyyy-MM", beginningFormat: 'yyyy-MM' },      // M
     { format: "yyyy" }                                      // y
 ]   
@@ -375,46 +402,47 @@ export class TimeAxisLabel extends AxisLabel {
 
         const fmts = this._formats;
         const scale = (axis.tick as TimeAxisTick).scale;
+        const ft = DatetimeFormatter.getFormatter;
 
         switch (scale) {
             case TimeScale.YEAR:
-                return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
+                return ft(fmts[scale].format).toStr(d, chart.startOfWeek);
             case TimeScale.MONTH:
                 if (index === 0 || d.getMonth() === 0) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
+                    return ft(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
+                    return ft(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }      
             case TimeScale.WEEK:
             case TimeScale.DAY:
                 if (index === 0 || d.getDate() === 1) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
+                    return ft(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
+                    return ft(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }      
             case TimeScale.HOUR:
                 if (index === 0 || d.getHours() === 0) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
+                    return ft(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
+                    return ft(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }
             case TimeScale.MIN:
                 if (index === 0 || d.getMinutes() === 0) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
+                    return ft(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
+                    return ft(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }
             case TimeScale.SEC:
                 if (index === 0 || d.getSeconds() === 0) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
+                    return ft(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
+                    return ft(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }
             case TimeScale.MS:
                 if (index === 0 || d.getMilliseconds() === 0) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
+                    return ft(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
+                    return ft(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }
         }
      }

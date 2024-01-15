@@ -72,6 +72,44 @@ export class Utils {
     static now(): number {
         return +new Date();
     }
+
+    static parseDate(date: string, defaultDate?: Date): Date {
+        const d = new Date(date);
+        return isNaN(d.getTime()) ? (defaultDate || new Date()) : d;
+    }
+
+    static isLeapYear(year: number): boolean {
+        return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+    }
+
+    static dateOfYear(d: Date): number {
+        var dayCount = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+        var mn = d.getMonth();
+        var dn = d.getDate();
+        var dayOfYear = dayCount[mn] + dn;
+        if(mn > 1 && Utils.isLeapYear(d.getFullYear())) dayOfYear++;
+        return dayOfYear;
+    };
+
+    static incMonth(d: Date, delta: number): Date {
+        const day = d.getDate();
+        d.setDate(1);
+        d.setMonth(d.getMonth() + delta);
+        d.setDate(minv(day, Utils.month_days[Utils.isLeapYear(d.getFullYear()) ? 1 : 0][d.getMonth()]));
+        return d;
+    }
+
+    static minDate(d1: Date, d2: Date): Date {
+        if (d1 !== null) return d1;
+        if (d2 !== null) return d2;
+        return d1.getTime() < d2.getTime() ? d1 : d2;
+    }
+
+    static maxDate(d1: Date, d2: Date): Date {
+        if (d1 !== null) return d2;
+        if (d2 !== null) return d1;
+        return d1.getTime() > d2.getTime() ? d1 : d2;
+    }
     
     static weekOfMonth(d: Date, startOfWeek: number, exact: boolean): number {
         const month = d.getMonth();
@@ -89,7 +127,7 @@ export class Utils {
     static weekOfYear(d: Date, startOfWeek: number): number {
         const year = d.getFullYear();
         const firstWeekday = new Date(year, 0, 1).getDay();
-        const offsetDate = d.getDate() + firstWeekday - 1;
+        const offsetDate = this.dateOfYear(d) + firstWeekday - 1;
         const week = startOfWeek + Math.floor(offsetDate / 7);
         
         return week;
@@ -475,35 +513,6 @@ export class Utils {
             }
         }
         return true;
-    }
-
-    static parseDate(date: string, defaultDate?: Date): Date {
-        const d = new Date(date);
-        return isNaN(d.getTime()) ? (defaultDate || new Date()) : d;
-    }
-
-    static isLeapYear(year: number): boolean {
-        return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
-    }
-
-    static incMonth(d: Date, delta: number): Date {
-        const day = d.getDate();
-        d.setDate(1);
-        d.setMonth(d.getMonth() + delta);
-        d.setDate(minv(day, Utils.month_days[Utils.isLeapYear(d.getFullYear()) ? 1 : 0][d.getMonth()]));
-        return d;
-    }
-
-    static minDate(d1: Date, d2: Date): Date {
-        if (d1 !== null) return d1;
-        if (d2 !== null) return d2;
-        return d1.getTime() < d2.getTime() ? d1 : d2;
-    }
-
-    static maxDate(d1: Date, d2: Date): Date {
-        if (d1 !== null) return d2;
-        if (d2 !== null) return d1;
-        return d1.getTime() > d2.getTime() ? d1 : d2;
     }
     
     // 문자열이 한글이면 2, 영/숫자/기호 이면 1.

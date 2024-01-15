@@ -86,10 +86,10 @@ const config = {
             visible: true,
             // step: 10,
             // timeFormat: 'M, yyyy',
-            textCallback: ({value}) => {
-                const d = new Date(value);
-                return d.toLocaleDateString('en-us', { day: 'numeric', month: 'short', year: 'numeric' });
-            }
+            // textCallback: ({value}) => {
+            //     const d = new Date(value);
+            //     return d.toLocaleDateString('en-us', { day: 'numeric', month: 'short', year: 'numeric' });
+            // }
         }
     },
     yAxis: {

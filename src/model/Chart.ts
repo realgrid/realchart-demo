@@ -577,10 +577,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      * 명시적으로 지정하지 않으면 현재 위치에 따른 값으로 자동 설정된다.\
      * [주의] 차트 로딩 후 변경할 수 없다.
      * 
-     * @default undefined
      * @config  
      */
-    timeOffset = new Date().getTimezoneOffset();
+    readonly timeOffset = new Date().getTimezoneOffset();
     /**
      * //TODO: locale에서 기본값 가져오기
      * 한 주의 시작 요일.\
