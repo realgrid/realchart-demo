@@ -43,21 +43,25 @@ const config = {
     },
     {
       type: "line",
-      data: now.map((e,i) => {return e - prev[i]}),
+      data: now.map((e,i) => {return e - 3}),
 	  pointLabel: {
 		visible: true,
-		effect: 'outline',
+		effect: 'background',
 		autoContrast: true,
 		suffix: ")",
 		prefix: '(',
+		textCallback: (args) => {
+			console.log(args)
+			return Math.abs(args.yValue).toFixed(2)
+		},
 		style: {
+			fill: "#fff",
 			fontSize: "20px",
-			rx: 20,
-			backgroundColor: "red"
 		},
 		backgroundStyle: {
-			fill: "red",
-			backgroundColor: "red"
+			fill: "#222",
+			padding: "4 7",
+			rx:1
 		}
 	  },
 	  style:{
