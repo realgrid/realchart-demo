@@ -48,6 +48,8 @@ const config = {
 		visible: true,
 		effect: 'outline',
 		autoContrast: true,
+		suffix: ")",
+		prefix: '(',
 		style: {
 			fontSize: "20px",
 			rx: 20,
