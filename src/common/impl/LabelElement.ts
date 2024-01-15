@@ -164,7 +164,6 @@ export class LabelElement extends GroupElement {
                 h + y + (parseFloat(cs.paddingBottom) || 0),
                 cs['rx']
             )
-            this._back.setStyle('fill', 'lightgray');
         }
 
         if (icon) {

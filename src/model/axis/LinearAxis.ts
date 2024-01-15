@@ -43,6 +43,10 @@ export class ContinuousAxisTick extends AxisTick {
     // properties
     //-------------------------------------------------------------------------
     stepInterval: number | string;
+    /**
+     * tick들 사이의 대략적인 픽셀 간격.<br/>
+     * 다른 설정이 없다면 이 값을 기준으로 tick 개수가 결정된다.
+     */
     stepPixels = 72;
     stepCount: number;
     /**
@@ -982,8 +986,8 @@ export abstract class ContinuousAxis extends Axis {
 }
 
 /**
- * 선형 연속 축.
- * 값 사아의 비율과 축 길이 비율이 항상 동일한 축.
+ * 선형 연속 축.<br/>
+ * 값 사이의 비율과 축 길이 비율이 항상 동일한 축.
  * 
  * @config chart.xAxis[type=linear]
  * @config chart.yAxis[type=linear]
