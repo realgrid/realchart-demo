@@ -42,6 +42,10 @@ export class ContinuousAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * tick들 사이의 값 간격.
+     * @config
+     */
     stepInterval: number | string;
     /**
      * tick들 사이의 대략적인 픽셀 간격.<br/>
