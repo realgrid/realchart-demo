@@ -67,7 +67,7 @@ export class BumpSeriesGroup extends ConstraintSeriesGroup<LineSeries> {
             const pts = map[x].sort((p1, p2) => p1.yValue - p2.yValue);
 
             for (let i = pts.length - 1; i >= 0; i--) {
-                pts[i].label = pts[i].yValue;
+                pts[i].yLabel = pts[i].yValue;
                 pts[i].yValue = pts[i].yGroup = i;
             }
         }

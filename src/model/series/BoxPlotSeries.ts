@@ -54,7 +54,7 @@ export class BoxPlotSeriesPoint extends DataPoint {
         return 2;
     }
 
-    getLabel(index: number) {
+    getLabelValue(index: number) {
         return index === 0 ? this.yValue : this.minValue;
     }
 

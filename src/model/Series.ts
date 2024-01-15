@@ -98,6 +98,8 @@ export class DataPointLabel extends IconedText {
     /**
      * 계산되는 기본 text 대신, data point label로 표시될 field.<br/>
      * {@link textCallback}이 설정되고 콜백에서 null이나 undefined를 리턴하지 않으면 이 속성은 무시된다.
+     * 
+     * @config
      */
     textField: string;
     /**
@@ -127,6 +129,14 @@ export class DataPointLabel extends IconedText {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getValue(p: DataPoint, index: number): any {
+        if (this.textField) {
+            const v = p.getProp(this.textField);
+            if (v != null) return v;
+        }
+        return p.getLabelValue(index);
+    }
+
     getTextDomain(p: DataPoint): IRichTextDomain {
         this._point = p;
         return this._domain;
@@ -734,7 +744,6 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     _simpleMode = false;
     private _legendMarker: RcElement;
     private _pointLabelCallback: (point: any) => string;
-    private _pointLabelField: string;
     protected _pointArgs: IDataPointCallbackArgs;
     private _argsPoint: DataPoint;
 
@@ -1404,7 +1413,6 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
 
     protected _preparePointArgs(args: IDataPointCallbackArgs): void {
         this._pointLabelCallback = this.pointLabel.textCallback;
-        this._pointLabelField = this.pointLabel.textField;
         this._argsPoint = null;
 
         args.series = this.chart._proxy?.getChartObject(this);
@@ -1422,10 +1430,6 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         if (this._pointLabelCallback) {
             this._getPointCallbackArgs(this._pointArgs, p);
             const s = this._pointLabelCallback(this._pointArgs);
-            if (s != null) return s;
-        }
-        if (this._pointLabelField) {
-            const s = p.getProp(this._pointLabelField);
             if (s != null) return s;
         }
         return label;

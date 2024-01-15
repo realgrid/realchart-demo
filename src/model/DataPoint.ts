@@ -61,7 +61,7 @@ export class DataPoint {
     range: IValueRange;
 
     zValue: number;
-    label: any;
+    yLabel: any;
 
     ani: RcAnimation;
     yPrev: number;
@@ -132,8 +132,8 @@ export class DataPoint {
         }
     }
 
-    getLabel(index: number): any {
-        return this.label === _undef ? this.yValue : this.label;
+    getLabelValue(index: number): any {
+        return this.yLabel === _undef ? this.yValue : this.yLabel;
     }
 
     swap(): void {
@@ -379,7 +379,7 @@ export class ZValuePoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    getLabel(index: number) {
+    getLabelValue(index: number): any {
         return this.zValue;
     }
 
@@ -462,7 +462,7 @@ export class RangedPoint extends DataPoint {
         return 2;
     }
 
-    getLabel(index: number) {
+    getLabelValue(index: number) {
         return index === 1 ? this.lowValue : this.yValue;
     }
 

@@ -95,15 +95,8 @@ export class PointLabelContainer extends LayerElement {
         if (richFormat) {
             model.prepareRich(richFormat);
             model.buildSvg(view._text, view._outline, NaN, NaN, model, model.getTextDomain(p));
-            // view.setStyles(styles);
-
-            // label.setStyles(styles);
-            // label.setSvg(pointLabel.getSvg(p.getValueOf))
-            //      .setStyles(styles);
         } else {
-            //label.setValueEx(p.value, true, 1)
-            view.setText(model.getText(p.getLabel(index)));
-                // .setStyles(styles);
+            view.setText(model.getText(model.getValue(p, index)));
         }
     }
 
