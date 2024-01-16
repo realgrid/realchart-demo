@@ -673,7 +673,8 @@ class ValueAnimation extends RcAnimation {
 /**
  * 시리즈는 {@link data}로 지정된 값들을 데이터포인트로 표시하는 차트의 핵심 구성 요소이다.<br/>
  * 차트 설정의 다른 부분이나 API에 참조하기 위해서는 {@link name}을 반드시 지정해야 햔다.
- * 차트 생성 시 **'type'**을 지정하지 않으면 **'bar'** 시리즈로 생성된다.
+ * 차트 생성 시 **'type'**을 지정하지 않으면 **'bar'** 시리즈로 생성된다.<br/>
+ * //데이터포인트 색상은 {@link pointStyleCallback}, 데이터포인트별로 지정된 색상, {@link pointColors}, {@link color} 순서대로 우선 적용된다.
  * 
  * @config chart.series[base]
  */
@@ -951,6 +952,8 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      * 모든 데이터포인트에 적용되는 inline 스타일셋.<br/>
      * {@link Series.style}로 설정되는 시리즈의 inline 스타일이
      * 데이터포인터에 적용되지 않는 경우 이 속성을 사용할 수 있다.
+     * {@link pointColors}나 {@link color}가 설정되면 이 속성으로 설정된 색상은 무시된다.
+     * 또, {@link pointStyleCallback}으로 설정된 스타일이 이 속성 스타일보다 우선한다.
      * 
      * @config
      */
@@ -958,14 +961,16 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     /**
      * 데이터 포인트 기본 색.<br/>
      * 숫자로 지정하면 정수로 변환된 값에 해당하는 팔레트 색상으로 설정된다.
-     * 'var(--color-n)'으로 지정한 것과 동일하며, 1 ~ 12 사이의 값으로 지정한다.
+     * 'var(--color-n)'으로 지정한 것과 동일하며, 1 ~ 12 사이의 값으로 지정한다.<br/>
+     *  {@link pointColors}나 {@link pointStyleCallback}으로 설정된 색상이 이 속성으로 설정한 색상보다 우선한다.
      * 
      * @config
      */
     color: string | number;
     /**
      * 데이터 포인트별 색들을 지정한다.<br/>
-     * 색 배열로 지정하거나, 'colors' asset으로 등록된 이름을 지정할 수 있다.
+     * 색 배열로 지정하거나, 'colors' asset으로 등록된 이름을 지정할 수 있다.<br/>
+     * {@link pointStyleCallback}으로 설정된 색상이나 데이터포인트별로 지정한 색상이 이 속성으로 설정한 색상보다 우선한다.
      * 
      * @config
      */
@@ -1665,9 +1670,6 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
                 p.color = p.color || color;
             })
         }
-         
-
-
         this._preparePointArgs(this._pointArgs);
     }
 

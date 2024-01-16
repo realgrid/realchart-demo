@@ -30,7 +30,7 @@ Lollipop 시리즈의 변종으로 시간에 따른 두 값의 변화를 표시�
 ### color: `string | number{:js}`[#color]
 데이터 포인트 기본 색.<br/>
 숫자로 지정하면 정수로 변환된 값에 해당하는 팔레트 색상으로 설정된다.
-<Content type="expression" value="'var(--color-n)'"></Content>으로 지정한 것과 동일하며, 1 ~ 12 사이의 값으로 지정한다.  
+<Content type="expression" value="'var(--color-n)'"></Content>으로 지정한 것과 동일하며, 1 ~ 12 사이의 값으로 지정한다.<br/> [pointColors](#pointcolors) 나 [pointStyleCallback](#pointstylecallback) 으로 설정된 색상이 이 속성으로 설정한 색상보다 우선한다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### colorField: `string{:js}`[#colorField]
 <Content type="keyword" value="undefined"></Content>이면, data point의 값이 객체일 때 <Content type="expression" value="'color'"></Content>.  
@@ -60,7 +60,7 @@ group에 포함되면 group의 noClip 설정을 따른다.
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### pointColors: `string | string[]{:js}`[#pointColors]
 데이터 포인트별 색들을 지정한다.<br/>
-색 배열로 지정하거나, <Content type="expression" value="'colors'"></Content> asset으로 등록된 이름을 지정할 수 있다.  
+색 배열로 지정하거나, <Content type="expression" value="'colors'"></Content> asset으로 등록된 이름을 지정할 수 있다.<br/> [pointStyleCallback](#pointstylecallback) 으로 설정된 색상이나 데이터포인트별로 지정한 색상이 이 속성으로 설정한 색상보다 우선한다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### [pointLabel](./dumbbell/pointLabel)
 데이터포인트 label 설정 모델.  
@@ -74,7 +74,8 @@ point가 차지할 원래 크기에 대한 상대 값으로서,
 <DefaultValue value="undefined" contents="한 카테고리에 cluster 가능한 시리즈가 하나만 표시되면 0.25, group에 포함된 경우 0.1, 여러 시리즈와 같이 표시되면 0.2."></DefaultValue>
 ### pointStyle: `SVGStyles | string{:js}`[#pointStyle]
 모든 데이터포인트에 적용되는 inline 스타일셋.<br/> [style](/config/config/series/dumbbell#style) 로 설정되는 시리즈의 inline 스타일이
-데이터포인터에 적용되지 않는 경우 이 속성을 사용할 수 있다.  
+데이터포인터에 적용되지 않는 경우 이 속성을 사용할 수 있다. [pointColors](#pointcolors) 나 [color](#color) 가 설정되면 이 속성으로 설정된 색상은 무시된다.
+또, [pointStyleCallback](#pointstylecallback) 으로 설정된 스타일이 이 속성 스타일보다 우선한다.  
 - `SVGStyles{:js}` 
 
 | Name | Type | Optional |  
