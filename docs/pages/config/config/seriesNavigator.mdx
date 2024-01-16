@@ -30,6 +30,11 @@ Navigator 시리즈의 data나 축 범위를 제공하는 본 시리즈의 이�
 | strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |  
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
+### usePointSource: `boolean{:js}`[#usePointSource]
+<Content type="keyword" value="true"></Content>로 지정하면 [source](#source) 로 지정한 원본 시리즈로부터 내비게이터 시리즈의 데이터포인트들을 생성할 때,
+원본 시리즈의 data로 지정된 값들을 사용하고, 내비게이터 시리즈의 yField를 원본과 다르게 지정할 수도 있다.<br/>
+기본값 <Content type="keyword" value="false"></Content>일 때는 이미 생성된 원본 데이터포인트의 x, y 값을 사용한다.  
+<DefaultValue value="false" contents=""></DefaultValue>
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
 <DefaultValue value="true" contents=""></DefaultValue>
