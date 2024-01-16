@@ -118,8 +118,7 @@ export class TimeAxisTick extends ContinuousAxisTick {
 
     protected _getStepMultiples(step: number): number[] {
         for (let i = TimeScale.MS; i < TimeScale.YEAR; i++) {
-            if (step >= time_scales[i] && step < time_scales[i + 1] / 2) {
-                // if (step <= time_scales[i]) {
+            if (step >= time_scales[i] / 2 && step < time_scales[i + 1] / 2) {
                 this.scale = i;
                 return time_multiples[i];
             }

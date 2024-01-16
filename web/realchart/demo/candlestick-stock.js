@@ -13,7 +13,8 @@ const config = {
         type: "time",
         // startFit: 40000,
         tick: {
-            step: 3
+            // step: 3
+            // stepInterval: '1m'
         },
     },
     crosshair: true,
@@ -26,6 +27,7 @@ const config = {
     },
     series: {
         type: "candlestick",
+        xField: 'date',
         pointLabel: false,
         openField: "openprc",
         highField: "highprc",
@@ -49,6 +51,8 @@ const config = {
         visible: true,
         series: {
             type: "bar",
+            // usePointSource: true,
+            xField: 'data',
             pointStyleCallback: (args) => {
                 // console.log(args);
                 

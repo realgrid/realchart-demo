@@ -188,11 +188,14 @@ export class SeriesNavigator extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    private _config: any;
+    private _axisType: string;
+
     protected _doLoad(src: any): void {
         super._doLoad(src);
 
         const config: any = {
-        }
+        };
 
         // series
         if (isObject(src.series)) {
@@ -204,9 +207,10 @@ export class SeriesNavigator extends ChartItem {
         }
         // x-axis
         if (isObject(src.xAxis)) {
-            config.xAxis = assign({}, src.xAxis, (AXES[src.xAxis.type] || AXES['linear'])(), AXIS);
+            config.xAxis = assign({}, src.xAxis, (AXES[src.xAxis.type])(), AXIS);
         } else {
-            config.xAxis = assign(AXES['linear'](), AXIS);
+            // config.xAxis = assign(AXES['linear'](), AXIS);
+            config.xAxis = assign({}, AXIS);
         }
 
         // y-axis
@@ -216,7 +220,10 @@ export class SeriesNavigator extends ChartItem {
             config.yAxis = assign(AXES['linear'](), AXIS);
         }
 
-        this._naviChart = this.chart._createChart(config);
+        this._config = config;
+        this._axisType = config.xAxis.type;
+
+        // this._naviChart = this.chart._createChart(config);
     }
 
     protected _doPrepareRender(chart: IChart): void {
@@ -225,6 +232,11 @@ export class SeriesNavigator extends ChartItem {
         // TODO: 데이터 변경
         if (source !== this._source) {
             this._source = source;
+
+            if (!this._axisType) {
+                this._config.xAxis.type = this._source._xAxisObj._type();
+            }
+            this._naviChart = this.chart._createChart(this._config);
 
             if (this.usePointSource) {
                 this._naviChart.firstSeries._loadPoints(this._source.getPoints()['_points'].map(p => p.source));
