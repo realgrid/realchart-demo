@@ -805,7 +805,12 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     // ITooltipContext
     //-------------------------------------------------------------------------
     getTooltipText(series: ISeries, point: DataPoint): string {
-        return this.tooltipText;
+        if (this.tooltipCallback) {
+            this._getPointCallbackArgs(this._pointArgs, point);
+            return this.tooltipCallback(this._pointArgs);
+        } else {
+            return this.tooltipText;
+        }
     }
 
     getTooltipParam(series: ISeries, point: DataPoint, param: string): any {
@@ -1000,6 +1005,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      * @config
      */
     tooltipText = '<b>${name}</b><br>${series}:<b> ${yValue}</b>';
+    tooltipCallback: (args: any) => string;
     /**
      * 차트 설정 로드 시 실행되는 animation 종류.
      */
