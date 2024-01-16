@@ -20,30 +20,29 @@ const config = {
     radius: '50%',
     tooltipText: '${x}: ${y}%',
     data: [{
-      label: '매우 긍정',
-      value: 11.1
+      x: '매우 긍정',
+      y: 11.1
     }, {
-      label: '어느 정도 긍정',
-      value: 31.4
+      x: '어느 정도 긍정',
+      y: 31.4
     }, {
-      label: '어느 정도 부정',
-      value: 33.5
+      x: '어느 정도 부정',
+      y: 33.5
     }, {
-      label: '매우 부정',
-      value: 16.5
+      x: '매우 부정',
+      y: 16.5
     }, {
-      label: '모름|무응답',
-      value: 7.1
+      x: '모름|무응답',
+      y: 7.1
     }],
     pointLabel: {
       visible: true,
       numberFormat: '#.00',
-      suffix: '%',
       position: 'inside',
       style: {
         fill: '#fff'
       },
-      text: '${x}<br>${y}'
+      text: '${x}<br>${y}%'
     },
     pointColors: ['#009D92', '#47AFA8', '#835337', '#593219', '#937B6F']
   }
