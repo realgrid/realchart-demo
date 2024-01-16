@@ -75,7 +75,9 @@ const AXIS = {
 /**
  * 시리즈 내비게이터 모델.<br/>
  * 내비게이터에 표시되는 시리즈는 기본적으로 'area' 시리즈로 표시되지만,
- * 'line', 'area', 'bar' 시리즈로 지정할 수도 있다.
+ * 'line', 'area', 'bar' 시리즈로 지정할 수도 있다.<br/>
+ * 내비게이터의 x축 종류는 명시적으로 설정하지 않으면 소스 시리즈의 x축 type을 따라간다.
+ * y축은 항상 'linear'로 생성된다.
  * 
  * @config chart.seriesNavigator
  */
