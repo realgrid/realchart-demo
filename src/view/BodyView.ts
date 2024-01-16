@@ -1442,7 +1442,7 @@ export class BodyView extends ChartElement<Body> {
         if (this._annotationViews.length > 0) {
             this._annotationViews.forEach(v => {
                 v._layoutView(inverted, 0, 0, w, h);
-                v.setClip(v.model.noClip ? _undef : this._bodyClip);
+                v.setClip(this._polar || v.model.noClip ? _undef : this._bodyClip);
             });
         }
     }

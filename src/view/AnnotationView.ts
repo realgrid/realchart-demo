@@ -44,7 +44,7 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
     _layoutView(invertd: boolean, x: number, y: number, w: number, h: number): void {
         this.resizeByMeasured();
         const p = this.model.getPosition(this.chart().isInverted(), x, y, w, h, this.width, this.height);
-        this.layout(p);//.transp();
+        this.layout(p);
     }
 
     //-------------------------------------------------------------------------
