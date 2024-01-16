@@ -496,7 +496,7 @@ export abstract class FormattableText extends ChartText {
     }
     
     protected _getText(text: string, value: any, useSymbols: boolean, forceSymbols: boolean): string {
-        let s = text || this.$_getNumberText(value, useSymbols, forceSymbols) || value;
+        let s = isString(text) ? text : (this.$_getNumberText(value, useSymbols, forceSymbols) || value);
         
         if (this.prefix) s = this.prefix + s;
         if (this.suffix) s += this.suffix;

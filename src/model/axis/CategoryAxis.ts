@@ -485,15 +485,13 @@ export class CategoryAxis extends Axis {
                 this._len += w;
                 cats.push({c, t, w, i});
             })
-        } else {
-            if (isArray(series)) {
-                for (const ser of series) {
-                    const cats2 = ser.collectCategories(this);
+        } else if (isArray(series)) {
+            for (const ser of series) {
+                const cats2 = ser.collectCategories(this);
 
-                    for (const c of cats2) {
-                        if (!cats.find(cat => cat.c === c)) {
-                            cats.push({c, w: 1, t: c});
-                        }
+                for (const c of cats2) {
+                    if (!cats.find(cat => cat.c === c)) {
+                        cats.push({c, w: 1, t: c});
                     }
                 }
             }
