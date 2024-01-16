@@ -27,8 +27,10 @@ Lollipop 시리즈의 변종으로 시간에 따른 두 값의 변화를 표시�
 ### col: `number{:js}`[#col]
 분할 모드일 때 시리즈가 표시될 pane의 수평 index.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
-### color: `string{:js}`[#color]
-데이터 포인트 기본 색.  
+### color: `string | number{:js}`[#color]
+데이터 포인트 기본 색.<br/>
+숫자로 지정하면 정수로 변환된 값에 해당하는 팔레트 색상으로 설정된다.
+<Content type="expression" value="'var(--color-n)'"></Content>으로 지정한 것과 동일하며, 1 ~ 12 사이의 값으로 지정한다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### colorField: `string{:js}`[#colorField]
 <Content type="keyword" value="undefined"></Content>이면, data point의 값이 객체일 때 <Content type="expression" value="'color'"></Content>.  

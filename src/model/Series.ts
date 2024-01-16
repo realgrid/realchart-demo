@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { absv, isArray, isFunc, isObject, isString, maxv, minv, pickNum, pickProp, pickProp3 } from "../common/Common";
+import { absv, isArray, isFunc, isNumber, isObject, isString, maxv, minv, pickNum, pickProp, pickProp3 } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { RcAnimation } from "../common/RcAnimation";
 import { RcElement } from "../common/RcControl";
@@ -609,7 +609,7 @@ export interface ISeries extends IPlottingItem {
     _colorFielder: (src: any) => any;
     colorField: string | number;
 
-    color: string;
+    color: string | number;
 
     displayName(): string;
     initPoints(source: any[]): DataPoint[];
@@ -741,6 +741,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     _minZ: number;
     _maxZ: number;
     _referents: Series[];
+    _runColor: string;
     _calcedColor: string;
     _simpleMode = false;
     private _legendMarker: RcElement;
@@ -955,11 +956,13 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      */
     pointStyle: SVGStyleOrClass;
     /**
-     * 데이터 포인트 기본 색.
+     * 데이터 포인트 기본 색.<br/>
+     * 숫자로 지정하면 정수로 변환된 값에 해당하는 팔레트 색상으로 설정된다.
+     * 'var(--color-n)'으로 지정한 것과 동일하며, 1 ~ 12 사이의 값으로 지정한다.
      * 
      * @config
      */
-    color: string;
+    color: string | number;
     /**
      * 데이터 포인트별 색들을 지정한다.<br/>
      * 색 배열로 지정하거나, 'colors' asset으로 등록된 이름을 지정할 수 있다.
@@ -1362,7 +1365,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         const vAxis = this._runRangeValue = this.getViewRangeAxis();
         const {min, max} = this._getRangeMinMax(vAxis);
 
-        if (this._runRanges = buildValueRanges(this.viewRanges, min, max, false, false, true, this.color)) {
+        if (this._runRanges = buildValueRanges(this.viewRanges, min, max, false, false, true, this._runColor)) {
             points.forEach((p, i) => {
                 this._setViewRange(p, vAxis);
             });
@@ -1636,7 +1639,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     }
 
     protected _doPrepareRender(): void {
-        const color = this.color;
+        const color = this._runColor = isNumber(this.color) ? `var(--color-${(Math.floor(this.color) - 1) % 12 + 1})` : this.color;
         let colors: string[];
         let list: ColorList;
 

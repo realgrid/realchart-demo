@@ -170,7 +170,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             area.unsetData('polar');
             area.setBoolData('simple', this._simpleMode);
             area.internalClearStyleAndClass();
-            series.color && area.internalSetStyle(FILL, series.color);
+            series._runColor && area.internalSetStyle(FILL, series._runColor);
             this._setFill(area, series.style);
             series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
         }
@@ -179,7 +179,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             lowArea.setBoolData('simple', this._simpleMode);
             lowArea.setPath(s);
             lowArea.internalClearStyleAndClass();
-            series.color && lowArea.internalSetStyle(FILL, series.color);
+            series._runColor && lowArea.internalSetStyle(FILL, series._runColor);
             series.areaStyle && lowArea.internalSetStyleOrClass(series.areaStyle);
             this._setFill(lowArea, series.belowStyle);
             series.belowAreaStyle && lowArea.internalSetStyleOrClass(series.belowAreaStyle);
@@ -217,7 +217,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
 
         area.setBoolData('polar', true);
         area.clearStyleAndClass();
-        area.setFill(series.color);
+        area.setFill(series._runColor);
         area.addStyleOrClass(series.style);
     }
 }

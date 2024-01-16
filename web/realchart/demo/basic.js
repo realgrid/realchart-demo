@@ -41,6 +41,7 @@ const config = {
     },
   },
   series: {
+    // color: 3,
     pointLabel: {
       visible: true,
     //   textField: 'label',

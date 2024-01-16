@@ -57,10 +57,9 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
     }
 
     private $_prepareMarkers(model: ScatterSeries, points: ScatterSeriesPoint[]): void {
-        const color = model.color;
         const count = points.length;
 
-        this._pointContainer.setFill(color);
+        this._pointContainer.setFill(model._runColor);
 
         this._markers.prepare(count, (mv, i) => {
             const p = mv.point = points[i];

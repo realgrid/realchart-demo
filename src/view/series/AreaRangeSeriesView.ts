@@ -108,7 +108,7 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
         area.unsetData('polar');
         area.setBoolData('simple', this._simpleMode);
         area.internalClearStyleAndClass();
-        series.color && area.setFill(series.color);
+        series._runColor && area.setFill(series._runColor);
         this._setFill(area, series.style);
         series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
     }

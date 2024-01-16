@@ -398,7 +398,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
             line.setPath(s);
             line.internalClearStyleAndClass();
-            line.internalSetStyle('stroke', series.color);
+            line.internalSetStyle('stroke', series._runColor);
             line.internalSetStyleOrClass(series.style);
             Dom.setImportantStyle(line.dom.style, FILL, 'none');
         }
@@ -416,7 +416,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
             lowLine.setPath(s);
             lowLine.internalClearStyleAndClass();
-            lowLine.internalSetStyle('stroke', series.color);
+            lowLine.internalSetStyle('stroke', series._runColor);
             lowLine.internalSetStyleOrClass(series.style);
             lowLine.internalSetStyleOrClass(series.belowStyle);
             Dom.setImportantStyle(lowLine.dom.style, FILL, 'none');

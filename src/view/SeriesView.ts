@@ -418,7 +418,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
 
         this.internalClearStyleAndClass();
         this.internalSetStyleOrClass(model.style);
-        model.color && this._setModelColor(model.color);
+        model._runColor && this._setModelColor(model._runColor);
         model._calcedColor = getComputedStyle(this.dom)[this._legendColorProp()];
 
         this._visPoints = this._collectVisPoints(model);
