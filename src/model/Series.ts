@@ -697,7 +697,8 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
             case 'series':
                 return series.displayName();
             case 'name':
-                return series._xAxisObj.getXValue(point.xValue);
+                // 포인트 source에 'name' 속성이 있을 수 있다.
+                return point.getTooltip(param) || series._xAxisObj.getXValue(point.xValue);
             case 'xValue':
                 return series._xAxisObj.value2Tooltip(point.xValue);
             case 'yValue':
