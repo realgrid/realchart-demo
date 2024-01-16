@@ -141,21 +141,29 @@ export abstract class Annotation extends ChartItem {
     /**
      * body 어노테이션일 경우,
      * x 축을 기준으로 지정하는 수평(inverted일 때 수직) 위치.<br/>
+     * 
+     * @config
      */
     x1: number | Date;
     /**
      * body 어노테이션일 경우,
      * x 축을 기준으로 지정하는 수평(inverted일 때 수직) 위치.<br/>
+     * 
+     * @config
      */
     x2: number | Date;
     /**
      * body 어노테이션일 경우,
      * y 축을 기준으로 지정하는 수직(inverted일 때 수평) 위치.<br/>
+     * 
+     * @config
      */
     y1: number | Date;
     /**
      * body 어노테이션일 경우,
      * y 축을 기준으로 지정하는 수직(inverted일 때 수평) 위치.<br/>
+     * 
+     * @config
      */
     y2: number | Date;
     /**

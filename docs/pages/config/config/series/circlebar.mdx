@@ -95,6 +95,24 @@ group에 포함되면 group의 noClip 설정을 따른다.
 point가 차지할 원래 크기에 대한 상대 값으로서,
 0 ~ 0.5 사이의 비율 값으로 지정한다.  
 <DefaultValue value="undefined" contents="한 카테고리에 cluster 가능한 시리즈가 하나만 표시되면 0.25, group에 포함된 경우 0.1, 여러 시리즈와 같이 표시되면 0.2."></DefaultValue>
+### pointStyle: `SVGStyles | string{:js}`[#pointStyle]
+모든 데이터포인트에 적용되는 inline 스타일셋.<br/> [style](/config/config/series/circlebar#style) 로 설정되는 시리즈의 inline 스타일이
+데이터포인터에 적용되지 않는 경우 이 속성을 사용할 수 있다.  
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### pointStyleCallback[#pointStyleCallback]
 데이터 point의 동적 스타일 콜백.  
 <DefaultValue value="undefined" contents=""></DefaultValue>

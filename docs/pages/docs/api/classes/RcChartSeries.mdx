@@ -30,10 +30,6 @@ point label 모델.
 | ----------- | ----------- | ----------- |
 | source | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 데이터포인트 원본 정보. |
 | animate=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | 추가 효과 표시. |
-### addPoints(source): [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) &#124; \< &#124; IRcDataPoint &#124; >[#addPoints]
-| Parameter | Type |
-| ----------- | ----------- |
-| source | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) &#124; \< &#124; [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) &#124; > |
 ### findPoint(keys): IRcDataPoint[#findPoint]
 지정한 값들에 해당하는 첫번째 데이터포인트의 정보를 리턴한다.<br/>
 전달되는 데이터포인트 정보는 리턴 시점의 복사본이다.
@@ -89,10 +85,6 @@ xValue에 해당하는 첫번째 데이터포인터의 yValue를 리턴한다.
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | xValue | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) &#124; IRcDataPoint | 제거할 데이터포인트의 x값 혹은 카테고리 이름. 또는 getPointAt이나 findPoint로 가져온 데이터포인트 정보 객체. |
-### removePoints(point): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#removePoints]
-| Parameter | Type |
-| ----------- | ----------- |
-| point | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) &#124; \< &#124; IRcDataPoint &#124; > |
 ### set(prop, value, redraw): [RcChartObject](../classes/RcChartObject)[#set]
 지정한 속성의 값(들)을 설정한다.<br/>
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다.<br/>

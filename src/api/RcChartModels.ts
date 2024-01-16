@@ -406,10 +406,16 @@ export class RcChartSeries extends RcNamedObject {
         return !!(this.$_p as Series).removePoint((this.$_p as Series).getPointAt(xValue));
     }
 
+    /**
+     * @internal 미구현
+     */
     addPoints(source: any[]): IRcDataPoint[] {
         return;
     }
 
+    /**
+     * @internal 미구현
+     */
     removePoints(point: IRcDataPoint[]): void {
     }
 
