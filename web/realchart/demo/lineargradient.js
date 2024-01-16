@@ -9,7 +9,7 @@ const config = {
     assets: [{
         type: 'linearGradient',
         id: 'gradient-1',
-        color: '#0088ff',
+        color: ['#0088ff', 'red'],
         opacity: [1, 0]
     }],
     xAxis: {

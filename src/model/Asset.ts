@@ -78,11 +78,11 @@ abstract class Gradient<T extends IGradient> extends AssetItem<T> {
         elt.setAttribute('id', this.source.id);
 
         stop1.setAttribute('offset', '0');
-        stop1.setAttribute('stop-color', color2);
+        stop1.setAttribute('stop-color', color1);
         stop1.setAttribute('stop-opacity', alpha1 as any);
 
         stop2.setAttribute('offset', '1');
-        stop2.setAttribute('stop-color', color1);
+        stop2.setAttribute('stop-color', color2);
         stop2.setAttribute('stop-opacity', alpha2 as any);
 
         elt.appendChild(stop1);
