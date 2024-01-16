@@ -121,6 +121,7 @@ export class SeriesNavigator extends ChartItem {
      * true로 지정하면 {@link source}로 지정한 원본 시리즈로부터 내비게이터 시리즈의 데이터포인트들을 생성할 때,
      * 원본 시리즈의 data로 지정된 값들을 사용하고, 내비게이터 시리즈의 yField를 원본과 다르게 지정할 수도 있다.<br/>
      * 기본값 false일 때는 이미 생성된 원본 데이터포인트의 x, y 값을 사용한다.
+     * // #431
      * 
      * @config
      */

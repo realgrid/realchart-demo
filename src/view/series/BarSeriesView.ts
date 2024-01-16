@@ -32,6 +32,12 @@ class BarSectorView extends SectorElement implements IPointView {
     //-------------------------------------------------------------------------
     point: DataPoint;
     // saveVal: number;
+
+    savePrevs(): void {
+        // TODO: 무엇을 저장해야지?
+        // this.wSave = this.wPoint;
+        // this.xSave = this.x;
+    }
 }
 
 export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSeriesView<T> {
