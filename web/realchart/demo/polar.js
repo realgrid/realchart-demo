@@ -24,7 +24,11 @@ const config = {
         type: 'bar',
         pointLabel: {
             visible: true,
-            position: 'outside'
+            position: 'outside',
+            // position: 'head',
+            style: {
+                fill: '#00f'
+            }
         },
         data: [ 7, 11, 9, 14.3, 13, 12.5 ]
     }, {
