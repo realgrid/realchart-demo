@@ -92,6 +92,7 @@ const config = {
   },
   seriesNavigator: {
     visible: true,
+    usePointSource: true,
     series: {
       type: 'bar',
       yField: 'trdamnt',
