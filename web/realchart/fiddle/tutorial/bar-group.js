@@ -92,11 +92,11 @@ const config = {
   yAxis: {
     label: false,
     grid: false,
-    strictMax: 100,
+    // strictMax: 100,
   },
   series: {
     type: 'bargroup',
-    layout: 'stack',
+    layout: 'fill',
     children: [
       {
         name: '긍정',
