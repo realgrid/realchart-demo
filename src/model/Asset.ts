@@ -134,10 +134,21 @@ export class LinearGradient extends Gradient<ILinearGradient> {
  * @config chart.asset[type=radialgradient]
  */
 export interface IRadialGradient extends IGradient {
-
+    /**
+     * gradient가 끝나는 원의 x 좌표.
+     * @config
+     */
     cx?: number | string;
+    /**
+     * gradient가 끝나는 원의 y 좌표.
+     * @config
+     */
     cy?: number | string;
-    rd?: number | string;
+    /**
+     * gradient가 끝나는 원의 반지름.
+     * @config
+     */
+    r?: number | string;
 }
 
 export class RadialGradient extends Gradient<IRadialGradient> {
@@ -153,8 +164,8 @@ export class RadialGradient extends Gradient<IRadialGradient> {
         if (!isNull(src.cy)) {
             elt.setAttribute('cy', src.cy as any);
         }
-        if (!isNull(src.rd)) {
-            elt.setAttribute('rd', src.rd as any);
+        if (!isNull(src.r)) {
+            elt.setAttribute('r', src.r as any);
         }
         this._setStops(doc, elt);
 
