@@ -77,10 +77,10 @@ export class ZoomTracker extends ChartDragTracker {
         const br = this._body.getBounds();
 
         if (this._vertical) {
-            y -= br.y - cr.y;
+            y = Math.max(0, Math.min(br.height, y - (br.y - cr.y)));
             this._feedback.setBounds(0, minv(this._yStart, y), this._body.width, absv(this._yStart - y));
         } else {
-            x -= br.x - cr.x;
+            x = Math.max(0, Math.min(br.width, x - (br.x - cr.x)));
             this._feedback.setBounds(minv(this._xStart, x), 0, absv(this._xStart - x), this._body.height);
         }
         return true;
