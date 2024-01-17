@@ -82,6 +82,9 @@ function setActions(container) {
       y: Math.floor(Math.random() * 10000),
     });
   });
+  createButton(container, 'Delete Row', function (e) {
+    data.deleteRow(0);
+  });
   // createButton(container, "Remove Point", function (e) {
   //     const i = Math.floor(Math.random() * chart.series.pointCount);
   //     chart.series.removePoint(i);
