@@ -3,14 +3,23 @@
  *
  */
 const config = {
+  templates:{
+    vert: {
+      vertical: true,
+      width: 80
+    },
+    horz: {
+      vertical: false,
+      height: 80
+    }
+  },
   title: 'Linear Gauge',
   options: {},
   gauge: [
     {
+      template: "vert",
       type: 'linear',
       name: 'gauge',
-      vertical: true,
-      width: 80,
       label: {
         numberFormat: '#.#',
         style: {
@@ -30,7 +39,7 @@ const config = {
       style: {
         fill: 'var(--color-2)',
       },
-    },
+    },    
   ],
 };
 
