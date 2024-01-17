@@ -198,6 +198,11 @@ const annotation_type = {
     'shape': ShapeAnnotation,
 };
 
+/**
+ * 차트 제작 주체 등을 표시하는 영역에 대한 모델.<br/>
+ * 기본적으로 차트 오른쪽 아래에 표시되지만, {@link align}, {@link verticalAlign} 등으로 위치를 지정할 수 있다.
+ * {@link url}을 설정하면 마우스 클릭 시 새창을 열고 해당 위치로 이동시킨다.
+ */
 export class Credits extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -210,14 +215,13 @@ export class Credits extends ChartItem {
      */
     text = 'RealChart v1.0';
     /**
-     * 이 속성을 지정하면 click시 해당 url로 이동한다.
+     * 이 속성을 지정하면 click시 해당 새 창(혹은 tab)을 열어서 해당 위치로 이동한다.
      * 
      * @config
      */
     url = 'http://realgrid.com';
     /**
-     * true이면 {@link verticalAlign}이 'top', 'bottom'일 때도,
-     * 별도의 영역을 차지하지 않고 chart view위에 표시된다.
+     * true이면 별도의 영역을 차지하지 않고 chart view위에 표시된다.<br/>
      * 
      * @config
      */
@@ -251,12 +255,8 @@ export class Credits extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     isFloating(): boolean {
-        return this.floating || this.verticalAlign === VerticalAlign.MIDDLE;
+        return this.floating || (this.verticalAlign === VerticalAlign.MIDDLE && this.align === Align.CENTER);
     }
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
 }
 
 /**

@@ -10,7 +10,7 @@ import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
 import { ClipRectElement, LayerElement, PathElement, RcControl, RcElement } from "../common/RcControl";
-import { ISize, Size } from "../common/Size";
+import { ISize } from "../common/Size";
 import { Align, FILL, PI_2, VerticalAlign, _undef } from "../common/Types";
 import { ImageElement } from "../common/impl/ImageElement";
 import { LineElement } from "../common/impl/PathElement";
@@ -133,8 +133,8 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: AxisGrid, hintWidth: number, hintHeight: number, phase: number): ISize {
-        return Size.create(hintWidth, hintHeight);
+    protected _doMeasure(doc: Document, model: AxisGrid, width: number, height: number, phase: number): ISize {
+        return {width, height};
     }
 
     protected _doLayout(): void {
@@ -1144,7 +1144,7 @@ export class BodyView extends ChartElement<Body> {
             this._zoomButton.layout();
         }
 
-        return Size.create(hintWidth, hintHeight);
+        return { width: hintWidth, height: hintHeight };
     }
     
     protected _clipSeries(view: RcElement, view2: RcElement, invertable: boolean): void {

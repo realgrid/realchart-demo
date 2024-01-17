@@ -75,11 +75,11 @@ export class LollipopSeriesView extends BoxedSeriesView<LollipopSeries> {
         return this._bars;
     }
 
-    protected _preparePointViews(doc: Document, model: LollipopSeries, points: LollipopSeriesPoint[]): void {
+    protected _preparePoints(doc: Document, model: LollipopSeries, points: LollipopSeriesPoint[]): void {
         this.$_parepareBars(doc, model, points);
     }
 
-    protected _layoutPointView(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
+    protected _layoutPoint(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
         view.setBounds(x, y - hPoint, 0, hPoint);
         view.layout();
     }

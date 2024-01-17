@@ -49,17 +49,17 @@ export class HistogramSeriesView extends ClusterableSeriesView<HistogramSeries> 
         return this._bars;
     }
 
-    protected _preparePointViews(doc: Document, model: HistogramSeries, points: HistogramSeriesPoint[]): void {
+    protected _preparePoints(doc: Document, model: HistogramSeries, points: HistogramSeriesPoint[]): void {
         this.$_parepareBars(doc, model, points);
     }
 
-    protected _layoutPointView(bar: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
+    protected _layoutPoint(bar: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
         bar.wPoint = wPoint;
         bar.hPoint = hPoint;
         bar.layout(x, y);
     }
 
-    protected _layoutPointViews(width: number, height: number): void {
+    protected _layoutPoints(width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
         const gr = this._getGrowRate();
@@ -91,7 +91,7 @@ export class HistogramSeriesView extends ClusterableSeriesView<HistogramSeries> 
             p.yPos = y -= yVal;
 
             // 아래에서 위로 올라가는 animation을 위해 바닥 지점을 전달한다.
-            this._layoutPointView(pointView, i, x, y + h, w, h * gr);
+            this._layoutPoint(pointView, i, x, y + h, w, h * gr);
 
             if (info && (info.labelView = labelViews.get(p, 0))) {
                 if (inverted) {

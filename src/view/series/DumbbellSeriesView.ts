@@ -85,7 +85,7 @@ export class DumbbellSeriesView extends RangedSeriesView<DumbbellSeries> {
         return p.lowValue;
     }
 
-    protected _preparePointViews(doc: Document, model: DumbbellSeries, points: DumbbellSeriesPoint[]): void {
+    protected _preparePoints(doc: Document, model: DumbbellSeries, points: DumbbellSeriesPoint[]): void {
         this._bars.prepare(points.length, (bar, i) => {
             const p = bar.point = points[i];
 
@@ -93,7 +93,7 @@ export class DumbbellSeriesView extends RangedSeriesView<DumbbellSeries> {
         })
     }
 
-    protected _layoutPointView(bar: BarElement, index: number, x: number, y: number, wPoint: number, hPoint: number): void {
+    protected _layoutPoint(bar: BarElement, index: number, x: number, y: number, wPoint: number, hPoint: number): void {
         bar.setBounds(x - wPoint / 2, y, wPoint, hPoint);
         bar.layout();
     }

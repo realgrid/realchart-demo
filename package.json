@@ -87,9 +87,5 @@
     "vite": "^4.1.4"
   },
   "dependencies": {
-    "bezier-easing": "^2.1.0",
-    "jsbarcode": "^3.11.5",
-    "puppeteer": "^21.1.0",
-    "qrcode": "^1.5.1"
   }
 }

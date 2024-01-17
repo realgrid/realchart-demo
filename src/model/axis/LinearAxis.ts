@@ -787,14 +787,14 @@ export abstract class ContinuousAxis extends Axis {
             const p = sect.len * (value - sect.from) / (sect.to - sect.from);
 
             if (this.reversed) {
-                return fixpos(length - p - sect.pos);
+                return fixpos(length - p - sect.pos); // fixpos #434
             } else {
                 return fixpos(p + sect.pos);
             }
         } else {
             const p = this._single ? length * 0.5 : length * (value - this._min) / (this._max - this._min);
 
-            return fixpos(this.reversed ? length - p : p);
+            return fixpos(this.reversed ? length - p : p); // fixpos #434
         }
     }
 

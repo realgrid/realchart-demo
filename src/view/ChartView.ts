@@ -11,11 +11,11 @@ import { maxv, pickNum } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { LayerElement, RcElement } from "../common/RcControl";
 import { IRect } from "../common/Rectangle";
-import { ISize, Size } from "../common/Size";
+import { ISize } from "../common/Size";
 import { Align, AlignBase, SectionDir, VerticalAlign, _undef } from "../common/Types";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Annotation, AnnotationScope } from "../model/Annotation";
-import { Axis, IAxis } from "../model/Axis";
+import { Axis } from "../model/Axis";
 import { Chart, Credits } from "../model/Chart";
 import { ChartItem } from "../model/ChartItem";
 import { DataPoint } from "../model/DataPoint";
@@ -521,7 +521,7 @@ class AxisSectionView extends SectionView {
             }
         })
 
-        return Size.create(w, h);
+        return { width: w, height: h };
     }
 
     /**
@@ -728,7 +728,11 @@ export class ChartView extends LayerElement {
         if (this._creditView.setVis(credit.visible)) {
             sz = this._creditView.measure(doc, credit, w, h, phase);
             if (!credit.isFloating()) {
-                h -= sz.height + (+credit.offsetY || 0) + (+credit.gap || 0);
+                if (credit.verticalAlign !== VerticalAlign.MIDDLE) {
+                    h -= sz.height + (+credit.offsetY || 0) + (+credit.gap || 0);
+                } else if (credit.align !== Align.CENTER) { // verticalAlign이 'middle' 이면서
+                    w -= sz.width + (+credit.offsetX || 0) + (+credit.gap || 0);
+                }
             }
         }
         
@@ -795,10 +799,12 @@ export class ChartView extends LayerElement {
         const legend = m.legend;
         const credit = m.options.credits;
         const vCredit = this._creditView;
-        const offCredit = +credit.offsetY || 0;
         const gapCredit = +credit.gap || 0;
+        let offCredit = 0;
         let h1Credit = 0;
         let h2Credit = 0;
+        let w1Credit = 0;
+        let w2Credit = 0;
         let x = 0;
         let y = 0;
 
@@ -807,10 +813,20 @@ export class ChartView extends LayerElement {
             vCredit.resizeByMeasured();
 
             if (!credit.isFloating()) {
-                if (credit.verticalAlign === VerticalAlign.TOP) {
-                    h -= h1Credit = vCredit.height + offCredit + gapCredit;
+                if (credit.verticalAlign !== VerticalAlign.MIDDLE) {
+                    offCredit = +credit.offsetY || 0;
+                    if (credit.verticalAlign === VerticalAlign.TOP) {
+                        h -= h1Credit = vCredit.height + offCredit + gapCredit;
+                    } else {
+                        h -= h2Credit = vCredit.height + offCredit + gapCredit;
+                    }
                 } else {
-                    h -= h2Credit = vCredit.height + offCredit + gapCredit;
+                    offCredit = +credit.offsetX || 0;
+                    if (credit.align === Align.LEFT) {
+                        w -= w1Credit = vCredit.width + offCredit + gapCredit;
+                    } else {
+                        w -= w2Credit = vCredit.width + offCredit + gapCredit;
+                    }
                 }
             }
         }
@@ -826,12 +842,13 @@ export class ChartView extends LayerElement {
         }
 
         // body
+        x = w1Credit;
         y = height - h2Credit;
 
         // navigator
         const vNavi = this._navigatorView;
         let hNavi = 0;
-        let wNavi = 0;
+        // let wNavi = 0;
         if (vNavi.visible) {
             if (vNavi.model._vertical) {
             } else {

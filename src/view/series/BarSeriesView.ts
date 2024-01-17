@@ -56,7 +56,7 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
         return this.chart().isPolar() ? this._sectors : this._bars;
     }
 
-    protected _preparePointViews(doc: Document, model: T, points: DataPoint[]): void {
+    protected _preparePoints(doc: Document, model: T, points: DataPoint[]): void {
         if (model.chart.isPolar()) {
             this.$_parepareSectors(doc, model, this._visPoints);
         } else {
@@ -72,11 +72,11 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
         }
     }
 
-    protected _layoutPointViews(width: number, height: number): void {
+    protected _layoutPoints(width: number, height: number): void {
         if (this.model.chart.isPolar()) {
             this.$_layoutSectors();
         } else {
-            super._layoutPointViews(width, height);
+            super._layoutPoints(width, height);
         }
     }
 
@@ -206,7 +206,7 @@ export class BarSeriesView extends BarSeriesViewBase<BarSeries> {
         this._rdBottom = +model.bottomRadius || 0;
     }
 
-    protected _layoutPointView(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
+    protected _layoutPoint(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
         view.wPoint = wPoint;
         view.hPoint = hPoint;
         view.layout(x, y, this._rdTop, this._rdBottom);

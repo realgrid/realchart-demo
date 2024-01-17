@@ -95,7 +95,7 @@ export class CandlestickSeriesView extends RangedSeriesView<CandlestickSeries> {
         return p.lowValue;
     }
 
-    protected _preparePointViews(doc: Document, model: CandlestickSeries, points: CandlestickSeriesPoint[]): void {
+    protected _preparePoints(doc: Document, model: CandlestickSeries, points: CandlestickSeriesPoint[]): void {
         this._sticks.prepare(points.length, (box, i) => {
             const p = box.point = points[i];
 
@@ -115,7 +115,7 @@ export class CandlestickSeriesView extends RangedSeriesView<CandlestickSeries> {
         }
      }
 
-    protected _layoutPointView(box: StickView, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
+    protected _layoutPoint(box: StickView, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
         box.setBounds(x, y, wPoint, hPoint);
         box.layout();
     } 

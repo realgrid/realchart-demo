@@ -111,19 +111,19 @@ export class EqualizerSeriesView extends BoxedSeriesView<EqualizerSeries> {
         return this._bars;
     }
 
-    protected _preparePointViews(doc: Document, model: EqualizerSeries, points: DataPoint[]): void {
+    protected _preparePoints(doc: Document, model: EqualizerSeries, points: DataPoint[]): void {
         this.$_parepareBars(model, points);
     }        
 
-    protected _layoutPointViews(width: number, height: number): void {
+    protected _layoutPoints(width: number, height: number): void {
         const len = (this.model._yAxisObj as Axis).prev(this._inverted ? width : height) * this._getGrowRate();
 
         this.$_buildSegments(this.model, len);
 
-        super._layoutPointViews(width, height);
+        super._layoutPoints(width, height);
     }
 
-    protected _layoutPointView(pv: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
+    protected _layoutPoint(pv: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
         const pr = this._prevRate;
 
         if (!isNaN(pr + pv.wSave)) {

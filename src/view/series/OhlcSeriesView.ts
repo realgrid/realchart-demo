@@ -94,11 +94,11 @@ export class OhlcSeriesView extends RangedSeriesView<OhlcSeries> {
         return p.lowValue;
     }
 
-    protected _preparePointViews(doc: Document, model: OhlcSeries, points: OhlcSeriesPoint[]): void {
+    protected _preparePoints(doc: Document, model: OhlcSeries, points: OhlcSeriesPoint[]): void {
         this.$_prepareSticks(model, points);
     }
 
-    protected _layoutPointView(view: StickView, index: number, x: number, y: number, wPoint: number, hPoint: number): void {
+    protected _layoutPoint(view: StickView, index: number, x: number, y: number, wPoint: number, hPoint: number): void {
         view.setBounds(x, y, wPoint, hPoint);
         view.layout();
     }

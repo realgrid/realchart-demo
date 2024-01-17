@@ -51,11 +51,11 @@ export class WaterfallSeriesView extends RangedSeriesView<WaterfallSeries> {
         this._rd = +model.cornerRadius || 0;
     }
 
-    protected _preparePointViews(doc: Document, model: WaterfallSeries, points: WaterfallSeriesPoint[]): void {
+    protected _preparePoints(doc: Document, model: WaterfallSeries, points: WaterfallSeriesPoint[]): void {
         this.$_parepareBars(doc, model, points);
     }
 
-    protected _layoutPointView(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
+    protected _layoutPoint(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
         const p = view.point as WaterfallSeriesPoint;
 
         view.wPoint = wPoint;
@@ -74,14 +74,14 @@ export class WaterfallSeriesView extends RangedSeriesView<WaterfallSeries> {
         this._wPrev = wPoint;
     }
 
-    protected _layoutPointViews(width: number, height: number): void {
+    protected _layoutPoints(width: number, height: number): void {
         if (this._inverted) {
             this._lineContainer.dom.style.transform = `translate(0px, ${height}px) rotate(90deg) scale(-1, 1)`;
         } else {
             this._lineContainer.dom.style.transform = '';
         }
 
-        super._layoutPointViews(width, height);
+        super._layoutPoints(width, height);
     }
 
     //-------------------------------------------------------------------------

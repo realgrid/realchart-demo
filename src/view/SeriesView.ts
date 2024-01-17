@@ -12,7 +12,7 @@ import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
 import { RcAnimation, createAnimation } from "../common/RcAnimation";
 import { ClipRectElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
-import { ISize, Size } from "../common/Size";
+import { ISize } from "../common/Size";
 import { FILL, IValueRange, SVGStyleOrClass, _undef } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
@@ -497,7 +497,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
             this._trendLineView.setVis(false);
         }
         
-        return Size.create(hintWidth, hintHeight);
+        return { width: hintWidth, height: hintHeight };
     }
 
     protected _doLayout(): void {
@@ -927,12 +927,12 @@ export abstract class ClusterableSeriesView<T extends Series> extends SeriesView
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: T): void {
-        this._preparePointViews(doc, model, this._visPoints);
+        this._preparePoints(doc, model, this._visPoints);
     }
 
     protected _renderSeries(width: number, height: number): void {
         this._pointContainer.invert(this._inverted, height);
-        this._layoutPointViews(width, height);
+        this._layoutPoints(width, height);
     }
 
     protected _runShowEffect(firstTime: boolean): void {
@@ -940,7 +940,7 @@ export abstract class ClusterableSeriesView<T extends Series> extends SeriesView
     }
 
     protected _doViewRateChanged(rate: number): void {
-        this._layoutPointViews(this.width, this.height);
+        this._layoutPoints(this.width, this.height);
     }
 
     protected _savePrevs(): void {
@@ -950,9 +950,9 @@ export abstract class ClusterableSeriesView<T extends Series> extends SeriesView
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    protected abstract _preparePointViews(doc: Document, model: T, points: DataPoint[]): void;
-    protected abstract _layoutPointViews(width: number, height: number): void;
-    protected abstract _layoutPointView(view: RcElement, index: number, x: number, y: number, wPoint: number, hPoint: number): void;
+    protected abstract _preparePoints(doc: Document, model: T, points: DataPoint[]): void;
+    protected abstract _layoutPoints(width: number, height: number): void;
+    protected abstract _layoutPoint(view: RcElement, index: number, x: number, y: number, wPoint: number, hPoint: number): void;
 }
 
 export abstract class BoxedSeriesView<T extends ClusterableSeries> extends ClusterableSeriesView<T> {
@@ -962,12 +962,12 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
     //-------------------------------------------------------------------------
     protected _doPrevRateChanged(rate: number): void {
         if (rate == 0) {
-            this._layoutPointViews(this.width, this.height);
+            this._layoutPoints(this.width, this.height);
         }
         this.invalidate();
     }
 
-    protected _layoutPointViews(width: number, height: number): void {
+    protected _layoutPoints(width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
         const gr = this._getGrowRate();
@@ -1016,7 +1016,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 p.yPos = y;
 
                 // 아래에서 위로 올라가는 animation을 위해 기준 지점을 전달한다.
-                this._layoutPointView(pv, i, x, yOrg - yBase - yGroup, wPoint, hPoint);
+                this._layoutPoint(pv, i, x, yOrg - yBase - yGroup, wPoint, hPoint);
 
                 // [주의] tooltip이 p.xPos, p.yPos를 사용한다. label이 미표시여도 계산한다.
                 if (inverted) {
@@ -1055,12 +1055,12 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
 
     protected _doPrevRateChanged(rate: number): void {
         if (rate == 0) {
-            this._layoutPointViews(this.width, this.height);
+            this._layoutPoints(this.width, this.height);
         }
         this.invalidate();
     }
 
-    protected _layoutPointViews(width: number, height: number): void {
+    protected _layoutPoints(width: number, height: number): void {
         const series = this.model;
         const inverted = series.chart.isInverted();
         const gr = this._getGrowRate();
@@ -1101,7 +1101,7 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
                 p.xPos = x;
                 p.yPos = y;
 
-                this._layoutPointView(pv, i, x, y, wPoint, hPoint);
+                this._layoutPoint(pv, i, x, y, wPoint, hPoint);
 
                 // [주의] tooltip이 p.xPos, p.yPos를 사용한다. label이 미표시여도 계산한다.
                 if (inverted) {

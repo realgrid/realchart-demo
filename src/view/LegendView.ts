@@ -10,7 +10,7 @@ import { maxv, pickNum } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { RcElement } from "../common/RcControl";
 import { IRect, RECT_Z, rectToSize } from "../common/Rectangle";
-import { ISize, Size } from "../common/Size";
+import { ISize } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Legend, LegendItem, LegendItemsAlign, LegendLayout, LegendLocation } from "../model/Legend";
@@ -73,7 +73,7 @@ export class LegendItemView extends ChartElement<LegendItem> {
         const sz = rectToSize(this._label.getBBox());
         this._gap = pickNum(model.legend.markerGap, 0);
 
-        return Size.create(rMarker.width + this._gap + sz.width, maxv(rMarker.height, sz.height));
+        return {width: rMarker.width + this._gap + sz.width, height: maxv(rMarker.height, sz.height) };
     }
 
     protected _doLayout(wMarker: number): void {
@@ -320,6 +320,6 @@ export class LegendView extends BoundableElement<Legend> {
             });
             h += lineGap * (rowViews.length - 1);
         }
-        return Size.create(w, h);
+        return { width: w, height: h };
     }
 }

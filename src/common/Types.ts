@@ -11,19 +11,20 @@ import { locale } from "./RcLocale";
 
 export const _undef = void 0; // 불필요
 export const ONE_CHAR = '①'.charCodeAt(0);
-const ASTERISK = '*'.charCodeAt(0);
-const PERCENT = '%'.charCodeAt(0);
 export const ZWSP = '&#8203;';
 export const ELLIPSIS = '\u2026';
-export const PI_2 = Math.PI * 2;
-export const ORG_ANGLE = -Math.PI / 2;
-export const DEG_RAD = Math.PI * 2 / 360;
-export const RAD_DEG = 360 / Math.PI / 2;
+export const PI = Math.PI;
+export const PI_2 = PI * 2;
+export const ORG_ANGLE = -PI / 2;
+export const DEG_RAD = PI * 2 / 360;
+export const RAD_DEG = 360 / PI / 2;
+export const NUMBER_SYMBOLS = 'k,M,G,T,P,E';
+export const NUMBER_FORMAT = '#,##0.#';
+const PERCENT = '%'.charCodeAt(0);
+
 export function fixAngle(a: number): number {
     return a > PI_2 ? a % PI_2 : a;
 }
-export const NUMBER_SYMBOLS = 'k,M,G,T,P,E';
-export const NUMBER_FORMAT = '#,##0.#';
 export function fixnum(value: number): number {
     return parseFloat(value.toPrecision(12));
 }

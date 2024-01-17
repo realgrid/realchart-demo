@@ -12,7 +12,7 @@ import { PathBuilder } from "../common/PathBuilder";
 import { PathElement, RcElement } from "../common/RcControl";
 import { rectToSize } from "../common/Rectangle";
 import { SvgRichText } from "../common/RichText";
-import { ISize, Size } from "../common/Size";
+import { ISize } from "../common/Size";
 import { Align, DEG_RAD } from "../common/Types";
 import { LabelElement } from "../common/impl/LabelElement";
 import { LineElement } from "../common/impl/PathElement";
@@ -604,7 +604,7 @@ export class AxisView extends ChartElement<Axis> {
             }
         }
 
-        return Size.create(horz ? hintWidth : sz, horz ? sz : hintHeight);
+        return { width: horz ? hintWidth : sz, height: horz ? sz : hintHeight };
     }
     
     protected _doLayout(): void {

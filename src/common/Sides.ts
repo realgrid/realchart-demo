@@ -16,13 +16,13 @@ export interface ISides {
 	bottom: number;
 }
 
-export const equalsSides = function (r1: ISides, r2: ISides): boolean {
-    if (r1 === r2) return true;
-    if (r1 && r2) {
-        return r1.left === r2.left && r1.right === r2.right && r1.top === r2.top && r1.bottom === r2.bottom;
-    }
-    return false;
-}
+// export const equalsSides = function (r1: ISides, r2: ISides): boolean {
+//     if (r1 === r2) return true;
+//     if (r1 && r2) {
+//         return r1.left === r2.left && r1.right === r2.right && r1.top === r2.top && r1.bottom === r2.bottom;
+//     }
+//     return false;
+// }
 
 /** @internal */
 export class Sides {
@@ -92,15 +92,4 @@ export class Sides {
             height: r.height - this.top - this.bottom
         };
     }
-
-	//-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-	toString(): string {
-		return "{top: " + this.top + ", bottom: " + this.bottom + ", left: " + this.left + ", right: " + this.right + "}";
-    }
-
-	//-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
 }

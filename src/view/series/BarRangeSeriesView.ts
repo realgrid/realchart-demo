@@ -43,7 +43,7 @@ export class BarRangeSeriesView extends RangedSeriesView<BarRangeSeries> {
         this._rd = +model.cornerRadius || 0;
     }
 
-    protected _preparePointViews(doc: Document, model: BarRangeSeries, points: DataPoint[]): void {
+    protected _preparePoints(doc: Document, model: BarRangeSeries, points: DataPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
 
@@ -55,7 +55,7 @@ export class BarRangeSeriesView extends RangedSeriesView<BarRangeSeries> {
         return p.lowValue;
     }
 
-    protected _layoutPointView(bar: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
+    protected _layoutPoint(bar: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
         bar.wPoint = wPoint;
         bar.hPoint = hPoint;
         bar.layout(x, y + hPoint, this._rd, this._rd);
