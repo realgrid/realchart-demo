@@ -2,65 +2,50 @@
  * @demo
  *
  */
+
 const config = {
-  templates: {
-    shape: {
-      shape: 'rectangle',
-      width: 100,
-      height: 100,
-      style: {
-        fill: 'none',
-        stroke: 'var(--color-1)',
-        strokeWidth: '5px',
-      },
-    },
-  },
   options: {},
   title: {
-    text: 'Annotation Shapes',
-    style: {
-      fontSize: '30px',
-    },
+      text: "전국아파트 실거래 지수",
   },
-  xAxis: false,
-  yAxis: false,
-  annotations: [
-    {
-      template: 'shape',
-      type: 'shape',
-    },
-    {
-      template: 'shape',
-      type: 'shape',
-      style: {
-        fill: 'var(--color-2)',
+  xAxis: {
+      type: 'time',
+      tick: {
+          stepInterval: '2m'
       },
-      offsetY: 110,
-    },
-    {
-      template: 'shape',
-      type: 'shape',
-      shape: 'circle',
-      align: 'center',
-      verticalAlign: 'middle',
-    },
-    {
-      template: 'shape',
-      type: 'shape',
-      shape: 'triangle',
-      align: 'center',
-      verticalAlign: 'middle',
-      offsetX: 100,
-    },
-    {
-      template: 'shape',
-      type: 'shape',
-      shape: 'diamond',
-      align: 'right',
-      verticalAlign: 'bottom',
-    },
-  ],
-};
+  },
+  yAxis: {
+      minValue: 0,
+      tick: {
+          stepInterval: 20,
+      }
+  },
+  series: {
+      name: 'main',
+      type: 'line',
+      lineType: 'spline',
+      marker: false,
+      xStart: '2020-01',
+      xStep: '2m',
+      data: [
+          101, 103, 105, 109, 113, 115, 120, 125, 131, 136, 139, 143, 141, 140, 139, 138, 130, 125, 120, 119, 119, 120, 122, 123    
+      ],
+  },
+  body: {
+      annotations: [{
+          type: 'shape',
+          shape: 'rectangle',
+          front: true,
+          offsetX: 500,
+          offsetY: 40,
+          style: {
+              fill: 'none',
+              stroke: 'red',
+              strokeWidth: '5px'
+          }
+      }]
+  }
+}
 
 let animate = false;
 let chart;

@@ -86,6 +86,7 @@ const config = {
     grid: false
     // strictMax: 100,
   },
+
   series: {
     type: 'bargroup',
     layout: 'fill',
