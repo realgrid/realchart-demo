@@ -1369,7 +1369,7 @@ export class RcElement extends RcObject {
     }
 
     invalidate(): void {
-        this.control.invalidateLayout();
+        this.control?.invalidateLayout();
     }
 
     sort(children: RcElement[]): void {
