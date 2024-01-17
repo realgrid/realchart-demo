@@ -18,21 +18,21 @@ const config = {
   series: {
     type: 'pie',
     radius: '50%',
-    tooltipText: '${x}: ${y}%',
+    tooltipText: '${name}: ${y}%',
     data: [{
-      x: '매우 긍정',
+      name: '매우 긍정',
       y: 11.1
     }, {
-      x: '어느 정도 긍정',
+      name: '어느 정도 긍정',
       y: 31.4
     }, {
-      x: '어느 정도 부정',
+      name: '어느 정도 부정',
       y: 33.5
     }, {
-      x: '매우 부정',
+      name: '매우 부정',
       y: 16.5
     }, {
-      x: '모름|무응답',
+      name: '모름|무응답',
       y: 7.1
     }],
     pointLabel: {
