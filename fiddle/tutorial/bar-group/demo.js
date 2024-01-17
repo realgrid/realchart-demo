@@ -1,5 +1,5 @@
 const config = {
-  inverted: true,
+  //   inverted: true,
   templates: {
     bar: {
       xField: '구분값',
@@ -90,6 +90,7 @@ const config = {
   series: {
     type: 'bargroup',
     layout: 'fill',
+    layout: 'stack',
     children: [{
       name: '긍정',
       template: 'bar',
