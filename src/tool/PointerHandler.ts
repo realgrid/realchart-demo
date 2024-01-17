@@ -181,8 +181,10 @@ export class ChartPointerHandler implements IPointerHandler {
 
     private $_pointerToPoint(event: PointerEvent): IPoint {
         const r = this._chart.svg().getBoundingClientRect();
-        const x = event.pageX - r.left;
-        const y = event.pageY - r.top;
+        // const x = event.pageX - r.left;
+        // const y = event.pageY - r.top;
+        const x = event.clientX - r.left;
+        const y = event.clientY - r.top;
         return {x, y};
     }
 
