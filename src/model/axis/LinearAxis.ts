@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, pickNum, pickNum3, assign, ceil, floor, log10, maxv, minv } from "../../common/Common";
-import { IPercentSize, RtPercentSize, assert, calcPercent, fixnum, parsePercentSize } from "../../common/Types";
+import { IPercentSize, RtPercentSize, assert, calcPercent, fixnum, fixpos, parsePercentSize } from "../../common/Types";
 import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick, AxisGrid, AxisLine } from "../Axis";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
@@ -787,14 +787,14 @@ export abstract class ContinuousAxis extends Axis {
             const p = sect.len * (value - sect.from) / (sect.to - sect.from);
 
             if (this.reversed) {
-                return length - p - sect.pos;
+                return fixpos(length - p - sect.pos);
             } else {
-                return p + sect.pos;
+                return fixpos(p + sect.pos);
             }
         } else {
             const p = this._single ? length * 0.5 : length * (value - this._min) / (this._max - this._min);
 
-            return this.reversed ? length - p : p;
+            return fixpos(this.reversed ? length - p : p);
         }
     }
 

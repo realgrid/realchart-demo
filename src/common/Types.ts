@@ -27,12 +27,12 @@ export const NUMBER_FORMAT = '#,##0.#';
 export function fixnum(value: number): number {
     return parseFloat(value.toPrecision(12));
 }
+export function fixpos(value: number): number {
+    return Math.round(value * 1000000) / 1000000;
+}
 export function toStr(value: any): string {
     return value == null ? null : String(value);
 }
-// export function deg2rad(degree: number): number {
-//     return degree * Math.PI * 2 / 360;
-// }
 export function pixel(v: number): string {
     return v + 'px';
 }
