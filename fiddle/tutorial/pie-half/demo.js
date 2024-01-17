@@ -22,7 +22,6 @@ const config = {
       visible: true
       // text: '${y}',
     },
-
     legendByPoint: true,
     pointColors: ['#002F5C', '#004987', '#004F92', '#00569D', '#3E77B6', '#90B1D8', '#BBD2Ec'],
     tooltipText: '${x} - ${y}',

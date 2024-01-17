@@ -28,7 +28,6 @@ const config = {
       numberFormat: 'a' // absolute
     }
   },
-
   series: {
     layout: 'overlap',
     children: [{

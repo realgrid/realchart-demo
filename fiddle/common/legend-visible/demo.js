@@ -9,7 +9,6 @@ const config = {
   legend: {
     visible: true // <-- 여기 변경
   },
-
   series: {
     pointLabel: {
       visible: true,

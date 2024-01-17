@@ -9,6 +9,7 @@ const config = {
     // animatable: false
   },
   xAxis: {
+    reversed: !true,
     categories: [
       '서울',
       '부산',
