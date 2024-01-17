@@ -23,6 +23,7 @@ const config = {
   series: [
     {
       layout: "fill",
+    //   layout: 'stack',
       children: [
         {
           template: "pointLabel",

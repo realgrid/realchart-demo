@@ -1238,6 +1238,16 @@ export abstract class Axis extends ChartItem implements IAxis {
      */
     tooltipFooter: string;
     animatable = true;
+    /**
+     * true로 지정하면 새로 계산된 너비나 높이가 이전 계산된 크기보다 작으면 이전 크기를 유지한다.
+     * 
+     * @config
+     */
+    fixedSize = false;
+    /**
+     * 최소 너비나 높이.
+     */
+    //minSize: number;
 
     isEmpty(): boolean {
         return this._series.length < 1;

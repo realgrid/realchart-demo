@@ -2854,29 +2854,42 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
         if (!isNaN(base)) {
             for (const pts of map.values()) {
                 const sum = pts.reduce((sum, p) => sum + (absv(p.yValue) || 0), 0);
-                let prev = 0;
-                let nprev = 0;
                 
-                for (const p of pts) {
-                    p.yValue = (p.yValue || 0) / sum * max;
+                if (sum === 0) {
+                    for (const p of pts) { p.yValue = 0; }    
+                    vals.push(0, 0);
+                } else {
+                    let prev = 0;
+                    let nprev = 0;
+                    
 
-                    if (p.yValue < base) {
-                        nprev = p.yGroup = (p.yValue || 0) + nprev;
-                    } else {
-                        prev = p.yGroup = (p.yValue || 0) + prev;
+                    for (const p of pts) {
+                        p.yValue = (p.yValue || 0) / sum * max;
+
+                        if (p.yValue < base) {
+                            nprev = p.yGroup = (p.yValue || 0) + nprev;
+                        } else {
+                            prev = p.yGroup = (p.yValue || 0) + prev;
+                        }
                     }
+                    vals.push(nprev, prev);
                 }
-                vals.push(nprev, prev);
             }
         } else {
             for (const pts of map.values()) {
                 const sum = pts.reduce((sum, p) => sum + (p.yValue || 0), 0);
-                let prev = 0;
 
-                for (const p of pts) {
-                    prev = p.yGroup = (p.yValue || 0) / sum * max + prev;
+                if (sum === 0) {
+                    for (const p of pts) { p.yValue = 0; }    
+                    vals.push(0);
+                } else {
+                    let prev = 0;
+
+                    for (const p of pts) {
+                        prev = p.yGroup = (p.yValue || 0) / sum * max + prev;
+                    }
+                    vals.push(max);
                 }
-                vals.push(max);
             }
         }
     }
