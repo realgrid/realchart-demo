@@ -1,20 +1,16 @@
-/**
- * @demo
- *
- */
 const config = {
   options: {},
   title: 'Assets - gradient',
   assets: [{
     type: 'linearGradient',
     id: 'gradient-0',
-    color: ['green', 'blue'],
+    color: ['#0088ff', 'red'],
     opacity: [1, 0]
-    //   dir: 'up',
+    // dir: 'down',
   }, {
     type: 'radialGradient',
     id: 'gradient-1',
-    color: ['#0088ff', '#fff'],
+    color: ['#fff', '#0088ff'],
     cx: 0.3,
     cy: 0.3,
     r: 0.5

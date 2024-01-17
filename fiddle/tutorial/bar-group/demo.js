@@ -1,5 +1,5 @@
 const config = {
-  //   inverted: true,
+  inverted: true,
   templates: {
     bar: {
       xField: '구분값',
@@ -82,11 +82,12 @@ const config = {
     }
   },
   yAxis: {
+    type: 'linear',
     label: false,
-    grid: false
+    grid: false,
     // strictMax: 100,
+    maxPadding: 0
   },
-
   series: {
     type: 'bargroup',
     layout: 'fill',

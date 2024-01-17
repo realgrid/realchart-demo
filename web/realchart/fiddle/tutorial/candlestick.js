@@ -436,8 +436,6 @@ const config = {
     ],
 };
 
-let chart;
-
 function addRow() {
     // add 1 day from the last date
     const d = new Date(ds.getValue(ds.rowCount - 1, 'date'));
@@ -468,6 +466,7 @@ function updateValue() {
     }
 }
 
+let chart;
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     RealChart.setLogging(false);
