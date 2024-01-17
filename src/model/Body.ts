@@ -200,7 +200,7 @@ export class Body extends ChartItem {
     zoomButton = new ZoomButton(this);
 
     canZoom(): boolean {
-        return this.zoomType === ZoomType.X || this.zoomType === ZoomType.Y || this.zoomType === ZoomType.BOTH;
+        return !this.chart.isEmpty(true) && (this.zoomType === ZoomType.X || this.zoomType === ZoomType.Y || this.zoomType === ZoomType.BOTH);
     }
 
     //-------------------------------------------------------------------------

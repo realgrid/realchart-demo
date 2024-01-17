@@ -36,7 +36,7 @@ import { ChartControl } from '../../../src/ChartControl';
 
         chart.prepareRender();
         cv.measure(control.doc(), chart, 500, 500, 1);
-        expect(chart.isEmpty()).is.false;
+        expect(chart.isEmpty(false)).is.false;
 
         expect(cv['_titleSectionView'].visible).is.true;
         expect(cv.titleView().visible).is.true;

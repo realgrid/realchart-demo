@@ -89,6 +89,7 @@ export interface IChart {
     _createChart(config: any): IChart;
     assignTemplates(target: any): any;
 
+    isEmpty(visibleOnly: boolean): boolean;
     isGauge(): boolean;
     isPolar(): boolean;
     isInverted(): boolean;
@@ -722,8 +723,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._splitted;
     }
 
-    isEmpty(): boolean {
-        return this._series.isEmpty() && this._gauges.isEmpty();
+    isEmpty(visibleOnly: boolean): boolean {
+        return this._series.isEmpty(visibleOnly) && this._gauges.isEmpty(visibleOnly);
     }
 
     //-------------------------------------------------------------------------
@@ -891,7 +892,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._series.load(source.series);
 
         this._gauges.load(source.gauges || source.gauge);
-        this._gaugeOnly = this._series.isEmpty() && !this._gauges.isEmpty();
+        this._gaugeOnly = this._series.isEmpty(false) && !this._gauges.isEmpty(false);
 
         if (!this._gaugeOnly) {
             // axes

@@ -404,8 +404,8 @@ export class GaugeCollection {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    isEmpty(): boolean {
-        return this._items.length < 1;
+    isEmpty(visibleOnly: boolean): boolean {
+        return (visibleOnly ? this._visibles : this._items).length < 1;
     }
 
     get firstGauge(): Gauge {

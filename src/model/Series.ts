@@ -200,7 +200,7 @@ export interface IPlottingItem {
     getVisiblePoints(): DataPoint[];
     getLegendSources(list: ILegendSource[]): void;
     needAxes(): boolean;
-    isEmpty(): boolean;
+    isEmpty(visibleOnly): boolean;
     canCategorized(): boolean;
     defaultYAxisType(): string;
     clusterable(): boolean;
@@ -1742,8 +1742,8 @@ export class PlottingItemCollection  {
         return this._widget;
     }
 
-    isEmpty(): boolean {
-        return !this._items.find(item => !item.isEmpty());
+    isEmpty(visibleOnly: boolean): boolean {
+        return !(visibleOnly ? this._visibles : this._items).find(item => !item.isEmpty(visibleOnly));
         // return !this._visibles.find(item => !item.isEmpty());
     }
 

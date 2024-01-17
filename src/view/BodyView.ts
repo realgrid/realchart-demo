@@ -964,13 +964,12 @@ export class BodyView extends ChartElement<Body> {
         const cl = (target as Element)?.classList;
         const isContextMenu = cl?.value && (cl.contains('rct-contextmenu-item') || cl.contains('rct-contextmenu-list'));
 
-        if (!this._zoomRequested) {
-            this._crosshairViews.forEach(v => {
-                if (v.setVis(inBody && !isContextMenu)) {
-                    v.layout(pv, p.x, p.y, w, h);
-                }
-            });
-        }
+        const vis = inBody && !this._zoomRequested && !this.chart().isEmpty(true) && !isContextMenu;
+        this._crosshairViews.forEach(v => {
+            if (v.setVis(vis)) {
+                v.layout(pv, p.x, p.y, w, h);
+            }
+        });
 
         if (pv) {
             this.$_setFocused(sv, pv, p);
