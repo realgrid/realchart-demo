@@ -2861,7 +2861,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
                 const sum = pts.reduce((sum, p) => sum + (absv(p.yValue) || 0), 0);
                 
                 if (sum === 0) {
-                    for (const p of pts) { p.yValue = 0; }    
+                    for (const p of pts) { p.yValue = p.yGroup = 0; }    
                     vals.push(0, 0);
                 } else {
                     let prev = 0;
@@ -2885,7 +2885,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
                 const sum = pts.reduce((sum, p) => sum + (p.yValue || 0), 0);
 
                 if (sum === 0) {
-                    for (const p of pts) { p.yValue = 0; }    
+                    for (const p of pts) { p.yValue = p.yGroup = 0; }    
                     vals.push(0);
                 } else {
                     let prev = 0;

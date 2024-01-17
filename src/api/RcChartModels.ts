@@ -318,10 +318,16 @@ export class RcChartSeries extends RcNamedObject {
      */
     get tooltip(): RcChartObject { return this._tooltip; }
 
+    /**
+     * 시리즈에 설정된 데이터포인트 개수.<br/>
+     */
     get pointCount(): number {
         return (this.$_p as Series)._runPoints.length;
     }
 
+    /**
+     * 시리즈에 설정된 데이터포인트들 중 표시 중인 것들의 개수.<br/>
+     */
     get visiblePointCount(): number {
         return (this.$_p as Series)._visPoints.length;
     }

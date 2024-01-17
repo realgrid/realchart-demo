@@ -55,7 +55,6 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     private _rangeLines: ElementPool<PathElement>;
     private _rangeClips: ClipRectElement[] = [];
     protected _polar: any;
-    protected _linePts: IPointPos[];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -379,7 +378,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const h = this.height;
         const inverted = this._inverted;
         const needBelow = series instanceof LineSeries && this._needBelow;
-        const s = this._buildLines2(series._lines, this._polar);
+        let s = this._buildLines2(series._lines, this._polar);
 
         if (series._runRanges) {
             this._rangeLines.forEach((line, i) => {
