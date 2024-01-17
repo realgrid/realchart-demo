@@ -798,6 +798,11 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
 
     onDataRowDeleted(data: ChartData, row: number): void {
         Utils.log('onDataRowDeleted', row);
+
+        const p = this._runPoints[row];
+        if (p) {
+            this.removePoint(p);
+        }
     }
 
     onDataChanged(data: ChartData): void {
