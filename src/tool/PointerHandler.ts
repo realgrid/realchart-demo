@@ -225,7 +225,10 @@ export class ChartPointerHandler implements IPointerHandler {
             this.setDragTracker(this._getDragTracker(dom, x - xStart, y - yStart));
         }
         if (this._dragTracker) {
-            return this._dragTracker.start(dom, xStart, yStart, x, y);
+            if (this._dragTracker.start(dom, xStart, yStart, x, y)) {
+                return true;
+            }
+            this._dragTracker = null;
         }
         return false;
     }

@@ -110,11 +110,16 @@ export class ScrollTracker extends ChartDragTracker {
     //-------------------------------------------------------------------------
     protected _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
         const v = this._view;
-        const p = v._thumbView.elementToSvg(0, 0);
+        const zoom = v.model.axis._zoom;
 
-        this._startOff = v._vertical ? (yStart - p.y) : (xStart - p.x);
-        this._zoomLen = v.model.axis._zoom.length();
-        return true;
+        if (zoom) {
+            const p = v._thumbView.elementToSvg(0, 0);
+
+            this._startOff = v._vertical ? (yStart - p.y) : (xStart - p.x);
+            this._zoomLen = zoom.length();
+            return true;
+        }
+        return false;
     }
 
     protected _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
