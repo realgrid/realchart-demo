@@ -416,20 +416,6 @@ const config = {
             row: 0,
         },
     ],
-    seriesNavigator: {
-        visible: !true,
-        // usePointSource: true,
-        series: {
-            // yField: 'open',
-            // type: 'bar',
-        },
-    },
-    split: {
-        visible: !true,
-        rows: 2,
-        cols: 1,
-        panes: [{ height: 300 }, { height: 100, style: { fill: '#fff' } }],
-    },
     series: [
         {
             name: 'candle',
@@ -447,18 +433,13 @@ const config = {
                 stroke: 'black',
             },
         },
-        // {
-        //   type: 'bar',
-        //   template: 'series',
-        //   yField: 'trdamnt',
-        //   yAxis: 1,
-        // },
     ],
 };
 
 let chart;
 
-function addPoint() {
+function addRow() {
+    // add 1 day from the last date
     const d = new Date(ds.getValue(ds.rowCount - 1, 'date'));
     d.setDate(d.getDate() + 1);
     const newDt = [d.getFullYear(), d.getMonth() + 1, d.getDate()]
@@ -472,12 +453,24 @@ function addPoint() {
 
     ds.addRow(p);
 }
-function removePoint() {
+function deleteRow() {
     ds.deleteRow(0);
 }
+function updateValue() {
+    const row = 0;
+    const high = ds.getValue(row, 'highprc');
+    const low = ds.getValue(row, 'lowprc');
+    const close = Math.floor(Math.random() * (high - low + 1) + low);
+    ds.setValue(row, 'close', close);
+
+    if (close == ds.getValue(row, 'close')) {
+        console.log('updated', close);
+    }
+}
+
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
-    // RealChart.setLogging(true);
+    RealChart.setLogging(false);
 
     chart = RealChart.createChart(document, 'realchart', config);
 
