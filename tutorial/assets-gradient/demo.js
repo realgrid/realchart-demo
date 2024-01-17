@@ -9,7 +9,7 @@ const config = {
     type: 'linearGradient',
     id: 'gradient-0',
     color: ['green', 'blue'],
-    opacity: [1, 0.2]
+    opacity: [1, 0]
     //   dir: 'up',
   }, {
     type: 'radialGradient',
