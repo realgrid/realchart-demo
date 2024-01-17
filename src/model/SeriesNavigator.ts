@@ -209,7 +209,7 @@ export class SeriesNavigator extends ChartItem {
         }
         // x-axis
         if (isObject(src.xAxis)) {
-            config.xAxis = assign({}, src.xAxis, (AXES[src.xAxis.type])(), AXIS);
+            config.xAxis = assign({}, src.xAxis, (AXES[src.xAxis.type] || AXES['linear'])(), AXIS);
         } else {
             // config.xAxis = assign(AXES['linear'](), AXIS);
             config.xAxis = assign({}, AXIS);
