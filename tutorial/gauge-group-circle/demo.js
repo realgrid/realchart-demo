@@ -1,6 +1,5 @@
 /**
- * @demo
- *
+ * CircleGaugeGroup
  */
 const config = {
   templates: {
