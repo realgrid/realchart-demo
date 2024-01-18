@@ -55,7 +55,7 @@ Locales['ko'] = {
     invalidOuterDiv: '잘못된 외부 div 입니다: %1',
     dataMustSet: '데이터가 먼저 설정돼야 합니다.',
     requireTableName: '테이블모델의 이름이 지정돼야 합니다.',
-    alreadyTableExists: '이미 존해하는 테이블모델입니다: %1',
+    alreadyTableExists: '이미 존재하는 테이블모델입니다: %1',
 };
 
 Locales['en'] = {
