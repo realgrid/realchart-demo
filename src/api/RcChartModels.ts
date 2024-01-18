@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject } from "../common/Common";
+import { isArray } from "../common/Common";
 import { _undef } from "../common/Types";
 import { Annotation } from "../model/Annotation";
 import { Axis } from "../model/Axis";

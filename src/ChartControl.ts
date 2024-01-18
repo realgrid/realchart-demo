@@ -42,6 +42,13 @@ export class ChartControl extends RcControl implements IChartEventListener {
         this.setPointerHandler(new ChartPointerHandler(this));
     }
 
+    protected _doDestory(): void {
+        this.setPointerHandler(null);
+        this._model = null;
+        
+        super._doDestory();
+    }
+
     //-------------------------------------------------------------------------
     // IChartEventListener
     //-------------------------------------------------------------------------
