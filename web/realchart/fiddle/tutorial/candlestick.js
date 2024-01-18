@@ -351,7 +351,6 @@ const config = {
             data: stockData,
             xField: 'date',
             pointLabel: !true,
-            padding: 1,
             pointPadding: 0.1,
         },
     },
@@ -424,6 +423,7 @@ const config = {
             highField: 'highprc',
             lowField: 'lowprc',
             closeField: 'closeprc',
+            // 시가가 종가보다 작으면 적용하는 스타일
             declineStyle: {
                 fill: 'var(--color-3)',
             },

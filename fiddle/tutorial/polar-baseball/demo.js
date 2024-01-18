@@ -189,10 +189,6 @@ const config = {
     tick: {
       stepInterval: 10
     },
-    grid: {
-      // visible: false,
-      firstVisible: false
-    },
     line: {
       visible: true,
       style: {
@@ -216,7 +212,7 @@ const config = {
     width: 380
   }],
   tooltip: {
-    level: 'series'
+    text: '${name}°: ${y}hits'
   },
   series: {
     // layout: 'stack',
@@ -229,8 +225,7 @@ const config = {
       style: {
         stroke: 'none',
         fill: '#bbb'
-      },
-      tooltipText: '${name}°: ${y}hits'
+      }
     }, {
       template: 'series',
       data: hitsData,
