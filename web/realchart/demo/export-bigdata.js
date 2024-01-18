@@ -105,6 +105,15 @@ function setActions(container) {
 			config.exportOptions.visible = _getChecked(e);
 			chart.load(config, animate);
 		}, true);
+    createCheckBox(
+        container,
+        'exportOptions.useLibrary',
+        function (e) {
+            config.exportOptions.useLibrary = _getChecked(e);
+            chart.load(config, animate);
+        },
+        false
+        );
 	createCheckBox(container, 'exportOptions.hideNavigator', function (e) {
 			config.exportOptions.hideNavigator = _getChecked(e);
 			chart.load(config, animate);

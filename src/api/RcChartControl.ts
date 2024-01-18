@@ -45,8 +45,15 @@ function getObject(map: Map<any, any>, obj: ChartItem): RcChartObject {
     }
 }
 
+export enum ImageType {
+    /** @config */
+    PNG = 'png',
+    /** @config */
+    JPEG = 'jpeg',
+}
+
 export interface RealChartExporter {
-    // export: (options, type) => void;
+    exportImage: (dom: HTMLElement, options: any, type: ImageType) => void;
     // print: (options) => void;
     render: (options: any) => void;
 }
@@ -81,8 +88,7 @@ export class RcChartControl {
         model._proxy = this._proxy;
 
         const realChartExporter = window['RealChartExporter'];
-        const exportVisible = model.exportOptions.visible;
-        if (realChartExporter && exportVisible) {
+        if (realChartExporter) {
             this._exporter = realChartExporter.render(this.$_p.doc(), this.$_p.dom(), model.exportOptions);
         };
 
@@ -276,5 +282,13 @@ export class RcChartControl {
             const obj = getObject(this._objects, ser);
             return obj as RcChartSeries;
         }
+    }
+
+    /**
+     * 차트를 이미지 파일로 다운로드한다.
+     */
+    exportImage(type = ImageType.PNG) {
+        const model = this.$_p.model;
+        this._exporter && this._exporter.exportImage(this.$_p.dom(), model.exportOptions, type);
     }
 }
