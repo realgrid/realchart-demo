@@ -5,7 +5,7 @@ export const config = {
     {
       type: 'radialGradient',
       id: 'gradient-1',
-      color: '#0088ff',
+      color: [ '#fff', '#0088ff' ],
       cx: 0.3,
       cy: 0.3,
       rd: 0.4

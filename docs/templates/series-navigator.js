@@ -1546,5 +1546,5 @@ export const config = {
       { year: '2023-03-03', value: 37650704 }
     ]
   },
-  seriesNavigator: { visible: true, xAxis: { label: false } }
+  seriesNavigator: { visible: true, series: { type: 'bar' }, xAxis: { label: false } }
 }

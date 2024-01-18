@@ -12,6 +12,7 @@
 config에서 설정해된 name을 리턴한다.<br/>
 최초 설정한 이름은 변경할 수 없다.
 ### pointCount: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)[#pointCount]
+시리즈에 설정된 데이터포인트 개수.<br/>
 ### pointLabel: [RcChartObject](../classes/RcChartObject)[#pointLabel]
 point label 모델.
 ### tooltip: [RcChartObject](../classes/RcChartObject)[#tooltip]
@@ -19,6 +20,7 @@ point label 모델.
 ### trendLine: [RcChartObject](../classes/RcChartObject)[#trendLine]
 point label 모델.
 ### visiblePointCount: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)[#visiblePointCount]
+시리즈에 설정된 데이터포인트들 중 표시 중인 것들의 개수.<br/>
 
 ## Methods
 ### addPoint(source, animate): IRcDataPoint[#addPoint]
@@ -30,15 +32,6 @@ point label 모델.
 | ----------- | ----------- | ----------- |
 | source | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 데이터포인트 원본 정보. |
 | animate=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | 추가 효과 표시. |
-### findPoint(keys): IRcDataPoint[#findPoint]
-지정한 값들에 해당하는 첫번째 데이터포인트의 정보를 리턴한다.<br/>
-전달되는 데이터포인트 정보는 리턴 시점의 복사본이다.
-
-
-
-| Parameter | Type | Description |
-| ----------- | ----------- | ----------- |
-| keys | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 데이터포이터를 찾기 위한 값 목록. |
 ### get(prop): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)[#get]
 지정한 설정 값(들)을 가져온다.<br/>
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 

@@ -8,7 +8,7 @@ export const config = {
   series: [
     {
       type: 'bar',
-      pointLabel: { visible: true, position: 'outside' },
+      pointLabel: { visible: true, position: 'outside', style: { fill: '#00f' } },
       data: [ 7, 11, 9, 14.3, 13, 12.5 ]
     },
     {

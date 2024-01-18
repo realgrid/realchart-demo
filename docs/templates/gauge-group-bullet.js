@@ -12,7 +12,7 @@ export const config = {
         {
           name: 'gauge1',
           template: 'gauge',
-          value: 62.09076663191446,
+          value: 49.9907817062933,
           targetValue: 90,
           valueRim: { style: { fill: '#00aaff' } },
           label: {
@@ -23,7 +23,7 @@ export const config = {
         {
           name: 'gauge2',
           template: 'gauge',
-          value: 63.320018950624316,
+          value: 62.14236830632043,
           targetValue: 70,
           valueRim: { style: { fill: '#ffaa00' } },
           label: {
@@ -34,7 +34,7 @@ export const config = {
         {
           name: 'gauge3',
           template: 'gauge',
-          value: 35.83837036670783,
+          value: 36.27190274259895,
           targetValue: 75,
           valueRim: { style: { fill: '#88cc00' } },
           label: {
@@ -45,7 +45,7 @@ export const config = {
         {
           name: 'gauge4',
           template: 'gauge',
-          value: 37.26322235357819,
+          value: 75.49135696842613,
           targetValue: 88,
           valueRim: { style: { fill: '#aa0000' } },
           label: {
@@ -60,7 +60,7 @@ export const config = {
       ],
       scale: {},
       label: { text: 'Bullet Gauges' },
-      paneStyle: { stroke: 'lightblue', borderRadius: '10px' }
+      backgroundStyle: { stroke: 'lightblue', borderRadius: '10px' }
     }
   ]
 }

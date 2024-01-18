@@ -345,6 +345,7 @@ export class RcChartSeries extends RcNamedObject {
     }
 
     /**
+     * @internal findPoint가 구현된 시리즈가 없음.
      * 지정한 값들에 해당하는 첫번째 데이터포인트의 정보를 리턴한다.<br/>
      * 전달되는 데이터포인트 정보는 리턴 시점의 복사본이다.
      * 
