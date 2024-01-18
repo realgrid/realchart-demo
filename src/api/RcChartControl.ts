@@ -80,6 +80,17 @@ export class RcChartControl {
     }
 
     /**
+     * 차트 SVG를 부모 div에서 제거하고 관련 모델들도 제거한다.<br/>
+     * 이 후로는 기존 컨트롤을 사용할 수 없다.
+     */
+    destroy(): void {
+        if (this.$_p) {
+            this.$_p.destroy();
+            this.$_p = null;
+        }
+    }
+
+    /**
      * 기존 설정 모델을 제거하고 새로운 설정으로 차트를 재구성한다.
      */
     load(config: any, animate?: boolean, callback?: () => void): void {

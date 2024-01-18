@@ -1,6 +1,5 @@
 /**
- * @demo
- *
+ * Linear Gauge Group
  */
 const config = {
   templates: {

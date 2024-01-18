@@ -44,6 +44,10 @@ export class VectorSeriesPoint extends DataPoint {
         });
     }
 
+    protected _valuesChangd(): boolean {
+        return this.length !== this._prev.length || this.angle !== this._prev.angle || super._valuesChangd();
+    }
+
     protected _readArray(series: VectorSeries, v: any[]): void {
         if (v.length <= 2) {
             this.isNull = true;
@@ -76,10 +80,12 @@ export class VectorSeriesPoint extends DataPoint {
     parse(series: VectorSeries): void {
         super.parse(series);
 
+        this.isNull ||= isNaN(this.lengthValue) || isNaN(this.angleValue);
+    }
+
+    initValues(): void {
         this.lengthValue = parseFloat(this.length);
         this.angleValue = parseFloat(this.angle);
-
-        this.isNull ||= isNaN(this.lengthValue) || isNaN(this.angleValue);
     }
 }
 

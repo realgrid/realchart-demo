@@ -1,6 +1,4 @@
 /**
- * @demo
- *
  * Bar Wing 예제
  * 그룹 시리즈의 overlap layout으로 split모드 없이 wing 차트 모양을 내는 예제.
  * male은 data는 음수로 구성되어 있다.

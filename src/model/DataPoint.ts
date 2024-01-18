@@ -6,9 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNone, isObject, pickNum, pickProp, pickProp3, pickProp4, assign, maxv, minv, absv } from "../common/Common";
+import { isArray, isObject, pickNum, pickProp, pickProp3, pickProp4, assign, maxv, minv, pickNum3 } from "../common/Common";
 import { IPoint } from "../common/Point";
-import { RcAnimation } from "../common/RcAnimation";
 import { IValueRange, _undef } from "../common/Types";
 import { AxisZoom, IAxis } from "./Axis";
 import { ISeries, LowRangedSeries, Series } from "./Series";
@@ -63,9 +62,11 @@ export class DataPoint {
     zValue: number;
     yLabel: any;
 
-    ani: RcAnimation;
-    yPrev: number;
-    yNew: number;
+    // ani: RcAnimation;
+    // yPrev: number;
+    // yNew: number;
+    _prev: any;
+    _vr: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -92,6 +93,10 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    copy(): any {
+        return {...this};
+    }
+
     proxy(): any {
         return {
             pid: this.pid,
@@ -130,6 +135,8 @@ export class DataPoint {
         } else {
             this._readSingle(v);
         }
+
+        this.initValues();
     }
 
     getLabelValue(index: number): any {
@@ -146,24 +153,50 @@ export class DataPoint {
         return { x: this.xPos, y: this.yPos };
     }
 
-    updateValue(value: number, animation: RcAnimation): void {
-        if (animation) {
-            this.yPrev = this.yValue;
-            this.yNew = value;
-            this.ani = animation;
-        } else {
-            this.y = value; // [주의] Series.collectValues에 yValue가 다시 계산된다.
-        }
-    }
+    // updateYValue(value: number, animation: ValueAnimation): void {
+    //     if (animation) {
+    //         this.yPrev = this.yValue;
+    //         this.yNew = value;
+    //         this.ani = animation;
+    //     } else {
+    //         this.y = value; // [주의] Series.collectValues에 yValue가 다시 계산된다.
+    //     }
+    // }
 
-    cleanValue(): void {
-        this.y = this.yNew;
-        delete this.yPrev;
-        delete this.yNew;
+    // cleanYValue(): void {
+    //     this.y = this.yNew;
+    //     delete this.yPrev;
+    //     delete this.yNew;
+    // }
+
+    updateValues(series: ISeries, values: any): any {
+        this._prev = this.copy();
+
+        if (isObject(values)) {
+            this.source = Object.assign(isObject(this.source) ? this.source : {}, values);
+        } else if (isArray(values)) {
+            this.source = values.slice(0);
+        } else {
+            this.source = values;
+        }
+
+        this.parse(series);
+
+        if (this._valuesChangd()) {
+            return this._prev;
+        } else {
+            this._prev = _undef;
+        }
     }
 
     getTooltip(param: string): any {
         return param in this ? this[param] : this.source?.[param];
+    }
+
+    applyValueRate(): void {
+    }
+
+    initValues(): void {
     }
 
     //-------------------------------------------------------------------------
@@ -207,6 +240,10 @@ export class DataPoint {
         // x 축에 대한 정보가 없으므로 홑 값들은 순서대로 값을 지정한다.
         //this.x = this.index;
         this.y = v;
+    }
+
+    protected _valuesChangd(): boolean {
+        return this.x !== this._prev.x || this.y !== this._prev.y;
     }
 }
 
@@ -398,6 +435,10 @@ export class ZValuePoint extends DataPoint {
         });
     }
 
+    protected _valuesChangd(): boolean {
+        return this.z !== this._prev.z || super._valuesChangd();
+    }
+
     protected _readArray(series: Series, v: any[]): void {
         if (v.length <= 1) {
             this.isNull = true;
@@ -428,16 +469,18 @@ export class ZValuePoint extends DataPoint {
 
     parse(series: Series): void {
         super.parse(series);
-
-        this.zValue = parseFloat(this.z);
         
         this.isNull ||= isNaN(this.zValue);
+    }
+
+    initValues(): void {
+        this.zValue = parseFloat(this.z);
     }
 }
 
 /**
- * [low, y]
- * [x, low, y]
+ * [low, high |y]
+ * [x, low, high | y]
  */
 export class RangedPoint extends DataPoint {
 
@@ -450,6 +493,7 @@ export class RangedPoint extends DataPoint {
     // fields
     //-------------------------------------------------------------------------
     lowValue: number;
+    get high(): number { return this.y; }
     get highValue(): number { return this.yValue; }
 
     //-------------------------------------------------------------------------
@@ -469,16 +513,21 @@ export class RangedPoint extends DataPoint {
     protected _assignTo(proxy: any): any {
         return assign(super._assignTo(proxy), {
             low: this.low,
+            high: this.high,
             lowValue: this.lowValue,
             highValue: this.yValue,
         });
+    }
+
+    protected _valuesChangd(): boolean {
+        return this.low !== this._prev.low || super._valuesChangd();
     }
 
     protected _readArray(series: LowRangedSeries, v: any[]): void {
         const d = v.length > 2 ? 1 : 0;
 
         this.low = v[pickNum(series.lowField, 0 + d)];
-        this.y = v[pickNum(series.yField, 1 + d)];
+        this.y = v[pickNum3(series.highField, series.yField, 1 + d)];
         if (d > 0) {
             this.x = v[pickNum(series.xField, 0)];
         }
@@ -489,7 +538,7 @@ export class RangedPoint extends DataPoint {
 
         if (!this.isNull) {
             this.low = pickProp(v[series.lowField], v.low);
-            this.y = pickProp3(series._yFielder(v), v.y, v.value);
+            this.y = pickProp3(v[series.highField], v.high, this.y);
         }
     }
 
@@ -502,7 +551,14 @@ export class RangedPoint extends DataPoint {
     parse(series: LowRangedSeries): void {
         super.parse(series);
 
-        this.lowValue = parseFloat(this.low);
         this.isNull ||= isNaN(this.lowValue);
+    }
+
+    initValues(): void {
+        this.lowValue = parseFloat(this.low);
+    }
+
+    applyValueRate(): void {
+        this.lowValue = this._prev.lowValue + (this.lowValue - this._prev.lowValue) * this._vr;
     }
 }

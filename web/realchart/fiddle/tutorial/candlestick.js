@@ -351,7 +351,6 @@ const config = {
             data: stockData,
             xField: 'date',
             pointLabel: !true,
-            padding: 1,
             pointPadding: 0.1,
         },
     },
@@ -424,6 +423,7 @@ const config = {
             highField: 'highprc',
             lowField: 'lowprc',
             closeField: 'closeprc',
+            // 시가가 종가보다 작으면 적용하는 스타일
             declineStyle: {
                 fill: 'var(--color-3)',
             },
@@ -436,6 +436,37 @@ const config = {
 };
 
 let chart;
+
+function addRow() {
+    // add 1 day from the last date
+    const d = new Date(ds.getValue(ds.rowCount - 1, 'date'));
+    d.setDate(d.getDate() + 1);
+    const newDt = [d.getFullYear(), d.getMonth() + 1, d.getDate()]
+        .map((v) => v.toString().padStart(2, '0'))
+        .join('-');
+    const ridx = Math.floor(Math.random() * ds.rowCount);
+    const p = {
+        ...ds.getRow(ridx),
+        date: newDt,
+    };
+
+    ds.addRow(p);
+}
+function deleteRow() {
+    ds.deleteRow(0);
+}
+function updateValue() {
+    const row = 0;
+    const high = ds.getValue(row, 'highprc');
+    const low = ds.getValue(row, 'lowprc');
+    const close = Math.floor(Math.random() * (high - low + 1) + low);
+    ds.setValue(row, 'closeprc', close);
+
+    if (close == ds.getValue(row, 'closeprc')) {
+        console.log('updated', close);
+    }
+}
+
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     RealChart.setLogging(false);

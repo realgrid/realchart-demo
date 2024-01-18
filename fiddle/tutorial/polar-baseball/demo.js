@@ -120,24 +120,9 @@ const hitsData = [{
   hits: 1
 }];
 const config = {
-  height: 600,
-  actions: [{
-    label: 'yAxis.type',
-    type: 'select',
-    data: ['linear', 'log'],
-    value: 'log',
-    action: ({
-      value
-    }) => {
-      config.yAxis.type = value;
-      config.yAxis.template = `${value}Axis`;
-      chart.load(config);
-    }
-  }],
   polar: true,
   templates: {
     series: {
-      noClip: true,
       pointLabel: false,
       xField: 'angle',
       yField: 'hits',
@@ -155,20 +140,11 @@ const config = {
       },
       title: 'hits',
       tick: {
-        visible: false
-        // stepInterval: 0.5,
+        visible: false,
         // stepCount: 5,
-        // steps: [
-        //   0,
-        //   Math.log10(5),
-        //   Math.log10(10),
-        //   Math.log10(20),
-        //   Math.log10(30),
-        //   // Math.log10(40),
-        // ],
+        steps: [0, Math.log10(5), Math.log10(10), Math.log10(20), Math.log10(30)]
       }
     },
-
     linearAxis: {
       label: {
         visible: true,
@@ -178,23 +154,11 @@ const config = {
           fill: '#555'
         },
         firstText: ''
-      },
-      tick: {
-        visible: false
-        // steps: [0, Math.log10(5), Math.log10(10), Math.log10(20), Math.log10(30)]
       }
     }
   },
-
-  options: {
-    // animatable: false,
-    style: {
-      paddingLeft: '100px'
-    },
-    credits: false
-  },
   title: {
-    text: 'J.D Reyes',
+    text: 'W.R Lion',
     align: 'left',
     style: {
       fontWeight: 700
@@ -213,65 +177,42 @@ const config = {
     reversed: true,
     startAngle: 10,
     totalAngle: 160,
-    minValue: -90,
-    maxValue: 90,
+    strictMin: -80,
+    strictMax: 80,
     label: {
       visible: true,
       suffix: '°',
       style: {
         fill: '#999'
-      },
-      textCallback: ({
-        count,
-        index,
-        value
-      }) => {
-        return value > -90 && value < 90 ? value.toString() : '';
       }
     },
     tick: {
       stepInterval: 10
     },
-    grid: {
-      // visible: false,
-      firstVisible: false
-    },
     line: {
       visible: true,
-      style: {
-        stroke: '#999'
-        // stroke: 'red',
-        // strokeWidth: '2px',
-        // fill: '#999'
-      }
-    },
-
-    sectorLine: {
       style: {
         stroke: '#999'
       }
     }
   },
   yAxis: {
-    template: 'logAxis',
-    type: 'log'
     // template: 'linearAxis',
     // type: 'linear',
+    template: 'logAxis',
+    type: 'log'
   },
-
-  body: {
-    annotations: [{
-      type: 'image',
-      imageUrl: 'https://www.realchart.co.kr/demo/assets/images/baseball-player.png',
-      align: 'center',
-      verticalAlign: 'middle',
-      offsetX: -120,
-      offsetY: -30,
-      width: 400
-    }]
-  },
+  annotations: [{
+    type: 'image',
+    imageUrl: 'https://www.realchart.co.kr/demo/assets/images/baseball-player.png',
+    align: 'center',
+    verticalAlign: 'middle',
+    offsetX: -110,
+    offsetY: -30,
+    width: 380
+  }],
   tooltip: {
-    level: 'series'
+    text: '${name}°: ${y}hits'
   },
   series: {
     // layout: 'stack',
@@ -284,8 +225,7 @@ const config = {
       style: {
         stroke: 'none',
         fill: '#bbb'
-      },
-      tooltipText: '${name}°: ${y}hits'
+      }
     }, {
       template: 'series',
       data: hitsData,

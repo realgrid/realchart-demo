@@ -1,6 +1,4 @@
 /**
- * @demo
- *
  * Split Wing
  */
 const config = {

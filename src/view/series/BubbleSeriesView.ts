@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { cos, sin } from "../../common/Common";
-import { IRect } from "../../common/Rectangle";
 import { Align, PI_2 } from "../../common/Types";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Axis } from "../../model/Axis";
@@ -45,7 +44,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
 
     protected _renderSeries(width: number, height: number): void {
         // invert 하지 않는다! // TODO: invert할 것!
-        // this._pointContainer.invert(this.model.chart.isInverted(), height);
+        // this._pointContainer.invert(this._inverted, height);
         this.$_layoutMarkers(width, height);
     }
 
@@ -64,7 +63,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
         const zAxis = series._xAxisObj._vlen < series._yAxisObj._vlen ? series._xAxisObj : series._yAxisObj;
         const len = zAxis._vlen;
         const count = points.length;
-        const {min, max} = series.getPixelMinMax(len);
+        // const {min, max} = series.getPixelMinMax(len);
 
         this._markers.prepare(count, (mv, i) => {
             const p = mv.point = points[i];
@@ -91,13 +90,12 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
         const yAxis = series._yAxisObj as Axis;
         const polar = this._polar = (series.chart as Chart).body.getPolar(xAxis);
         const yLen = yAxis.prev(inverted ? width : height);
-        const xLen = xAxis.prev(inverted ? height : width);
+        const xLen = xAxis.prev(polar ? polar.rd * PI_2 : inverted ? height : width);
         const zAxis = series._xAxisObj._vlen < series._yAxisObj._vlen ? series._xAxisObj : series._yAxisObj;
         const len = zAxis._vlen;
         const {min, max} = series.getPixelMinMax(len);
-        const yOrg = height;
+        const yOrg = inverted ? 0 : height;
         let labelView: PointLabelView;
-        let r: IRect;
 
         this._markers.forEach((mv, i) => {
             const p = mv.point as BubbleSeriesPoint;
@@ -118,9 +116,10 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
                 } else {
                     x = xAxis.getPos(xLen, p.xValue);
                     y = yOrg - yAxis.getPos(yLen, p.yValue);
+
                     if (inverted) {
-                        x = yAxis.getPos(yLen, p.yGroup);
-                        y = yOrg - xAxis.getPos(xLen, p.xValue);
+                        x = yAxis.getPos(yLen, p.yValue);
+                        y = height - xAxis.getPos(xLen, p.xValue);
                     }
                 }
                 p.xPos = x;
@@ -128,10 +127,8 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
     
                 if (mv.setVis(!needClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
                     path = SvgShapes.circle(0, 0, sz);
-                    mv.setPath(path);
-                    mv.trans(x, y);
+                    mv.setPath(path).trans(x, y);
     
-                    // label
                     if (lv) {
                         labelView.setContrast(mv.dom);
                         labelView.layout(Align.CENTER);

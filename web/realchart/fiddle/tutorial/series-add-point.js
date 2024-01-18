@@ -56,7 +56,7 @@ function removePoint() {
 }
 
 function updatePoint() {
-    chart.series.setValueAt(0, Math.floor(Math.random() * 10000));
+    chart.series.updatePoint(0, Math.floor(Math.random() * 10000));
 }
 
 function init() {

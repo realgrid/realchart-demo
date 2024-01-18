@@ -3,58 +3,39 @@
  *
  */
 const config = {
-    options: {},
-    title: 'Update Data',
-    legend: true,
-    body: {
-        style: {
-            stroke: 'none',
-        },
+    title: 'Update Range Data',
+    options: {
+        // animatable: false,
     },
     xAxis: {
-        label: {
-            style: {},
-        },
-        grid: {
-            visible: true,
-            lastVisible: true,
-        },
-        tick: true,
-        title: {
-            text: '수정구',
-        },
-        // grid: true,
-        crosshair: true,
+        grid: true,
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
     yAxis: {
-        title: {
-            text: '전체 인구수',
-        },
-        unit: '(명)',
-        label: {
-            lastText: '${label}<br>${axis.unit}',
-            lastStyle: { fontWeight: 'bold' },
-        },
     },
     series: {
-        pointLabel: true,
-        data: [
-            ['신흥1동', 3904],
-            ['신흥2동', 19796],
-            ['신흥3동', 10995],
-            ['태평1동', 14625],
-            ['태평2동', 14627],
-            ['태평3동', 12649],
-            ['태평4동', 12279],
-        ],
-        pointStyleCallback: (args) => {
-            if (args.yValue > 30000) {
-                return { fill: 'blue', stroke: 'blue' };
-            } else if (args.yValue < 5000) {
-                return { fill: 'red', stroke: 'red' };
-            }
+        type: 'barrange',
+        pointLabel: {
+            visible: true,
+            // format: '${x}'
+            // text: '<b style="fill:red">${x}</b>'
         },
-    },
+        data: [
+            [-13.9, 5.2],
+            [-16.7, 10.6],
+            [-4.7, 11.6],
+            [-4.4, 16.8],
+            [-2.1, 27.2],
+            [5.9, 29.4],
+            [6.5, 29.1],
+            [4.7, 25.4],
+            [4.3, 21.6],
+            [-3.5, 15.1],
+            [-9.8, 12.5],
+            [-11.5, 8.4]
+        ]
+    }
 };
 
 let animate;
@@ -71,22 +52,28 @@ function setActions(container) {
         },
         false
     );
-    createButton(container, 'Inc Point', function (e) {
-        const v = chart.series.getValueAt(0);
-        chart.series.updatePoint(0, v + 5000);
-    });
-    createButton(container, 'Dec Point', function (e) {
-        const v = chart.series.getValueAt(0);
-        chart.series.updatePoint(0, v - 5000);
+    createButton(container, 'Update Point', function (e) {
+        const low = chart.series.getValueAt(0, 'low');
+        const high = chart.series.getValueAt(0, 'high');
+
+        chart.series.updatePoint(0, {
+            low: low + Math.random() * 10 - 5,
+            high: high + Math.random() * 3
+        });
     });
     createButton(container, 'Update Point2', function (e) {
-        const v = chart.series.getValueAt('신흥3동');
-        chart.series.updatePoint('신흥3동', v + 3000);
+        const low = chart.series.getValueAt('신흥3동', 'low');
+        const high = chart.series.getValueAt('신흥3동', 'high');
+
+        chart.series.updatePoint('신흥3동', {
+            low: low + Math.random() * 10 - 5,
+            high: high + Math.random() * 3
+        });
     });
     createButton(container, 'Random', function (e) {
         const i = Math.floor(Math.random() * chart.series.pointCount);
         const v = chart.series.getValueAt(i);
-        chart.series.updatePoint(i, v + Math.floor(Math.random() * 10000));
+        chart.series.updatePoint(i, v + Math.floor(Math.random() * 10));
     });
     createButton(container, 'Run', function (e) {
         if (timer) {
@@ -95,8 +82,14 @@ function setActions(container) {
         }
         timer = setInterval(() => {
             const i = Math.floor(Math.random() * chart.series.pointCount);
-            const v = chart.series.getValueAt(i) + Math.floor(Math.random() * 10000) - 5000;
-            chart.series.updatePoint(i, Math.max(0, v));
+
+            const low = chart.series.getValueAt(i, 'low');
+            const high = chart.series.getValueAt(i, 'high');
+    
+            chart.series.updatePoint(i, {
+                low: low + Math.random() * 10 - 5,
+                high: high + Math.random() * 3
+            });
         }, 200);
     });
     createButton(container, 'Stop', function (e) {

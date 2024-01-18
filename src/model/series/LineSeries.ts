@@ -587,6 +587,7 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
     // fields
     //-------------------------------------------------------------------------
     lowValue: number;
+    get high(): number { return this.y; }
     get highValue(): number { return this.yValue; }
 
     //-------------------------------------------------------------------------
@@ -595,9 +596,14 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
     protected _assignTo(proxy: any): any {
         return assign(super._assignTo(proxy), {
             low: this.low,
+            high: this.high,
             lowValue: this.lowValue,
             highValue: this.yValue,
         });
+    }
+
+    protected _valuesChangd(): boolean {
+        return this.low !== this._prev.low || super._valuesChangd();
     }
 
     protected _readArray(series: AreaRangeSeries, v: any[]): void {
@@ -628,8 +634,11 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
     parse(series: AreaRangeSeries): void {
         super.parse(series);
 
-        this.lowValue = parseFloat(this.low);
         this.isNull ||= isNaN(this.lowValue);
+    }
+
+    initValues(): void {
+        this.lowValue = parseFloat(this.low);
     }
 
     getTooltipPos(): IPoint {

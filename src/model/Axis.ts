@@ -1525,8 +1525,14 @@ export abstract class Axis extends ChartItem implements IAxis {
         this._prevRate = rate;
     }
 
-    prev(len: number): number {
-        return isNaN(this._prevRate) ? len : len * this._prevRate;
+    prev(pos: number): number {
+        if (isNaN(this._prevRate)) {
+            return pos;
+        } else if (this.reversed) {
+            return pos + (this._vlen - pos) * (this._prevRate - 1);
+        } else {
+            return pos * this._prevRate;
+        }
     }
 
     abstract xValueAt(pos: number): number;

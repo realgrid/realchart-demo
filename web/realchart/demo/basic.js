@@ -188,6 +188,15 @@ function setActions(container) {
         false
     );
 
+    // createButton(container, 'Destroy', function (e) {
+    //     chart.destroy();
+    // });
+    // createButton(container, 'Create', function (e) {
+    //     chart = RealChart.createChart(document, 'realchart', config, true, () => {
+    //         console.log('LoADED!')
+    //     });
+    // });
+
     createCodePenButton();
 }
 

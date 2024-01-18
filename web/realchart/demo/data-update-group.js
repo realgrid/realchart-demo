@@ -3,58 +3,62 @@
  *
  */
 const config = {
-    options: {},
-    title: 'Update Data',
-    legend: true,
-    body: {
-        style: {
-            stroke: 'none',
-        },
-    },
-    xAxis: {
-        label: {
-            style: {},
-        },
-        grid: {
-            visible: true,
-            lastVisible: true,
-        },
-        tick: true,
-        title: {
-            text: '수정구',
-        },
-        // grid: true,
-        crosshair: true,
-    },
-    yAxis: {
-        title: {
-            text: '전체 인구수',
-        },
-        unit: '(명)',
-        label: {
-            lastText: '${label}<br>${axis.unit}',
-            lastStyle: { fontWeight: 'bold' },
-        },
-    },
-    series: {
-        pointLabel: true,
-        data: [
-            ['신흥1동', 3904],
-            ['신흥2동', 19796],
-            ['신흥3동', 10995],
-            ['태평1동', 14625],
-            ['태평2동', 14627],
-            ['태평3동', 12649],
-            ['태평4동', 12279],
-        ],
-        pointStyleCallback: (args) => {
-            if (args.yValue > 30000) {
-                return { fill: 'blue', stroke: 'blue' };
-            } else if (args.yValue < 5000) {
-                return { fill: 'red', stroke: 'red' };
-            }
-        },
-    },
+    type: 'line',
+	title: 'Update Group Data',
+	options: {
+		// animatable: false
+	},
+	xAxis: {
+		title: '일일 Daily fat',
+		categories: [
+			'쓰리엠',
+			'아디다스',
+			'디즈니',
+			'이마트',
+			'메리어트',
+			'시세이도',
+		],
+	},
+	yAxis: {
+		title: 'Vertical 수직축 Axis',
+		// reversed: true
+	},
+	series: [
+		{
+			// layout: 'default',
+			children: [
+				{
+					name: 'column1',
+					pointLabel: {
+						visible: true,
+						position: 'inside',
+						effect: 'outline',
+					},
+					// pointWidth: '100%',
+					data: [11, 22, 15, 9, 13, 27],
+				},
+				{
+					name: 'column2',
+					pointWidth: 2,
+					pointLabel: {
+						visible: true,
+						position: 'inside',
+						effect: 'outline',
+					},
+					data: [15, 19, 19, 6, 21, 21],
+				},
+				{
+					name: 'column3',
+					pointLabel: {
+						visible: true,
+						position: 'inside',
+						effect: 'outline',
+					},
+					data: [13, 17, 15, 11, 23, 17],
+				},
+			],
+		},
+	],
 };
 
 let animate;
@@ -71,22 +75,18 @@ function setActions(container) {
         },
         false
     );
-    createButton(container, 'Inc Point', function (e) {
+    createButton(container, 'Update Point', function (e) {
         const v = chart.series.getValueAt(0);
-        chart.series.updatePoint(0, v + 5000);
-    });
-    createButton(container, 'Dec Point', function (e) {
-        const v = chart.series.getValueAt(0);
-        chart.series.updatePoint(0, v - 5000);
+        chart.series.updatePoint(0, v + Math.random() * v);
     });
     createButton(container, 'Update Point2', function (e) {
-        const v = chart.series.getValueAt('신흥3동');
-        chart.series.updatePoint('신흥3동', v + 3000);
+        const v = chart.series.getValueAt('디즈니');
+        chart.series.updatePoint('디즈니', v + Math.random() * v);
     });
     createButton(container, 'Random', function (e) {
         const i = Math.floor(Math.random() * chart.series.pointCount);
         const v = chart.series.getValueAt(i);
-        chart.series.updatePoint(i, v + Math.floor(Math.random() * 10000));
+        chart.series.updatePoint(i, v + Math.floor(Math.random() * v));
     });
     createButton(container, 'Run', function (e) {
         if (timer) {
@@ -95,8 +95,8 @@ function setActions(container) {
         }
         timer = setInterval(() => {
             const i = Math.floor(Math.random() * chart.series.pointCount);
-            const v = chart.series.getValueAt(i) + Math.floor(Math.random() * 10000) - 5000;
-            chart.series.updatePoint(i, Math.max(0, v));
+            const v = chart.series.getValueAt(i);
+            chart.series.updatePoint(i, Math.max(0, v + Math.floor(Math.random() * v) - Math.random() * v / 2));
         }, 200);
     });
     createButton(container, 'Stop', function (e) {
@@ -105,6 +105,16 @@ function setActions(container) {
             timer = null;
         }
     });
+	createListBox(
+		container,
+		'layout',
+		['default', 'stack', 'fill', 'overlap'],
+		function (e) {
+			config.series[0].layout = _getValue(e);
+			chart.load(config, animate);
+		},
+		'default'
+	);
     createCheckBox(
         container,
         'Inverted',
