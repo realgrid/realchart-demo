@@ -1,14 +1,14 @@
 const config = {
   title: "Boundary",
   xAxis: {
-    type: "log",
+    type: "linear",
     tick: {
       visible: true,
     },
   },
   series: [
     {
-      // type: 'line',
+      type: 'bar',
       name: "column",
       data: [ 1,  2,   4,   8]
     },
