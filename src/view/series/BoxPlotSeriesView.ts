@@ -49,6 +49,7 @@ class BoxView extends RangeElement implements IPointView {
         const hBox = h * (p.highValue - p.lowValue) / len;
 
         p.color && this._box.setFill(p.color);
+        this.x = this.tx + x; // savePrevs()에서 사용한다.
 
         this._stemUp.setVLine(x, y, yHigh);
         this._stemDown.setVLine(x, yLow, h);

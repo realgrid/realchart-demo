@@ -50,6 +50,8 @@ class BarElement extends RangeElement implements IPointView {
         const h = this.height;
         const x = w / 2;
 
+        this.x = this.tx + x; // savePrevs()에서 사용한다.
+
         this._stem.setVLine(x, 0, h);
         this._whiskerUp.setHLine(0, 0, w);
         this._whiskerDown.setHLine(h, 0, w);

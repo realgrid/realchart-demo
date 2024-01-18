@@ -98,6 +98,9 @@ function setActions(container) {
             timer = null;
         }
     });
+    createButton(container, 'Add Point', function (e) {
+        chart.series.addPoint([-11.5, 8.4]);
+    });
     createCheckBox(
         container,
         'Inverted',

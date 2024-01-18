@@ -51,6 +51,7 @@ class BarElement extends RangeElement implements IPointView {
             this._hmarker.setFill(p.color);
             this._lmarker.setFill(p.color);
         }
+        this.x = this.tx + x; // savePrevs()에서 사용한다.
 
         this._line.setVLineC(x, y, h);
         SvgShapes.setShape(this._hmarker, p.shape, rd, rd);
