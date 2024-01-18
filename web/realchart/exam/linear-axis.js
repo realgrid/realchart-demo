@@ -6,13 +6,20 @@ const config = {
       visible: true,
     },
   },
+  body:{
+    padding: 100,
+  },
   series: [
     {
       type: 'bar',
       name: "column",
-      data: [ 1,  2,   4,   8]
+      data: [ 1,  2,   4,   8],
+
     },
   ],
+  tooltip: {
+    text: "%{y} ㅎㅎㅎ"
+  }
 };
 
 let animate = false;
@@ -36,8 +43,8 @@ function setActions(container) {
     },
     false
   );
-  createButton(container, "Test", function (e) {
-    alert("hello");
+  createButton(container, "createChart", function (e) {
+    chart = RealChart.createChart(document, "realchart", config,false, () => {console.log("hi")});
   });
   createCheckBox(
     container,
@@ -74,6 +81,6 @@ function init() {
   // RealChart.setDebugging(true);
   RealChart.setLogging(true);
 
-  chart = RealChart.createChart(document, "realchart", config);
+  chart = RealChart.createChart(document, "realchart", config,false, () => {console.log("hi")});
   setActions("actions");
 }
