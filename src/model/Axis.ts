@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isObject, isString, maxv, minv, pickNum, pickProp } from "../common/Common";
+import { RcAnimation } from "../common/RcAnimation";
 import { IRichTextDomain } from "../common/RichText";
 import { Align, DEG_RAD, ORG_ANGLE, SVGStyleOrClass, VerticalAlign, _undef, fixnum, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
@@ -1076,6 +1077,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     _prevSeries: IPlottingItem[];
     _seriesChanged = false;
     _prevRate: number;
+
+    animating(): boolean {
+        return !isNaN(this._prevRate);
+    }
 
     //-------------------------------------------------------------------------
     // constructor

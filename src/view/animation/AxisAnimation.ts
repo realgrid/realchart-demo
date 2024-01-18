@@ -27,8 +27,8 @@ export class AxisAnimation extends RcAnimation {
         this._axis = axis;
         this._prevMin = prevMin;
         this._prevMax = prevMax;
-        this.endHandler = endHandler;
-        this.start();
+        // this.endHandler = endHandler;
+        this.start(endHandler);
     }
 
     //-------------------------------------------------------------------------

@@ -667,7 +667,6 @@ export class ValueAnimation extends RcAnimation {
     }
 
     protected _doUpdate(rate: number): boolean {
-        if (!this.point) debugger;
         this.point._vr = rate;
         // this.point.y = this.point.yPrev + (this.point.yNew - this.point.yPrev) * rate;
         // this.point.y = this.point.yPrev + (this.point.yNew - this.point.yPrev) * rate;
@@ -755,6 +754,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     private _pointLabelCallback: (point: any) => string;
     protected _pointArgs: IDataPointCallbackArgs;
     private _argsPoint: DataPoint;
+    _pointsChanged: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1165,7 +1165,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     setShape(shape: Shape): void {}
 
     seriesChanged(): boolean {
-        return false;
+        return this._pointsChanged;
     }
 
     //-------------------------------------------------------------------------
@@ -1230,6 +1230,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     }
 
     prepareAfter(): void {
+        this._pointsChanged = false;
     }
 
     collectCategories(axis: IAxis): string[] {
@@ -1289,6 +1290,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
 
                     p.initValues();
                     if (!isNaN(p._vr)) {
+                        if (isNaN(p._prev.yValue)) p._prev.yValue = axis.axisMin();
                         val = p._prev.yValue + (val - p._prev.yValue) * p._vr;
                         p.applyValueRate();
                     }
@@ -1551,10 +1553,10 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
 
             if (prev) {
                 this.chart.dataChanged();
-                // if (animate) {
+                if (this.chart.animatable()) {
                     prev.ani = new ValueAnimation(this, p);
                     prev.ani.start();
-                // }
+                }
             }
             this._changed();
             return !!prev;
@@ -1578,6 +1580,13 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         if (p) {
             this._points.add(p);
             this.chart.dataChanged();
+            if (this.chart.animatable()) {
+                this._pointsChanged = true;
+
+                const prev = p._prev = p.copy();
+                prev.ani = new ValueAnimation(this, p);
+                prev.ani.start();
+            }
             this._changed();
         }
         return p;
@@ -1593,7 +1602,17 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
             })
         }
         if (pts.length > 0) {
+            this._pointsChanged = true;
             this.chart.dataChanged();
+
+            if (this.chart.animatable()) {
+                // TODO: 대량 포인트 Test!
+                pts.forEach(p => {
+                    const prev = p._prev = p.copy();
+                    prev.ani = new ValueAnimation(this, p);
+                    prev.ani.start();
+                });
+            }
             this._changed();
         }
         return pts;
@@ -1602,6 +1621,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     removePoint(p: DataPoint): boolean {
         if (p && this._points.remove(p)) {
             this._doPointRemoved(p);
+            this._pointsChanged = true;
             this.chart.dataChanged();
             this._changed();
             return true;
@@ -1619,6 +1639,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
             })
             if (removed.length > 0) {
                 this._doPointsRemoved(removed);
+                this._pointsChanged = true;
                 this.chart.dataChanged();
                 this._changed();
             }
@@ -2803,7 +2824,14 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
 
         this._stacked = this.layout === SeriesGroupLayout.STACK || this.layout === SeriesGroupLayout.FILL;
         this._visibles = this._series.filter(ser => ser.visible).sort((s1, s2) => (+s1.zOrder || 0) - (+s2.zOrder || 0));
-        this._seriesChanged = !Utils.equalArrays(prev, this._visibles);
+        if (!(this._seriesChanged = !Utils.equalArrays(prev, this._visibles))) {
+            for (let i = this._visibles.length - 1; i >= 0; i--) {
+                if (this._visibles[i].seriesChanged()) {
+                    this._seriesChanged = true;
+                    break;
+                }
+            }
+        }
 
         super.prepareRender();
     }

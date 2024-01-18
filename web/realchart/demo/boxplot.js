@@ -46,6 +46,9 @@ function setActions(container) {
         config.yAxis.reversed = _getChecked(e);
         chart.load(config);
     }, false);
+    createButton(container, 'Add Point', function (e) {
+        chart.series.addPoint([634, 736, 804, 882, 910]);
+    });
 }
 
 function init() {
