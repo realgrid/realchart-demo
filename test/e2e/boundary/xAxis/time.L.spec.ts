@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
-// category.L.spec.ts
-// 2023. 12. 14. created by dltlghkd930217
+// time.L.spec.ts
+// 2024. 01. 18. created by dltlghkd930217
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
@@ -13,7 +13,7 @@ import { PWTester } from "../../PWTester";
  * PlayWright Tests for area.html
  */
 
-test.describe("xAxis, category test", () => {
+test.describe("xAxis, time test", () => {
   const url = "boundary/empty.html?debug";
 
   let chart;
@@ -21,7 +21,7 @@ test.describe("xAxis, category test", () => {
   let config: any = {
     title: "Boundary",
     xAxis: {
-      categories: [],
+      type: "time",
       title: {
         visible: true,
       },
@@ -49,39 +49,18 @@ test.describe("xAxis, category test", () => {
     const labels = await xAxis.$$(".rct-axis-label");
 
     const labelTexts = await page.evaluate((labels) => {
-      return labels.map((e) => Number(e.textContent));
-    }, labels);
-
-    const expectTexts = config.series[0].data.map((e, i) => i);
-
-    expect(labelTexts).is.deep.equal(expectTexts);
-  });
-
-
-  test("add categories", async ({ page }) => {
-    config.xAxis.categories = ["a", "b", "c", "d", "e"];
-    await page.evaluate((newConfig) => {
-      chart.load(newConfig, false);
-    }, config);
-    const xAxis = await PWTester.getAxis(page, "x");
-    const labels = await xAxis.$$(".rct-axis-label");
-
-    const labelTexts = await page.evaluate((labels) => {
       return labels.map((e) => e.textContent);
     }, labels);
 
-    const expectTexts = config.series[0].data.map(
-      (e, i) => i < config.xAxis.categories.length && config.xAxis.categories[i]
-    );
+    const expectTexts = ['00:00', '001', '002', '003']
 
     expect(labelTexts).is.deep.equal(expectTexts);
   });
+
 
   test("path", async ({ page }) => {
     const container = await page.$("#realchart");
 
-    config.xAxis.type = "category";
-    config.xAxis.categories = [];
     await page.evaluate((newConfig) => {
       chart.load(newConfig, false);
     }, config);
