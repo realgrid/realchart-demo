@@ -379,7 +379,7 @@ export class RcChartSeries extends RcNamedObject {
      * const x = '카테고리';
      * const v = chart.series.getValueAt(x);
      * 
-     * chart.series.updatePoint(x, v + 10, true);
+     * chart.series.updatePoint(x, v + 10);
      * ```
      * 
      * @param xValue x값. x축이 category 축이면 카테고리 이름을 지정할 수 있다.

@@ -423,7 +423,7 @@ const config = {
             highField: 'highprc',
             lowField: 'lowprc',
             closeField: 'closeprc',
-            // 시가가 종가보다 작으면 적용하는 스타일
+            // 종가가 시가보다 작으면 적용하는 스타일
             declineStyle: {
                 fill: 'var(--color-3)',
             },
