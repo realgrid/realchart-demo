@@ -59,7 +59,7 @@ export class ImageElement extends RcElement {
         if (url) {
             // 이렇게 기존 'href'와 다른 지 check하지 않고 직접 setAttr()하면 계속 onload 이벤트가 발생한다. #332
             this.url = url;
-            this.resize(width, height);
+            if (this.resize(width, height)) this._dirty = true;
             return true;
         }
         return false;
@@ -74,10 +74,6 @@ export class ImageElement extends RcElement {
             this._dirty = false;
         }
         return this._bounds;
-    }
-
-    protected _doSizeChanged(): void {
-        this._dirty = true;
     }
 
     //-------------------------------------------------------------------------

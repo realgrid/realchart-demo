@@ -6,10 +6,12 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isArray, isObject } from "../common/Common";
 import { _undef } from "../common/Types";
 import { Annotation } from "../model/Annotation";
 import { Axis } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
+import { DataPoint } from "../model/DataPoint";
 import { ValueGauge } from "../model/Gauge";
 import { Series } from "../model/Series";
 
@@ -360,48 +362,47 @@ export class RcChartSeries extends RcNamedObject {
      * xValue에 해당하는 첫번째 데이터포인터의 yValue를 리턴한다.
      * 
      * @param xValue x값 혹은 x,y값이 포함된 데이터포인트 정보. x축이 category 축이면 카테고리 이름을 지정할 수 있다.
-     * @returns y 또는 z값.
+     * @param prop 가져올 값. 지정하지 않으면 'yValue'.
+     * @returns prop로 지정한 데이터포인트 값.
      */
-    getValueAt(xValue: number | string | IRcDataPoint): number {
+    getValueAt(xValue: number | string | IRcDataPoint, prop = 'yValue'): number {
         const p = (this.$_p as Series).getPointAt(xValue);
-        return p ? p.yValue : _undef;
+        return p ? p[prop] : _undef;
     }
     /**
-     * xValue에 해당하는 첫번째 데이터포인터의 yValue를 변경한다.
+     * xValue에 해당하는 첫번째 데이터포인터의 값들을 변경한다.<br/>
+     * 시리즈에 data를 지정하는 것과 동일한 방식으로 데이터포인트의 값(들)을 변경할 수 있다.
+     * [주의] json으로 필드값(들)을 지정할 때는 시리즈에 지정된 field 이름 속성들과 같은 이름으로 값들을 지정해야 한다.
      * 
      * ```
      * const x = '카테고리';
      * const v = chart.series.getValueAt(x);
      * 
-     * chart.series.setValueAt(x, v + 10, true);
+     * chart.series.updatePoint(x, v + 10, true);
      * ```
      * 
      * @param xValue x값. x축이 category 축이면 카테고리 이름을 지정할 수 있다.
-     * @param value 변경할 y 또는 z값.
-     * @param animate true로 지정하면 변경 효과가 표시된다. 기본값 true.
+     * @param values 변경할 단일 값, 배열, 또는 json.
      * @returns 변경됐으면 true.
      */
-    setValueAt(xValue: number | string | IRcDataPoint, value: number, animate = true): boolean {
+    updatePoint(xValue: number | string | IRcDataPoint, values: any): boolean {
         const p = (this.$_p as Series).getPointAt(xValue);
 
         if (p) {
-            return !!(this.$_p as Series).setValueAt(p, value, animate);
+            return !!(this.$_p as Series).updatePoint(p, values);
         }
         return false;
     }
-
     /**
      * 데이터포인트를 추가한다.
      * 
      * @param source 데이터포인트 원본 정보.
-     * @param animate 추가 효과 표시.
      * @returns 실제 추가된 데이터포인트 정보 객체를 리턴한다.
      */
-    addPoint(source: any, animate = true): IRcDataPoint {
-        const p = (this.$_p as Series).addPoint(source, animate);
+    addPoint(source: any): IRcDataPoint {
+        const p = (this.$_p as Series).addPoint(source);
         return p && p.proxy();
     }
-
     /**
      * 데이터포인트를 제거한다.
      * 
@@ -411,20 +412,32 @@ export class RcChartSeries extends RcNamedObject {
     removePoint(xValue: number | string | IRcDataPoint): boolean {
         return !!(this.$_p as Series).removePoint((this.$_p as Series).getPointAt(xValue));
     }
-
     /**
-     * @internal 미구현
+     * 하나 이상의 데이터포인트들을 추가한다.
+     * 
+     * @param source 데이터포인트 원본 목록.
+     * @returns 실제 추가된 데이터포인트 정보 객체 배열을 리턴한다.
      */
     addPoints(source: any[]): IRcDataPoint[] {
-        return;
+        return (this.$_p as Series).addPoints(source).map(p => p.proxy());
     }
-
     /**
-     * @internal 미구현
+     * 하나 이상의 데이터포인트들을 제거한다.
+     * 
+     * @param xValue 제거할 데이터포인트의 x값 혹은 카테고리 이름 목록. 또는 getPointAt이나 findPoint로 가져온 데이터포인트 정보 객체 목록.
+     * @returns 실제로 제거된 데이터포인트 개수.
      */
-    removePoints(point: IRcDataPoint[]): void {
-    }
+    removePoints(xValues: (number | string | IRcDataPoint)[]): number {
+        const pts: DataPoint[] = [];
 
+        if (isArray(xValues)) {
+            xValues.forEach(v => {
+                pts.push((this.$_p as Series).getPointAt(v));
+            })
+            return (this.$_p as Series).removePoints(pts);
+        }
+        return 0;
+    }
     /**
      * 시리즈 data 원본을 변경한다.<br/>
      * [주의] x축이 카테고리 축이고, x축의 categories 속성이 명시적으로 설정되지 않았다면,
@@ -450,8 +463,8 @@ export class RcChartGauge extends RcNamedObject {
     /**
      * 게이지의 값을 변경한다.
      */
-    setValue(value: any, animate = true): void {
-        (this.$_p as ValueGauge).updateValue(value, animate);
+    setValue(value: any): void {
+        (this.$_p as ValueGauge).updateValue(value);
     }
 }
 

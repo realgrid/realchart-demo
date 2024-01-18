@@ -651,20 +651,26 @@ const AXIS_VALUE = {
     'z': 'zValue'
 }
 
-class ValueAnimation extends RcAnimation {
+export class ValueAnimation extends RcAnimation {
 
     constructor(public series: Series, public point: DataPoint) {
         super();
 
         this.duration = 500;
         this.endHandler = () => {
-            delete this.point.ani;
-            this.point.cleanValue();
+            // delete this.point.ani;
+            // this.point.cleanYValue();
+            delete this.point._vr;
+            this.series['_changed']();
+            this.series = this.point = null;
         }
     }
 
     protected _doUpdate(rate: number): boolean {
-        this.point.y = this.point.yPrev + (this.point.yNew - this.point.yPrev) * rate;
+        if (!this.point) debugger;
+        this.point._vr = rate;
+        // this.point.y = this.point.yPrev + (this.point.yNew - this.point.yPrev) * rate;
+        // this.point.y = this.point.yPrev + (this.point.yNew - this.point.yPrev) * rate;
         this.series['_changed']();
         return true;
     }
@@ -779,11 +785,17 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     onDataValueChanged(data: ChartData, row: number, field: string, value: any, oldValue: any): void {
         Utils.log('onDataValueChanged', row, field, value, oldValue);
         
-        if (field === (this.yField || 'y')) {
-            const p = this._runPoints[row];
-            if (p) {
-                this.setValueAt(p, value, true);
-            }
+        // if (field === (this.yField || 'y')) {
+        //     const p = this._runPoints[row];
+        //     if (p) {
+        //         this.setValueAt(p, value, true);
+        //     }
+        // }
+        const p = this._runPoints[row];
+        if (p) {
+            const props = {};
+            props[field] = value;
+            this.updatePoint(p, props);
         }
     }
 
@@ -793,7 +805,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     onDataRowAdded(data: ChartData, row: number): void {
         Utils.log('onDataRowAdded', row);
 
-        this.addPoint(data.getRow(row), true);
+        this.addPoint(data.getRow(row));
     }
 
     onDataRowDeleted(data: ChartData, row: number): void {
@@ -1241,7 +1253,9 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
             let x = this.$_getXStart() || 0;
             let xStep: any = this.getXStep() || 1;
 
-            if (isString(xStep)) xStep = xStep.trim();
+            if (isString(xStep)) {
+                xStep = xStep.trim();
+            }
 
             this._runPoints.forEach((p, i) => {
                 let val = axis.getValue(p.x);
@@ -1271,6 +1285,12 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
                     if (isNaN(val)) {
                         debugger;
                         val = axis.getValue(p.y);
+                    }
+
+                    p.initValues();
+                    if (!isNaN(p._vr)) {
+                        val = p._prev.yValue + (val - p._prev.yValue) * p._vr;
+                        p.applyValueRate();
                     }
         
                     if (!isNaN(val)) {
@@ -1506,19 +1526,40 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         return this._points.pointAt(xValue);
     }
 
-    setValueAt(p: DataPoint, yValue: number, animate: boolean): boolean {
-        if (p && (p.ani && p.yNew !== yValue || !p.ani && p.yValue !== yValue)) {
-            const ani = animate ? new ValueAnimation(this, p) : _undef;
+    // // TODO: updatePoint로 대체
+    // setValueAt(p: DataPoint, yValue: number, animate: boolean): boolean {
+    //     if (p && (p.ani && p.yNew !== yValue || !p.ani && p.yValue !== yValue)) {
+    //         const ani = animate ? new ValueAnimation(this, p) : _undef;
 
-            if (p.ani instanceof ValueAnimation) {
-                p.ani.stop();
+    //         if (p.ani instanceof ValueAnimation) {
+    //             p.ani.stop();
+    //         }
+    //         p.updateYValue(yValue, ani);
+    //         this.chart.dataChanged();
+    //         ani.start();
+    //         this._changed();
+    //         return true;
+    //     }
+    // }
+
+    updatePoint(p: DataPoint, props: any): boolean {
+        if (p) {
+            let prev = p._prev;
+
+            prev && prev.ani && prev.ani.stop();
+            prev = p.updateValues(this, props);
+
+            if (prev) {
+                this.chart.dataChanged();
+                // if (animate) {
+                    prev.ani = new ValueAnimation(this, p);
+                    prev.ani.start();
+                // }
             }
-            p.updateValue(yValue, ani);
-            this.chart.dataChanged();
-            ani.start();
             this._changed();
-            return true;
+            return !!prev;
         }
+        return false;
     }
 
     findPoint(keys: any): DataPoint {
@@ -1531,7 +1572,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         this._changed();
     }
 
-    addPoint(source: any, animate: boolean): DataPoint {
+    addPoint(source: any): DataPoint {
         const p = this._doAddPoint(source);
 
         if (p) {
@@ -1542,13 +1583,47 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         return p;
     }
 
+    addPoints(source: any[]): DataPoint[] {
+        const pts: DataPoint[] = [];
+
+        if (isArray(source)) {
+            source.forEach(src => {
+                const p = this._doAddPoint(src);
+                p && pts.push(p) && this._points.add(p);
+            })
+        }
+        if (pts.length > 0) {
+            this.chart.dataChanged();
+            this._changed();
+        }
+        return pts;
+    }
+
     removePoint(p: DataPoint): boolean {
         if (p && this._points.remove(p)) {
-            this.chart.dataChanged();
             this._doPointRemoved(p);
+            this.chart.dataChanged();
             this._changed();
             return true;
         }
+    }
+
+    removePoints(pts: DataPoint[]): number {
+        if (isArray(pts)) {
+            const removed: DataPoint[] = [];
+
+            pts.forEach(p => {
+                if (p && this._points.remove(p)) {
+                    removed.push(p);
+                }
+            })
+            if (removed.length > 0) {
+                this._doPointsRemoved(removed);
+                this.chart.dataChanged();
+                this._changed();
+            }
+        }
+        return 0;
     }
     
     //-------------------------------------------------------------------------
@@ -1577,6 +1652,9 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     }
 
     protected _doPointRemoved(point: DataPoint): void {
+    }
+
+    protected _doPointsRemoved(points: DataPoint[]): void {
     }
 
     protected _createLegendMarker(doc: Document, size: number): RcElement {
@@ -2374,6 +2452,7 @@ export abstract class LowRangedSeries extends RangedSeries {
     // properties
     //-------------------------------------------------------------------------
     lowField: string;
+    highField: string;
 }
 
 export enum SeriesGroupLayout {

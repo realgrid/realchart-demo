@@ -36,12 +36,13 @@ export class AxisAnimation extends RcAnimation {
     //-------------------------------------------------------------------------
     protected _doUpdate(rate: number): boolean {
         if (this._axis.parent) {
+            const m = this._axis.model;
             const prev = this._prevMax - this._prevMin;
-            const next = this._axis.model.axisMax() - this._axis.model.axisMin();
+            const next = m.axisMax() - m.axisMin();
             const start = next / prev;
 
             rate = start + (1 - start) * rate;
-            this._axis.model.setPrevRate(rate);
+            m.setPrevRate(rate);
             this._axis.invalidate();
             return true;
         }

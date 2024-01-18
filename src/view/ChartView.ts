@@ -363,7 +363,7 @@ class LegendSectionView extends SectionView {
                 break;
         }
 
-        view.resize(w, h).trans(x, y);
+        view.trans(x, y).resize(w, h);
         view.layout();
     }
 }
@@ -908,7 +908,7 @@ export class ChartView extends LayerElement {
         let rPlot: IRect;
 
         if (this._paneContainer.visible) {
-            this._paneContainer.resize(w, h).trans(x, yTitle + hTitle);
+            this._paneContainer.trans(x, yTitle + hTitle).resize(w, h);
             this._paneContainer.layout();
             hPlot = h;
             wPlot = w;
@@ -1190,7 +1190,6 @@ export class ChartView extends LayerElement {
         }
 
         this.$_layoutAnnotations(this._inverted, width, height, rPlot);
-
         this._tooltipView.close(true, false);
     }
 

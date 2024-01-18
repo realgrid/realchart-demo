@@ -1039,16 +1039,20 @@ export class RcElement extends RcObject {
         return this;
     }
 
-    resize(width: number, height: number, attr = true): RcElement {
+    resize(width: number, height: number, attr = true): boolean {
+        let changed = false;
+
         if (width !== this._width) {
             this._width = Math.max(0, width);
-            attr &&  this.setAttrEx('width', this._width);
+            attr && this.setAttrEx('width', this._width);
+            changed = true;
         }
         if (height !== this._height) {
             this._height = Math.max(0, height);
             attr && this.setAttrEx('height', this._height);
+            changed = true;
         }
-        return this;
+        return changed;
     }
 
     appendDom(dom: Node): Node {
@@ -1534,10 +1538,9 @@ export class ClipRectElement extends ClipElement {
         return this;
     }
 
-    resize(width: number, height: number, attr?: boolean): RcElement {
+    resize(width: number, height: number, attr?: boolean): boolean {
         // super.resize(width, height);
-        this._rect.resize(width, height);
-        return this;
+        return this._rect.resize(width, height);
     }
 
     //-------------------------------------------------------------------------

@@ -551,7 +551,7 @@ export abstract class ValueGauge extends Gauge {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    updateValue(value: any, animate: boolean): void {
+    updateValue(value: any): void {
         if (value !== this.value) {
             this.value = value;
             this._changed();

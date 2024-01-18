@@ -41,7 +41,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
 
     protected _renderSeries(width: number, height: number): void {
         // invert 하지 않는다! // TODO: invert할 것!
-        // this._pointContainer.invert(this.model.chart.isInverted(), height);
+        // this._pointContainer.invert(this._inverted, height);
         this.$_layoutMarkers(width, height);
     }
 
@@ -91,8 +91,8 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
         const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
         const yLen = yAxis.prev(inverted ? width : height);
-        const xLen = xAxis.prev(inverted ? height : width);
-        const yOrg = height;
+        const xLen = xAxis.prev(polar ? polar.rd * PI_2 : inverted ? height : width);
+        const yOrg = inverted ? 0 : height;
         let labelView: PointLabelView;
         let r: IRect;
 
@@ -118,9 +118,10 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
                 } else {
                     x = xAxis.getPos(xLen, xJitter);
                     y = yOrg - yAxis.getPos(yLen, yJitter);
+
                     if (inverted) {
                         x = yAxis.getPos(yLen, yJitter);
-                        y = yOrg - xAxis.getPos(xLen, xJitter);
+                        y = height - xAxis.getPos(xLen, xJitter);
                     }
                 }
 

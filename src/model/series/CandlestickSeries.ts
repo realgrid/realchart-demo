@@ -25,7 +25,6 @@ export class CandlestickSeriesPoint extends DataPoint {
     low: any;
     close: any;
     open: any;
-    high: any;
 
     //-------------------------------------------------------------------------
     // fields
@@ -33,6 +32,7 @@ export class CandlestickSeriesPoint extends DataPoint {
     lowValue: number;
     closeValue: number;
     openValue: number;
+    get high(): number { return this.y; }
     get highValue(): number { return this.yValue; }
 
     //-------------------------------------------------------------------------
@@ -49,6 +49,16 @@ export class CandlestickSeriesPoint extends DataPoint {
             openValue: this.openValue,
             highValue: this.highValue
         });
+    }
+
+    protected _valuesChangd(): boolean {
+        if (!super._valuesChangd()) {
+            const prev = this._prev;
+            return this.low !== prev.low ||
+                   this.close !== prev.close ||
+                   this.open !== prev.open;
+        }
+        return true;
     }
 
     protected _readArray(series: CandlestickSeries, v: any[]): void {
@@ -85,13 +95,13 @@ export class CandlestickSeriesPoint extends DataPoint {
     parse(series: CandlestickSeries): void {
         super.parse(series);
 
-        this.high = this.y;
+        this.isNull ||= isNaN(this.lowValue) || isNaN(this.openValue) || isNaN(this.closeValue);
+    }
 
+    initValues(): void {
         this.lowValue = parseFloat(this.low);
         this.openValue = parseFloat(this.open);
         this.closeValue = parseFloat(this.close);
-
-        this.isNull ||= isNaN(this.lowValue) || isNaN(this.openValue) || isNaN(this.closeValue);
     }
 }
 

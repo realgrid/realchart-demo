@@ -236,27 +236,6 @@ export class GrowAnimation extends PointAnimation {
 }
 
 /**
- * 데이터포인트의 값 변경 변화를 표시한다.
- */
-export class ValueAnimation extends PointAnimation {
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    protected _doUpdate(rate: number): boolean {
-        this._series.setValueRate(rate);
-        return true;
-    }
-
-    protected _doStop(): void {
-        this._series.setValueRate(NaN);
-    }
-}
-
-/**
  * 원점 등에 포인트들을 모아 놓은 후 위치를 원복시킨다.
  */
 export class SpreadAnimation extends PointAnimation {

@@ -892,7 +892,7 @@ export class BodyView extends ChartElement<Body> {
     protected _animatable: boolean;
 
     private _seriesClip: ClipRectElement;
-    // private _seriesClip2: ClipRectElement; // bubble, scatter처럼 transform으로 inverted를 하지 않는 시리즈를 위한.
+    private _seriesClip2: ClipRectElement; // bubble, scatter처럼 transform으로 inverted를 하지 않는 시리즈를 위한.
     // private _lineSeriesClip: ClipRectElement;
     private _bodyClip: ClipRectElement;
 
@@ -1102,7 +1102,7 @@ export class BodyView extends ChartElement<Body> {
 
         if (!this._seriesClip) {
             this._seriesClip = this.control.clipBounds();
-            // this._seriesClip2 = this.control.clipBounds();
+            this._seriesClip2 = this.control.clipBounds();
             // this._lineSeriesClip = this.control.clipBounds();
             this._bodyClip = this.control.clipBounds();
         }
@@ -1147,12 +1147,12 @@ export class BodyView extends ChartElement<Body> {
     }
     
     protected _clipSeries(view: RcElement, view2: RcElement, invertable: boolean): void {
-        // const sc = invertable ? this._seriesClip : this._seriesClip2;
-        // view && view.setClip(sc);
-        // view2 && view2.setClip(sc);
+        const sc = invertable ? this._seriesClip : this._seriesClip2;
+        view && view.setClip(sc);
+        view2 && view2.setClip(sc);
 
-        view && view.setClip(this._seriesClip);
-        view2 && view2.setClip(this._seriesClip);
+        // view && view.setClip(this._seriesClip);
+        // view2 && view2.setClip(this._seriesClip);
     }
 
     protected _doLayout(): void {
@@ -1162,10 +1162,10 @@ export class BodyView extends ChartElement<Body> {
 
         if (this._inverted) {
             this._seriesClip.setBounds(0, -w, h, w);
-            // this._seriesClip2.setBounds(0, -w, h, w);
+            this._seriesClip2.setBounds(0, 0, w, h);
         } else {
             this._seriesClip.setBounds(0, 0, w, h);
-            // this._seriesClip2.setBounds(0, 0, w, h);
+            this._seriesClip2.setBounds(0, 0, w, h);
         }
         this._bodyClip.setBounds(0, 0, w, h);
 

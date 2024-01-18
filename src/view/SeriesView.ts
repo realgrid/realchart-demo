@@ -286,7 +286,6 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     protected _legendMarker: RcElement;
     protected _visPoints: DataPoint[];
     private _growRate = NaN;
-    private _valueRate = NaN;
     private _posRate = NaN;
     protected _prevRate = NaN;
     _animations: Animation[] = [];
@@ -329,9 +328,6 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
                 this._doViewRateChanged(rate);
             }
         }
-    }
-
-    setValueRate(rate: number): void {
     }
 
     setPosRate(rate: number): void {

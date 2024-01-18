@@ -10,7 +10,7 @@ import { pickNum, pickProp, assign, pickNum3, pickProp3 } from "../../common/Com
 import { RcElement } from "../../common/RcControl";
 import { RectElement } from "../../common/impl/RectElement";
 import { DataPoint } from "../DataPoint";
-import { LowRangedSeries, RangedSeries, Series } from "../Series";
+import { LowRangedSeries, Series } from "../Series";
 
 /**
  * [min, low, mid, high, max|y]
@@ -25,7 +25,7 @@ export class BoxPlotSeriesPoint extends DataPoint {
     low: any;   // first quartile(q1, 25th percentile)
     mid: any;   // median (q2, 50th percentile)
     high: any;  // third quartile (q3 75th percentile)
-    max: any;   // q4 or 100th percentile
+    //max: any;   // q4 or 100th percentile
 
     //-------------------------------------------------------------------------
     // fields
@@ -34,6 +34,7 @@ export class BoxPlotSeriesPoint extends DataPoint {
     lowValue: number;
     midValue: number;
     highValue: number;
+    get max(): number { return this.y; }
     get maxValue(): number { return this.yValue; }
 
     lowPos: number;
@@ -64,12 +65,24 @@ export class BoxPlotSeriesPoint extends DataPoint {
             low: this.low,
             mid: this.mid,
             high: this.high,
+            max: this.max,
             minValue: this.minValue,
             lowValue: this.lowValue,
             midValue: this.midValue,
             highValue: this.highValue,
             maxValue: this.maxValue
         });
+    }
+
+    protected _valuesChangd(): boolean {
+        if (!super._valuesChangd()) {
+            const prev = this._prev;
+            return this.min !== prev.min ||
+                   this.low !== prev.low ||
+                   this.mid !== prev.mid ||
+                   this.high !== prev.high;
+        }
+        return true;
     }
 
     protected _readArray(series: BoxPlotSeries, v: any[]): void {
@@ -107,14 +120,14 @@ export class BoxPlotSeriesPoint extends DataPoint {
     parse(series: BoxPlotSeries): void {
         super.parse(series);
 
-        this.max = this.y;
+        this.isNull ||= isNaN(this.minValue) || isNaN(this.lowValue) || isNaN(this.midValue);
+    }
 
+    initValues(): void {
         this.minValue = parseFloat(this.min);
         this.lowValue = parseFloat(this.low);
         this.midValue = parseFloat(this.mid);
         this.highValue = parseFloat(this.high);
-
-        this.isNull ||= isNaN(this.minValue) || isNaN(this.lowValue) || isNaN(this.midValue);
     }
 }
 

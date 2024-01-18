@@ -198,13 +198,13 @@ export abstract class RcAnimation {
         }
 
         try {
-            if (!this._canUpdate() || this._doUpdate(rate) === false) {
+            if (!this._timer || !this._canUpdate() || this._doUpdate(rate) === false) {
                 this._stop();
             }
         } finally {
             if (dt >= this.duration) {
                 this._stop();
-            } else if (this._started) {
+            } else if (this._started && this._timer) {
                 window.requestAnimationFrame(this._handler)
             }
         }

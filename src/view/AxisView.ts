@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { absv, cos, maxv, minv, pickNum, pickProp, sin } from "../common/Common";
+import { absv, cos, maxv, minv, pickNum, sin } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { PathElement, RcElement } from "../common/RcControl";
@@ -529,7 +529,8 @@ export class AxisView extends ChartElement<Axis> {
             this._prevMax = m.axisMax();
     
             if (!isNaN(max) && this._prevMax !== max || !isNaN(min) && this._prevMin !== min) {
-                if (m.chart.isDataChanged() && m.animatable) {
+                if (m.animatable) {
+                // if (m.chart.isDataChanged() && m.animatable) {
                     new AxisAnimation(this, min, max, () => {
                         this.invalidate();
                     });

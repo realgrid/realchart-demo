@@ -35,6 +35,7 @@ export class HistogramSeriesPoint extends DataPoint {
         this.min = v.min;
         this.max = v.max;
     }
+    
     protected _assignTo(proxy: any): any {
         return assign(super._assignTo(proxy), {
             min: this.min,
