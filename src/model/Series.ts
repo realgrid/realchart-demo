@@ -1290,9 +1290,9 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
 
                     p.initValues();
                     if (!isNaN(p._vr)) {
-                        if (isNaN(p._prev.yValue)) p._prev.yValue = axis.axisMin();
+                        isNaN(p._prev.yValue) && p.initPrev(axis, p._prev);
                         val = p._prev.yValue + (val - p._prev.yValue) * p._vr;
-                        p.applyValueRate();
+                        p.applyValueRate(p._prev, p._vr);
                     }
         
                     if (!isNaN(val)) {

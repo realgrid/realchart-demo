@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, pickNum, pickProp, pickProp3, pickProp4, assign, maxv, minv, pickNum3 } from "../common/Common";
+import { isArray, isObject, pickNum, pickProp, pickProp3, pickProp4, assign, maxv, minv, pickNum3, incv } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { IValueRange, _undef } from "../common/Types";
 import { AxisZoom, IAxis } from "./Axis";
@@ -193,10 +193,22 @@ export class DataPoint {
         return param in this ? this[param] : this.source?.[param];
     }
 
-    applyValueRate(): void {
+    initValues(): void {
     }
 
-    initValues(): void {
+    /**
+     * 동적으로 생성 시 animation을 위해 prev 값들을 초기화 한다.
+     */
+    initPrev(axis: IAxis, prev: any): void {
+        prev.yValue = axis.axisMin();
+    }
+
+    /**
+     * ValueAnimation에서 호출한다.
+     * 처음 생성될 때, 값이 변경될 때 모두 호출된다.
+     * yValue는 series.collectValues()에서 계산한다.
+     */
+    applyValueRate(prev: any, vr: number): void {
     }
 
     //-------------------------------------------------------------------------
@@ -476,6 +488,15 @@ export class ZValuePoint extends DataPoint {
     initValues(): void {
         this.zValue = parseFloat(this.z);
     }
+
+    initPrev(axis: IAxis, prev: any): void {
+        prev.yValue = prev.zValue = this.yValue;
+    }
+
+    applyValueRate(prev: any, vr: number): void {
+        // yValue는 series.collectValues()에서 한다.
+        this.zValue = incv(prev.zValue, this.zValue, vr);
+    }
 }
 
 /**
@@ -558,7 +579,12 @@ export class RangedPoint extends DataPoint {
         this.lowValue = parseFloat(this.low);
     }
 
-    applyValueRate(): void {
-        this.lowValue = this._prev.lowValue + (this.lowValue - this._prev.lowValue) * this._vr;
+    initPrev(axis: IAxis, prev: any): void {
+        prev.yValue = prev.lowValue = this.lowValue; 
+    }
+
+    applyValueRate(prev: any, vr: number): void {
+        // yValue는 series.collectValues()에서 한다.
+        this.lowValue = incv(prev.lowValue, this.lowValue, vr);
     }
 }

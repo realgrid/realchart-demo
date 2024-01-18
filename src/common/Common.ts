@@ -61,6 +61,9 @@ export const mergeObj = (v1: any, v2: any): any => {
     }
     return obj;
 }
+export const incv = (prev: number, next: number, rate: number): number => {
+    return prev + (next - prev) * rate;
+}
 export class RcDebug {
     static _debugging = false;
     static debug(): void { if (this._debugging) { debugger; } }

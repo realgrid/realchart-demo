@@ -6,10 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, assign, pickProp3, pickNum3 } from "../../common/Common";
+import { pickNum, pickProp, assign, pickProp3, pickNum3, incv } from "../../common/Common";
 import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { SVGStyleOrClass } from "../../common/Types";
+import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { LowRangedSeries, Series } from "../Series";
 
@@ -102,6 +103,17 @@ export class CandlestickSeriesPoint extends DataPoint {
         this.lowValue = parseFloat(this.low);
         this.openValue = parseFloat(this.open);
         this.closeValue = parseFloat(this.close);
+    }
+
+    initPrev(axis: IAxis, prev: any): void {
+        prev.yValue = prev.lowValue = prev.openValue = prev.closeValue = this.lowValue;
+    }
+
+    applyValueRate(prev: any, vr: number): void {
+        // yValue는 series.collectValues()에서 한다.
+        this.lowValue = incv(prev.lowValue, this.lowValue, vr);
+        this.openValue = incv(prev.openValue, this.openValue, vr);
+        this.closeValue = incv(prev.closeValue, this.closeValue, vr);
     }
 }
 

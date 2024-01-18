@@ -8,7 +8,6 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
-import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
 import { BoxPlotSeries, BoxPlotSeriesPoint } from "../../model/series/BoxPlotSeries";
@@ -42,7 +41,7 @@ class BoxView extends RangeElement implements IPointView {
         const p = this.point;
         const w = this.width;
         const h = this.height;
-        const len = p.yValue - p.minValue;
+        const len = Math.max(0.0001, p.yValue - p.minValue);
         const x = w / 2;
         let y = 0;
         const yLow = y + h - h * (p.lowValue - p.minValue) / len;

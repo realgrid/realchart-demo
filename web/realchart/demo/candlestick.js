@@ -3,7 +3,7 @@
  * 
  */
 
-const stockData = data.sort((a, b) => a.date > b.date).filter(r => r.date >= '2021-04-01')
+const stockData = data.sort((a, b) => a.date > b.date).filter(r => r.date >= '2021-05-01')
 const config = {
     actions: [
         {
@@ -145,6 +145,13 @@ function setActions(container) {
         config.yAxis.reversed = _getChecked(e);
         chart.load(config);
     }, false);
+    createButton(container, 'Add Point', function (e) {
+        chart.series.addPoint({
+            "date":"2021-06-03","openprc":80300,"highprc":80600,"lowprc":79600,"closeprc":80500,
+            "trdamnt":13321324},{"date":"2021-06-01","openprc":80500,"highprc":81300,"lowprc":80100,
+            "closeprc":80600,"trdamnt":14058401},{"date":"2021-06-02","openprc":80400,"highprc":81400,
+            "lowprc":80300,"closeprc":80800,"trdamnt":16414644});
+    });
 }
 
 function init() {

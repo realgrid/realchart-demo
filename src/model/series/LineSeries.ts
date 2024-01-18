@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, assign, minv, pickProp3 } from "../../common/Common";
+import { pickNum, pickProp, assign, minv, pickProp3, incv } from "../../common/Common";
 import { IPoint } from "../../common/Point";
 import { RcElement } from "../../common/RcControl";
 import { Align, IValueRange, SVGStyleOrClass } from "../../common/Types";
@@ -658,6 +658,15 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
 
     initValues(): void {
         this.lowValue = parseFloat(this.low);
+    }
+
+    initPrev(axis: IAxis, prev: any): void {
+        prev.yValue = prev.lowValue = this.lowValue;
+    }
+
+    applyValueRate(prev: any, vr: number): void {
+        // yValue는 series.collectValues()에서 한다.
+        this.lowValue = incv(prev.lowValue, this.lowValue, vr);
     }
 
     getTooltipPos(): IPoint {

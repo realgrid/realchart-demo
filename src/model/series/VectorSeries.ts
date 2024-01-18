@@ -6,8 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, pickProp3, assign, maxv } from "../../common/Common";
+import { pickNum, pickProp, pickProp3, assign, maxv, incv } from "../../common/Common";
 import { PathElement, RcElement } from "../../common/RcControl";
+import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { Series } from "../Series";
 
@@ -86,6 +87,16 @@ export class VectorSeriesPoint extends DataPoint {
     initValues(): void {
         this.lengthValue = parseFloat(this.length);
         this.angleValue = parseFloat(this.angle);
+    }
+
+    initPrev(axis: IAxis, prev: any): void {
+        prev.yValue = this.yValue;
+        prev.lengthValue = 0.001;
+    }
+
+    applyValueRate(prev: any, vr: number): void {
+        // yValue는 series.collectValues()에서 한다.
+        this.lengthValue = incv(prev.lengthValue, this.lengthValue, vr);
     }
 }
 

@@ -1078,7 +1078,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     _seriesChanged = false;
     _prevRate: number;
 
-    animating(): boolean {
+    _animating(): boolean {
         return !isNaN(this._prevRate);
     }
 
@@ -1328,10 +1328,11 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     disconnect(): void {
         this._series = [];
-        this._values = [];
+        // this._values = [];
     }
 
     collectValues(): void {
+        this._values = [];
         this._series.forEach(item => {
             item.collectValues(this, this._values);
         })
@@ -1362,7 +1363,7 @@ export abstract class Axis extends ChartItem implements IAxis {
 
         // range
         const series = this._series;
-        const vals: number[] = this._values;
+        const vals = this._values;
 
         if (this._isX && this._prevSeries) {
             if (!(this._seriesChanged = !Utils.equalArrays(series, this._prevSeries))) {

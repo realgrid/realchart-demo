@@ -6,9 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, assign, pickNum3, pickProp3 } from "../../common/Common";
+import { pickNum, pickProp, assign, pickNum3, pickProp3, incv } from "../../common/Common";
 import { RcElement } from "../../common/RcControl";
 import { RectElement } from "../../common/impl/RectElement";
+import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { LowRangedSeries, Series } from "../Series";
 
@@ -128,6 +129,18 @@ export class BoxPlotSeriesPoint extends DataPoint {
         this.lowValue = parseFloat(this.low);
         this.midValue = parseFloat(this.mid);
         this.highValue = parseFloat(this.high);
+    }
+
+    initPrev(axis: IAxis, prev: any): void {
+        prev.yValue = prev.highValue = prev.midValue = prev.lowValue = prev.minValue = this.minValue;
+    }
+
+    applyValueRate(prev: any, vr: number): void {
+        // yValue는 series.collectValues()에서 한다.
+        this.minValue = incv(prev.minValue, this.minValue, vr);
+        this.lowValue = incv(prev.lowValue, this.lowValue, vr);
+        this.midValue = incv(prev.midValue, this.midValue, vr);
+        this.highValue = incv(prev.highValue, this.highValue, vr);
     }
 }
 
