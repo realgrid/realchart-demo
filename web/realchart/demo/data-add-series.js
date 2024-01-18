@@ -3,6 +3,7 @@
  *
  */
 const config = {
+    type: 'line',
     options: {},
     title: 'Add/Remove Series',
     legend: true,

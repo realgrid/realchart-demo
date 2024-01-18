@@ -53,6 +53,17 @@ x축이 원호에, y축은 방사선에 위치하고, 아래의 제한 사항이
 | ----------- | ----------- | ----------- |
 | source | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 시리즈 설정 json. |
 | animate=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | 애니메이션 실행 여부. |
+### destroy(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#destroy]
+차트 SVG를 부모 div에서 제거하고 관련 모델들도 제거한다.<br/>
+이 후로는 기존 컨트롤을 사용할 수 없다.
+### exportImage(type): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#exportImage]
+차트를 이미지 파일로 다운로드한다.
+
+
+
+| Parameter | Type |
+| ----------- | ----------- |
+| type=`ImageType.PNG` | ImageType |
 ### getAnnotation(name): [RcAnnotation](../classes/RcAnnotation)[#getAnnotation]
 Annotation 이름에 해당하는 Annotation 객체를 리턴한다.
 

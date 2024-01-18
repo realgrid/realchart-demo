@@ -1,0 +1,119 @@
+## **pointLabel**
+Series data point label options.
+## Properties
+
+### autoContrast: `boolean{:js}`[#autoContrast]
+텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
+
+
+밝게 표시할 때는 [lightStyle](#lightstyle) 을 적용하고,
+어둡게 표시할 때는 [darkStyle](#darkstyle) 이 적용된다.
+brightStyle이 지정되지 않으면 <Content type="expression" value="'rct-text-light'"></Content>이,
+darkStyle이 지정되지 않으면 <Content type="expression" value="'rct-text-dark'"></Content>가 기본 적용된다.  
+<DefaultValue value="true" contents=""></DefaultValue>
+### backgroundStyle: `SVGStyles | string{:js}`[#backgroundStyle]
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
+### darkStyle: `SVGStyles | string{:js}`[#darkStyle]
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
+### distance: `number{:js}`[#distance]
+<Content type="expression" value="'pie', 'funnel'"></Content> 시리즈에서 label이 외부에 표시될 때 label과 시리즈 본체와의 기본 간격.  
+<DefaultValue value="25" contents=""></DefaultValue>
+### effect: `'background'|'none'|'outline'{:js}`[#effect]
+- `'background'` 텍스트 배경 상자를 표시한다.      배경 상자에 [backgroundStyle](#backgroundStyle) 이 적용된다.  스타일이 적용되지 않으면 기본 <Content type="expression" value="'rct-text-background'"></Content>이 적용된다.
+- `'none'` 효과 없음.
+- `'outline'` 텍스트 색상과 대조되는 색상으로 텍스트 외곽을 구분 표시한다.
+
+<DefaultValue value="'none'" contents=""></DefaultValue>
+### lightStyle: `SVGStyles | string{:js}`[#lightStyle]
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
+### numberFormat: `string{:js}`[#numberFormat]
+label이 숫자일 때 표시 형식.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### numberSymbols: `string{:js}`[#numberSymbols]
+축의 tick 간격이 1000 이상인 큰 수를 표시할 때 
+이 속성에 지정한 symbol을 이용해서 축약형으로 표시한다.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### offset: `number{:js}`[#offset]
+label과 point view 사이의 기본 간격.
+
+값을 지정하지 않으면 [position](#position) 이 <Content type="expression" value="'inside'"></Content>일 때는 0, 그 외는 4 픽셀이다.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### position[#position]
+포인트 label 표시 위치.  
+
+
+<DefaultValue value="PointItemPosition.AUTO" contents=""></DefaultValue>
+### prefix: `string{:js}`[#prefix]
+label 문자열 앞에 추가되는 문자열.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### style: `SVGStyles | string{:js}`[#style]
+스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
+### suffix: `string{:js}`[#suffix]
+label 문자열 끝에 추가되는 문자열.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### text: `string{:js}`[#text]
+rich text format을 지정할 수 있다.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### textField: `string{:js}`[#textField]
+계산되는 기본 text 대신, data point label로 표시될 field.<br/> [textCallback](#textcallback) 이 설정되고 콜백에서 <Content type="keyword" value="null"></Content>이나 <Content type="keyword" value="undefined"></Content>를 리턴하지 않으면 이 속성은 무시된다.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### visible: `boolean{:js}`[#visible]
+표시 여부.  
+<DefaultValue value="true" contents=""></DefaultValue>

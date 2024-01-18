@@ -420,6 +420,25 @@ export class LineSeries extends LineSeriesBase {
     }
 }
 
+/**
+ * {@link lineType} 설정을 무시하고 항상 'spline'으로 표시되는 것 외에는 {@link config.series.line line} 시리즈와 동일하다.<br/>
+ * 
+ * @config chart.series[type=spline]
+ */
+export class SplineSeries extends LineSeries {
+
+    getLineType(): LineType {
+        return LineType.SPLINE;
+    }
+
+    /**
+     * 항상 'spline'이다.<br/>
+     * 
+     * @config
+     */
+    lineType: LineType
+}
+
 export class AreaSeriesPoint extends LineSeriesPoint {
 
     //-------------------------------------------------------------------------

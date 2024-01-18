@@ -37,7 +37,7 @@ import { ErrorBarSeries } from "./series/ErrorBarSeries";
 import { FunnelSeries } from "./series/FunnelSeries";
 import { HeatmapSeries } from "./series/HeatmapSeries";
 import { HistogramSeries } from "./series/HistogramSeries";
-import { AreaRangeSeries, AreaSeries, AreaSeriesGroup, LineSeries, LineSeriesGroup } from "./series/LineSeries";
+import { AreaRangeSeries, AreaSeries, AreaSeriesGroup, LineSeries, LineSeriesGroup, SplineSeries } from "./series/LineSeries";
 import { LollipopSeries } from "./series/LollipopSeries";
 import { OhlcSeries } from "./series/OhlcSeries";
 import { ParetoSeries } from "./series/ParetoSeries";
@@ -161,6 +161,7 @@ const series_types = {
     'heatmap': HeatmapSeries,
     'histogram': HistogramSeries,
     'line': LineSeries,
+    'spline': SplineSeries,
     'lollipop': LollipopSeries,
     'ohlc': OhlcSeries,
     'pareto': ParetoSeries,

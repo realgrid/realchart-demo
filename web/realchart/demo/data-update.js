@@ -3,6 +3,7 @@
  *
  */
 const config = {
+    type: 'spline',
     options: {},
     title: 'Update Data',
     legend: true,
