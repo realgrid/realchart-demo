@@ -609,7 +609,7 @@ export class GaugeScaleLabel extends IconedText {
     // methods
     //-------------------------------------------------------------------------
     getText(value: any): string {
-        if (Utils.isValidNumber(value)) {
+        if (Utils.isValidNum(value)) {
             return this._getText(null, value, absv(value) > 1000, true);
         }
         return value;

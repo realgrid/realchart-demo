@@ -10,17 +10,15 @@ import { expect } from 'chai';
 import { beforeEach, describe, it } from 'mocha';
 import { Chart } from '../../../src/model/Chart';
 import { Tester } from '../Tester';
-import { DataPoint } from '../../../src/model/DataPoint';
 import { Tooltip } from '../../../src/model/Tooltip';
-import { Utils } from '../../../src/common/Utils';
 
 const source = {
-    html: Utils.srandom(1, 10),
-    text: Utils.srandom(1, 10),
-    offset: Utils.irandom(0, 1000),
-    hideDelay: Utils.irandom(0, 10000),
-    minWidth: Utils.irandom(0, 1000),
-    minHeight: Utils.irandom(0, 1000),
+    html: Tester.srandom(1, 10),
+    text: Tester.srandom(1, 10),
+    offset: Tester.irandom(0, 1000),
+    hideDelay: Tester.irandom(0, 10000),
+    minWidth: Tester.irandom(0, 1000),
+    minHeight: Tester.irandom(0, 1000),
 }
 
 /**
@@ -69,7 +67,7 @@ describe('Tooltip test', function() {
 
     // TODO: 다시 작성하세요.
     // it('getValue()', () => {
-    //     const param = Utils.arandom(['series', 'sereis.name', 'point.x', 'point', 'point.y']);
+    //     const param = Tester.arandom(['series', 'sereis.name', 'point.x', 'point', 'point.y']);
     //     const dp = new DataPoint({});
     //     switch (param) {
     //         case 'series':

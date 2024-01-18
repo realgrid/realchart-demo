@@ -8,21 +8,20 @@
 
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { Utils } from '../../../src/common/Utils';
 import { Legend, LegendItem } from '../../../src/model/Legend';
 import { Tester } from '../Tester';
 import { Chart } from '../../../src/model/Chart';
 
 const source = {
-    location: Utils.arandom(['bottom', 'top', 'right', 'left', 'plot', 'subplot']),
-    layout: Utils.arandom(['auto', 'horizontal', 'vertical']),
-    alignBase: Utils.arandom(['chart', 'plot']),
-    left: Utils.irandom(-1000, 1000),
-    right: Utils.irandom(-1000, 1000),
-    top: Utils.irandom(-1000, 1000),
-    bottom: Utils.irandom(-1000, 1000),
-    itemGap: Utils.irandom(-1000, 1000),
-    markerGap: Utils.irandom(-1000, 1000),
+    location: Tester.arandom(['bottom', 'top', 'right', 'left', 'plot', 'subplot']),
+    layout: Tester.arandom(['auto', 'horizontal', 'vertical']),
+    alignBase: Tester.arandom(['chart', 'plot']),
+    left: Tester.irandom(-1000, 1000),
+    right: Tester.irandom(-1000, 1000),
+    top: Tester.irandom(-1000, 1000),
+    bottom: Tester.irandom(-1000, 1000),
+    itemGap: Tester.irandom(-1000, 1000),
+    markerGap: Tester.irandom(-1000, 1000),
     backgroundStyle: {}
 }
 

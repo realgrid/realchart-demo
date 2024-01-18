@@ -75,9 +75,24 @@ export class Tester {
         return vals[this.irandom(vals.length)];
     }
 
+    static brandom(): boolean {
+        return Math.random() > 0.5 ? true : false;
+    }
+
     static arandom(arr: any[]): any {
         return arr[(Math.random() * arr.length) >> 0];
-}
+    }
+
+    static iarandom(min: number, max: number, count: number): number[] {
+        const list = new Array<number>();
+        for (let i = min; i < max; i++) {
+            list.push(i);
+        }
+        while (list.length > count) {
+            list.splice(Tester.irandom(list.length), 1);
+        }
+        return list;
+    }
 }
 
 export class TestChartControl extends ChartControl {

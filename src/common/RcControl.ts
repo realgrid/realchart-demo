@@ -984,8 +984,8 @@ export class RcElement extends RcObject {
 
     trans(x: number, y: number): RcElement {
         if (x !== this._tx || y !== this._ty) {
-            if (Utils.isValidNumber(x)) this._tx = x;
-            if (Utils.isValidNumber(y)) this._ty = y;
+            if (Utils.isValidNum(x)) this._tx = x;
+            if (Utils.isValidNum(y)) this._ty = y;
             this._updateTransform();
         }
         return this;
@@ -1021,7 +1021,7 @@ export class RcElement extends RcObject {
 
     transX(x: number): RcElement {
         if (x !== this._tx) {
-            if (Utils.isValidNumber(x)) {
+            if (Utils.isValidNum(x)) {
                 this._tx = x;
                 this._updateTransform();
             }
@@ -1031,7 +1031,7 @@ export class RcElement extends RcObject {
 
     transY(y: number): RcElement {
         if (y !== this._ty) {
-            if (Utils.isValidNumber(y)) {
+            if (Utils.isValidNum(y)) {
                 this._ty = y;
                 this._updateTransform();
             }
@@ -1408,7 +1408,7 @@ export class RcElement extends RcObject {
         // translate
         let tf = [];
 
-        if (Utils.isValidNumber(tx) || Utils.isValidNumber(ty)) {
+        if (Utils.isValidNum(tx) || Utils.isValidNum(ty)) {
             tx = tx || 0;
             ty = ty || 0;
             tf = ['translate(' + tx + ',' + ty + ')'];

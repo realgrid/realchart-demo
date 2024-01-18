@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { expect } from 'chai';
-import { beforeEach, describe, it } from 'mocha';
+import { Test, beforeEach, describe, it } from 'mocha';
 import { Axis, AxisGrid, AxisLabel, AxisTick, IAxisTick } from '../../../src/model/Axis';
 import { Tester } from '../Tester';
 import { Chart } from '../../../src/model/Chart';
@@ -156,7 +156,7 @@ class AxisImpl extends Axis {
     it('buildTicks()');
 
     it('getValue()', () => {
-        const i = Utils.irandom(0, 10000);
+        const i = Tester.irandom(0, 10000);
         expect(axis.getValue(i.toString())).to.be.a('number');
     });
 
@@ -168,7 +168,7 @@ class AxisImpl extends Axis {
             if (value < min) min = value;
             if (value > max) max = value;
         });
-        const i = Utils.irandom(0, 10000);
+        const i = Tester.irandom(0, 10000);
         axis.prepareRender();
         expect(axis.contains(i)).eq(i >= min && i <= max);
     });

@@ -10,11 +10,11 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { Crosshair } from '../../../src/model/Crosshair';
 import { LinearAxis } from '../../../src/model/axis/LinearAxis';
-import { Utils } from '../../../src/common/Utils';
+import { Tester } from '../Tester';
 
 const source = {
-    showAlways: Utils.brandom(),
-    showLabel: Utils.brandom(),
+    showAlways: Tester.brandom(),
+    showLabel: Tester.brandom(),
     labelFormat: '',
     labelStyles: {}
 }

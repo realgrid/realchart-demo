@@ -32,32 +32,6 @@ import { Utils } from '../../../src/common/Utils';
         expect(Utils.equalObjects(obj1, obj2)).true;
     });
 
-    it('irandom', () => {
-        let i = Utils.irandom(0, 0.5);
-        expect(i).eq(0);
-    });
-
-    it('array test', () => {
-        const cnt = 1000;
-        const texts: string[] = [];
-
-        for (let i = 0; i < cnt; i++) {
-            texts.push(Utils.srandom(5, 20));
-        }
-
-        console.time('array');
-
-        const tester = /.+\[\d+\]$/;
-        let n = 0;
-
-        for (let i = 0; i < cnt; i++) {
-            if (tester.test(texts[i])) n++;
-        }
-
-        // console.log(n);
-        console.timeEnd('array');
-    });
-
     it('deep clone', () => {
         let obj: any = {}
         let obj2: any = Utils.deepClone(obj);

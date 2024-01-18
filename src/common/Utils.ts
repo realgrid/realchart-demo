@@ -253,7 +253,7 @@ export class Utils {
         return !isNaN(value) && !isNaN(parseFloat(value));
     }
 
-    static isValidNumber(value: any): value is number {
+    static isValidNum(value: any): value is number {
         return typeof value === 'number' && !isNaN(value) && isFinite(value);
     }
 
@@ -325,111 +325,6 @@ export class Utils {
 		}
 		return undefined;
 	}
-
-    static pickNum(...args: any): number {
-		const len = args.length;
-		for (let i = 0; i < len; i++) {
-            if (!isNaN(args[i]) && args[i] !== null) return args[i];
-        }
-        return NaN;
-    }
-
-	static included(value: any, ...args: any): any {
-        const len = args.length;
-        
-		for (let i = 0; i < len; i++) {
-			if (args[i] == value) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	static compareTextValue(v1: any, v2: any, caseSensitive: boolean, partialMatch: boolean): boolean {
-		if (v1 === v2) {
-			return true;
-        }
-        
-		let s1 = String(v1);
-		let s2 = v2 == null ? undefined : String(v2);
-        
-        if (!s1 && !s2) {
-			return true;
-		}
-		if (!s1 || !s2) {
-			return false;
-		}
-		if (!caseSensitive) {
-			s1 = s1.toLowerCase();
-			s2 = s2.toLowerCase();
-		}
-		if (partialMatch) {
-			return s2.indexOf(s1) >= 0;
-		} else {
-			return s1 == s2;
-		}
-    }
-    
-    // static cast(obj: any, clazz: any): any {
-    //     return obj instanceof clazz ? obj : null;
-    // }
-    
-    static irandom(min: number, max?: number): number {
-        if (max !== undefined) {
-            const v1 = min >> 0;
-            const v2 = max >> 0;
-            return (Math.random() * (v2 - v1) + v1) >>> 0;
-        } else {
-            const v = min >> 0;
-            return (Math.random() * v) >> 0;
-        }
-    }
-    
-    // static irandomExcept(except: number, min: number, max?: number): number {
-    //     if (except === 0 && min === 1 && isNaN(max)) {
-    //         throw new Error(`Invalid irandom2`);
-    //     }
-    //     while (true) {
-    //         const i = this.irandom(min, max);
-    //         if (i !== except) {
-    //             return i;
-    //         }
-    //     }
-    // }
-
-    static brandom(): boolean {
-        return Math.random() > 0.5 ? true : false;
-    }
-
-    static srandom(min: number, max: number): string {
-        let s = '';
-        const len = this.irandom(min, max);
-
-        for (let i = 0; i < len; i++) {
-            s += String.fromCharCode(this.irandom(97, 123))
-        }
-        return s;
-    }
-
-    static erandom(clazz: any): any {
-        const vals = Object.values(clazz);
-        return vals[this.irandom(vals.length)];
-    }
-
-    static arandom(arr: any[]): any {
-        return arr[(Math.random() * arr.length) >> 0];
-}
-
-    static iarandom(min: number, max: number, count: number): number[] {
-        const list = new Array<number>();
-        for (let i = min; i < max; i++) {
-            list.push(i);
-        }
-        while (list.length > count) {
-            list.splice(Utils.irandom(list.length), 1);
-        }
-        return list;
-    }
 
     static alert(message: string): void {
         window.alert(message);

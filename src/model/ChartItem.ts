@@ -477,7 +477,7 @@ export abstract class FormattableText extends ChartText {
     // internal members
     //-------------------------------------------------------------------------
     private $_getNumberText(value: any, useSymbols: boolean, forceSymbols: boolean): string {
-        if (Utils.isValidNumber(value)) {
+        if (Utils.isValidNum(value)) {
             const sv = this._numSymbols && useSymbols && Utils.scaleNumber(value, this._numSymbols, forceSymbols);
 
             if (this._numberFormatter) {

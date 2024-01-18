@@ -9,14 +9,14 @@
 import { expect } from 'chai';
 import { beforeEach, describe, it } from 'mocha';
 import { Chart } from '../../../src/model/Chart';
-import { Utils } from '../../../src/common/Utils';
 import { Subtitle, SubtitlePosition, Title } from '../../../src/model/Title';
 import { Align, VerticalAlign, isNull } from '../../../src/common/Types';
 import { isBoolean, isString } from '../../../src/common/Common';
+import { Tester } from '../Tester';
 
 const title_source = {
-    text: Utils.srandom(1, 10),
-    align: Utils.arandom([Align.LEFT, Align.CENTER, Align.RIGHT]),
+    text: Tester.srandom(1, 10),
+    align: Tester.arandom([Align.LEFT, Align.CENTER, Align.RIGHT]),
     backgroundStyle: {
         fill: 'red'
     }
@@ -62,7 +62,7 @@ describe('Title test', function() {
     });
 
     it('_doLoadSimple()', () => {
-        const value = Utils.arandom([Utils.srandom(1, 10), Utils.irandom(0, 1000), Utils.brandom()]) ;
+        const value = Tester.arandom([Tester.srandom(1, 10), Tester.irandom(0, 1000), Tester.brandom()]) ;
         if (isString(value)) {
             expect(title['_doLoadSimple'](value)).true;
             expect(title.text).eq(value);
@@ -76,9 +76,9 @@ describe('Title test', function() {
 });
 
 const subtitle_source = {
-    text: Utils.srandom(1, 10),
-    verticalAlign: Utils.arandom([VerticalAlign.BOTTOM, VerticalAlign.MIDDLE, VerticalAlign.TOP]),
-    position: Utils.arandom([SubtitlePosition.BOTTOM, SubtitlePosition.LEFT, SubtitlePosition.RIGHT, SubtitlePosition.TOP])
+    text: Tester.srandom(1, 10),
+    verticalAlign: Tester.arandom([VerticalAlign.BOTTOM, VerticalAlign.MIDDLE, VerticalAlign.TOP]),
+    position: Tester.arandom([SubtitlePosition.BOTTOM, SubtitlePosition.LEFT, SubtitlePosition.RIGHT, SubtitlePosition.TOP])
 }
 
 /**
