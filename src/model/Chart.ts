@@ -425,6 +425,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _navigator: SeriesNavigator;
     private _exportOptions = {
         visible: true,
+        useLibrary: false,
         menus: [ExportType.PNG, ExportType.JPEG],
         // menus: [ExportType.PNG, ExportType.JPEG, ExportType.SVG, ExportType.PDF, ExportType.PRINT],
         fileName: 'realchart',
