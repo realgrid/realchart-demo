@@ -345,11 +345,10 @@ const stockData = [
     },
 ];
 
-const ds = RealChart.createData('main', stockData);
 const config = {
     templates: {
         series: {
-            data: ds,
+            data: stockData,
             xField: 'date',
             pointLabel: !true,
             padding: 1,
@@ -473,8 +472,4 @@ function init() {
     RealChart.setLogging(false);
 
     chart = RealChart.createChart(document, 'realchart', config);
-
-    // setInterval(() => {
-    //     addPoints();
-    // }, 1000);
 }

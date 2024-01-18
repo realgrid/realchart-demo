@@ -6149,6 +6149,9 @@ const config = {
   // legend: true,
   seriesNavigator: {
     visible: true,
+    series: {
+      type: 'bar',
+    },
     xAxis: {
       label: false,
     },

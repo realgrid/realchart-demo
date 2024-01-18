@@ -27,7 +27,7 @@ export const config = {
       ],
       label: { text: 'RealChart<br>Linear<br>ver 1.0' },
       style: { padding: '10px' },
-      paneStyle: { stroke: 'lightblue', borderRadius: '10px' }
+      backgroundStyle: { stroke: 'lightblue', borderRadius: '10px' }
     },
     {
       type: 'linear',

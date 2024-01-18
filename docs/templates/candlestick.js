@@ -36,10 +36,7 @@ export const config = {
   xAxis: {
     type: 'time',
     tick: { visible: false, stepInterval: '1w' },
-    label: {
-      visible: true,
-      textCallback: ({value}) => { const d = new Date(value); return d.toLocaleDateString('en-us', { day: 'numeric', month: 'short', year: 'numeric' }); }
-    }
+    label: { visible: true }
   },
   yAxis: { crosshair: true, tick: { stepInterval: 1000 } },
   series: {

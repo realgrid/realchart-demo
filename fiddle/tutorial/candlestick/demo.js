@@ -300,11 +300,10 @@ const stockData = [{
   closeprc: 80800,
   trdamnt: 16414644
 }];
-const ds = RealChart.createData('main', stockData);
 const config = {
   templates: {
     series: {
-      data: ds,
+      data: stockData,
       xField: 'date',
       pointLabel: !true,
       padding: 1,
@@ -365,27 +364,6 @@ const config = {
     position: 'opposite',
     row: 0
   }],
-  seriesNavigator: {
-    visible: !true,
-    // usePointSource: true,
-    series: {
-      // yField: 'open',
-      // type: 'bar',
-    }
-  },
-  split: {
-    visible: !true,
-    rows: 2,
-    cols: 1,
-    panes: [{
-      height: 300
-    }, {
-      height: 100,
-      style: {
-        fill: '#fff'
-      }
-    }]
-  },
   series: [{
     name: 'candle',
     template: 'series',
@@ -401,38 +379,11 @@ const config = {
       fill: 'var(--color-1)',
       stroke: 'black'
     }
-  }
-  // {
-  //   type: 'bar',
-  //   template: 'series',
-  //   yField: 'trdamnt',
-  //   yAxis: 1,
-  // },
-  ]
+  }]
 };
-
 let chart;
-function addPoint() {
-  const d = new Date(ds.getValue(ds.rowCount - 1, 'date'));
-  d.setDate(d.getDate() + 1);
-  const newDt = [d.getFullYear(), d.getMonth() + 1, d.getDate()].map(v => v.toString().padStart(2, '0')).join('-');
-  const ridx = Math.floor(Math.random() * ds.rowCount);
-  const p = {
-    ...ds.getRow(ridx),
-    date: newDt
-  };
-  ds.addRow(p);
-}
-function removePoint() {
-  ds.deleteRow(0);
-}
 function init() {
   console.log('RealChart v' + RealChart.getVersion());
-  // RealChart.setLogging(true);
-
+  RealChart.setLogging(false);
   chart = RealChart.createChart(document, 'realchart', config);
-
-  // setInterval(() => {
-  //     addPoints();
-  // }, 1000);
 }

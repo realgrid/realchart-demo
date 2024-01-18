@@ -39,7 +39,7 @@ export const config = {
         { toValue: 70, color: '#aaa' }
       ],
       label: { position: 'top', text: 'RealChart Linear ver 1.0' },
-      paneStyle: { stroke: 'lightblue' }
+      backgroundStyle: { stroke: 'lightblue' }
     }
   ]
 }

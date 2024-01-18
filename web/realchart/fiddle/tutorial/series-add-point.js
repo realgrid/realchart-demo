@@ -55,10 +55,14 @@ function removePoint() {
     chart.series.removePoint(0);
 }
 
+function updatePoint() {
+    chart.series.setValueAt(0, Math.floor(Math.random() * 10000));
+}
+
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
-    RealChart.setLogging(true);
+    RealChart.setLogging(false);
 
     chart = RealChart.createChart(document, 'realchart', config);
 }
