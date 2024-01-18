@@ -365,27 +365,6 @@ const config = {
     position: 'opposite',
     row: 0
   }],
-  seriesNavigator: {
-    visible: !true,
-    // usePointSource: true,
-    series: {
-      // yField: 'open',
-      // type: 'bar',
-    }
-  },
-  split: {
-    visible: !true,
-    rows: 2,
-    cols: 1,
-    panes: [{
-      height: 300
-    }, {
-      height: 100,
-      style: {
-        fill: '#fff'
-      }
-    }]
-  },
   series: [{
     name: 'candle',
     template: 'series',
@@ -401,37 +380,37 @@ const config = {
       fill: 'var(--color-1)',
       stroke: 'black'
     }
-  }
-  // {
-  //   type: 'bar',
-  //   template: 'series',
-  //   yField: 'trdamnt',
-  //   yAxis: 1,
-  // },
-  ]
+  }]
 };
-
-let chart;
-function addPoints() {
+function addRow() {
+  // add 1 day from the last date
   const d = new Date(ds.getValue(ds.rowCount - 1, 'date'));
   d.setDate(d.getDate() + 1);
   const newDt = [d.getFullYear(), d.getMonth() + 1, d.getDate()].map(v => v.toString().padStart(2, '0')).join('-');
-  const ridx = Math.floor(Math.random() * stockData.length);
+  const ridx = Math.floor(Math.random() * ds.rowCount);
   const p = {
     ...ds.getRow(ridx),
     date: newDt
   };
   ds.addRow(p);
-  // ds.deleteRow(0);
-  // chart.series.addPoint(p);
-  // chart.series.removePoint(0);
 }
-
-function removePoint() {}
+function deleteRow() {
+  ds.deleteRow(0);
+}
+function updateValue() {
+  const row = 0;
+  const high = ds.getValue(row, 'highprc');
+  const low = ds.getValue(row, 'lowprc');
+  const close = Math.floor(Math.random() * (high - low + 1) + low);
+  ds.setValue(row, 'close', close);
+  if (close == ds.getValue(row, 'close')) {
+    console.log('updated', close);
+  }
+}
+let chart;
 function init() {
   console.log('RealChart v' + RealChart.getVersion());
-  // RealChart.setLogging(true);
-
+  RealChart.setLogging(false);
   chart = RealChart.createChart(document, 'realchart', config);
 
   // setInterval(() => {
