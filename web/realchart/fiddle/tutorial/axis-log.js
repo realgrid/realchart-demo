@@ -1,3 +1,4 @@
+/** source - http://www.gandalf.it/data/data1.htm */
 const data = [
     ['1981', 213],
     ['1982', 235],
@@ -35,22 +36,25 @@ const config = {
     title: 'Internet Hosts 1981 - 2011',
     xAxis: {
         type: 'time',
-        grid: true,
         label: {
             autoArrange: 'none',
             rotation: -45,
             step: 1,
         },
         tick: {
-            visible: true,
             stepInterval: '1y',
         },
     },
     yAxis: {
         type: 'log',
-        // strictMax: 1000000000,
+        strictMax: Math.log10(10000000000),
         tick: {
-            stepCount: 8,
+            steps: [
+                0,
+                Math.log10(1000),
+                Math.log10(1000000),
+                Math.log10(1000000000),
+            ],
         },
         label: {
             numberFormat: '#,###,###',
