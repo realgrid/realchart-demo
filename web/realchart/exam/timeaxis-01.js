@@ -10,6 +10,9 @@ const config = {
         tick: {
             stepInterval: '2d',
         },
+        label: {
+            timeFormat: 'yyyy-MM-dd',
+        },
     },
     yAxis: {},
     series: {
