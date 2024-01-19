@@ -1,20 +1,21 @@
 ////////////////////////////////////////////////////////////////////////////////
-// AreaLegendMarkerView.ts
-// 2023. 12. 18. created by woori
+// AreaRangeLegendMarkerView.ts
+// 2024. 01. 19. created by woori
 // -----------------------------------------------------------------------------
-// Copyright (c) 2023 Wooritech Inc.
+// Copyright (c) 2023-2024 Wooritech Inc.
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
 import { PathElement } from "../../../common/RcControl";
 import { ShapeLegendMarkerView } from "./ShapeLegendMarkerView";
 
-export class AreaLegendMarkerView extends ShapeLegendMarkerView {
+export class AreaRangeLegendMarkerView extends ShapeLegendMarkerView {
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     _line: PathElement;
+    _line2: PathElement;
     _area: PathElement;
 
     //-------------------------------------------------------------------------
@@ -24,6 +25,9 @@ export class AreaLegendMarkerView extends ShapeLegendMarkerView {
         super(doc, size);
 
         this.insertFirst(this._line = new PathElement(doc));
+        this._line.setFill('none');
+        this.insertFirst(this._line2 = new PathElement(doc));
+        this._line2.setFill('none');
         this.insertFirst(this._area = new PathElement(doc));
         this._area.setBoolData('fill', true);
     }
@@ -38,20 +42,30 @@ export class AreaLegendMarkerView extends ShapeLegendMarkerView {
         super._renderShape(size);
 
         const line = [
-            'M', 0, size * 0.5, 
-            'L', size * 2, 0,
+            'M', 0, size * 0.3,
+            'L', size * 0.7, 0, 
+            'L', size * 2, size * 0.4,
+        ];
+        const line2 = [
+            'M', 0, size,
+            'L', size, size * 0.7, 
+            'L', size * 2, size,
         ];
         const area = [
-            'M', 0, size * 0.5, 
-            'L', size * 2, 0,
-            'L', size * 2, size, 
+            'M', 0, size * 0.3, 
+            'L', size * 0.7, 0, 
+            'L', size * 2, size * 0.4,
+            'L', size * 2, size,
+            'L', size, size * 0.7, 
             'L', 0, size,
             'Z'
         ]
 
         this._marker.setStyle('visibility', this._shape ? 'visible' : 'hidden');
+
         if (this._line) {
             this._line.setPath(line.join(' '));
+            this._line2.setPath(line2.join(' '));
             this._area.setPath(area.join(' '));
         }
     }

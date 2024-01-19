@@ -19,6 +19,7 @@ import { DataPoint } from "../DataPoint";
 import { LegendItem } from "../Legend";
 import { DataPointLabel, PointItemPosition, Series, SeriesGroup, SeriesGroupLayout, SeriesMarker } from "../Series";
 import { AreaLegendMarkerView } from "./legend/AreaLegendMarkerView";
+import { AreaRangeLegendMarkerView } from "./legend/AreaRangeLegendMarkerView";
 import { LineLegendMarkerView } from "./legend/LineLegendMarkerView";
 import { ShapeLegendMarkerView } from "./legend/ShapeLegendMarkerView";
 
@@ -746,6 +747,10 @@ export class AreaRangeSeries extends LineSeriesBase {
     }
 
     tooltipText = '<b>${name}</b><br>${series}: <b>${lowValue}</b> ~ <b>${highValue}</b>';
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return new AreaRangeLegendMarkerView(doc, size);
+    }
 
     protected _createPoint(source: any): DataPoint {
         return new AreaRangeSeriesPoint(source);

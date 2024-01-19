@@ -9,6 +9,8 @@
 import { Dom } from "../../common/Dom";
 import { PathElement } from "../../common/RcControl";
 import { AreaRangeSeries, AreaRangeSeriesPoint } from "../../model/series/LineSeries";
+import { AreaRangeLegendMarkerView } from "../../model/series/legend/AreaRangeLegendMarkerView";
+import { LegendItemView } from "../LegendView";
 import { LineContainer, LineSeriesBaseView } from "./LineSeriesView";
 
 export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
@@ -40,6 +42,16 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
     protected _markersPerPoint(): number {
         return 2;
     }
+
+    decoreateLegend(legendView: LegendItemView): void {
+        super.decoreateLegend(legendView);
+
+        const cs = getComputedStyle(this._area.dom);
+        (legendView._marker as AreaRangeLegendMarkerView)._area.setStroke('none');
+        (legendView._marker as AreaRangeLegendMarkerView)._area.setFill(cs.fill);
+        (legendView._marker as AreaRangeLegendMarkerView)._area.setStyle('fillOpacity', cs.fillOpacity);
+    }
+
 
     protected _renderSeries(width: number, height: number): void {
         this._areaContainer.invert(this.model.chart.isInverted(), height);
