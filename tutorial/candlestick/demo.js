@@ -306,20 +306,12 @@ const config = {
       timeFormat: 'M/d, yyyy'
     }
   },
-  yAxis: [{
+  yAxis: {
     crosshair: true,
     tick: {
       stepInterval: 1000
-    },
-    row: 1
-  }, {
-    crosshair: !true,
-    height: 200,
-    grid: false,
-    label: false,
-    position: 'opposite',
-    row: 0
-  }],
+    }
+  },
   series: [{
     name: 'candle',
     template: 'series',
