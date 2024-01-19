@@ -516,12 +516,12 @@ export class AxisView extends ChartElement<Axis> {
     scroll(pos: number): void {
     }
 
-    checkExtents(): void {
+    checkExtents(loaded: boolean): void {
         const prev = this._prevModel;
         const m = this._prevModel = this.model;
 
         // chart를 새로 로드할 때는 실행하지 않는다.
-        if ((!prev || prev === m) && this.control.loaded) {
+        if ((!prev || prev === m) && loaded) {
             const min = this._prevMin;
             const max = this._prevMax;
     

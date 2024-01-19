@@ -528,6 +528,7 @@ class AxisSectionView extends SectionView {
      * split일 때에도 width, heigh는 양쪽을 포함한 크기이다.
      */
     protected _doLayout(wCenter: number): void {
+        const loaded = this.control.loaded;
         let w = this.width;
         let h = this.height;
         let x = 0;
@@ -541,7 +542,7 @@ class AxisSectionView extends SectionView {
 
                 views.forEach(v => {
                     if (v.visible) {
-                        v.checkExtents();
+                        v.checkExtents(loaded);
 
                         if (this.isHorz) {
                             v.resize(w, v.mh);
