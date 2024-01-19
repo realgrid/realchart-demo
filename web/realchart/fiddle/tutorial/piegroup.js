@@ -6,7 +6,6 @@ const config = {
     series: {
         type: 'piegroup',
         layout: 'stack',
-        polarSize: '10%',
         children: [
             {
                 template: 'series',
