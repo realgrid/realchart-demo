@@ -48,6 +48,7 @@ const config = {
         },
     },
     series: {
+        type: 'bargroup',
         layout: 'overlap',
         children: [
             {
