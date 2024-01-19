@@ -57,7 +57,7 @@ const config = {
             ],
         },
         label: {
-            numberFormat: '#,###,###',
+            numberFormat: ',',
         },
     },
     series: {

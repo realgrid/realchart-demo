@@ -20,7 +20,7 @@ const config = {
       steps: [0, Math.log10(1000), Math.log10(1000000), Math.log10(1000000000)]
     },
     label: {
-      numberFormat: '#,###,###'
+      numberFormat: ','
     }
   },
   series: {
