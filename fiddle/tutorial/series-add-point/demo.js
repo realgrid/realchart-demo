@@ -1,3 +1,4 @@
+const data = [['신흥1동', 3904], ['신흥2동', 19796], ['신흥3동', 10995], ['태평1동', 14625], ['태평2동', 14627], ['태평3동', 12649], ['태평4동', 12279]];
 const config = {
   options: {},
   title: 'Add Point',
@@ -22,7 +23,7 @@ const config = {
   },
   series: {
     pointLabel: true,
-    data: [['신흥1동', 3904], ['신흥2동', 19796], ['신흥3동', 10995], ['태평1동', 14625], ['태평2동', 14627], ['태평3동', 12649], ['태평4동', 12279]],
+    data,
     pointStyleCallback: args => {
       if (args.yValue > 30000) {
         return {
@@ -50,6 +51,9 @@ function removePoint() {
 }
 function updatePoint() {
   chart.series.updatePoint(0, Math.floor(Math.random() * 10000));
+}
+function updateData() {
+  chart.series.updateData(data);
 }
 function init() {
   console.log('RealChart v' + RealChart.getVersion());
