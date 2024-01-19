@@ -21,11 +21,7 @@ export const config = {
 					return percentage.toFixed(1)+'%';
 				},
 			},
-			tooltipText: "${x} <br> 매출비중: ${y} / ${}",
-			tooltipCallback: (args) => {
-				const total = data.reduce((acc, curr) => acc + (curr.y || 0), 0);
-				return `${args.x} <br> 매출비중: ${(args.yValue / total * 100).toFixed(1)}%`;
-			}
+			tooltipText: "${x} <br> 매출비중: ${y} / ${}"
 		},
     ],
     legend: {

@@ -37,6 +37,7 @@ const config = {
         },
         position: 'opposite',
     }, {
+        
         line: false,
         label: false,
         title: {
@@ -82,26 +83,7 @@ const config = {
             strokeWidth: '3px',
         }
     }],
-    gauge: [{
-        template: "gauge",
-        name: 'gauge1',
-        left: -60,
-        top: -320,
-        value: 16,
-        label: {
-            text: '<t style="font-size:48px;">${value}</t><t style="font-size:24px;">  km/h</t>',
-        }
-    }, {
-        template: "gauge",
-        name: 'gauge2',
-        left: -50,
-        top: -70,
-        value: 132,
-        maxValue: 240,
-        label: {
-            text: '<t style="font-size:48px;">${value}</t><t style="font-size:24px;">  bpm</t>',
-        }
-    }]
+   
 }
 
 let animate = false;

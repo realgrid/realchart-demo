@@ -46,6 +46,9 @@ function setActions(container) {
   createButton(container, "createChart", function (e) {
     chart = RealChart.createChart(document, "realchart", config,false, () => {console.log("hi")});
   });
+  createButton(container, "destroy", function (e) {
+    chart.destroy()
+  });
   createCheckBox(
     container,
     "Inverted",
