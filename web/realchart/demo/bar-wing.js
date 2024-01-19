@@ -7,6 +7,7 @@
  * axis는 그룹의 axis를 따른다. 두 번째 axis는 모양만 내는 것.
  */
 const config = {
+    height: 600,
     templates: {
         xAxis: {
             categories: [
