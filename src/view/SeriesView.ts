@@ -972,6 +972,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj as Axis;
         const yAxis = series._yAxisObj as Axis;
+        const reversed = yAxis.reversed;
         const wPad = xAxis.unitPad() * 2;
         const yLen = yAxis.prev(inverted ? width : height);
         const xLen = xAxis.prev(inverted ? height : width);
@@ -983,7 +984,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         const based = !isNaN(base);
         const info: LabelLayoutInfo = labelViews && assign(this._labelInfo, {
             inverted,
-            reversed: yAxis.reversed,
+            reversed: reversed,
             labelPos: series.getLabelPosition(labels.position),
             labelOff: series.getLabelOff(labels.getOffset())
         });
@@ -1065,6 +1066,7 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj as Axis;
         const yAxis = series._yAxisObj;
+        const reversed = yAxis.reversed;
         const wPad = xAxis.unitPad() * 2;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;

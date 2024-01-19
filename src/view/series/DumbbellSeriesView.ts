@@ -38,10 +38,8 @@ class BarElement extends RangeElement implements IPointView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    layout(): void {
+    layout(w: number, h: number): void {
         const p = this.point;
-        const w = this.width;
-        const h = this.height;
         const rd = p.radius;
         const x = w / 2;
         let y = 0;
@@ -95,7 +93,7 @@ export class DumbbellSeriesView extends RangedSeriesView<DumbbellSeries> {
     }
 
     protected _layoutPoint(bar: BarElement, index: number, x: number, y: number, wPoint: number, hPoint: number): void {
-        bar.setBounds(x - wPoint / 2, y, wPoint, hPoint);
-        bar.layout();
+        bar.trans(x - wPoint / 2, y);
+        bar.layout(wPoint, hPoint);
     }
 }

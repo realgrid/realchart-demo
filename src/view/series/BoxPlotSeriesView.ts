@@ -27,6 +27,9 @@ class BoxView extends RangeElement implements IPointView {
     private _min: LineElement;
     private _max: LineElement;
 
+    wPoint: number;
+    hPoint: number;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -37,11 +40,10 @@ class BoxView extends RangeElement implements IPointView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    layout(): void {
+    layout(w: number, h: number): void {
         const p = this.point;
-        const w = this.width;
-        const h = this.height;
-        const len = Math.max(0.0001, p.yValue - p.minValue);
+        // const len = Math.max(0.0001, p.yValue - p.minValue);
+        const len = p.yValue - p.minValue;
         const x = w / 2;
         let y = 0;
         const yLow = y + h - h * (p.lowValue - p.minValue) / len;
@@ -106,7 +108,8 @@ export class BoxPlotSeriesView extends RangedSeriesView<BoxPlotSeries> {
     }
 
     protected _layoutPoint(box: BoxView, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
-        box.setBounds(x - wPoint / 2, y, wPoint, hPoint);
-        box.layout();
+        // box.setBounds(x - wPoint / 2, y, wPoint, hPoint);
+        box.trans(x - wPoint / 2, y);
+        box.layout(wPoint, hPoint);
     }
 }

@@ -36,10 +36,8 @@ class StickView extends RangeElement implements IPointView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    layout(): void {
+    layout(w: number, h: number): void {
         const p = this.point;
-        const w = this.width;
-        const h = this.height;
         const len = p.yValue - p.lowValue;
         const x = 0;//this.width / 2;
         const x1 = -w / 2;
@@ -101,8 +99,8 @@ export class OhlcSeriesView extends RangedSeriesView<OhlcSeries> {
     }
 
     protected _layoutPoint(view: StickView, index: number, x: number, y: number, wPoint: number, hPoint: number): void {
-        view.setBounds(x, y, wPoint, hPoint);
-        view.layout();
+        view.trans(x, y);
+        view.layout(wPoint, hPoint);
     }
 
     protected _setPointStyle(v: RcElement, model: OhlcSeries, p: OhlcSeriesPoint, styles?: any[]): void {

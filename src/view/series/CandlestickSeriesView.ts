@@ -36,10 +36,8 @@ class StickView extends RangeElement implements IPointView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    layout(): void {
+    layout(w: number, h: number): void {
         const p = this.point;
-        const w = this.width;
-        const h = this.height;
         const len = p.yValue - p.lowValue;
         const x = 0;
         let y = 0;
@@ -118,7 +116,7 @@ export class CandlestickSeriesView extends RangedSeriesView<CandlestickSeries> {
      }
 
     protected _layoutPoint(box: StickView, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
-        box.setBounds(x, y, wPoint, hPoint);
-        box.layout();
+        box.trans(x, y);
+        box.layout(wPoint, hPoint);
     } 
 }

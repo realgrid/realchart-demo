@@ -45,9 +45,7 @@ class BarElement extends RangeElement implements IPointView {
         this._back.setTransparent(false);
     }
 
-    layout(): void {
-        const w = this.width
-        const h = this.height;
+    layout(w: number, h: number): void {
         const x = w / 2;
 
         this.x = this.tx + x; // savePrevs()에서 사용한다.
@@ -93,7 +91,7 @@ export class ErrorBarSeriesView extends RangedSeriesView<ErrorBarSeries> {
     }
 
     protected _layoutPoint(box: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
-        box.setBounds(x - wPoint / 2, y, wPoint, hPoint);
-        box.layout();
+        box.trans(x - wPoint / 2, y);
+        box.layout(wPoint, hPoint);
     }
 }
