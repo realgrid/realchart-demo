@@ -39,10 +39,10 @@ class BarElement extends GroupElement implements IPointView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    layout(): void {
+    layout(h: number): void {
         const rd = this.point.radius;
 
-        this._line.setVLineC(0, 0, this.height);
+        this._line.setVLineC(0, 0, h);
         SvgShapes.setShape(this._marker, this.point.shape, rd, rd);
         this._marker.trans(-rd, -rd);
     }
@@ -80,8 +80,8 @@ export class LollipopSeriesView extends BoxedSeriesView<LollipopSeries> {
     }
 
     protected _layoutPoint(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
-        view.setBounds(x, y - hPoint, 0, hPoint);
-        view.layout();
+        view.trans(x, y - hPoint);
+        view.layout(hPoint);
     }
 
     //-------------------------------------------------------------------------
