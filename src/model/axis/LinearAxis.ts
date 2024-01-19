@@ -130,6 +130,11 @@ export class ContinuousAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    canUseNumSymbols(): boolean {
+        // steps로 지정한 경우 nan이다.
+        return isNaN(this._step) || this._step >= 1000;
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -318,16 +323,18 @@ export class LinearAxisLabel extends AxisLabel {
     //-------------------------------------------------------------------------
     /**
      * true로 지정하면 label 끝에 단위 문자를 추가한다.<br/>
+     * 표시되는 값들의 연속성을 위해 true로 지정해도 step 간격이 1000 이상일 때 추가하는데,
+     * 간격과 상관없이 단위 문자를 표시하려면 '*'으로 지정한다.
      * 
      * @config
      */
-    useSymbols = true;
+    useSymbols: boolean | '*' = true;
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     getTick(index: number, v: any): string {
-        return this._getText(null, v, this.useSymbols && (this.axis.tick as ContinuousAxisTick)._step > 100, true);
+        return this._getText(null, v, this.useSymbols === '*' || this.useSymbols && this.axis.tick.canUseNumSymbols(), true);
     }
 }
 

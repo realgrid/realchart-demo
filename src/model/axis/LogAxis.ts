@@ -26,6 +26,10 @@ export class LogAxisTick extends ContinuousAxisTick {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    canUseNumSymbols(): boolean {
+        return this.axis.axisMax() > 3;
+    }
+
     protected _getStepMultiples(scale: number): number[] {
         // 그냥 scale이 사용되게 한다. 아래 _normalizeSteps()에서 정돈될 수 있다.
         if (scale <= 0.1) { 

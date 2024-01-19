@@ -166,8 +166,10 @@ label 문자열 끝에 추가되는 문자열.
 ### text: `string{:js}`[#text]
 rich text format을 지정할 수 있다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
-### useSymbols: `boolean{:js}`[#useSymbols]
-<Content type="keyword" value="true"></Content>로 지정하면 label 끝에 단위 문자를 추가한다.<br/>  
+### useSymbols: `boolean | '*'{:js}`[#useSymbols]
+<Content type="keyword" value="true"></Content>로 지정하면 label 끝에 단위 문자를 추가한다.<br/>
+표시되는 값들의 연속성을 위해 <Content type="keyword" value="true"></Content>로 지정해도 step 간격이 1000 이상일 때 추가하는데,
+간격과 상관없이 단위 문자를 표시하려면 <Content type="expression" value="'*'"></Content>으로 지정한다.  
 <DefaultValue value="true" contents=""></DefaultValue>
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
