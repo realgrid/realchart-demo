@@ -12,8 +12,9 @@ import { PathElement, RcControl, RcElement } from "../common/RcControl";
 import { SvgRichText } from "../common/RichText";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { DataPoint } from "../model/DataPoint";
-import { Series } from "../model/Series";
+import { Series, WidgetSeriesPoint } from "../model/Series";
 import { Tooltip } from "../model/Tooltip";
+import { PieSeries } from "../model/series/PieSeries";
 
 export enum TooltipPosition {
     TOP = 'top',
@@ -94,7 +95,11 @@ export class TooltipView extends RcElement {
         // 시리즈 색은 동적일 수 있다.
         //this._top.setData('index', (series.index % PALETTE_LEN) as any);
         // TODO: point별로 색상이 다를 수 있다.
-        this._top.setFill(series._calcedColor);
+        if (series instanceof PieSeries && series.legendByPoint) {
+            this._top.setFill((point as WidgetSeriesPoint)._calcedColor);
+        } else {
+            this._top.setFill(series._calcedColor);   
+        };
 
         const dur = this.getStyle('visibility') === 'visible' ? 300 : 0;
         let translate: number;
