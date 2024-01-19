@@ -31,5 +31,6 @@ export const config = {
     ],
     style: { fillOpacity: 0.4 }
   },
+  tooltip: false,
   ChartTextEffect: { autoContrast: false }
 }

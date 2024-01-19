@@ -5,7 +5,7 @@ function readFile(file) {
     return readFileSync(file, "utf-8");
 }
 
-const snapshotTestPage = 'http://localhost:6010/snapshot.html?debug';
+const snapshotTestPage = 'http://localhost:6010/realchart/demo/snapshot.html?debug';
 const ingnoreList = ['gauge-clock.js', 'gauge-clock-multi.js'];
 
 const demoPath = './docs/templates/';

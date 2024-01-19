@@ -25,6 +25,7 @@ export const config = {
   body: { style: { stroke: 'none' } },
   xAxis: { title: { text: '수정구' } },
   yAxis: { title: { text: '전체 인구수' } },
+  tooltip: false,
   series: [
     {
       pointLabel: { visible: true, effect: 'outline', style: {} },

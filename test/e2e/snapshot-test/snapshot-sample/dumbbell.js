@@ -13,7 +13,7 @@ export const config = {
   yAxis: {},
   series: {
     type: 'dumbbell',
-    tooltip: { text: 'low: ${low}<br>y: ${y}<br>' },
+    tooltipText: 'low: ${low}<br>high: ${yValue}<br>',
     pointLabel: { visible: true },
     data: [
       [ -13.9, 5.2 ], [ -16.7, 10.6 ],

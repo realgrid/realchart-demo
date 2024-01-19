@@ -1,8 +1,23 @@
 export const config = {
   type: 'scatter',
   title: 'Crosshair',
-  xAxis: { title: 'Height', crosshair: true },
-  yAxis: { title: 'Weight', crosshair: true },
+  params: { 'crosshair.x': 0, 'crosshair.y': 0 },
+  xAxis: {
+    title: 'Height',
+    crosshair: args => { chart.setParam('crosshair.x', args.pos); chart.getAnnotation('anno').update(); }
+  },
+  yAxis: {
+    title: 'Weight',
+    crosshair: args => { chart.setParam('crosshair.y', args.pos); chart.getAnnotation('anno').update(); }
+  },
+  body: {
+    annotations: [
+      {
+        name: 'anno',
+        text: '${crosshair.x;0;#.0}, ${crosshair.y;0;#.0}'
+      }
+    ]
+  },
   series: {
     data: [
       [ 161.2, 51.6 ], [ 167.5, 59 ],   [ 159.5, 49.2 ],  [ 157, 63 ],

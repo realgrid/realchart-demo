@@ -1,7 +1,7 @@
 export const config = {
-  options: { animatable: false },
+  options: {},
   title: 'Line Series 01',
-  xAxis: { type: 'category' },
+  xAxis: { type: 'category', crosshair: true },
   yAxis: {},
   series: {
     type: 'line',

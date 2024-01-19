@@ -9,7 +9,7 @@ export const config = {
   yAxis: {},
   series: {
     type: 'funnel',
-    tooltip: { text: 'height: ${height}' },
+    tooltipText: 'height: ${height}',
     pointLabel: { visible: true, text: '${name} (${y})' },
     legendByPoint: true,
     data: [

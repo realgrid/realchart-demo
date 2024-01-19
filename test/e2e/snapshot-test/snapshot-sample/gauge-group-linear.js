@@ -1,6 +1,6 @@
 export const config = {
   templates: { gauge: { label: { numberFormat: '#00.#' } } },
-  options: { animatable: false, credits: {} },
+  options: { credits: {} },
   title: 'Linear Gauge Group',
   gauge: [
     {
@@ -12,7 +12,7 @@ export const config = {
         {
           name: 'gauge1',
           template: 'gauge',
-          value: 25.9509783655429,
+          value: 23.175096707336508,
           valueRim: { style: { fill: '#00aaff' } },
           label: {
             style: { fill: '#00aaff' },
@@ -22,7 +22,7 @@ export const config = {
         {
           name: 'gauge2',
           template: 'gauge',
-          value: 59.669510337686305,
+          value: 99.74390065920807,
           valueRim: { style: { fill: '#ffaa00' } },
           label: {
             style: { fill: '#ffaa00' },
@@ -32,7 +32,7 @@ export const config = {
         {
           name: 'gauge3',
           template: 'gauge',
-          value: 11.907777415346676,
+          value: 17.435013162041656,
           valueRim: { style: { fill: '#88cc00' } },
           label: {
             style: { fill: '#88cc00' },
@@ -42,7 +42,7 @@ export const config = {
         {
           name: 'gauge4',
           template: 'gauge',
-          value: 15.954752936291893,
+          value: 83.23752912346656,
           valueRim: { style: { fill: '#aa0000' } },
           label: {
             style: { fill: '#aa0000' },
@@ -60,7 +60,7 @@ export const config = {
         ]
       },
       label: { text: 'Linear Gauges' },
-      paneStyle: { stroke: 'lightblue', borderRadius: '10px' }
+      backgroundStyle: { stroke: 'lightblue', borderRadius: '10px' }
     }
   ]
 }

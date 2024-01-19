@@ -1,0 +1,76 @@
+export const config = {
+    options: {},
+    title: {
+        text: '전국아파트 실거래 지수',
+        style: {
+            fontSize: '40px',
+        },
+    },
+    xAxis: {
+        type: 'time',
+        tick: {
+            stepInterval: '2m',
+        },
+        label: {
+            rotation: -90,
+            timeFormat: 'yyyy년 MM월',
+            style: {
+                fontFamily: 'Arial',
+                fontSize: '20px',
+            },
+        },
+    },
+    yAxis: {
+        minValue: 0,
+        tick: {
+            stepInterval: 20,
+        },
+    },
+    series: {
+        name: 'main',
+        type: 'line',
+        lineType: 'spline',
+        marker: false,
+        xStart: '2020-01',
+        xStep: '2m',
+        data: [
+            101, 103, 105, 109, 113, 115, 120, 125, 131, 136, 139, 143, 141,
+            140, 139, 138, 130, 125, 120, 119, 119, 120, 122, 123,
+        ],
+        style: {
+            strokeWidth: '5px',
+        },
+    },
+    annotations: {
+        type: 'shape',
+        shape: 'rectangle',
+        front: true,
+        series: 'main',
+        x1: new Date(2022, 8),
+        x2: new Date(2023, 3),
+        y1: 95,
+        y2: 145,
+        style: {
+            fill: 'none',
+            stroke: 'green',
+            strokeWidth: '5px',
+        },
+    },
+    body: {
+        annotations: {
+            type: 'shape',
+            shape: 'rectangle',
+            front: true,
+            series: 'main',
+            x1: new Date(2022, 8),
+            x2: new Date(2023, 3),
+            y1: 95,
+            y2: 145,
+            style: {
+                fill: 'none',
+                stroke: 'red',
+                strokeWidth: '5px',
+            },
+        },
+    },
+};

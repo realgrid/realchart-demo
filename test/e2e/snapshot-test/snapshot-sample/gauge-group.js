@@ -1,62 +1,55 @@
 export const config = {
   templates: { gauge: { label: { numberFormat: '#00.#' } } },
-  options: { theme: 'dark', credits: {} },
+  options: { palette: 'unicorn' },
   title: 'Circle Gauge Group',
   gauge: [
     {
+      colorByPoints: true,
       children: [
         {
           name: 'gauge1',
           template: 'gauge',
-          value: 64.88659768315559,
-          valueRim: { style: { fill: '#00aaff' } },
+          value: 31.57086807966918,
+          valueRim: { style: { fill: 'var(--color-1)' } },
+          rim: { style: {} },
           label: {
-            style: { fill: '#00aaff' },
-            text: "<t style='fill:gray'>게이지 101 -</t> ${value}"
+            style: { fill: 'var(--color-1)' },
+            text: "<t style='fill:gray'>Time -</t> ${value}"
           }
         },
         {
           name: 'gauge2',
           template: 'gauge',
-          value: 35.95332611256732,
-          valueRim: { style: { fill: '#ffaa00' } },
+          value: 81.5351666179555,
+          valueRim: { style: { fill: 'var(--color-2)' } },
           label: {
-            style: { fill: '#ffaa00' },
-            text: "<t style='fill:gray'>게이지 202 -</t> ${value}"
+            style: { fill: 'var(--color-2)' },
+            text: "<t style='fill:gray'>Run -</t> ${value}"
           }
         },
         {
           name: 'gauge3',
           template: 'gauge',
-          value: 63.46764976262742,
-          valueRim: { style: { fill: '#88cc00' } },
+          value: 61.145056638802586,
+          valueRim: { style: { fill: 'var(--color-3)' } },
           label: {
-            style: { fill: '#88cc00' },
-            text: "<t style='fill:gray'>게이지 303 -</t> ${value}"
+            style: { fill: 'var(--color-3)' },
+            text: "<t style='fill:gray'>Walk -</t> ${value}"
           }
         },
         {
           name: 'gauge4',
           template: 'gauge',
-          value: 14.875815454623776,
-          valueRim: { style: { fill: '#aa0000' } },
+          value: 21.132021870988595,
+          valueRim: { style: { fill: 'var(--color-4)' } },
           label: {
-            style: { fill: '#aa0000' },
-            text: "<t style='fill:gray'>게이지 404 -</t> ${value}"
+            style: { fill: 'var(--color-4)' },
+            text: "<t style='fill:gray'>Kcal -</t> ${value}"
           }
         }
       ],
       innerRadius: '30%',
-      sweepAngle: 270,
-      valueRim: {
-        ranges: [
-          { toValue: 25, color: 'green' },
-          { toValue: 50, color: '#0000cc' },
-          { toValue: 75, color: '#ffaa00' },
-          { color: 'red' }
-        ]
-      },
-      panelStyle: { stroke: 'lightblue', borderRadius: '10px' }
+      sweepAngle: 270
     }
   ]
 }
