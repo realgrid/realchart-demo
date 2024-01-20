@@ -509,11 +509,6 @@ export class TimeAxis extends ContinuousAxis {
         super.collectValues();
     }
 
-    protected _adjustMinMax(min: number, max: number): { min: number; max: number; } {
-        const v = super._adjustMinMax(min, max);
-        return v;
-    }
-
     getValue(value: any): number {
         if (isNumber(value)) {  
             return value + this._offset;

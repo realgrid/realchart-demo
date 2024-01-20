@@ -1168,6 +1168,10 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         return this._pointsChanged;
     }
 
+    getMinPointWidth(): number {
+        return NaN;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -2284,6 +2288,7 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
 
     _single: boolean;
     _pointPad = 0;
+    _minPointWidth = 0;
 
     //-------------------------------------------------------------------------
     // properties
@@ -2320,10 +2325,15 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
      * @config
      */
     pointPadding: number;
+    minPointWidth: number;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getMinPointWidth(): number {
+        return this._minPointWidth;
+    }
+
     getPointWidth(length: number): number {
         const g = this.group as ClusterableSeriesGroup<Series>;
         let w = length;
@@ -2336,7 +2346,7 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
             w *= this._clusterWidth;           
         }
         w *= 1 - this._pointPad * 2;    // 시리즈 padding
-        return w;
+        return maxv(this._minPointWidth, w);
     }
 
     getPointPos(length: number): number {
@@ -2381,6 +2391,7 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
         super._doPrepareRender();
 
         this._pointPad = isNaN(this.pointPadding) ? (this._single ? 0.25 : this.group ? 0.1 : 0.2) : Math.max(0, Math.min(0.5, this.pointPadding));
+        this._minPointWidth = pickNum(this.getMinPointWidth(), 0);
     }
 }
 

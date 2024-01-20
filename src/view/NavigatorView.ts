@@ -180,7 +180,7 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
         this.$_prepareXAxisView(doc, chart);
         this.$_prepareYAxisView(doc, chart);
 
-        (model._naviChart.xAxis as Axis).calcPoints(width, 1);
+        (model._naviChart.xAxis as Axis).calcPoints(width, 101);
         (model._naviChart.yAxis as Axis).calcPoints(height, 1);
 
         return { width, height };

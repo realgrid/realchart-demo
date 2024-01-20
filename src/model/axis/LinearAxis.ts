@@ -621,7 +621,6 @@ export abstract class ContinuousAxis extends Axis {
 
     protected _doPrepareRender(): void {
         this._baseVal = parseFloat(this.baseValue as any);
-        this._unitLen = NaN;
         (this.tick as ContinuousAxisTick)._findBaseAxis();
     }
 
@@ -632,7 +631,7 @@ export abstract class ContinuousAxis extends Axis {
 
         const tick = this.tick as ContinuousAxisTick;
         const based = tick._baseAxis instanceof ContinuousAxis;
-        let { min, max } = this._adjustMinMax(this._calcedMin = calcedMin, this._calcedMax = calcedMax);
+        let { min, max } = this._adjustMinMax(length, this._calcedMin = calcedMin, this._calcedMax = calcedMax);
         let baseVal = this._baseVal;
 
         // baseValue가 지정되지 않고 0 위아래로 분포하면 0을 기준으로 한다.
@@ -712,6 +711,21 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     calcPoints(length: number, phase: number): void {
+        // [주의] measure 중 마지막에 한 번만 실행하도록 한다.
+        if (phase > 100 && this._isX) {
+            const unit = this.$_calcUnitLength(this._isPolar ? this.getTotalAngle() : length);
+
+            if (unit) {
+                this._unitLen = unit.len;
+                
+                // 선형 축에 너비가 필요한 시리즈가 있는 경우, 양 끝이 넘치지 않도록 조종한다. #485, #472
+                if (!this._isPolar) {
+                    this._min -= unit.min / 2;
+                    this._max += unit.min / 2;
+                }
+            }
+        }
+
         super.calcPoints(length, phase);
 
         this._markPoints = this._ticks.map(t => t.pos);
@@ -832,9 +846,6 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     getUnitLen(length: number, value: number): number {
-        if (isNaN(this._unitLen)) {
-            this._unitLen = this.$_calcUnitLength(length);
-        }
         return this._unitLen;
     }
 
@@ -845,7 +856,7 @@ export abstract class ContinuousAxis extends Axis {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    protected _adjustMinMax(min: number, max: number): { min: number, max: number } {
+    protected _adjustMinMax(length: number, min: number, max: number): { min: number, max: number } {
         let minPadFixed = this.isZoomed();
         let maxPadFixed = this.isZoomed();
         let minFixed = true;
@@ -930,35 +941,37 @@ export abstract class ContinuousAxis extends Axis {
         return { min: min2, max: max2 };
     }
 
-    protected $_calcUnitLength(length: number): number {
+    protected $_calcUnitLength(length: number): { len: number, min: number } {
         const pts: DataPoint[] = [];
 
         this._series.forEach(ser => {
-            if (ser.visible) {
-            // if (ser.visible && ser.clusterable()) {
+            // if (ser.visible) {
+            if (ser.visible && ser.clusterable()) {
                 pts.push(...ser.getVisiblePoints());
             }
         })
 
-        const isX = this._isX;
-        let vals = pts.map(p => isX ? p.xValue : p.yValue).sort((v1, v2) => v1 - v2);
-        for (let i = vals.length - 1; i > 0; i--) {
-            if (vals[i] === vals[i - 1]) {
-                vals.splice(i, 1);
+        if (pts.length > 0) {
+            const isX = this._isX; // TODO: x일 때만 필요한 것 아닌가?
+            let vals = pts.map(p => isX ? p.xValue : p.yValue).sort((v1, v2) => v1 - v2);
+            for (let i = vals.length - 1; i > 0; i--) {
+                if (vals[i] === vals[i - 1]) {
+                    vals.splice(i, 1);
+                }
             }
+            let min = vals[1] - vals[0];
+    
+            for (let i = 2; i < vals.length; i++) {
+                min = minv(min, vals[i] - vals[i - 1]);
+            }
+    
+            // 이 축에 연결된 clsuterable 시리즈들의 point 최소 간격.
+            length *= min / (this._max - this._min);// + (this._isPolar ? 0 : min));
+    
+            // [주의] polar인 경우 1보다 작을 수 있다.
+            // return maxv(1, pickNum(length, 1));
+            return { len: pickNum(length, 1), min };
         }
-        let min = vals[1] - vals[0];
-
-        for (let i = 2; i < vals.length; i++) {
-            min = minv(min, vals[i] - vals[i - 1]);
-        }
-
-        // 이 축에 연결된 clsuterable 시리즈들의 point 최소 간격.
-        length *= min / (this._max - this._min);
-
-        // [주의] polar인 경우 1보다 작을 수 있다.
-        // return maxv(1, pickNum(length, 1));
-        return pickNum(length, 1);
     }
     
     private $_loadBreak(source: any): AxisBreak {
@@ -1046,8 +1059,8 @@ export class LinearAxis extends ContinuousAxis {
         return 'linear';
     }
 
-    protected _adjustMinMax(min: number, max: number): { min: number; max: number; } {
-        const v = super._adjustMinMax(min, max);
+    protected _adjustMinMax(length: number, min: number, max: number): { min: number; max: number; } {
+        const v = super._adjustMinMax(length, min, max);
         const series = this._series;
 
         if (!this._isX && series.length === 1 && series[0] instanceof SeriesGroup && series[0].layout === SeriesGroupLayout.FILL) {

@@ -2,6 +2,8 @@ const config = {
   title: "Boundary",
   xAxis: {
     type: "time",
+    // minPadding: 0,
+    // maxPadding: 0,
     tick: {
       visible: true,
     },

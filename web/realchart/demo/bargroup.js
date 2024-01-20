@@ -9,6 +9,7 @@ const config = {
 	},
 	xAxis: {
 		title: '일일 Daily fat',
+        // type: 'linear',
 		categories: [
 			'쓰리엠',
 			'아디다스',

@@ -138,11 +138,15 @@ export class ChartControl extends RcControl implements IChartEventListener {
 
             model.prepareRender();
         }
-        if (!this.loaded) view.clean();
+        if (!this.loaded) {
+            view.clean();
+        }
+        
         view.measure(this.doc(), model, bounds.width, bounds.height, 1);
         view.setRect(bounds);
         view.layout();
         model && model.afterRender();
+        
         if (this._loadCallback) {
             setTimeout(this._loadCallback, 0);
             this._loadCallback = _undef;

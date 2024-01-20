@@ -230,7 +230,7 @@ export class Split extends ChartItem {
     }
 
     calcAxesPoints(xLens: number[], yLens: number[]): void {
-        this.$_calcAxesPoints(xLens, yLens, 1);
+        this.$_calcAxesPoints(xLens, yLens, 101);
     }
 
     /**

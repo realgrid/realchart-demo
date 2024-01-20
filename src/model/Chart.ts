@@ -1013,7 +1013,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     axesLayouted(width: number, height: number, inverted: boolean): void {
-        this.$_calcAxesPoints(width, height, inverted, 1);
+        this.$_calcAxesPoints(width, height, inverted, 101);
     }
 
     /**

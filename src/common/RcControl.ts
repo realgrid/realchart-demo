@@ -539,7 +539,9 @@ export abstract class RcControl extends RcObject {//} RcWrappableObject {
 
             const p = this._padding = Dom.getPadding(this._root.dom);
 
+            // this._root.remove();
             this._doRender({x: p.left, y: p.top, width: w - p.left - p.right, height: h - p.top - p.bottom});
+            // this._svg.appendChild(this._root['_dom']);
 
         } finally {
             this.loaded = true;
