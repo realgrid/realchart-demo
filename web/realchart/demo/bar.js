@@ -10,7 +10,7 @@ const config = {
   },
   xAxis: {
     title: '서울시',
-    categories: ['2014', '2015', '2016', '2017', '2018', '2019', '2020'],
+    // categories: ['2014', '2015', '2016', '2017', '2018', '2019', '2020'],
     grid: {
       visible: true,
     },
@@ -30,7 +30,7 @@ const config = {
       pointLabel: true,
       // pointWidth: '100%',
       // colorByPoint: true,
-      data: [155, 138, 122, 133, 114, 113, 123],
+      data: [155, 138, 122, 133, 114, 113],
     },
   ],
 };

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { floor, log10, pow10 } from "../../common/Common";
+import { floor, log10, minv, pickNum, pow10 } from "../../common/Common";
 import { fixnum } from "../../common/Types";
 import { AxisTick, IAxisTick } from "../Axis";
 import { ContinuousAxis, ContinuousAxisTick } from "./LinearAxis";
@@ -33,9 +33,10 @@ export class LogAxisTick extends ContinuousAxisTick {
     protected _getStepMultiples(scale: number): number[] {
         // 그냥 scale이 사용되게 한다. 아래 _normalizeSteps()에서 정돈될 수 있다.
         if (scale <= 0.1) { 
-            return [1 / scale];
+            // return [1 / scale];
         }
         return [1, 2, 3, 4, 5, 10];
+        // return [1, 2, 3, 4, 5, 6, 7, 8, 9];
     }
 
     /**
@@ -54,6 +55,7 @@ export class LogAxisTick extends ContinuousAxisTick {
                     steps[i] = v;
                 } else if (i > 0) {
                     if (steps[i - 1] >= max) {
+                        steps.splice(i, steps.length);
                         break;
                     } else {
                         const scale = pow10(floor(log10(steps[i] - steps[i - 1])));
@@ -65,7 +67,7 @@ export class LogAxisTick extends ContinuousAxisTick {
                                 if (v3 > log10(j) && v3 < log10(j + 1)) {
                                     const v4 = floor(v2) + log10(j);
                                     if (v4 >= max) {
-                                        v = v4;
+                                        v = v3;
                                         break;
                                     }
                                 }
@@ -127,5 +129,22 @@ export class LogAxis extends ContinuousAxis {
      */
     protected _createTick(length: number, index: number, step: number): IAxisTick {
         return super._createTick(length, index, fixnum(pow10(step)));
+    }
+
+    protected _calcUnitLen(vals: number[], length: number, axisMin: number, axisMax: number): { len: number; min: number; } {
+        let min = log10(vals[1]) - log10(vals[0]);
+    
+        for (let i = 2; i < vals.length; i++) {
+            min = minv(min, log10(vals[i]) - log10(vals[i - 1]));
+        }
+
+        const len = axisMax - axisMin;
+        const n = min / len;
+
+        // const len = axisMax -  axisMin;
+        // const n = log10(valueGap) / (len + log10(valueGap));
+
+        length *= n;
+        return { len: pickNum(length, 1), min: len * n };
     }
 }

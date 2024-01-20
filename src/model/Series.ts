@@ -17,7 +17,7 @@ import { RectElement } from "../common/impl/RectElement";
 import { Shape, Shapes } from "../common/impl/SvgShape";
 import { ChartData, IChartDataListener } from "../data/ChartData";
 import { ColorList } from "./Asset";
-import { IAxis } from "./Axis";
+import { Axis, IAxis } from "./Axis";
 import { IChart } from "./Chart";
 import { ChartItem, IconedText, LabelIconPostion } from "./ChartItem";
 import { SeriesLoadAnimation } from "./ChartTypes";
@@ -25,6 +25,7 @@ import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource, LegendItem } from "./Legend";
 import { ITooltipContext } from "./Tooltip";
 import { CategoryAxis } from "./axis/CategoryAxis";
+import { ContinuousAxis } from "./axis/LinearAxis";
 
 export enum PointItemPosition {
     AUTO = 'auto',
@@ -949,7 +950,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         }
     }
     /**
-     * x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.<br/>
+     * 연결된 x축이 연속 축(카테고리축이 아닌)일 때, x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.<br/>
      * 이 후에는 {@link xStep}씩 증가시키면서 설정한다.
      * 이 속성이 지징되지 않은 경우 {@link ChartOptions.xStart}가 적용된다.
      * 
@@ -957,7 +958,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      */
     xStart: any;
     /**
-     * x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.<br/>
+     * 연결된 x축이 연속 축(카테고리축이 아닌)일 때, x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.<br/>
      * 첫번째 값은 {@link xStart}로 설정한다.
      * time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'w', 'd', 'h', 'n', 's')로 지정할 수 있다.
      * 이 속성이 지정되지 않으면 {@link ChartOptions.xStep}이 적용된다.
@@ -1204,14 +1205,14 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         return source.map((s, i) => this.$_addPoint(s, i));
     }
 
-    private $_getXStart(): number {
-        let s = this._xAxisObj.getValue(this.xStart);
-        const v = !isNaN(s) ? s : this._xAxisObj.getValue(this.chart.options.xStart);
+    private $_getXStart(axis: Axis): number {
+        let s = axis.getValue(this.xStart);
+        const v = !isNaN(s) ? s : axis.getValue(this.chart.options.xStart);
 
-        return this._xAxisObj._zoom ? Math.floor(this._xAxisObj._zoom.start) : v;
+        return axis._zoom ? Math.floor(axis._zoom.start) : v;
     }
 
-    getXStep(): number {
+    private $_getXStep(axis: Axis): number {
         return pickProp(this.xStep, this.chart.options.xStep);
     }
 
@@ -1255,8 +1256,8 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      */
     collectValues(axis: IAxis, vals: number[]): void {
         if (axis === this._xAxisObj) {
-            let x = this.$_getXStart() || 0;
-            let xStep: any = this.getXStep() || 1;
+            let x = this.$_getXStart(axis as Axis) || 0;
+            let xStep: any = this.$_getXStep(axis as Axis) || 1;
 
             if (isString(xStep)) {
                 xStep = xStep.trim();

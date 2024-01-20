@@ -959,19 +959,22 @@ export abstract class ContinuousAxis extends Axis {
                     vals.splice(i, 1);
                 }
             }
-            let min = vals[1] - vals[0];
-    
-            for (let i = 2; i < vals.length; i++) {
-                min = minv(min, vals[i] - vals[i - 1]);
-            }
-    
-            // 이 축에 연결된 clsuterable 시리즈들의 point 최소 간격.
-            length *= min / (this._max - this._min);// + (this._isPolar ? 0 : min));
-    
-            // [주의] polar인 경우 1보다 작을 수 있다.
-            // return maxv(1, pickNum(length, 1));
-            return { len: pickNum(length, 1), min };
+            return this._calcUnitLen(vals, length, this._min, this._max);
         }
+    }
+
+    protected _calcUnitLen(vals: number[], length: number, axisMin: number, axisMax: number): { len: number, min: number } {
+        let min = vals[1] - vals[0];
+    
+        for (let i = 2; i < vals.length; i++) {
+            min = minv(min, vals[i] - vals[i - 1]);
+        }
+
+        length *= min / (axisMax - axisMin);// + (this._isPolar ? 0 : valueGap));
+    
+        // [주의] polar인 경우 1보다 작을 수 있다.
+        // return maxv(1, pickNum(length, 1));
+        return { len: pickNum(length, 1), min };
     }
     
     private $_loadBreak(source: any): AxisBreak {
