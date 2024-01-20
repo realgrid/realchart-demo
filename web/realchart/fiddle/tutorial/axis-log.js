@@ -36,12 +36,15 @@ const config = {
     title: 'Internet Hosts 1981 - 2011',
     xAxis: {
         type: 'time',
+        minPadding: 0,
+        maxPadding: 0,
         label: {
             autoArrange: 'none',
             rotation: -45,
             step: 1,
         },
         tick: {
+            visible: true,
             stepInterval: '1y',
         },
     },

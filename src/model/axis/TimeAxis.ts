@@ -23,6 +23,25 @@ const enum TimeScale {
     YEAR
 };
 
+const equals = function (scale: TimeScale, t1: number, t2: number): boolean {
+    const d1 = new Date(t1);
+    const d2 = new Date(t2);
+
+    if (scale === TimeScale.WEEK) {
+        d1.setHours(0, 0, 0, 0);
+        d2.setHours(0, 0, 0, 0);
+        return d1.setDate(d1.getDate() - d1.getDay()) ===  d2.setDate(d2.getDate() - d2.getDay());
+    }
+    if (d1.getFullYear() !== d2.getFullYear()) return false;
+    if (scale < TimeScale.YEAR && d1.getMonth() !== d2.getMonth()) return false;
+    if (scale < TimeScale.MONTH && d1.getDate() !== d2.getDate()) return false;
+    if (scale < TimeScale.DAY && d1.getHours() !== d2.getHours()) return false;
+    if (scale < TimeScale.HOUR && d1.getMinutes() !== d2.getMinutes()) return false;
+    if (scale < TimeScale.MIN && d1.getSeconds() !== d2.getSeconds()) return false; 
+    if (scale < TimeScale.SEC && d1.getMilliseconds() !== d2.getMilliseconds()) return false; 
+    return true;
+}
+
 // 밀리초 기준 시간 단위별 크기
 const time_scales = [
     1,
@@ -243,6 +262,11 @@ export class TimeAxisTick extends ContinuousAxisTick {
                 t += step;
             } while (t <= max);
         }
+
+        // scale 수준에서 steps[0]이 시리즈들의 min과 동일하면서 숫자값이 적은 경우 axis에서 min을 조정하도록 한다.
+        if (equals(this.scale, (axis as TimeAxis)._calcedMin, steps[0])) {
+            this._steppedMin = steps[0];
+        }
         return steps;
     }
 
@@ -257,34 +281,35 @@ export class TimeAxisTick extends ContinuousAxisTick {
             interval = time_scales[this.scale];
 
             // scale의 첫날 부터 시작되도록 한다.
-            const d = new Date(min += (this.axis as TimeAxis)._offset);
+            let d = new Date(min += (this.axis as TimeAxis)._offset);
 
             switch (this.scale) {
                 case TimeScale.YEAR:
-                    // t.setFullYear(t.getFullYear() + delta);
+                    d.setMonth(0);
+                    d.setDate(1);
                     break;
                 case TimeScale.MONTH:
-                    // t.setMonth(t.getMonth() + delta);
+                    d.setDate(1);
                     break;
                 case TimeScale.WEEK:
                     d.setDate(d.getDate() + (7 - d.getDay() + this.chart.startOfWeek) % 7);
                     break;
                 case TimeScale.DAY:
-                    // t.setDate(t.getDate() + delta);
+                    d = new Date(d.getFullYear(), d.getMonth(), d.getDate());
                     break;
                 case TimeScale.HOUR:
-                    // t.setHours(t.getHours() + delta);
+                    d.setMinutes(0);
                     break;
                 case TimeScale.MIN:
-                    // t.setMinutes(t.getMinutes() + delta);
+                    d.setSeconds(0);
                     break;
                 case TimeScale.SEC:
-                    // t.setSeconds(t.getSeconds() + delta);
+                    d.setMilliseconds(0);
                     break;
                 case TimeScale.MS:
-                    // t.setMilliseconds(t.getMilliseconds() + delta);
                     break;
             }
+
             min = +d;
 
             if (!isNaN(base)) {
@@ -301,9 +326,15 @@ export class TimeAxisTick extends ContinuousAxisTick {
                 while (v < max) {
                     steps.push(v = this.getNextStep(v, 1));
                 }
+            
             }
-            this._step = interval;
+
+            // scale 수준에서 steps[0]이 시리즈들의 min과 동일하면서 숫자값이 적은 경우 axis에서 min을 조정하도록 한다.
+            if (equals(this.scale, steps[0], (this.axis as TimeAxis)._calcedMin)) {
+                this._steppedMin = steps[0];
+            }
     
+            this._step = interval;
             return steps;
         } else {
             return super._getStepsByInterval(interval, base, min, max);

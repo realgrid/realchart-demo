@@ -529,7 +529,7 @@ export class AxisView extends ChartElement<Axis> {
             this._prevMax = m.axisMax();
     
             if (!isNaN(max) && this._prevMax !== max || !isNaN(min) && this._prevMin !== min) {
-                if (m.animatable) {
+                if (!m._zooming && m.animatable) {
                 // if (m.chart.isDataChanged() && m.animatable) {
                     new AxisAnimation(this, min, max, () => {
                         this.invalidate();

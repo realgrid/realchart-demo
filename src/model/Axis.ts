@@ -1081,6 +1081,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     _prevSeries: IPlottingItem[];
     _seriesChanged = false;
     _prevRate: number;
+    _zooming: boolean;
 
     _animating(): boolean {
         return !isNaN(this._prevRate);
@@ -1441,6 +1442,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     afterRender(): void {
         this._seriesChanged = false;
         this._prevSeries = this._series;
+        this._zooming = false;
     }
 
     buildTicks(length: number): void {
@@ -1483,6 +1485,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     resetZoom(): void {
         if (this._zoom) {
             this._zoom = null;
+            this._zooming = true;
             this._changed();
         }
     }
@@ -1505,6 +1508,7 @@ export abstract class Axis extends ChartItem implements IAxis {
         if (zoom.isFull()) {
             this._zoom = null;
         }
+        this._zooming = true;
         this._changed();
         return ret;
     }

@@ -38,6 +38,8 @@ export class ContinuousAxisTick extends AxisTick {
     _step: number;
     _strictEnds = false;
     _strictTicks = false;
+    _steppedMin: number;
+    // _steppedMax: number;
 
     //-------------------------------------------------------------------------
     // properties
@@ -97,6 +99,7 @@ export class ContinuousAxisTick extends AxisTick {
     buildSteps(length: number, base: number, min: number, max: number, broken = false): number[] {
         let pts: number[];
 
+        this._steppedMin = NaN;//this._steppedMax = NaN;
         this._strictTicks = this._strictEnds = false;
         this._step = NaN;
 
@@ -653,9 +656,13 @@ export abstract class ContinuousAxis extends Axis {
         if (!tick._strictTicks) {
             steps = tick._normalizeSteps(steps, min, max);
         }
+        // tick.buildSteps에서 시작 tick이 min보다 작은 값으로 설정된 경우(ex. time)
+        if (tick._steppedMin < min) {
+            min = tick._steppedMin;
+        }
 
         if (!isNaN(this._fixedMin) || !tick._strictEnds && this.getStartFit() !== AxisFit.TICK) {
-            while (steps.length > 1 && min > steps[0]) {
+            while (steps.length > 1 &&  min > steps[0]) {
                 steps.shift();
             }
         } else {
