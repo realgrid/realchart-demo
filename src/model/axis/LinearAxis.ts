@@ -417,7 +417,10 @@ export class AxisBaseLine extends AxisLine {
 }
 
 /**
- * 연속 축 기반.
+ * 연속 축 기반.<br/>
+ * 
+ * 최대한 데이터포인트들을 표시해야 하므로 'bar' 시리즈 등 너비가 있는 것들을 표시하기 위해서
+ * 양 끝에 공간을 추가할 수 있다. // calcPoints() 참조.
  */
 export abstract class ContinuousAxis extends Axis {
 
@@ -711,7 +714,8 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     calcPoints(length: number, phase: number): void {
-        // [주의] measure 중 마지막에 한 번만 실행하도록 한다.
+        // 최대한 데이터포인트들을 표시해야 한다.
+        // [주의] measure 중 마지막에 한 번만 실행하도록 phase에 100 보다 큰 값을 넘겨야 한다.
         if (phase > 100 && this._isX) {
             const unit = this.$_calcUnitLength(this._isPolar ? this.getTotalAngle() : length);
 

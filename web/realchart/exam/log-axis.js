@@ -11,8 +11,8 @@ const config = {
     },
     series: [
         {
-            // xStart: 1000,
-            // xStep: 1000000,
+            xStart: 1000,
+            xStep: 1000,
             // type: 'line',
             name: "column",
             data: [1.9, 2, 4, 8]

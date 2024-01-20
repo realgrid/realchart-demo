@@ -31,19 +31,16 @@ export class LogAxisTick extends ContinuousAxisTick {
     }
 
     protected _getStepMultiples(scale: number): number[] {
-        // 그냥 scale이 사용되게 한다. 아래 _normalizeSteps()에서 정돈될 수 있다.
-        if (scale <= 0.1) { 
-            // return [1 / scale];
-        }
         return [1, 2, 3, 4, 5, 10];
-        // return [1, 2, 3, 4, 5, 6, 7, 8, 9];
     }
 
     /**
      * 소수점을 갖는 step들을 역로그된 값이 최대한 정수가 되게 조정한다.
      */
     _normalizeSteps(steps: number[], min: number, max: number): number[] {
-        if (!this.arrangeDecimals) return  steps;
+        if (!this.arrangeDecimals) return steps;
+
+        const pts: number[] = [];
 
         for (let i = 0; i < steps.length; i++) {
             let v = steps[i];
@@ -52,10 +49,9 @@ export class LogAxisTick extends ContinuousAxisTick {
             if (v > 0 && v > f) {
                 v = f + log10((v - f) * 10);
                 if (v <= max) {
-                    steps[i] = v;
+                    pts.push(v);
                 } else if (i > 0) {
-                    if (steps[i - 1] >= max) {
-                        steps.splice(i, steps.length);
+                    if (pts[i - 1] >= max) {
                         break;
                     } else {
                         const scale = pow10(floor(log10(steps[i] - steps[i - 1])));
@@ -73,12 +69,16 @@ export class LogAxisTick extends ContinuousAxisTick {
                                 }
                             }
                         }
-                        steps[i] = v;
+                        pts.push(v);
                     }
                 }
+            } else if (v <= max) {
+                pts.push(v);
+            } else {
+                break;
             }
         }
-        return steps;
+        return pts;
     }
 }
 
