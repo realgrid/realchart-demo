@@ -10,6 +10,7 @@ const config = {
 	},
 	xAxis: {
         type: 'linear',
+        // padding: 0,
 		title: '년도',
 		grid: true,
 		label: {

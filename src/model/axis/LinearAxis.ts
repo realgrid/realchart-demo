@@ -974,7 +974,7 @@ export abstract class ContinuousAxis extends Axis {
             min = minv(min, vals[i] - vals[i - 1]);
         }
 
-        length *= min / (axisMax - axisMin);// + (this._isPolar ? 0 : valueGap));
+        length *= min / (axisMax - axisMin + min); // 반드시 min을 더해야 한다.
     
         // [주의] polar인 경우 1보다 작을 수 있다.
         // return maxv(1, pickNum(length, 1));

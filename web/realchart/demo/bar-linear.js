@@ -78,6 +78,16 @@ function setActions(container) {
     );
     createCheckBox(
         container,
+        'padding',
+        function (e) {
+            if (_getChecked(e)) delete config.xAxis.padding;
+            else config.xAxis.padding = 0;
+            chart.load(config, animate);
+        },
+        true
+    );
+    createCheckBox(
+        container,
         'Inverted',
         function (e) {
             config.inverted = _getChecked(e);
