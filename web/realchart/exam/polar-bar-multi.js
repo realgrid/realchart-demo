@@ -239,16 +239,6 @@ function setActions(container) {
         },
         true
     );
-    createListBox(
-        container,
-        'layout',
-        ['default', 'overlap', 'stack', 'fill'],
-        function (e) {
-            config.series.layout = _getValue(e);
-            chart.load(config);
-        },
-        '0'
-    );
 }
 
 function init() {

@@ -135,7 +135,7 @@ const config = {
     },
     yAxis: {
         template: 'logAxis',
-        // type: 'log',
+        type: 'log',
         // template: 'linearAxis',
         // type: 'linear',
     },

@@ -136,6 +136,8 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
             const wUnit = xAxis.getUnitLen(totalAngle, p.xValue);
             const wPoint = series.getPointWidth(wUnit);
             let a = polar.start + xAxis.getPos(totalAngle, p.xValue);
+
+            a += series.getPointPos(wUnit);
     
             view.setSector({
                 cx, 
