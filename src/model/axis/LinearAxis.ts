@@ -950,7 +950,7 @@ export abstract class ContinuousAxis extends Axis {
 
         this._series.forEach(ser => {
             // if (ser.visible) {
-            if (ser.visible && ser.clusterable()) {
+            if (ser.visible && ser.isClusterable()) {
                 pts.push(...ser.getVisiblePoints());
             }
         })

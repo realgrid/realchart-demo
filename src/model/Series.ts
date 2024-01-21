@@ -204,7 +204,7 @@ export interface IPlottingItem {
     isEmpty(visibleOnly): boolean;
     canCategorized(): boolean;
     defaultYAxisType(): string;
-    clusterable(): boolean;
+    isClusterable(): boolean;
     getBaseValue(axis: IAxis): number;
     // true면 baseValue로 지정된 값을 continuous axis의 최소/최대값으로 사용할 수 있다.
     isBased(axis: IAxis): boolean;
@@ -1104,7 +1104,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      * 
      * 병렬 배치 가능한가?
      */
-    clusterable(): boolean {
+    isClusterable(): boolean {
         return false;
     }
 
@@ -2010,7 +2010,7 @@ export class PlottingItemCollection  {
             return order1 - order2;
         })
 
-        const nCluster = this._visibleSeries.filter(ser => ser.clusterable()).length;
+        const nCluster = this._visibleSeries.filter(ser => ser.isClusterable()).length;
 
         this._visibleSeries.forEach((ser, i) => {
             if (ser instanceof ClusterableSeries) {
@@ -2297,6 +2297,7 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
     get groupWidth(): number {
         return this.pointWidth;
     }
+    // clusterable: boolean;
     // /**
     //  * 시리즈가 group에 포함되지 않은 경우, 축 단위 너비에서 이 시리즈가 차지하는 상대적 너비.
     //  * 그룹에 포함되면 이 속성은 무시된다.
@@ -2327,6 +2328,12 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
      */
     pointPadding: number;
     minPointWidth: number;
+    /**
+     * 구분 배치가 가능한 둘 이상의 시리즈나 시리즈그룸이 표시 중일 때 구분 배치할 지 여부.<br/>
+     * 명시적 false로 지정하지 않는 한 무리 배치한다. 
+     * 즉, 복수 개의 시리즈나 시리즈그룹의 데이터포인트들이 겹치지 않고 차레대로 표시된다.
+     */
+    clusterable: boolean;
 
     //-------------------------------------------------------------------------
     // methods
@@ -2379,8 +2386,8 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
     //-------------------------------------------------------------------------
     // overriden mebers
     //-------------------------------------------------------------------------
-    clusterable(): boolean {
-        return true;
+    isClusterable(): boolean {
+        return this.clusterable !== false;
     }
 
     setCluster(width: number, pos: number): void {
@@ -2681,7 +2688,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
         return 'linear';
     }
 
-    clusterable(): boolean {
+    isClusterable(): boolean {
         return false;
     }
 
@@ -3064,12 +3071,18 @@ export abstract class ClusterableSeriesGroup<T extends Series> extends SeriesGro
      * 이 그룹의 너비에서 포인트들이 표시되기 전후의 상대적 여백 크기.
      */
     groupPadding = 0.1;
+    /**
+     * 구분 배치가 가능한 둘 이상의 시리즈나 시리즈그룸이 표시 중일 때 구분 배치할 지 여부.<br/>
+     * 명시적 false로 지정하지 않는 한 무리 배치한다. 
+     * 즉, 복수 개의 시리즈나 시리즈그룹의 데이터포인트들이 겹치지 않고 차레대로 표시된다.
+     */
+    clusterable: boolean;
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    clusterable(): boolean {
-        return true;
+    isClusterable(): boolean {
+        return this.clusterable !== false;
     }
 
     setCluster(width: number, pos: number): void {

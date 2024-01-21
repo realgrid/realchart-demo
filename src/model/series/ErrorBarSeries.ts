@@ -54,7 +54,7 @@ export class ErrorBarSeries extends LowRangedSeries {
         return 'errorbar';
     }
 
-    clusterable(): boolean {
+    isClusterable(): boolean {
         return false;
     }
 

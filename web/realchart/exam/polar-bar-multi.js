@@ -134,7 +134,7 @@ const config = {
         },
     },
     yAxis: {
-        template: 'logAxis',
+        // template: 'logAxis',
         // type: 'log',
         // template: 'linearAxis',
         // type: 'linear',
@@ -146,31 +146,25 @@ const config = {
     tooltip: {
         level: 'series',
     },
-    series: {
-        type: 'bargroup',
-        layout: 'default',
-        // layout: 'stack',
-        // layout: 'overlap',
-        children: [
-            {
-                template: 'series',
-                data: ballsData,
-                style: {
-                    stroke: 'none',
-                    fill: '#bbb',
-                },
-                tooltipText: '${name}°: ${y}hits',
+    series: [
+        {
+            template: 'series',
+            data: ballsData,
+            style: {
+                stroke: 'none',
+                fill: '#bbb',
             },
-            {
-                template: 'series',
-                data: hitsData,
-                style: {
-                    stroke: 'none',
-                    fill: 'var(--color-3)',
-                },
+            tooltipText: '${name}°: ${y}hits',
+        },
+        {
+            template: 'series',
+            data: hitsData,
+            style: {
+                stroke: 'none',
+                fill: 'var(--color-3)',
             },
-        ],
-    },
+        },
+    ],
 };
 
 let animate;

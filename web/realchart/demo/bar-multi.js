@@ -27,6 +27,7 @@ const config = {
 	},
 	series: [
 			{
+                // clusterable: false,
 				pointWidth: 2,
 				pointLabel: {
 					visible: true,

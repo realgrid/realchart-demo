@@ -1404,12 +1404,12 @@ export abstract class Axis extends ChartItem implements IAxis {
                     let p = 0;
             
                     series.forEach(item => {
-                        if (item._row == row && item.clusterable()) {
+                        if (item._row == row && item.isClusterable()) {
                             sum += pickNum((item as any as IClusterable).groupWidth, 1);
                         }
                     });
                     series.forEach(item => {
-                        if (item._row == row && item.clusterable()) {
+                        if (item._row == row && item.isClusterable()) {
                             const w = pickNum((item as any as IClusterable).groupWidth, 1) / sum;
             
                             (item as any as IClusterable).setCluster(w, p);
@@ -1423,12 +1423,12 @@ export abstract class Axis extends ChartItem implements IAxis {
                 let p = 0;
         
                 series.forEach(item => {
-                    if (item.clusterable()) {
+                    if (item.isClusterable()) {
                         sum += pickNum((item as any as IClusterable).groupWidth, 1);
                     }
                 });
                 series.forEach(item => {
-                    if (item.clusterable()) {
+                    if (item.isClusterable()) {
                         const w = pickNum((item as any as IClusterable).groupWidth, 1) / sum;
         
                         (item as any as IClusterable).setCluster(w, p);
