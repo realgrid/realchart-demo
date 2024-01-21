@@ -262,11 +262,6 @@ export class TimeAxisTick extends ContinuousAxisTick {
                 t += step;
             } while (t <= max);
         }
-
-        // scale 수준에서 steps[0]이 시리즈들의 min과 동일하면서 숫자값이 적은 경우 axis에서 min을 조정하도록 한다.
-        if (equals(this.scale, (axis as TimeAxis)._calcedMin, steps[0])) {
-            this._steppedMin = steps[0];
-        }
         return steps;
     }
 
@@ -281,7 +276,7 @@ export class TimeAxisTick extends ContinuousAxisTick {
             interval = time_scales[this.scale];
 
             // scale의 첫날 부터 시작되도록 한다.
-            let d = new Date(min += (this.axis as TimeAxis)._offset);
+            let d = new Date(min);
 
             switch (this.scale) {
                 case TimeScale.YEAR:
@@ -328,14 +323,9 @@ export class TimeAxisTick extends ContinuousAxisTick {
                 }
             
             }
-
-            // scale 수준에서 steps[0]이 시리즈들의 min과 동일하면서 숫자값이 적은 경우 axis에서 min을 조정하도록 한다.
-            if (equals(this.scale, steps[0], (this.axis as TimeAxis)._calcedMin)) {
-                this._steppedMin = steps[0];
-            }
-    
             this._step = interval;
             return steps;
+
         } else {
             return super._getStepsByInterval(interval, base, min, max);
         }
@@ -542,7 +532,8 @@ export class TimeAxis extends ContinuousAxis {
 
     getValue(value: any): number {
         if (isNumber(value)) {  
-            return value + this._offset;
+            // return value + this._offset;
+            return value;
         } else if (value instanceof Date) {
             return value.getTime();
         } else if (isString(value)) {
