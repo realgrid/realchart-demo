@@ -132,7 +132,7 @@ export class ContinuousAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     canUseNumSymbols(): boolean {
         // steps로 지정한 경우 nan이다.
-        return isNaN(this._step) || this._step >= 1000;
+        return isNaN(this._step) || this._step >= 500;
     }
 
     //-------------------------------------------------------------------------
@@ -669,7 +669,7 @@ export abstract class ContinuousAxis extends Axis {
                     }
                 }
             }
-            min = steps[0];
+            min = Math.min(min, steps[0]);
         }
         if (!isNaN(this.strictMax) || !tick._strictEnds && this.getEndFit() !== AxisFit.TICK) {
             while (max < steps[steps.length - 1] && steps.length > 1) {
@@ -686,7 +686,7 @@ export abstract class ContinuousAxis extends Axis {
                     }
                 }
             }
-            max = steps[steps.length - 1];
+            max = Math.max(max, steps[steps.length - 1]);
         }
 
         this._setMinMax(min, max);

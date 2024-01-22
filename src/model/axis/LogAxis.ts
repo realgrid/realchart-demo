@@ -27,11 +27,15 @@ export class LogAxisTick extends ContinuousAxisTick {
     // overriden members
     //-------------------------------------------------------------------------
     canUseNumSymbols(): boolean {
-        return this.axis.axisMax() > 3;
+        return this.axis.axisMax() > log10(500);
     }
 
     protected _getStepMultiples(scale: number): number[] {
-        return [1, 2, 3, 4, 5, 10];
+        console.log(scale);
+        // return [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        // return [1, 2, 3, 4, 5, 10];
+        return [1, 2, 5, 10];
+        // return [1, 2, 4];
     }
 
     /**
@@ -41,12 +45,23 @@ export class LogAxisTick extends ContinuousAxisTick {
         if (!this.arrangeDecimals) return steps;
 
         const pts: number[] = [];
+        let gap = max - min;
 
         for (let i = 0; i < steps.length; i++) {
             let v = steps[i];
             let f = floor(v);
 
-            if (v > 0 && v > f) {
+            if (v === f) {
+                let v2 = pts[pts.length - 1];
+                if (i > 1 && v - v2 < gap) {
+                    v2 = Math.pow(10, v2);
+                    // 간격 좁고 정수가 아니면 뺀다.
+                    if (floor(v2) !== fixnum(v2)) {
+                        pts.pop();
+                    }
+                }
+                pts.push(v);
+            } else  if (v > 0 && v > f) {
                 v = f + log10((v - f) * 10);
                 if (v <= max) {
                     pts.push(v);
@@ -63,7 +78,7 @@ export class LogAxisTick extends ContinuousAxisTick {
                                 if (v3 > log10(j) && v3 < log10(j + 1)) {
                                     const v4 = floor(v2) + log10(j);
                                     if (v4 >= max) {
-                                        v = v3;
+                                        v = v4;
                                         break;
                                     }
                                 }
@@ -72,10 +87,13 @@ export class LogAxisTick extends ContinuousAxisTick {
                         pts.push(v);
                     }
                 }
-            } else if (v <= max) {
+            } else if (i > 0 && v <= max && v > pts[pts.length - 1]) {
                 pts.push(v);
-            } else {
+            } else if (v > max) {
                 break;
+            }
+            if (i > 0) {
+                gap = Math.min(0.5, gap, pts[pts.length - 1] - pts[pts.length - 2]);
             }
         }
         return pts;
