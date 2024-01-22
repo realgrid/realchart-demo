@@ -41,11 +41,12 @@ class StickView extends RangeElement implements IPointView {
         const len = p.yValue - p.lowValue;
         const x = 0;
         let y = 0;
-        const yOpen = y + h - h * (minv(p.openValue, p.closeValue) - p.lowValue) / len;
-        const yClose = y + h - h * (maxv(p.openValue, p.closeValue) - p.lowValue) / len;
+        const yOpen = y + h - h * (len === 0 ? 1 : (minv(p.openValue, p.closeValue) - p.lowValue) / len);
+        const yClose = y + h - h * (len === 0 ? 1 : (maxv(p.openValue, p.closeValue) - p.lowValue) / len);
         const yBox = minv(yClose, yOpen);
         const hBox = maxv(1, absv(yOpen - yClose));
         const decline = p.close < p.open;
+
 
         this.x = this.tx + x; // savePrevs()에서 사용한다.
 

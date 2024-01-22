@@ -674,7 +674,7 @@ export abstract class ContinuousAxis extends Axis {
         }
 
         if (!isNaN(this._fixedMin) || !tick._strictEnds && this.getStartFit() !== AxisFit.TICK) {
-            while (steps.length > 1 &&  min > steps[0]) {
+            while (steps.length > 0 &&  min > steps[0]) {
                 steps.shift();
             }
         } else {
@@ -688,10 +688,11 @@ export abstract class ContinuousAxis extends Axis {
                     }
                 }
             }
-            min = Math.min(min, steps[0]);
+            min = Math.min(min, steps[0]); 
         }
+
         if (!isNaN(this.strictMax) || !tick._strictEnds && this.getEndFit() !== AxisFit.TICK) {
-            while (max < steps[steps.length - 1] && steps.length > 1) {
+            while (max < steps[steps.length - 1] && steps.length > 0) {
                 steps.pop();
             }
         } else {
@@ -706,6 +707,10 @@ export abstract class ContinuousAxis extends Axis {
                 }
             }
             max = Math.max(max, steps[steps.length - 1]);
+        }
+
+        if (steps.length === 0) {
+            steps.push(min + (max - min) / 2);
         }
 
         this._setMinMax(min, max);
@@ -987,17 +992,21 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     protected _calcUnitLen(vals: number[], length: number, axisMin: number, axisMax: number): { len: number, min: number } {
-        let min = vals[1] - vals[0];
+        if (vals.length < 2) {
+            return { len: length, min: vals[0] || 0 }
+        } else {
+            let min = vals[1] - vals[0];
     
-        for (let i = 2; i < vals.length; i++) {
-            min = minv(min, vals[i] - vals[i - 1]);
+            for (let i = 2; i < vals.length; i++) {
+                min = minv(min, vals[i] - vals[i - 1]);
+            }
+    
+            length *= min / (axisMax - axisMin + min); // 반드시 min을 더해야 한다.
+        
+            // [주의] polar인 경우 1보다 작을 수 있다.
+            // return maxv(1, pickNum(length, 1));
+            return { len: pickNum(length, 1), min };
         }
-
-        length *= min / (axisMax - axisMin + min); // 반드시 min을 더해야 한다.
-    
-        // [주의] polar인 경우 1보다 작을 수 있다.
-        // return maxv(1, pickNum(length, 1));
-        return { len: pickNum(length, 1), min };
     }
     
     private $_loadBreak(source: any): AxisBreak {
