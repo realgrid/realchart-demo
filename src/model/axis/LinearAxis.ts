@@ -453,6 +453,7 @@ export abstract class ContinuousAxis extends Axis {
     _fixedMin: number;
     _fixedMax: number;
 
+    private _visPoints: DataPoint[];
     private _runBreaks: AxisBreak[];
     private _sects: IAxisBreakSect[];
     private _lastSect: IAxisBreakSect;
@@ -644,6 +645,15 @@ export abstract class ContinuousAxis extends Axis {
     protected _doPrepareRender(): void {
         this._baseVal = parseFloat(this.baseValue as any);
         (this.tick as ContinuousAxisTick)._findBaseAxis();
+
+        const pts: DataPoint[] = this._visPoints = [];
+
+        this._series.forEach(ser => {
+            // if (ser.visible) {
+            if (ser.visible && ser.isClusterable()) {
+                pts.push(...ser.getVisiblePoints());
+            }
+        })
     }
 
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
@@ -666,51 +676,57 @@ export abstract class ContinuousAxis extends Axis {
             max = tick._baseAxis.axisMax();
         }
 
-        let steps = tick.buildSteps(length, baseVal, min, max, false);
+        let steps: number[];
+        
+        if (this._isX && this._visPoints.length === 1) {
+            steps = [min = max = this._visPoints[0].xValue];
+        } else {
+            steps = tick.buildSteps(length, baseVal, min, max, false);
 
-        if (steps.length > 0) {
-            if (!tick._strictTicks) {
-                steps = tick._normalizeSteps(steps, min, max);
-            }
-    
-            if (!isNaN(this._fixedMin) || !tick._strictEnds && this.getStartFit() !== AxisFit.TICK) {
-                while (steps.length > 2 &&  steps[0] < min) {
-                    steps.shift();
+            if (steps.length > 0) {
+                if (!tick._strictTicks) {
+                    steps = tick._normalizeSteps(steps, min, max);
                 }
-            } else {
-                if (!tick._strictEnds && !based) {
-                    while (steps.length > 2 && steps[1] <= min) {
+        
+                if (!isNaN(this._fixedMin) || !tick._strictEnds && this.getStartFit() !== AxisFit.TICK) {
+                    while (steps.length > 2 &&  steps[0] < min) {
                         steps.shift();
                     }
-                    if (!isNaN(tick._step)) {
-                        while (steps[0] > min) {
-                            steps.unshift(tick.getNextStep(steps[0], -1));
+                } else {
+                    if (!tick._strictEnds && !based) {
+                        while (steps.length > 2 && steps[1] <= min) {
+                            steps.shift();
+                        }
+                        if (!isNaN(tick._step)) {
+                            while (steps[0] > min) {
+                                steps.unshift(tick.getNextStep(steps[0], -1));
+                            }
                         }
                     }
                 }
-            }
-            min = Math.min(min, steps[0]); 
-    
-            if (!isNaN(this.strictMax) || !tick._strictEnds && this.getEndFit() !== AxisFit.TICK) {
-                while (steps.length > 2 && max < steps[steps.length - 1]) {
-                    steps.pop();
-                }
-            } else {
-                if (!tick._strictEnds && !based) {
-                    while (steps.length > 2 && steps[steps.length - 2] >= max) {
+                min = Math.min(min, steps[0]); 
+        
+                if (!isNaN(this.strictMax) || !tick._strictEnds && this.getEndFit() !== AxisFit.TICK) {
+                    while (steps.length > 2 && max < steps[steps.length - 1]) {
                         steps.pop();
                     }
-                    if (!isNaN(tick._step)) {
-                        while (steps[steps.length - 1] < max) {
-                            steps.push(tick.getNextStep(steps[steps.length - 1], 1));
+                } else {
+                    if (!tick._strictEnds && !based) {
+                        while (steps.length > 2 && steps[steps.length - 2] >= max) {
+                            steps.pop();
+                        }
+                        if (!isNaN(tick._step)) {
+                            while (steps[steps.length - 1] < max) {
+                                steps.push(tick.getNextStep(steps[steps.length - 1], 1));
+                            }
                         }
                     }
                 }
-            }
-            max = Math.max(max, steps[steps.length - 1]);
+                max = Math.max(max, steps[steps.length - 1]);
 
-        } else { // steps.length === 0
-            steps.push(min + (max - min) / 2);
+            } else { // steps.length === 0
+                steps.push(min + (max - min) / 2);
+            }
         }
 
         this._setMinMax(min, max);
@@ -743,19 +759,22 @@ export abstract class ContinuousAxis extends Axis {
         // 최대한 데이터포인트들을 표시해야 한다.
         // [주의] measure 중 마지막에 한 번만 실행하도록 phase에 100 보다 큰 값을 넘겨야 한다.
         if (phase > 100 && this._isX) {
-            const unit = this.$_calcUnitLength(this._isPolar ? this.getTotalAngle() : length);
+            if (this._visPoints.length === 1) {
+                this._unitLen = length / 4;
+            } else {
+                const unit = this.$_calcUnitLength(this._isPolar ? this.getTotalAngle() : length);
 
-            if (unit) {
-                this._unitLen = unit.len;
-                
-                // 선형 축에 너비가 필요한 시리즈가 있는 경우, 양 끝이 넘치지 않도록 조종한다. #485, #472
-                if (!this._isPolar) {
-                    this._min -= unit.min / 2;
-                    this._max += unit.min / 2;
+                if (unit) {
+                    this._unitLen = unit.len;
+                    
+                    // 선형 축에 너비가 필요한 시리즈가 있는 경우, 양 끝이 넘치지 않도록 조종한다. #485, #472
+                    if (!this._isPolar) {
+                        this._min -= unit.min / 2;
+                        this._max += unit.min / 2;
+                    }
                 }
             }
         }
-
         super.calcPoints(length, phase);
 
         this._markPoints = this._ticks.map(t => t.pos);
@@ -972,14 +991,7 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     protected $_calcUnitLength(length: number): { len: number, min: number } {
-        const pts: DataPoint[] = [];
-
-        this._series.forEach(ser => {
-            // if (ser.visible) {
-            if (ser.visible && ser.isClusterable()) {
-                pts.push(...ser.getVisiblePoints());
-            }
-        })
+        const pts = this._visPoints;
 
         if (pts.length > 0) {
             const isX = this._isX; // TODO: x일 때만 필요한 것 아닌가?
@@ -989,6 +1001,7 @@ export abstract class ContinuousAxis extends Axis {
                     vals.splice(i, 1);
                 }
             }
+            this._visPoints = _undef;
             return this._calcUnitLen(vals, length, this._min, this._max);
         }
     }

@@ -532,12 +532,11 @@ export class TimeAxis extends ContinuousAxis {
 
     getValue(value: any): number {
         if (isNumber(value)) {  
-            // return value + this._offset;
             return value;
         } else if (value instanceof Date) {
-            return value.getTime();
+            return value.getTime() + this._offset;
         } else if (isString(value)) {
-            return new Date(value).getTime();
+            return new Date(value).getTime() + this._offset;
         }
     }
 

@@ -7,6 +7,16 @@ const stockData = [
         closeprc: 82900,
         trdamnt: 18676461,
     },
+];
+const stockData2 = [
+    {
+        date: '2021-04-01',
+        openprc: 82500,
+        highprc: 83000,
+        lowprc: 82000,
+        closeprc: 82900,
+        trdamnt: 18676461,
+    },
     {
         date: '2021-04-02',
         openprc: 84000,
