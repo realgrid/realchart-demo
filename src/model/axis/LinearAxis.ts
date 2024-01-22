@@ -667,53 +667,55 @@ export abstract class ContinuousAxis extends Axis {
         }
 
         let steps = tick.buildSteps(length, baseVal, min, max, false);
-        const ticks: IAxisTick[] = [];
 
-        if (!tick._strictTicks) {
-            steps = tick._normalizeSteps(steps, min, max);
-        }
-
-        if (!isNaN(this._fixedMin) || !tick._strictEnds && this.getStartFit() !== AxisFit.TICK) {
-            while (steps.length > 0 &&  min > steps[0]) {
-                steps.shift();
+        if (steps.length > 0) {
+            if (!tick._strictTicks) {
+                steps = tick._normalizeSteps(steps, min, max);
             }
-        } else {
-            if (!tick._strictEnds && !based) {
-                while (steps.length > 2 && steps[1] <= min) {
+    
+            if (!isNaN(this._fixedMin) || !tick._strictEnds && this.getStartFit() !== AxisFit.TICK) {
+                while (steps.length > 2 &&  steps[0] < min) {
                     steps.shift();
                 }
-                if (!isNaN(tick._step)) {
-                    while (steps[0] > min) {
-                        steps.unshift(tick.getNextStep(steps[0], -1));
+            } else {
+                if (!tick._strictEnds && !based) {
+                    while (steps.length > 2 && steps[1] <= min) {
+                        steps.shift();
+                    }
+                    if (!isNaN(tick._step)) {
+                        while (steps[0] > min) {
+                            steps.unshift(tick.getNextStep(steps[0], -1));
+                        }
                     }
                 }
             }
             min = Math.min(min, steps[0]); 
-        }
-
-        if (!isNaN(this.strictMax) || !tick._strictEnds && this.getEndFit() !== AxisFit.TICK) {
-            while (max < steps[steps.length - 1] && steps.length > 0) {
-                steps.pop();
-            }
-        } else {
-            if (!tick._strictEnds && !based) {
-                while (steps.length > 2 && steps[steps.length - 2] >= max) {
+    
+            if (!isNaN(this.strictMax) || !tick._strictEnds && this.getEndFit() !== AxisFit.TICK) {
+                while (steps.length > 2 && max < steps[steps.length - 1]) {
                     steps.pop();
                 }
-                if (!isNaN(tick._step)) {
-                    while (steps[steps.length - 1] < max) {
-                        steps.push(tick.getNextStep(steps[steps.length - 1], 1));
+            } else {
+                if (!tick._strictEnds && !based) {
+                    while (steps.length > 2 && steps[steps.length - 2] >= max) {
+                        steps.pop();
+                    }
+                    if (!isNaN(tick._step)) {
+                        while (steps[steps.length - 1] < max) {
+                            steps.push(tick.getNextStep(steps[steps.length - 1], 1));
+                        }
                     }
                 }
             }
             max = Math.max(max, steps[steps.length - 1]);
-        }
 
-        if (steps.length === 0) {
+        } else { // steps.length === 0
             steps.push(min + (max - min) / 2);
         }
 
         this._setMinMax(min, max);
+
+        const ticks: IAxisTick[] = [];
 
         // if (min !== max) {
             if (this._runBreaks) {
@@ -993,7 +995,7 @@ export abstract class ContinuousAxis extends Axis {
 
     protected _calcUnitLen(vals: number[], length: number, axisMin: number, axisMax: number): { len: number, min: number } {
         if (vals.length < 2) {
-            return { len: length, min: vals[0] || 0 }
+            return { len: length, min: 0 }
         } else {
             let min = vals[1] - vals[0];
     

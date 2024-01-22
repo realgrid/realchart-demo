@@ -287,13 +287,7 @@ export class TimeAxisTick extends ContinuousAxisTick {
                     d.setDate(1);
                     break;
                 case TimeScale.WEEK:
-                    if (d.getDay() !== this.chart.startOfWeek) {
-                        const d2 = new Date(d);
-                        d.setDate(d.getDate() + (7 - d.getDay() + this.chart.startOfWeek) % 7);
-                        if (+d >= max) {
-                            d = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
-                        }
-                    }
+                    d.setDate(d.getDate() - d.getDay() + this.chart.startOfWeek);
                     break;
                 case TimeScale.DAY:
                     d = new Date(d.getFullYear(), d.getMonth(), d.getDate());
