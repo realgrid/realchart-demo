@@ -86,10 +86,12 @@ const parseOptionsByConfig = (
 
 export function RealChartReact({
   config,
+  tool,
   showEditor,
   autoUpdate,
 }: {
   config: RealChartConfig;
+  tool: unknown;
   showEditor: boolean;
   autoUpdate: boolean;
 }) {
@@ -102,12 +104,12 @@ export function RealChartReact({
 
   const { inverted, polar, xReversed, yReversed } =
     parseOptionsByConfig(config);
+
   const [invertedChecked, setInvertedChecked] = useState(inverted);
   const [xReversedChecked, setXReversedChecked] = useState(xReversed);
   const [yReversedChecked, setYReversedChecked] = useState(yReversed);
   const [polarChecked, setPolarChecked] = useState(polar);
   const [intervalId, setIntervalId] = useState();
-
 
   useEffect(() => {
     return () => {
@@ -179,8 +181,8 @@ export function RealChartReact({
     applyChart({ polar: checked });
   };
 
-  const _height = code["height"];
-  const _width = code["width"];
+  const _height = tool && tool["height"];
+  const _width = tool && tool["width"];
 
   const height = _height
     ? typeof _height === "number"
@@ -203,8 +205,8 @@ export function RealChartReact({
 
   const isSplit = config["split"]?.visible || config["split"] === true;
 
-  const sliders = code["actions"]?.filter((m) => m.type == "slider");
-  const inputs = code["actions"]?.filter((m) => m.type != "slider");
+  const sliders = tool["actions"]?.filter((m) => m.type == "slider");
+  const inputs = tool["actions"]?.filter((m) => m.type != "slider");
   return (
     <Panel
       title={`RealChart ${version}`}
@@ -223,7 +225,7 @@ export function RealChartReact({
       {sliders?.map((action, idx) => {
         const { min, max, step, label, value } = action;
         const onSliderChanged = (value) => {
-          action.action && action.action({ value });
+          action.action && action.action({ tool, config, value });
         };
         // const marks = [min, max].map((v) => {
         //   return { value: v, label: v.toString() };
@@ -262,7 +264,7 @@ export function RealChartReact({
                   label={label}
                   defaultChecked={value}
                   onChange={(event) => {
-                    action.action({ value: event.currentTarget.checked });
+                    action.action({ tool, config, value: event.currentTarget.checked });
                   }}
                 />
               );
@@ -295,7 +297,7 @@ export function RealChartReact({
                     defaultValue={value || data[0]}
                     size={"xs"}
                     onChange={(value) => {
-                      action.action({ value });
+                      action.action({ tool, config, value });
                     }}
                   />
                 </Flex>
@@ -321,14 +323,13 @@ export function RealChartReact({
             onChange={onChangeYReversed}
           />
           {
-            code["polar"] && 
-            <Checkbox
-              style={isSplit ? { display: "none" } : {}}
-              label="Polar"
-              checked={polarChecked}
-              onChange={onChangePolar}
-            />
-
+            inputs?.some(i => i.type == 'config.polar') &&
+              <Checkbox
+                style={isSplit ? { display: "none" } : {}}
+                label="Polar"
+                checked={polarChecked}
+                onChange={onChangePolar}
+              />
           }
         </div>
 
