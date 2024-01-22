@@ -6,8 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, pickNum, pickNum3, assign, ceil, floor, log10, maxv, minv } from "../../common/Common";
-import { IPercentSize, RtPercentSize, assert, calcPercent, fixnum, fixpos, parsePercentSize } from "../../common/Types";
+import { isArray, isObject, pickNum, pickNum3, assign, ceil, floor, log10, maxv, minv, isFunc } from "../../common/Common";
+import { IPercentSize, RtPercentSize, _undef, assert, calcPercent, fixnum, fixpos, parsePercentSize } from "../../common/Types";
 import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick, AxisGrid, AxisLine } from "../Axis";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
@@ -27,6 +27,12 @@ export class ContinuousAxisGrid extends AxisGrid {
             return axis._ticks.map(tick => axis.getPos(length, tick.value));
         }
     }
+}
+
+export interface IStepCallbackArgs {
+    length: number;
+    minValue: number;
+    maxValue: number;
 }
 
 export class ContinuousAxisTick extends AxisTick {
@@ -56,13 +62,22 @@ export class ContinuousAxisTick extends AxisTick {
     stepPixels = 72;
     stepCount: number;
     /**
-     * 명시적으로 설정하는 스텝 목록<br/>
+     * 명시적으로 설정하는 setp 목록<br/>
+     * 양 끝을 NaN으로 지정하면 계산된 min/max로 설정된다.
+     * 이 목록이 설정되면 스텝 설정과 관련된 다른 속성들은 무시된다.<b/>
+     * {@link stepCallback}이 지정되면 이 속성은 무시된다.
+     * 
+     * @config
+     */
+    steps: number[];
+    /**
+     * 명시적 step 목록을 리턴하는 callback<br/>
      * 양 끝을 NaN으로 지정하면 계산된 min/max로 설정된다.
      * 이 목록이 설정되면 스텝 설정과 관련된 다른 속성들은 무시된다.
      * 
      * @config
      */
-    steps: number[];
+    stepCallback: (args: IStepCallbackArgs) => (number | Date)[];
     /**
      * tick 개수를 맞춰야 하는 대상 axis.<br/>
      * base의 strictMin, strictMax가 설정되지 않아야 한다.
@@ -102,9 +117,13 @@ export class ContinuousAxisTick extends AxisTick {
 
         if (broken) {
             pts = this._getStepsByPixels(length, pickNum(this.stepPixels * 0.85, 60), base, min, max);
-        } else if (Array.isArray(this.steps)) {
-            // 지정한 위치대로 tick들을 생성한다.
-            pts = this.steps.slice(0);
+        } else if (isArray(this.steps) || isFunc(this.stepCallback)) {
+            if (this.stepCallback) {
+                pts = this.stepCallback.call(_undef, { length, minValue: min, maxValue: max });
+            } else {
+                // 지정한 위치대로 tick들을 생성한다.
+                pts = this.steps.slice(0);
+            }
             if (pts.length > 0 && isNaN(pts[0])) pts[0] = min;
             if (pts.length > 1 && isNaN(pts[pts.length - 1])) pts[pts.length - 1] = max;
             this._strictTicks = this._strictEnds = true;
