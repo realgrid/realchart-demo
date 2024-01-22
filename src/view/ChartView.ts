@@ -1194,11 +1194,12 @@ export class ChartView extends LayerElement {
         this._tooltipView.close(true, false);
     }
 
-    showTooltip(series: Series, point: DataPoint, body: RcElement, p: IPoint): void {
+    showTooltip(series: Series, point: DataPoint, body: BodyView, p: IPoint): void {
         const {x, y} = point.getTooltipPos();
         const isFollowPointer =  this._model.chart.tooltip.followPointer;
-        const tx = isFollowPointer ? p.x + body.tx : x + body.tx;
-        const ty = isFollowPointer ? p.y + body.ty : y + body.ty;
+        const bp = body.getTooltipPos();
+        const tx = isFollowPointer ? p.x + bp.x : x + bp.x;
+        const ty = isFollowPointer ? p.y + bp.y : y + bp.y;
 
         this._tooltipView.show(series, point, tx, ty, true);
     }

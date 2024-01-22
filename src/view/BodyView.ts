@@ -1087,6 +1087,10 @@ export class BodyView extends ChartElement<Body> {
         return ani;
     }
 
+    getTooltipPos(): IPoint {
+        return {x: this.tx, y: this.ty};
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

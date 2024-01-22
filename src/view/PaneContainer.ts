@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { maxv } from "../common/Common";
+import { IPoint } from "../common/Point";
 import { LayerElement, RcControl } from "../common/RcControl";
 import { ISize } from "../common/Size";
 import { _undef } from "../common/Types";
@@ -325,6 +326,10 @@ export class PaneBodyView extends BodyView {
         this._prepareGauges(doc, chart, gauges);
         this._prepareAnnotations(doc, body.getAnnotations());
     }
+
+    getTooltipPos(): IPoint {
+        return {x: this.parent.parent.tx + this.tx, y: this.parent.parent.ty + this.ty};
+    }
 }
 
 export class PaneContainer extends LayerElement {
@@ -626,6 +631,7 @@ export class PaneContainer extends LayerElement {
 
                     view.measure(this.doc, model.getPane(r, c).body, x2 - x1, y2 - y1, 1);
                     view.resize(x2 - x1, y2 - y1);
+                    
                     view.trans(x1, this.height - y2);
                     view.layout();
                 }
