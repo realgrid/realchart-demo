@@ -453,7 +453,6 @@ export abstract class ContinuousAxis extends Axis {
     _fixedMin: number;
     _fixedMax: number;
 
-    private _visPoints: DataPoint[];
     private _runBreaks: AxisBreak[];
     private _sects: IAxisBreakSect[];
     private _lastSect: IAxisBreakSect;
@@ -645,15 +644,6 @@ export abstract class ContinuousAxis extends Axis {
     protected _doPrepareRender(): void {
         this._baseVal = parseFloat(this.baseValue as any);
         (this.tick as ContinuousAxisTick)._findBaseAxis();
-
-        const pts: DataPoint[] = this._visPoints = [];
-
-        this._series.forEach(ser => {
-            // if (ser.visible) {
-            if (ser.visible && ser.isClusterable()) {
-                pts.push(...ser.getVisiblePoints());
-            }
-        })
     }
 
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
@@ -678,8 +668,8 @@ export abstract class ContinuousAxis extends Axis {
 
         let steps: number[];
         
-        if (this._isX && this._visPoints.length === 1) {
-            steps = [min = max = this._visPoints[0].xValue];
+        if (min === max) {
+            steps = [min];
         } else {
             steps = tick.buildSteps(length, baseVal, min, max, false);
 
@@ -759,7 +749,7 @@ export abstract class ContinuousAxis extends Axis {
         // 최대한 데이터포인트들을 표시해야 한다.
         // [주의] measure 중 마지막에 한 번만 실행하도록 phase에 100 보다 큰 값을 넘겨야 한다.
         if (phase > 100 && this._isX) {
-            if (this._visPoints.length === 1) {
+            if (this._min === this._max) {
                 this._unitLen = length / 4;
             } else {
                 const unit = this.$_calcUnitLength(this._isPolar ? this.getTotalAngle() : length);
@@ -975,6 +965,8 @@ export abstract class ContinuousAxis extends Axis {
             }
         }
 
+        // 데이터포인트가 하나이고, min/max나 strictMin/Max가 설정되지 않은 경우 
+        // padding이나 base는 무시되고, 축 중앙에 포인트 하나만 표시된다.
         let len = maxv(0, max - min);
         let min2 = min - len * (this._minPad = minPad);
         let max2 = max + len * (this._maxPad = maxPad);
@@ -991,7 +983,14 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     protected $_calcUnitLength(length: number): { len: number, min: number } {
-        const pts = this._visPoints;
+        const pts: DataPoint[] = [];
+
+        this._series.forEach(ser => {
+            // if (ser.visible) {
+            if (ser.visible && ser.isClusterable()) {
+                pts.push(...ser.getVisiblePoints());
+            }
+        })
 
         if (pts.length > 0) {
             const isX = this._isX; // TODO: x일 때만 필요한 것 아닌가?
@@ -1001,14 +1000,19 @@ export abstract class ContinuousAxis extends Axis {
                     vals.splice(i, 1);
                 }
             }
-            this._visPoints = _undef;
             return this._calcUnitLen(vals, length, this._min, this._max);
         }
     }
 
     protected _calcUnitLen(vals: number[], length: number, axisMin: number, axisMax: number): { len: number, min: number } {
         if (vals.length < 2) {
-            return { len: length, min: 0 }
+            if (this._ticks.length > 0) {
+                const min = (axisMax - axisMin) / this._ticks.length;
+                length *= min / (axisMax - axisMin + min);
+                return { len: pickNum(length, 1), min };
+            } else {
+                return { len: length, min: 0 }
+            }
         } else {
             let min = vals[1] - vals[0];
     
