@@ -44,7 +44,7 @@ const config: DocsThemeConfig = {
   banner: {
     key: "0.9.38-release",
     text: (
-      <a href="/guide/release/v0.9.38">🎉 RealChart 0.9.38 is released. Read more →</a>
+      <a href="/guide/release/v0.9.39">🎉 RealChart 0.9.39 is released. Read more →</a>
     ),
   },
   editLink: {

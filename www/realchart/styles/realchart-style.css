@@ -401,6 +401,9 @@
     fill: #aaa !important;
     stroke: #aaa !important;
 }
+.rct-legend-item-marker[data-hidden] path[data-fill] {
+    fill: #aaa !important;
+}
 
 /** plot area */
 .rct-body-background {
