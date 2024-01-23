@@ -23,3 +23,4 @@ export const config = {
   },
   tooltip: { timeFormat: 'yyyy-MM-dd HH:mm' }
 }
+export const tool = false

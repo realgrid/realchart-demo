@@ -1,30 +1,4 @@
 export const config = {
-  actions: [
-    {
-      type: 'select',
-      label: 'Legend.location',
-      data: [ 'bottom', 'top', 'right', 'left' ],
-      action: ({ value }) => { config.legend.location = value; chart.load(config); }
-    },
-    {
-      type: 'slider',
-      label: 'Total Angle',
-      min: 0,
-      max: 360,
-      step: 1,
-      value: 180,
-      action: ({ value }) => { config.series.totalAngle = value; chart.load(config); }
-    },
-    {
-      type: 'slider',
-      label: 'Start Angle',
-      min: 0,
-      max: 360,
-      value: 270,
-      step: 1,
-      action: ({ value }) => { config.series.startAngle = value; chart.load(config); }
-    }
-  ],
   title: {
     text: 'Number of Mobile Users in the World (Users In Millions)',
     alignBase: 'chart'
@@ -61,4 +35,32 @@ export const config = {
       { name: 'Redmi', y: 53 }
     ]
   }
+}
+export const tool = {
+  actions: [
+    {
+      type: 'select',
+      label: 'Legend.location',
+      data: [ 'bottom', 'top', 'right', 'left' ],
+      action: ({ value }) => { config.legend.location = value; chart.load(config); }
+    },
+    {
+      type: 'slider',
+      label: 'Total Angle',
+      min: 0,
+      max: 360,
+      step: 1,
+      value: 180,
+      action: ({ value }) => { config.series.totalAngle = value; chart.load(config); }
+    },
+    {
+      type: 'slider',
+      label: 'Start Angle',
+      min: 0,
+      max: 360,
+      value: 270,
+      step: 1,
+      action: ({ value }) => { config.series.startAngle = value; chart.load(config); }
+    }
+  ]
 }

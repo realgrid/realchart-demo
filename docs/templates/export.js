@@ -107,3 +107,4 @@ export const config = {
   ChartTextEffect: { autoContrast: true },
   seriesNavigator: { visible: true }
 }
+export const tool = false

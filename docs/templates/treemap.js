@@ -114,3 +114,4 @@ export const config = {
     style: {}
   }
 }
+export const tool = false

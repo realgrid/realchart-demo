@@ -32,3 +32,4 @@ export const config = {
     }
   ]
 }
+export const tool = false

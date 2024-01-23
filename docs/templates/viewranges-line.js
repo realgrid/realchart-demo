@@ -34,3 +34,4 @@ export const config = {
   tooltip: false,
   ChartTextEffect: { autoContrast: false }
 }
+export const tool = false

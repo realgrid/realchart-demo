@@ -1,6 +1,4 @@
 export const config = {
-  width: 600,
-  height: 1200,
   templates: {
     yAxis: { grid: false, label: false, strictMax: 520000 },
     series: {
@@ -696,3 +694,4 @@ export const config = {
     }
   ]
 }
+export const tool = { width: 600, height: 1200 }

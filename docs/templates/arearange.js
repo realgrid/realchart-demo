@@ -29,3 +29,4 @@ export const config = {
   ],
   tooltip: { followPointer: true }
 }
+export const tool = false

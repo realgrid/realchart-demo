@@ -272,3 +272,4 @@ export const config = {
     { template: 'line', name: '기타', yField: '기타' }
   ]
 }
+export const tool = false

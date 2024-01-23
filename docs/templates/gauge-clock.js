@@ -3,3 +3,4 @@ export const config = {
   title: 'Clock Gauge',
   gauge: { type: 'clock', name: 'clock1', secondHand: {}, label: {} }
 }
+export const tool = false

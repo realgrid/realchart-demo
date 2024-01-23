@@ -28,3 +28,4 @@ export const config = {
     style: { fill: 'url(#gradient-1)' }
   }
 }
+export const tool = false

@@ -1548,3 +1548,4 @@ export const config = {
   },
   seriesNavigator: { visible: true, series: { type: 'bar' }, xAxis: { label: false } }
 }
+export const tool = false

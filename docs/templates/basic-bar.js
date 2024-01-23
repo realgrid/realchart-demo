@@ -1,17 +1,4 @@
 export const config = {
-  actions: [
-    {
-      type: 'select',
-      label: 'Palette',
-      data: [
-        'default', 'warm',
-        'cool',    'forest',
-        'gray',    'vintage',
-        'unicorn'
-      ],
-      action: ({ value }) => { config.options.palette = value; chart.load(config); }
-    }
-  ],
   type: 'bar',
   title: '월별 매출 현황 분석',
   subtitle: '1월부터 12월까지의 매출 변화 추적',
@@ -41,6 +28,21 @@ export const config = {
         [ 120 ],  [ 130 ],
         [ 140 ],  [ 160 ]
       ]
+    }
+  ]
+}
+export const tool = {
+  actions: [
+    {
+      type: 'select',
+      label: 'Palette',
+      data: [
+        'default', 'warm',
+        'cool',    'forest',
+        'gray',    'vintage',
+        'unicorn'
+      ],
+      action: ({ config, value }) => { config.options.palette = value; chart.load(config); }
     }
   ]
 }

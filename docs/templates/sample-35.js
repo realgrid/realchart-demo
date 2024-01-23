@@ -1,14 +1,4 @@
 export const config = {
-  params: {
-    updateDisplay: () => { let temperature, usage, ramUsage; const temperatureValue = chart.getGauge("temperature").get("value"); const usageValue = chart.getGauge("usage").get("value"); const ramUsageValue = chart.getGauge("ramUsage").get("value"); const randomValue = Math.random() < 0.5 ? -1 : 1; temperature = temperatureValue + randomValue * (Math.random() * 5); usage = usageValue + randomValue * (Math.random() * 5); ramUsage = ramUsageValue + randomValue * (Math.random() * 2); chart.getGauge("temperature").set("value", Math.round(temperature)); chart.getGauge("usage").set("value", usage); chart.getGauge("ramUsage").set("value", ramUsage);}
-  },
-  actions: [
-    {
-      type: 'button',
-      label: '데이터 업데이트',
-      action: () => { let intervalId = setInterval(config.params.updateDisplay, 1000); return intervalId; }
-    }
-  ],
   templates: {
     gauge: {
       width: '28%',
@@ -92,6 +82,15 @@ export const config = {
           '      <t style="font-size:20px;font-weight:normal">RAM Usage Rate</t>\n' +
           '      '
       }
+    }
+  ]
+}
+export const tool = {
+  actions: [
+    {
+      type: 'button',
+      label: '데이터 업데이트',
+      action: () => { function updateDisplay() { let temperature, usage, ramUsage; const temperatureValue = chart .getGauge('temperature') .get('value'); const usageValue = chart.getGauge('usage').get('value'); const ramUsageValue = chart .getGauge('ramUsage') .get('value'); const randomValue = Math.random() < 0.5 ? -1 : 1; temperature = temperatureValue + randomValue * (Math.random() * 5); usage = usageValue + randomValue * (Math.random() * 5); ramUsage = ramUsageValue + randomValue * (Math.random() * 2); chart .getGauge('temperature') .set('value', Math.round(temperature)); chart.getGauge('usage').set('value', usage); chart.getGauge('ramUsage').set('value', ramUsage); } let intervalId = setInterval(updateDisplay, 1000); return intervalId; }
     }
   ]
 }

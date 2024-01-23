@@ -32,3 +32,4 @@ export const config = {
   ],
   legend: {}
 }
+export const tool = false

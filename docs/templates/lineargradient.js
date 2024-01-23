@@ -27,3 +27,4 @@ export const config = {
     style: { fill: 'url(#gradient-1)', fillOpacity: 1, strokeWidth: '2px' }
   }
 }
+export const tool = false

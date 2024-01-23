@@ -1,14 +1,4 @@
 export const config = {
-  height: 600,
-  actions: [
-    {
-      label: 'yAxis.type',
-      type: 'select',
-      data: [ 'linear', 'log' ],
-      value: 'log',
-      action: ({ value }) => { config.yAxis.type = value; config.yAxis.template = `${value}Axis`; chart.load(config); }
-    }
-  ],
   polar: true,
   templates: {
     series: {
@@ -145,4 +135,17 @@ export const config = {
       }
     ]
   }
+}
+export const tool = {
+  height: 600,
+  actions: [
+    {
+      label: 'yAxis.type',
+      type: 'select',
+      data: [ 'linear', 'log' ],
+      value: 'log',
+      action: ({ config, value }) => { config.yAxis.type = value; config.yAxis.template = `${value}Axis`; chart.load(config); }
+    },
+    { type: 'config.polar' }
+  ]
 }

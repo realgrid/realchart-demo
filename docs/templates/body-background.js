@@ -135,3 +135,4 @@ export const config = {
     style: { stroke: 'red' }
   }
 }
+export const tool = false

@@ -19,3 +19,4 @@ export const config = {
     marker: { style: {} }
   }
 }
+export const tool = false
