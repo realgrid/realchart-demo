@@ -1,31 +1,34 @@
 /**
  * @demo
- * 
+ *
  */
 
-const stockData = data.sort((a, b) => a.date > b.date).filter(r => r.date >= '2021-04-01')
-const config = {
+const stockData = data
+    .sort((a, b) => a.date > b.date)
+    .filter((r) => r.date >= '2021-04-01');
+const tool = {
     actions: [
         {
             type: 'check',
             label: 'Use StyleCallback',
-            action: ({value}) => {
+            action: ({ config, value }) => {
                 config.series.template = value ? 'series' : '';
                 chart.load(config);
-            }
-        }
+            },
+        },
     ],
+};
+const config = {
     title: {
         text: 'Multiple Candlestick',
         align: 'left',
         style: {
             fill: '#666',
             fontWeight: 700,
-        }
+        },
     },
     templates: {
-        series: {
-        }
+        series: {},
     },
     options: {
         credits: false,
@@ -33,7 +36,7 @@ const config = {
     body: {
         style: {
             // fill: '#F7F5F5'
-        }
+        },
     },
     annotations: [
         {
@@ -43,8 +46,8 @@ const config = {
             style: {
                 fontSize: '16pt',
                 fontWeight: 700,
-                fill: '#000'
-            }
+                fill: '#000',
+            },
         },
         {
             offsetX: 355,
@@ -53,9 +56,9 @@ const config = {
             style: {
                 fontSize: '12pt',
                 fontWeight: 700,
-                fill: 'var(--color-3)'
-            }
-        }
+                fill: 'var(--color-3)',
+            },
+        },
     ],
     xAxis: {
         type: 'time',
@@ -67,70 +70,97 @@ const config = {
             visible: true,
             // step: 10,
             // timeFormat: 'M, yyyy',
-            textCallback: ({value}) => {
+            textCallback: ({ value }) => {
                 const d = new Date(value);
-                return d.toLocaleDateString('en-us', { day: 'numeric', month: 'short', year: 'numeric' });
-            }
-        }
+                return d.toLocaleDateString('en-us', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                });
+            },
+        },
     },
     yAxis: {
         tick: {
             stepInterval: 1000,
-        }
+        },
         // position: 'opposite'
     },
-    series: [{
-        // pointStyleCallback: args => {return { fill: 'red', stroke: 'red'}},
-        template: '',
-        tooltipText: '<b>종가: ${close}</b>',
-        padding: 1,
-        pointPadding: 0.1,
-        type: 'candlestick',
-        pointLabel: !true,
-        xField: 'date',
-        openField: 'openprc',
-        highField: 'highprc',
-        lowField: 'lowprc',
-        closeField: 'closeprc',
-        data: stockData,
-    }, {
-        template: '',
-        tooltipText: '<b>종가: ${close}</b>',
-        padding: 1,
-        pointPadding: 0.1,
-        type: 'candlestick',
-        pointLabel: !true,
-        xField: 'date',
-        openField: 'openprc',
-        highField: 'highprc',
-        lowField: 'lowprc',
-        closeField: 'closeprc',
-        data: stockData,
-    }]
-}
+    series: [
+        {
+            // pointStyleCallback: args => {return { fill: 'red', stroke: 'red'}},
+            template: '',
+            tooltipText: '<b>종가: ${close}</b>',
+            padding: 1,
+            pointPadding: 0.1,
+            type: 'candlestick',
+            pointLabel: !true,
+            xField: 'date',
+            openField: 'openprc',
+            highField: 'highprc',
+            lowField: 'lowprc',
+            closeField: 'closeprc',
+            data: stockData,
+        },
+        {
+            template: '',
+            tooltipText: '<b>종가: ${close}</b>',
+            padding: 1,
+            pointPadding: 0.1,
+            type: 'candlestick',
+            pointLabel: !true,
+            xField: 'date',
+            openField: 'openprc',
+            highField: 'highprc',
+            lowField: 'lowprc',
+            closeField: 'closeprc',
+            data: stockData,
+        },
+    ],
+};
 
 let chart;
 
 function setActions(container) {
-    createCheckBox(container, 'Debug', function (e) {
-        RealChart.setDebugging(_getChecked(e));
-        chart.render();
-    }, false);
-    createButton(container, 'Test', function(e) {
+    createCheckBox(
+        container,
+        'Debug',
+        function (e) {
+            RealChart.setDebugging(_getChecked(e));
+            chart.render();
+        },
+        false
+    );
+    createButton(container, 'Test', function (e) {
         alert('hello');
     });
-    createCheckBox(container, 'Inverted', function (e) {
-        config.inverted = _getChecked(e);
-        chart.load(config);
-    }, false);
-    createCheckBox(container, 'X Reversed', function (e) {
-        config.xAxis.reversed = _getChecked(e);
-        chart.load(config);
-    }, false);
-    createCheckBox(container, 'Y Reversed', function (e) {
-        config.yAxis.reversed = _getChecked(e);
-        chart.load(config);
-    }, false);
+    createCheckBox(
+        container,
+        'Inverted',
+        function (e) {
+            config.inverted = _getChecked(e);
+            chart.load(config);
+        },
+        false
+    );
+    createCheckBox(
+        container,
+        'X Reversed',
+        function (e) {
+            config.xAxis.reversed = _getChecked(e);
+            chart.load(config);
+        },
+        false
+    );
+    createCheckBox(
+        container,
+        'Y Reversed',
+        function (e) {
+            config.yAxis.reversed = _getChecked(e);
+            chart.load(config);
+        },
+        false
+    );
 }
 
 function init() {
@@ -139,5 +169,5 @@ function init() {
     RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
-    setActions('actions')
+    setActions('actions');
 }
