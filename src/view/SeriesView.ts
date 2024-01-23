@@ -999,6 +999,11 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 const yGroup = (yAxis.getPos(yLen, p.yGroup) - yBase - yVal) * gr;
                 const hPoint = yVal * gr;
                 let x = xAxis.getPos(xLen, p.xValue) - wUnit / 2;
+                if (isNaN(x)) {
+                    debugger;
+                    const wUnit2 = xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad);
+                    x = xAxis.getPos(xLen, p.xValue) - wUnit2 / 2;
+                }
                 let y = yOrg - yAxis.getPos(yLen, p.yGroup) * gr;
 
                 if (!isNaN(pr + pv.wSave)) {

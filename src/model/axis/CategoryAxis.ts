@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isObject, minv, pickNum, pickNum3, pickProp } from "../../common/Common";
+import { isArray, isNumber, isObject, maxv, minv, pickNum, pickNum3, pickProp } from "../../common/Common";
 import { DEG_RAD, PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { Axis, AxisGrid, AxisTick, AxisLabel, IAxisTick } from "../Axis";
@@ -85,8 +85,16 @@ class CategoryAxisGrid extends AxisGrid {
         const pts: number[] = [];
 
         if (n > 0) {
-            for (let i = 0; i <= n; i++) {
-                pts.push(apts[i + 1]);
+            const step = Math.max(1, (this.axis.tick as CategoryAxisTick).step || 1);
+
+            if (step > 1) {
+                for (let i = 0, j = 1, len = apts.length; i <= n && j < len; i++, j += step) {
+                    pts.push(apts[j]);
+                }
+            } else {
+                for (let i = 0; i <= n; i++) {
+                    pts.push(apts[i + 1]);
+                }
             }
         }
         return pts;
@@ -95,17 +103,21 @@ class CategoryAxisGrid extends AxisGrid {
 
 /**
  * 지정된 카테고리 개수로 축을 분할해서 각 카테고리에 연결된 데이터포인트들이 표시되게 한다.<br/>
- * 카테고리 하나가 1의 너비를 갖는다.
+ * 카테고리 하나가 1의 축 값(너비)을 갖는다.
  * 주로 x축으로 사용되며, 선형(linear)축과 달리 축을 분할한 각 카테고리는 서로 격리되어 있으며, 
- * 기본적으로 개별 카테고리의 너비(간격)나 카테고리들 사이의 순서는 의미가 없다.<br/>
- * // 선형 축들은 값이 연속돼야 한다. 중간에 빈 값들도 자리를 차지한다.
+ * 기본적으로 개별 카테고리의 너비(간격)나 카테고리들 사이의 순서는 의미가 없다. 
+ * 즉, 카테고리가 위치한 축 값(숫자)이 data로서는 별 의미가 없는 경우에 사용한다.
+ * 축 상에 데이터포인트가 존재하지 않는 영역이 존재하게 된다면 선형 축을 고려해야 한다.
+ * (데이터포인트가 없은 영역을 자동으로 없애지는 않는다.)<br/>
+ * 반대로, 선형(linear, time, log) 축들은 축 값이 의미있는 data이므로, 
+ * 축 값은 연속되고 데이터포인트가 없는 영역 또한 그 자체로 의미가 있다.<br/>
  * // TODO: 그렇기 때문에, 카테고리를 정렬(sort)할 수 있다. (ex. 첫번째 시리즈 y값을 기준으로...). 필터링?
  * 또, 축 label에 카테고리를 대표하는 이름을 표시할 필요한 경우 먼저 카테고리 축을 고려해야 한다.
  * 
  * //1. categories 속성으로 카테고리 목록을 구성한다.
  * //2. 이 축에 연결된 시리즈들에 포함된 data point들의 문자열인 값들, 혹은 categoryField에 해당하는 값들을 수집한다.
  * //   수집된 category들 중 숫자가 아닌 것들은 {@link startValue}부터 시작해서 {@link valueStep} 속성에 지정된 값씩 차례대로 증가한 값을 갖게된다.
- * //3. 각 카테고리 영역의 크기는 {@link categoryStep} 설정값에 따라 기본적으로 동일하게 배분되고, 
+ * //3. 각 카테고리 영역의 크기는 기본적으로 동일하게 배분되고, 
  * //   카테고리 영역 중간점이 카테고리 값의 위치가 된다.
  * //   {@link categories} 속성으로 카테고리를 지정할 때, 상대적 크기를 width로 지정해서 각 카테고리의 값을 다르게 표시할 수 있다.
  * //4. tick mark나 label은 기본적으로 카테고리 값 위치(카테고리 중앙)에 표시된다.
@@ -131,7 +143,9 @@ export class CategoryAxis extends Axis {
     private _catPad = 0;
     private _catMin: number;
     private _catMax: number;
+    private _catLen: number;
     _pts: number[];
+    _tstep = 1;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -189,10 +203,6 @@ export class CategoryAxis extends Axis {
      * // TODO: 구현할 것! (시리즈가 아니라 여기서 지정한 게 맞나?)
      */
     wieghtField: number | string;
-    // /** 
-    //  * 카테고리 하나의 값 크기.
-    //  */
-    // categoryStep = 1;
     /**
      * 축의 양 끝 카테고리 위치 전후에 여백으로 추가되는 크기.<br/>
      * 각각 시작/끝 카테고리에 대한 상대적 크기로 지정한다.
@@ -239,15 +249,6 @@ export class CategoryAxis extends Axis {
     getCategories(): string[] {
         return this._cats;
     }
-
-    getCategory(index: number): string {
-        return this._cats[index];
-    }
-
-    // categoryOf(cat: string): any {
-    //     const i = this._map[cat];
-    //     return i >= 0 ? this._categories[i] : '';
-    // }
 
     xValueAt(pos: number): number {
         for (let i = 2; i < this._pts.length - 1; i++) {
@@ -327,57 +328,59 @@ export class CategoryAxis extends Axis {
 
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
         const label = this.label as CategoryAxisLabel;
-        let cats = this._categories.map(cat => cat.c);
+        let cats = this._cats = this._categories.map(cat => cat.c);
         let weights = this._weights = this._categories.map(cat => cat.w);
         const steps = (this.tick as CategoryAxisTick).step || 1;
         const ticks: IAxisTick[] = [];
         const minSave = min;
         const maxSave = max;
 
-        min = this._catMin = Math.floor(min + 0.5);
-        max = this._catMax = Math.ceil(max - 0.5);
+        min = this._catMin = Math.floor(min + 0.5); // 최소 카테고리 값.
+        max = this._catMax = Math.ceil(max - 0.5);  // 최대 카테고리 값.
 
-        let len = max - min + 1;
+        let len = this._catLen = max - min + 1;
+
+        this._tstep = Math.max(1, Math.min(len, (this.tick as CategoryAxisTick).step || 1));
 
         for (let i = -1; i >= min; i--) {
             cats.unshift(String(i));
             weights.unshift(1);
         }
-        while (cats.length < len) {
-            cats.push(String(cats.length + min));
-            weights.push(1);
-        }
-
-        cats = this._cats = cats.slice(0, len);
-        weights = weights.slice(0, len);
+        // while (cats.length < len) {
+        //     cats.push(String(cats.length + min));
+        //     weights.push(1);
+        // }
 
         len = this._len = this._minPad + this._maxPad + weights.reduce((a, c) => a + c, 0);
+        len += this._catLen - cats.length;
+
+        weights.length = cats.length = this._catLen;
+
+        const pts = this._pts = [];
 
         if (len > 0) {
-            // const step = this._step = this.categoryStep || 1;
-            const pts = this._pts = [0];
             let p = this._minPad;
 
-            for (let i = min; i <= max; i++) {// += step) {
+            pts.push(0);
+
+            for (let i = min; i <= max; i++) { 
                 pts.push(p / len);
-                p += weights[i - min];// step
+                p += weights[i - min] || 1;
             }
             pts.push(p / len);
             pts.push((p + this._maxPad) / len);
+        }
 
-            for (let i = 1; i < pts.length - 2; i += steps) {
-                const v = min + i - 1;
-                const c = this._categories[min + i - 1];
+        for (let i = 1; i < pts.length - 2; i += steps) {
+            const v = min + i - 1;
+            const c = this._categories[min + i - 1];
 
-                ticks.push({
-                    index: i - 1,
-                    pos: NaN,
-                    value: v,
-                    label: label.getTick(i - 1, c ? c.t : cats[i - 1]),
-                });
-            }
-        } else {
-            this._pts = [];
+            ticks.push({
+                index: i - 1,
+                pos: NaN,
+                value: v,
+                label: label.getTick(i - 1, c ? c.t : v),
+            });
         }
 
         this._setMinMax(minSave, maxSave);
@@ -445,7 +448,11 @@ export class CategoryAxis extends Axis {
     getUnitLen(length: number, value: number): number {
         const v = Math.floor(value - this._catMin + 0.5);
 
-        return (this._pts[v + 2] - this._pts[v + 1]);
+        if (v > this._tstep) {
+            return this._pts[v + 2] - this._pts[v + 2 - this._tstep];
+        } else {
+            return this._pts[v + 2 + this._tstep - 1] - this._pts[v + 2 - 1];
+        }
     }
 
     getValue(value: any): number {

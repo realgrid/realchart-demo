@@ -6,7 +6,6 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { GroupElement } from "./impl/GroupElement";
 import { RcElement } from "./RcControl";
 import { RcObject } from "./RcObject";
 
@@ -86,6 +85,16 @@ export class ElementPool<T extends RcElement> extends RcObject {
         return this._views.slice();
     }
 
+    pull(index: number): T {
+        let v = this._views[index];
+        if (!v) {
+            v = this._pool.pop() || new this._creator(this._owner.doc, this._styleName);
+            this._owner.add(v);
+            this._views.push(v);
+        }
+        return v;
+    }
+
     _internalItems(): T[] {
         return this._views;
     }
@@ -122,12 +131,12 @@ export class ElementPool<T extends RcElement> extends RcObject {
         if (!v) {
             v = new this._creator(doc, this._styleName);
         }
-        this._owner.add(v);
         return v;
     }
 
     prepare(count: number, visitor?: Visitor<T>, initor?: Visitor<T>): ElementPool<T> {
         const doc = this._owner.doc;
+        const owner = this._owner;
         const pool = this._pool;
         const views = this._views;
 
@@ -144,8 +153,10 @@ export class ElementPool<T extends RcElement> extends RcObject {
 
         while (views.length < count) {
             const v = this.$_create(doc);
+
             views.push(v);
             initor?.(v, views.length - 1, count);
+            owner.add(v);
         }
 
         visitor && this.forEach(visitor);
@@ -190,8 +201,10 @@ export class ElementPool<T extends RcElement> extends RcObject {
     //             if (!v.parent) this._owner.add(v);
     //         } else {
     //             const v = this.$_create(doc, i, cnt);
+    //
     //             views.push(v);
     //             initor?.(v, i, cnt);
+    //             this._owner.add(v); 
     //         }
     //     }
     
@@ -244,6 +257,20 @@ export class ElementPool<T extends RcElement> extends RcObject {
         elements = elements || this._views;
         for (let i = elements.length - 1; i >= 0; i--) {
             this.free(elements[i], removeDelay);
+        }
+    }
+
+    freeHiddens(): void {
+        const views = this._views;
+        for (let i = views.length - 1; i >= 0; i--) {
+            !views[i].visible && this.free(views[i], 0);
+        }
+    }
+
+    freeFrom(from: number): void {
+        const views = this._views;
+        for (let i = views.length - 1; i >= from; i--) {
+            this.free(views[i], 0);
         }
     }
 
