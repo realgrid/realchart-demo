@@ -3,9 +3,7 @@
  *
  */
 const tool = {
-    actions: {
-        type: 'config.polar',
-    },
+    actions: [{ type: 'config.polar' }],
 };
 const config = {
     polar: true,

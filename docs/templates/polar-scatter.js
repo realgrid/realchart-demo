@@ -4015,4 +4015,4 @@ export const config = {
     }
   ]
 }
-export const tool = { actions: { type: 'config.polar' } }
+export const tool = { actions: [ { type: 'config.polar' } ] }

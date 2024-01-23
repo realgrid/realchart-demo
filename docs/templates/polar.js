@@ -18,4 +18,4 @@ export const config = {
     }
   ]
 }
-export const tool = false
+export const tool = { actions: [ { type: 'config.polar' } ] }
