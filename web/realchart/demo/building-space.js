@@ -16,6 +16,7 @@ const buildingData = data.map((r) => {
         }</t>`;
     return r;
 });
+console.log(data.length);
 
 const tool = {
     width: 600,
@@ -113,6 +114,7 @@ const config = {
             label: {
                 visible: true,
                 step: 1,
+                // autoArrange: 'none',
                 style: {
                     fill: '#333',
                     fontWeight: 500,
