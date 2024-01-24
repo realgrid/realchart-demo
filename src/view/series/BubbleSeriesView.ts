@@ -82,6 +82,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
         const inverted = this._inverted;
         const needClip = series.needClip(false);
         const gr = this._getGrowRate();
+        const rotation = +series.rotation || 0;
         const labels = series.pointLabel;
         const labelPos = labels.position;
         const labelOff = labels.getOffset();
@@ -95,6 +96,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
         const len = zAxis._vlen;
         const {min, max} = series.getPixelMinMax(len);
         const yOrg = inverted ? 0 : height;
+        const drawer = this._getDrawer(series.shape);
         let labelView: PointLabelView;
 
         this._markers.forEach((mv, i) => {
@@ -126,8 +128,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
                 p.yPos = y;
     
                 if (mv.setVis(!needClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
-                    path = SvgShapes.circle(0, 0, sz);
-                    mv.setPath(path).trans(x, y);
+                    mv.setPath(drawer(sz)).trans(x, y).rotate(rotation);
     
                     if (lv) {
                         labelView.setContrast(mv.dom);

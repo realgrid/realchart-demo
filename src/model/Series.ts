@@ -3104,4 +3104,16 @@ export abstract class MarkerSeries extends Series {
      * @config
      */
     shape: Shape;
+    /**
+     * 데이터포인트 {@link shape 도형} 회전 각도.<br/>
+     * 
+     * @config
+     */
+    rotation: number;
+    /**
+     * 데이터포인트 별로 다른 색상으로 그린다.<br/>
+     * 
+     * @config
+     */
+    colorByPoint = false;
 }

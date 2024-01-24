@@ -61,12 +61,25 @@ export class ScatterSeries extends MarkerSeries {
     // properties
     //-------------------------------------------------------------------------
     /**
+     * 시리즈 데이터포인트들의 **x** 위치에 추가되는 무작위 변화 값.<br/>
+     * 동일하거나 유사한 값의 여러 데이터 포인트가 있는 경우 
+     * 포인트 간의 중첩을 방지하고 데이터의 분포를 더 명확하게 나타내기 위해 사용된다.<br/>
      * https://thomasleeper.com/Rcourse/Tutorials/jitter.html
+     * 
+     * @config
      */
     jitterX = 0;
+    /**
+     * 시리즈 데이터포인트들의 **y** 위치에 추가되는 무작위 변화 값.<br/>
+     * 동일하거나 유사한 값의 여러 데이터 포인트가 있는 경우 
+     * 포인트 간의 중첩을 방지하고 데이터의 분포를 더 명확하게 나타내기 위해 사용된다.<br/>
+     * https://thomasleeper.com/Rcourse/Tutorials/jitter.html
+     * 
+     * @config
+     */
     jitterY = 0;
     /**
-     * {@link shape}의 반지름.
+     * 데이터포인트 {@link shape 도형}의 반지름.
      * 
      * @config
      */
@@ -85,6 +98,10 @@ export class ScatterSeries extends MarkerSeries {
 
     protected _createLegendMarker(doc: Document, size: number): RcElement {
         return new ShapeLegendMarkerView(doc, size);
+    }
+
+    _colorByPoint(): boolean {
+        return this.colorByPoint;
     }
 
     /**

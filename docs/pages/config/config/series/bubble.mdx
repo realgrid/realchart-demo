@@ -31,6 +31,9 @@ x, y로 지정되는 위치와 z로 지정되는 크기 사이의 관계를 표�
 숫자로 지정하면 정수로 변환된 값에 해당하는 팔레트 색상으로 설정된다.
 <Content type="expression" value="'var(--color-n)'"></Content>으로 지정한 것과 동일하며, 1 ~ 12 사이의 값으로 지정한다.<br/> [pointColors](#pointcolors) 나 [pointStyleCallback](#pointstylecallback) 으로 설정된 색상이 이 속성으로 설정한 색상보다 우선한다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
+### colorByPoint: `boolean{:js}`[#colorByPoint]
+데이터포인트 별로 다른 색상으로 그린다.<br/>  
+<DefaultValue value="false" contents=""></DefaultValue>
 ### colorField: `string{:js}`[#colorField]
 <Content type="keyword" value="undefined"></Content>이면, data point의 값이 객체일 때 <Content type="expression" value="'color'"></Content>.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
@@ -42,6 +45,12 @@ x, y로 지정되는 위치와 z로 지정되는 크기 사이의 관계를 표�
 레전드나 툴팁에서 시리즈를 대표한다.
 이 속성이 지정되지 않으면 [name](#name) 이 사용된다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
+### maxSize: `string | number{:js}`[#maxSize]
+버블 최대 크기.  
+<DefaultValue value="'20%'" contents=""></DefaultValue>
+### minSize: `string | number{:js}`[#minSize]
+버블 최소 크기.  
+<DefaultValue value="8" contents=""></DefaultValue>
 ### name: `string{:js}`[#name]
 시리즈 이름.<br/>
 시리즈 생성시 지정된 후 변경할 수 없다.
@@ -86,6 +95,9 @@ group에 포함되면 group의 noClip 설정을 따른다.
 ### pointStyleCallback[#pointStyleCallback]
 데이터 point의 동적 스타일 콜백.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
+### rotation: `number{:js}`[#rotation]
+데이터포인트 [shape](/config/config/series/bubble#shape) 회전 각도.<br/>  
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### row: `number{:js}`[#row]
 분할 모드일 때 시리즈가 표시될 pane의 수직 index.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
@@ -99,6 +111,11 @@ group에 포함되면 group의 noClip 설정을 따른다.
 - `'triangle'` 삼각형
 
 <DefaultValue value="undefined" contents=""></DefaultValue>
+### sizeMode[#sizeMode]
+버블 크기를 결정하는 방식.  
+
+
+<DefaultValue value="BubbleSizeMode.AREA" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 - `SVGStyles{:js}` 
