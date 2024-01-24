@@ -21,15 +21,18 @@ test.describe("xAxis, time test", () => {
   let config: any = {
     title: "Boundary",
     xAxis: {
-      type: "log",
+      type: "time",
       title: {
         visible: true,
       },
     },
+    yAxis: {
+      type: 'log'
+    },
     series: [
       {
         name: "column1",
-        data: [1, 2, 3, 4],
+        data: [1, 100, 10000, 1000000],
       },
     ],
   };
@@ -52,18 +55,23 @@ test.describe("xAxis, time test", () => {
       return labels.map((e) => e.textContent);
     }, labels);
 
+    // ms text
     const expectTexts = ['00:00', '001', '002', '003']
 
+    // xAxis labels
     expect(labelTexts).is.deep.equal(expectTexts);
+
   });
 
 
-  test("path", async ({ page }) => {
+  test("tick and path", async ({ page }) => {
     const container = await page.$("#realchart");
 
     await page.evaluate((newConfig) => {
+      newConfig.xAxis.tick = true;
       chart.load(newConfig, false);
     }, config);
+    await PWTester.sleep();
     const xAxis = await PWTester.getAxis(page, "x");
     const ticks = await xAxis.$$(".rct-axis-tick");
 
@@ -79,6 +87,9 @@ test.describe("xAxis, time test", () => {
       expect(Number(path?.split(" ")[1])).is.greaterThan(0);
     }
   }); 
+
+  /** @TODO: yValues */
+  // test("log yValues", async ({ page }) => {})
 
   test.describe("title", () => {
     test.beforeEach(async ({ page }) => {

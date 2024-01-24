@@ -33,12 +33,9 @@ test.describe('line-multi.html test', async function () {
 		expect(markers.length > 0).is.true;
 
 		const config: any = await page.evaluate('config');
-		const data = [];
+		const data: any = await page.evaluate('data');
 
-		for (let i = 0; i < config.series.length; i++) {
-			data.push(...config.series[i].data);
-		}
-		expect(data.length).eq(markers.length);
+		expect(data.length * config.series.length).eq(markers.length);
 
 		// await page.screenshot({path: 'out/ss/line-multi.png'});
 		page.close();
@@ -115,7 +112,7 @@ test.describe('line-multi.html test', async function () {
 	test('grid', async ({ page }) => {
 		const config = await page.evaluate('config');
 
-		const grid = await page.$('.rct-grids');
+		const grid = await page.$('.rct-axis-grids');
 		expect(grid).exist;
 
 		const axisGrid = await page.$('.rct-axis-grid');
@@ -123,7 +120,7 @@ test.describe('line-multi.html test', async function () {
 	});
 
 	test('dataPoint', async ({ page }) => {
-		const config: any = await page.evaluate('config');
+		const data: any = await page.evaluate('data');
 
 		const dataPoints = await page.$$('.rct-series-points');
 		expect(dataPoints).exist;
@@ -131,7 +128,7 @@ test.describe('line-multi.html test', async function () {
 		for (let i = 0; i < dataPoints.length; i++) {
 			const rctPoint = dataPoints[i];
 			const point = await rctPoint.$$('.' + SeriesView.POINT_CLASS);
-			expect(point.length).eq(config.series[i].data.length);
+			expect(point.length).eq(data.length);
 		}
 	});
 });

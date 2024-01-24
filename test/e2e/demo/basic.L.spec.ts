@@ -74,7 +74,7 @@ test.describe("basic.html test", () => {
     expect(labels).to.exist;
 
     // grids
-    const grids = await page.$(".rct-grids");
+    const grids = await page.$(".rct-axis-grids");
     expect(grids).to.exist;
 
     // credits
@@ -206,7 +206,7 @@ test.describe("basic.html test", () => {
   test("plot", async ({ page }) => {
     const chartView = await page.$(".rct-chart");
     const body = await page.$(`.${BodyView.BODY_CLASS}`);
-    const grids = await page.$(".rct-grids");
+    const grids = await page.$(".rct-axis-grids");
     const axisGrids = await page.$$(".rct-axis-grid");
     const barSeries = await page.$(".rct-series-container .rct-bar-series");
     const labelContainer = await page.$(".rct-label-container");
@@ -241,7 +241,7 @@ test.describe("basic.html test", () => {
       expect(gridChildCount).is.equal(1);
     }
 
-    // rct-grids
+    // rct-axis-grids
     const xTicks = await xAxis.$(`.rct-axis-ticks`);
     const yTicks = await yAxis.$(`.rct-axis-ticks`);
 

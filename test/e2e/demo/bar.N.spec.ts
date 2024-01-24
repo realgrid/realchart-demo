@@ -235,7 +235,7 @@ test.describe('bar.html test', async function () {
 			
 	});
 
-	test('xlabel', async ({ page }) => {
+	test('x.Label', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
 		const xAxis = await PWTester.getAxis(page, 'x');
@@ -271,7 +271,7 @@ test.describe('bar.html test', async function () {
 	});
 
 	test('grid', async ({ page }) => {
-		const grid = await page.$('.rct-grids');
+		const grid = await page.$('.rct-axis-grids');
 		expect(grid).exist;
 
 		const axisGrid = await page.$('.rct-axis-grid');

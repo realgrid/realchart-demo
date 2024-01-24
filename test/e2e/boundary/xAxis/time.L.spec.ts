@@ -62,8 +62,10 @@ test.describe("xAxis, time test", () => {
     const container = await page.$("#realchart");
 
     await page.evaluate((newConfig) => {
+      newConfig.xAxis.tick = true;
       chart.load(newConfig, false);
     }, config);
+    PWTester.sleep();
     const xAxis = await PWTester.getAxis(page, "x");
     const ticks = await xAxis.$$(".rct-axis-tick");
 

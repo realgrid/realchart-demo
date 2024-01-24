@@ -45,7 +45,7 @@ test.describe('candlestick.html test', async function () {
 		expect(title).exist;
 
 		const titleText = await page.evaluate((el) => el.textContent, title);
-		expect(titleText).eq(config.title);
+		expect(titleText).eq(config.title.text);
 	});
 
 	test('xTitle', async ({ page }) => {
@@ -106,9 +106,9 @@ test.describe('candlestick.html test', async function () {
 
 		const xAxis = await PWTester.getAxis(page, 'x');
 		const xAxisTick = await xAxis.$$('.rct-axis-tick');
-		if(config.xAxis.tick){
+		if (config.xAxis.tick === true || config.xAxis.tick?.visible) {
 			expect(xAxisTick.length).eq(config.series.data.length);
-		}else{
+		} else{
 			const displayValue = await xAxis.$eval('.rct-axis-ticks', el => el.style.display);
 			expect(displayValue).to.equal('none');
 		}
@@ -128,7 +128,7 @@ test.describe('candlestick.html test', async function () {
 	test('grid', async ({ page }) => {
 		const config = await page.evaluate('config');
 
-		const grid = await page.$('.rct-grids');
+		const grid = await page.$('.rct-axis-grids');
 		expect(grid).exist;
 
 		const axisGrid = await page.$('.rct-axis-grid');
@@ -141,12 +141,17 @@ test.describe('candlestick.html test', async function () {
 		const axis = await PWTester.getAxis(page, 'x');
 		const tickAxis = await axis.$('.rct-axis-labels');
 		const text = await tickAxis.$$('text');
+		const tickStart = new Date('2021-05-02');
+		expect(config.xAxis.tick.stepInterval).equal('1w');
 		for (let i = 0; i < text.length; i++) {
 			const tickText = await page.evaluate(
 				(el) => el.textContent,
 				text[i]
 			);
-			expect(Number(tickText)).eq(i);
+			// console.log(tickText)
+			i && tickStart.setDate(tickStart.getDate() + 7);
+			const expText = `${tickStart.getMonth() + 1}/${tickStart.getDate()}`;
+			expect(tickText).eq(expText);
 		}
 	});
 

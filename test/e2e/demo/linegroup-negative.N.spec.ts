@@ -127,7 +127,7 @@ test.describe('linegroup-negative.html test', async function () {
 	test('grid 의 존재유무 확인', async ({ page }) => {
 		const config = await page.evaluate('config');
 
-		const grid = await page.$('.rct-grids');
+		const grid = await page.$('.rct-axis-grids');
 		expect(grid).exist;
 
 		const axisGrid = await page.$('.rct-axis-grid');
