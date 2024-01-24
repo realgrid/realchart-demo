@@ -45,6 +45,7 @@ test.describe("xAxis, category test", () => {
     await page.evaluate((newConfig) => {
       chart.load(newConfig, false);
     }, config);
+    await PWTester.sleep();
     const xAxis = await PWTester.getAxis(page, "x");
     const labels = await xAxis.$$(".rct-axis-label");
 
@@ -77,12 +78,13 @@ test.describe("xAxis, category test", () => {
     expect(labelTexts).is.deep.equal(expectTexts);
   });
 
-  test("path", async ({ page }) => {
+  test("tick and path", async ({ page }) => {
     const container = await page.$("#realchart");
 
     config.xAxis.type = "category";
     config.xAxis.categories = [];
     await page.evaluate((newConfig) => {
+      newConfig.xAxis.tick = true;
       chart.load(newConfig, false);
     }, config);
     await PWTester.sleep();

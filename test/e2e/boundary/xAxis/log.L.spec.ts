@@ -48,6 +48,7 @@ test.describe("xAxis, time test", () => {
     await page.evaluate((newConfig) => {
       chart.load(newConfig, false);
     }, config);
+    await PWTester.sleep();
     const xAxis = await PWTester.getAxis(page, "x");
     const labels = await xAxis.$$(".rct-axis-label");
 
@@ -166,6 +167,7 @@ test.describe("xAxis, time test", () => {
       await page.evaluate((newConfig) => {
         chart.load(newConfig, false);
       }, config);
+      await PWTester.sleep();      
 
       // 너비는 #realchart보다 넓어야한다.
 
