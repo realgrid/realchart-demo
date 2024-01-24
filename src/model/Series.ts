@@ -317,7 +317,7 @@ export class Trendline extends ChartItem {
     // http://npmjs.com/package/regression
     protected _doPrepareRender(chart: IChart): void {
         const series = this.series;
-        const res = this._res = (series._runPoints.length - 1) * Math.max(1, (this.resolution || 5));
+        const res = this._res = (series._runPoints.length - 1) * Math.max(1, +this.resolution || 5);
         const minX = series._minX > 0 ? 0 : (series._maxX - series._minX) / res - series._minX;
         const minY = series._minY > 0 ? 0 : (series._maxY - series._minY) / res - series._minY;
         const pts = series._runPoints.filter(p => !p.isNull).map(p => {
