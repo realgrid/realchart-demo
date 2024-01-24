@@ -117,6 +117,7 @@ test.describe("area-multi.html test", () => {
           c.marker = false;
         });
 
+        config.series[0].children[0].visible = true;
         config.series[0].children[0].marker = {
           visible: true,
           style: {
@@ -131,7 +132,7 @@ test.describe("area-multi.html test", () => {
       const marker = await page.$$("." + SeriesView.POINT_CLASS);
 
       const filledColor = await marker[0].evaluate((marker) => {
-        const style = window.getComputedStyle(marker);
+        const style = getComputedStyle(marker);
         return style.fill;
       }, marker[0]);
 
@@ -194,6 +195,7 @@ test.describe("area-multi.html test", () => {
         chart.load(config, false);
         return config;
       }, firstColor);
+      await sleep();
 
       let areas = await page.$$(".rct-area-series-area");
 
@@ -348,9 +350,12 @@ test.describe("area-multi.html test", () => {
 
       let areas = await page.$$(".rct-area-series-areas");
       let area = await areas[0].$(".rct-area-series-area");
-      let areaPath = await PWTester.getPathDValue(area);
-
-      expect(areaPath.includes("Q")).is.true;
+      expect(area).is.not.null;
+      if (area) {
+        let areaPath = await PWTester.getPathDValue(area);
+        expect(areaPath).is.not.null;
+        expect(areaPath?.includes("Q")).is.true;
+      }
     });
 
     test("onPointClick", async ({ page }) => {
@@ -364,6 +369,7 @@ test.describe("area-multi.html test", () => {
       });
 
       config = await page.evaluate(() => {
+        config.series[0].children[0].visible = true;
         config.series[0].children[1].visible = false;
         config.series[0].children[0].onPointClick = () => {
           console.log("clicked");
@@ -372,6 +378,7 @@ test.describe("area-multi.html test", () => {
         chart.load(config, false);
         return config;
       });
+      await sleep();
 
       const clickHandle = await page.$$(".rct-point");
       const count = 3;
@@ -521,19 +528,31 @@ test.describe("area-multi.html test", () => {
       const firstColor = { fill: "rgb(255, 0, 0)" };
       const secondColor = { fill: "rgb(0, 255, 0)" };
       config = await page.evaluate((color) => {
+        config.series[0].children[0].visible = true;
         // 빨강
         config.series[0].children[0].style = color;
 
         chart.load(config, false);
-        return config;
+        
       }, firstColor);
       await sleep();
 
       let areas = await page.$$(".rct-area-series-area");
 
+      // const colorValue = await page.evaluate((selector, variableName) => {
+      //   const element = document.querySelector(selector);
+      //   if (element) {
+      //     // getComputedStyle를 사용하여 계산된 스타일 가져오기
+      //     const computedStyle = getComputedStyle(element);
+      //     // CSS 변수 값 가져오기
+      //     return computedStyle.getPropertyValue(variableName).trim();
+      //   }
+
       let area = await page.evaluate((area) => {
-        return area.style.fill;
+        return getComputedStyle(area).fill;
       }, areas[0]);
+
+      // areaStyle.getPropertyValue('--color-1');
 
       expect(area).is.equal(firstColor.fill);
 
@@ -548,7 +567,7 @@ test.describe("area-multi.html test", () => {
 
       areas = await page.$$(".rct-area-series-area");
       area = await page.evaluate((area) => {
-        return window.getComputedStyle(area).fill;
+        return getComputedStyle(area).fill;
       }, areas[0]);
 
       expect(area).is.equal(secondColor.fill);

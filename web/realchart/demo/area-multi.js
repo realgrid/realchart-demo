@@ -57,7 +57,7 @@ const config = {
             lineType: 'spline',
             children: [
                 {
-                    visible: false,
+                    // visible: false,
                     name: '여자',
                     data: [
                         118, 138, 120, 232, 473, 222, 254, 226, 380, 385, 130,
