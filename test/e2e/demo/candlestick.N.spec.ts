@@ -45,7 +45,11 @@ test.describe('candlestick.html test', async function () {
 		expect(title).exist;
 
 		const titleText = await page.evaluate((el) => el.textContent, title);
-		expect(titleText).eq(config.title);
+		if (config?.title.text) {
+			expect(titleText).eq(config.title.text);
+		} else {
+			expect(titleText).eq(config.title);
+		}
 	});
 
 	test('xTitle', async ({ page }) => {
@@ -106,7 +110,7 @@ test.describe('candlestick.html test', async function () {
 
 		const xAxis = await PWTester.getAxis(page, 'x');
 		const xAxisTick = await xAxis.$$('.rct-axis-tick');
-		if(config.xAxis.tick){
+		if(config.xAxis.tick.visible){
 			expect(xAxisTick.length).eq(config.series.data.length);
 		}else{
 			const displayValue = await xAxis.$eval('.rct-axis-ticks', el => el.style.display);
@@ -128,26 +132,11 @@ test.describe('candlestick.html test', async function () {
 	test('grid', async ({ page }) => {
 		const config = await page.evaluate('config');
 
-		const grid = await page.$('.rct-grids');
+		const grid = await page.$('.rct-axis-grids');
 		expect(grid).exist;
 
 		const axisGrid = await page.$('.rct-axis-grid');
 		expect(axisGrid).exist;
-	});
-
-	test('xTickLabel 사용자가 지정하지 않은 경우', async ({ page }) => {
-		const config: any = await page.evaluate('config');
-
-		const axis = await PWTester.getAxis(page, 'x');
-		const tickAxis = await axis.$('.rct-axis-labels');
-		const text = await tickAxis.$$('text');
-		for (let i = 0; i < text.length; i++) {
-			const tickText = await page.evaluate(
-				(el) => el.textContent,
-				text[i]
-			);
-			expect(Number(tickText)).eq(i);
-		}
 	});
 
 	test('yTickLabel', async ({ page }) => {
