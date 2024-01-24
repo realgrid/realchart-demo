@@ -921,61 +921,64 @@ export class AxisView extends ChartElement<Axis> {
         const labels = axis.label;
         const ticks = axis._ticks;
         const nView = ticks.length;
-        const inc = maxv(1, step) * maxv(1, rows);
+        const inc = (step = maxv(1, step)) * (rows = maxv(1, rows));
         const a = rotation || 0;
         const arad = absv(a) * DEG_RAD;
         const acute = arad < 35 * DEG_RAD;
         let overalpped = false;
-        let i = 0;
         let n = 0;
         let v: AxisLabelView;
 
-        for (; i < nView; i += inc) {
-            let w = 0;
+        for (let r = 0; r < rows; r++) {
+            let i = r * step;
 
-            for (let j = i; j < i + inc && j < nView; j++) {
-                w += axis.getLabelLength(width, ticks[j].value);
-            }
-
-            // [주의] 끝 차투리는 무시한다.
-            if (i + inc < nView) {
-                v = views.pull(n++);
-                v.rotation = a;
-                v.row = 0;
-                v.index = i;
-                this._prepareLabel(v, ticks[i], labels, nView)
-                v.setVis(true);
-
-                if (a === 0 && v.getBBox().width >= w) {
-                    overalpped = true;
-                    break;
-                } else if (acute && v.getBBox().width * cos(arad) >= w) {
-                    overalpped = true;
-                    break;
-                } 
-                // 30도 이상의 둔각이면 text 높이를 기준으로 한다.
-                else if  (a !== 0 && v.getBBox().height >= w) {
-                // } else if  (a !== 0 && views[i].getBBounds().width * cos(arad) >= w) {
-                // } else if  (a !== 0 && (views[i].getBBounds().width + views[i].getBBounds().height) * cos(arad) >= w) {
-                    overalpped = true;
-                    break;
+            for (; i < nView; i += inc) {
+                let w = 0;
+    
+                for (let j = i; j < i + inc && j < nView; j++) {
+                    w += axis.getLabelLength(width, ticks[j].value);
+                }
+    
+                // [주의] 끝 차투리는 무시한다.
+                if (i + inc < nView) {
+                    v = views.pull(n++);
+                    v.rotation = a;
+                    v.row = r;
+                    v.index = i;
+                    this._prepareLabel(v, ticks[i], labels, nView)
+                    v.setVis(true);
+    
+                    if (a === 0 && v.getBBox().width >= w) {
+                        overalpped = true;
+                        break;
+                    } else if (acute && v.getBBox().width * cos(arad) >= w) {
+                        overalpped = true;
+                        break;
+                    } 
+                    // 30도 이상의 둔각이면 text 높이를 기준으로 한다.
+                    else if  (a !== 0 && v.getBBox().height >= w) {
+                    // } else if  (a !== 0 && views[i].getBBounds().width * cos(arad) >= w) {
+                    // } else if  (a !== 0 && (views[i].getBBounds().width + views[i].getBBounds().height) * cos(arad) >= w) {
+                        overalpped = true;
+                        break;
+                    }
                 }
             }
-        }
-
-        if (!overalpped) {
-            if (i - inc < nView) {
-                v = views.pull(n++);
-                v.row = 0;
-                v.rotation = a;
-                v.index = i - inc;
-                this._prepareLabel(v, ticks[i - inc], labels, nView)
-                v.setVis(true);
+    
+            if (!overalpped) {
+                if (i - inc < nView) {
+                    v = views.pull(n++);
+                    v.row = r;
+                    v.rotation = a;
+                    v.index = i - inc;
+                    this._prepareLabel(v, ticks[i - inc], labels, nView)
+                    v.setVis(true);
+                }
+            } else {
+                return true;
             }
-            !checkOnly && views.freeFrom(n);
         }
-
-        return overalpped;
+        !checkOnly && views.freeFrom(n);
     }
 
     private $_applyStep(axis: Axis, views: AxisLabelView[], step: number): AxisLabelView[] {
@@ -1004,7 +1007,7 @@ export class AxisView extends ChartElement<Axis> {
         this._labelRowPts = [0];
 
         if (!overlapped) {
-            views = this.$_applyStep(axis, views, step || 1);
+            // views = this.$_applyStep(axis, views, step || 1);
         } else if (m.autoArrange === AxisLabelArrange.NONE) {
             // TODO: clip | ellipsis | wrap
             this._labelViews.prepare(axis._ticks.length, (v, i, count) => {
@@ -1094,9 +1097,9 @@ export class AxisView extends ChartElement<Axis> {
                 const rotated = !isNaN(rotation) && rotation != 0;
                 const pts = this._labelRowPts;
     
-                if (rows > 1) {
-                    views.forEach((v, i) => v.row = i % rows);
-                }
+                // if (rows > 1) {
+                //     views.forEach((v, i) => v.row = i % rows);
+                // }
     
                 for (let i = 0; i < rows; i++) {
                     pts.push(0);

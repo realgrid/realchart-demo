@@ -1417,7 +1417,9 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         if (this._referents) {
             this._referents.forEach(r => r.reference(this, axis));
         }
-        this._visPoints = this._runPoints.filter(p => p.visible);
+        if (this.visible) {
+            this._visPoints = this._runPoints.filter(p => p.visible);
+        }
     }
 
     reference(other: Series, axis: IAxis): void {

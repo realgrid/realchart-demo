@@ -24,7 +24,7 @@ const config = {
     "title": "Month of Year",
     type: 'category',
     tick: {
-    //   step: 3,
+      step: 3,
     },
   },
   "yAxis": {

@@ -28,6 +28,7 @@ const config = {
         //     '태평4동',
         // ],
         label: {
+            // step: 2,
             style: {},
         },
         grid: {

@@ -447,6 +447,11 @@ export class CategoryAxis extends Axis {
 
     getUnitLen(length: number, value: number): number {
         const v = Math.floor(value - this._catMin + 0.5);
+        return this._pts[v + 2] - this._pts[v + 2 - 1];
+    }
+
+    getLabelLength(length: number, value: number): number {
+        const v = Math.floor(value - this._catMin + 0.5);
 
         if (v > this._tstep) {
             return this._pts[v + 2] - this._pts[v + 2 - this._tstep];
