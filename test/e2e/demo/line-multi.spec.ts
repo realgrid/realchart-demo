@@ -29,12 +29,9 @@ test.describe('line-multi.html test', () => {
 		expect(markers.length > 0).is.true;
 
 		const config: any = await page.evaluate('config');
-		const data = [];
-
-		for (let i = 0; i < config.series.length; i++) {
-			data.push(...config.series[i].data);
-		}
-		expect(data.length).eq(markers.length);
+		const data: any = await page.evaluate('data');
+		
+		expect(data.length * config.series.length).eq(markers.length);
 
 		// await page.screenshot({path: 'out/ss/line-multi.png'});
 	});
