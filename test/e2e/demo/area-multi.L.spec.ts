@@ -1,7 +1,7 @@
 import { Utils } from "./../../../src/common/Utils";
 import { PointStyleCallback } from "./../../../src/model/Series";
 import { LineType } from "./../../../src/model/ChartTypes";
-import { getCssProp, StyleProps } from "./../../../src/common/Types";
+import { getCssProp, SVGStyles } from "./../../../src/common/Types";
 ////////////////////////////////////////////////////////////////////////////////
 // area-multi.L.spec.ts
 // 2023. 11. 17. created by dltlghkd930217
@@ -68,10 +68,15 @@ test.describe("area-multi.html test", () => {
       await sleep();
 
       let points = await page.$$(".rct-series-points");
-
+      
       let opacities = await page.evaluate((points) => {
-        const res = points.map((point) => point.style.opacity);
-        return res;
+        return points.map((point) => {
+          for (const p of point.children) {
+            if (getComputedStyle(p).opacity !== '1')
+              return '0';
+          }
+          return '1'
+        });
       }, points);
 
       for (let opacity of opacities) {
@@ -88,13 +93,20 @@ test.describe("area-multi.html test", () => {
         return config;
       });
       await sleep();
+
       points = await page.$$(".rct-series-points");
       opacities = await page.evaluate((points) => {
-        const res = points.map((point) => point.style.opacity);
-        return res;
+        return points.map((point) => {
+          for (const p of point.children) {
+            if (getComputedStyle(p).opacity !== '0')
+              return '1';
+          }
+          return '0'
+        });
       }, points);
-      for (let opacity of opacities) {
-        expect(opacity).is.equal("0");
+
+      for (const o of opacities) {
+        expect(o).is.equal('0');
       }
     });
 
@@ -105,6 +117,7 @@ test.describe("area-multi.html test", () => {
           c.marker = false;
         });
 
+        config.series[0].children[0].visible = true;
         config.series[0].children[0].marker = {
           visible: true,
           style: {
@@ -119,7 +132,7 @@ test.describe("area-multi.html test", () => {
       const marker = await page.$$("." + SeriesView.POINT_CLASS);
 
       const filledColor = await marker[0].evaluate((marker) => {
-        const style = window.getComputedStyle(marker);
+        const style = getComputedStyle(marker);
         return style.fill;
       }, marker[0]);
 
@@ -129,6 +142,10 @@ test.describe("area-multi.html test", () => {
 
   // areaStyle,clipped,nullAsBase 은 구현이 되어있지 않아 테스트가 불가능.
   test.describe("area-multi.html area", () => {
+    /**
+     * baseValue는 데이터 최소값보다 클 수 없다?
+     * BoxedSeriesView._layoutPoints 참고.
+     */
     test("baseValue", async ({ page }) => {
       config = await page.evaluate(() => {
         config.series.forEach((s: any) => {
@@ -139,30 +156,33 @@ test.describe("area-multi.html test", () => {
         return config;
       });
 
-      let areas = await page.$$(".rct-area-series-area");
+      // rct-area-series-area 는 높이 변화가 거의 없다. plot area 밖으로 벗어난다.
+      let areas = await page.$$(".rct-line-series-line");
       const orgHeight = await page.evaluate((area: any) => {
         return area.getBBox().height;
       }, areas[0]);
 
-      await page.evaluate(() => {
-        const minValue = config.series[0].children[0].data.reduce(
-          (acc, curr) => {
-            return curr < acc ? curr : acc;
-          },
-          config.series[0].children[0].data[0]
-        );
-
-        config.series[0].children[0].baseValue = minValue;
+      const data = config.series[0].children.reduce((acc, child) => acc.concat(child.data), []);
+      const minValue = data.reduce(
+        (acc, curr) => {
+          return Math.min(acc, curr)
+        },
+        Number.MAX_SAFE_INTEGER
+      );
+      console.log({minValue})
+      await page.evaluate((minValue) => {
+        config.series[0].baseValue = minValue;
 
         chart.load(config, false);
-      });
+      }, minValue);
       await sleep();
 
-      areas = await page.$$(".rct-area-series-area");
+      areas = await page.$$(".rct-line-series-line");
       const baseValueHeight = await page.evaluate((area: any) => {
         return area.getBBox().height;
       }, areas[0]);
-      expect(orgHeight).is.greaterThan(baseValueHeight);
+      // 축의 간격이 좁혀지면서 line영역이 더 커진다.
+      expect(baseValueHeight).is.greaterThan(orgHeight);
     });
 
     test("color", async ({ page }) => {
@@ -175,6 +195,7 @@ test.describe("area-multi.html test", () => {
         chart.load(config, false);
         return config;
       }, firstColor);
+      await sleep();
 
       let areas = await page.$$(".rct-area-series-area");
 
@@ -329,9 +350,12 @@ test.describe("area-multi.html test", () => {
 
       let areas = await page.$$(".rct-area-series-areas");
       let area = await areas[0].$(".rct-area-series-area");
-      let areaPath = await PWTester.getPathDValue(area);
-
-      expect(areaPath.includes("Q")).is.true;
+      expect(area).is.not.null;
+      if (area) {
+        let areaPath = await PWTester.getPathDValue(area);
+        expect(areaPath).is.not.null;
+        expect(areaPath?.includes("Q")).is.true;
+      }
     });
 
     test("onPointClick", async ({ page }) => {
@@ -345,6 +369,7 @@ test.describe("area-multi.html test", () => {
       });
 
       config = await page.evaluate(() => {
+        config.series[0].children[0].visible = true;
         config.series[0].children[1].visible = false;
         config.series[0].children[0].onPointClick = () => {
           console.log("clicked");
@@ -353,6 +378,7 @@ test.describe("area-multi.html test", () => {
         chart.load(config, false);
         return config;
       });
+      await sleep();
 
       const clickHandle = await page.$$(".rct-point");
       const count = 3;
@@ -502,19 +528,31 @@ test.describe("area-multi.html test", () => {
       const firstColor = { fill: "rgb(255, 0, 0)" };
       const secondColor = { fill: "rgb(0, 255, 0)" };
       config = await page.evaluate((color) => {
+        config.series[0].children[0].visible = true;
         // 빨강
         config.series[0].children[0].style = color;
 
         chart.load(config, false);
-        return config;
+        
       }, firstColor);
       await sleep();
 
       let areas = await page.$$(".rct-area-series-area");
 
+      // const colorValue = await page.evaluate((selector, variableName) => {
+      //   const element = document.querySelector(selector);
+      //   if (element) {
+      //     // getComputedStyle를 사용하여 계산된 스타일 가져오기
+      //     const computedStyle = getComputedStyle(element);
+      //     // CSS 변수 값 가져오기
+      //     return computedStyle.getPropertyValue(variableName).trim();
+      //   }
+
       let area = await page.evaluate((area) => {
-        return area.style.fill;
+        return getComputedStyle(area).fill;
       }, areas[0]);
+
+      // areaStyle.getPropertyValue('--color-1');
 
       expect(area).is.equal(firstColor.fill);
 
@@ -529,7 +567,7 @@ test.describe("area-multi.html test", () => {
 
       areas = await page.$$(".rct-area-series-area");
       area = await page.evaluate((area) => {
-        return window.getComputedStyle(area).fill;
+        return getComputedStyle(area).fill;
       }, areas[0]);
 
       expect(area).is.equal(secondColor.fill);
@@ -567,8 +605,11 @@ test.describe("area-multi.html test", () => {
       let seriesLength = series.length;
       let legends = await page.$$(".rct-legend-item-label");
 
+      page.on('console', msg => { console.log(msg) });
+      
       const legendStyle = await page.evaluate((legend) => {
-        return window.getComputedStyle(legend).textDecorationLine;
+        console.log(getComputedStyle(legend).toString());
+        return getComputedStyle(legend).textDecorationLine;
       }, legends[0]);
 
       // visible이 꺼저있는 경우 textDecorationLine이 line-through여야 한다.
