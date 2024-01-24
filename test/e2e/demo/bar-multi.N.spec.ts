@@ -32,11 +32,8 @@ test.describe('bar-multi.html test', async function () {
 		expect(bars.length > 0).is.true;
 
 		const config: any = await page.evaluate('config');
-		const data = [];
-
-		for (let i = 0; i < config.series[0].children.length; i++) {
-			data.push(...config.series[0].children[i].data);
-		}
+		
+		const data = config.series.reduce((acc, s) => acc.concat(s.data), []);
 		expect(data.length).eq(bars.length);
 
 		// await page.screenshot({path: 'out/ss/bar-multi.png'});
@@ -160,7 +157,7 @@ test.describe('bar-multi.html test', async function () {
 	test('grid', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
-		const grid = await page.$('.rct-grids');
+		const grid = await page.$('.rct-axis-grids');
 		expect(grid).exist;
 
 		const axisGrid = await page.$('.rct-axis-grid');

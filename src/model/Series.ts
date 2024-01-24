@@ -952,7 +952,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     /**
      * 연결된 x축이 연속 축(카테고리축이 아닌)일 때, x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.<br/>
      * 이 후에는 {@link xStep}씩 증가시키면서 설정한다.
-     * 이 속성이 지징되지 않은 경우 {@link ChartOptions.xStart}가 적용된다.
+     * 이 속성이 지정되지 않은 경우 {@link ChartOptions.xStart}가 적용된다.
      * 
      * @config
      */

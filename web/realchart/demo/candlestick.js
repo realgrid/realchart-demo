@@ -84,6 +84,7 @@ const config = {
     ],
     legend: !true,
     xAxis: {
+        crosshair: true,
         type: 'time',
         tick: {
             visible: !true,
@@ -92,7 +93,7 @@ const config = {
         label: {
             visible: true,
             // step: 10,
-            // timeFormat: 'M, yyyy',
+            timeFormat: 'M/d',
             // textCallback: ({value}) => {
             //     const d = new Date(value);
             //     return d.toLocaleDateString('en-us', { day: 'numeric', month: 'short', year: 'numeric' });

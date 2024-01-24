@@ -45,11 +45,13 @@ test.describe('candlestick.html test', async function () {
 		expect(title).exist;
 
 		const titleText = await page.evaluate((el) => el.textContent, title);
+
 		if (config?.title.text) {
 			expect(titleText).eq(config.title.text);
 		} else {
 			expect(titleText).eq(config.title);
 		}
+
 	});
 
 	test('xTitle', async ({ page }) => {
@@ -110,9 +112,10 @@ test.describe('candlestick.html test', async function () {
 
 		const xAxis = await PWTester.getAxis(page, 'x');
 		const xAxisTick = await xAxis.$$('.rct-axis-tick');
-		if(config.xAxis.tick.visible){
+
+		if (config.xAxis.tick === true || config.xAxis.tick?.visible) {
 			expect(xAxisTick.length).eq(config.series.data.length);
-		}else{
+		} else{
 			const displayValue = await xAxis.$eval('.rct-axis-ticks', el => el.style.display);
 			expect(displayValue).to.equal('none');
 		}
@@ -137,6 +140,26 @@ test.describe('candlestick.html test', async function () {
 
 		const axisGrid = await page.$('.rct-axis-grid');
 		expect(axisGrid).exist;
+	});
+
+	test('xTickLabel 사용자가 지정하지 않은 경우', async ({ page }) => {
+		const config: any = await page.evaluate('config');
+
+		const axis = await PWTester.getAxis(page, 'x');
+		const tickAxis = await axis.$('.rct-axis-labels');
+		const text = await tickAxis.$$('text');
+		const tickStart = new Date('2021-05-02');
+		expect(config.xAxis.tick.stepInterval).equal('1w');
+		for (let i = 0; i < text.length; i++) {
+			const tickText = await page.evaluate(
+				(el) => el.textContent,
+				text[i]
+			);
+			// console.log(tickText)
+			i && tickStart.setDate(tickStart.getDate() + 7);
+			const expText = `${tickStart.getMonth() + 1}/${tickStart.getDate()}`;
+			expect(tickText).eq(expText);
+		}
 	});
 
 	test('yTickLabel', async ({ page }) => {

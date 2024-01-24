@@ -29,11 +29,7 @@ test.describe('bar-multi.html test', () => {
         expect(bars.length > 0).is.true;
 
         const config: any = await page.evaluate('config');
-        const data = [];
-
-        for (let i = 0; i < config.series[0].children.length; i++) {
-            data.push(...config.series[0].children[i].data);
-        }
+        const data = config.series.reduce((acc, s) => acc.concat(s.data), []);
         expect(data.length).eq(bars.length);
 
         // await page.screenshot({path: 'out/ss/bar-multi.png'});

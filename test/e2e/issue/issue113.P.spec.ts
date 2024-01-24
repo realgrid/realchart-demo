@@ -28,11 +28,13 @@ test.describe('issue113 test', () => {
         const barCount = await bars.count();
         await page.waitForTimeout(500);
         for (let i = 0; i < barCount; i++) {
-            await bars.nth(i).hover();
-            await page.waitForTimeout(Tooltip.HIDE_DELAY);
+            // 주의: 틀팁효과로 bar path 순서가 변경된다.
+            const bar = await page.locator(`.${SeriesView.POINT_CLASS}[data-index="${i}"]`);
+            await bar.hover();
+            await page.waitForTimeout(Tooltip.HIDE_DELAY + 100);
             expect(await tooltip.isVisible()).is.true;
             const tb = await tooltip.boundingBox();
-            const bb = await bars.nth(i).boundingBox();
+            const bb = await bar.boundingBox();
             expect(bb.y).gt(tb.y + tb.height, 'tooltip이 bar보다 더 위에 그려져야 한다.');
         }
 	});

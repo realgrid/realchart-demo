@@ -142,7 +142,7 @@ test.describe('barrange.html test', async function () {
 	test('grid', async ({ page }) => {
 		const config = await page.evaluate('config');
 
-		const grid = await page.$('.rct-grids');
+		const grid = await page.$('.rct-axis-grids');
 		expect(grid).exist;
 
 		const axisGrid = await page.$('.rct-axis-grid');

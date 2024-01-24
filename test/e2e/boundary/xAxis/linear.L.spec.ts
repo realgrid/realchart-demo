@@ -25,6 +25,12 @@ test.describe("xAxis, category test", () => {
       title: {
         visible: true,
       },
+      tick: {
+        visible: true,
+        steps: [
+          0,1,2,3
+        ]
+      }
     },
     series: [
       {
@@ -58,7 +64,7 @@ test.describe("xAxis, category test", () => {
   });
 
 
-  test("path", async ({ page }) => {
+  test("tick and path", async ({ page }) => {
     const container = await page.$("#realchart");
 
     config.xAxis.type = "category";
