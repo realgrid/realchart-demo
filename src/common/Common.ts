@@ -12,6 +12,7 @@ export const isArray = Array.isArray;
 export const isArrayEx = function (v: any, length: number): v is Array<any> { return Array.isArray(v) && v.length >= length; }
 export const isFunc = function (v: any): v is Function { return typeof v === 'function'; }
 export const isString = function (v: any): v is string { return typeof v === 'string'; }
+export const isStringL = function (v: any): v is string { return typeof v === 'string' && v.length > 0; }
 export const isNumber = function (v: any): v is number { return typeof v === 'number'; }
 export const isBoolean = function (v: any): v is boolean { return typeof v === 'boolean'; }
 export const isNone = function (v: any): boolean { return v == null || isNaN(v); }

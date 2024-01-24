@@ -11,7 +11,7 @@ const config = {
   title: '마스크 종류별 수출 현황',
   xAxis: {
     title: '날짜',
-    type: 'date',
+    type: 'time',
   },
   yAxis: {
     title: '수출량',

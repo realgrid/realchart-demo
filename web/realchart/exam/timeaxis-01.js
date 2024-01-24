@@ -11,7 +11,8 @@ const config = {
             stepInterval: '2d',
         },
         label: {
-            timeFormat: 'yyyy-MM-dd',
+            // beginningFormat: 'yyyy-MM',
+            // timeFormat: 'yyyy-MM-dd',
         },
     },
     yAxis: {},

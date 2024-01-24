@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isObject, isString, pickNum, assign, maxv } from "../../common/Common";
+import { isArray, isNumber, isObject, isString, pickNum, assign, maxv, isStringL } from "../../common/Common";
 import { DatetimeFormatter } from "../../common/DatetimeFormatter";
 import { AxisLabel, AxisTick } from "../Axis";
 import { IChart } from "../Chart";
@@ -207,12 +207,13 @@ export class TimeAxisTick extends ContinuousAxisTick {
             dt = new Date(y, m);
 
             if (dt < calcedMin && new Date(y, m + step) > calcedMin) {
-                dt = new Date(calcedMin.getFullYear(), calcedMin.getMonth());
+                m = calcedMin.getMonth();
+                dt = new Date(calcedMin.getFullYear(), m);
             }
             do {
                 steps.push(+dt);
-                m += step;
-                dt = new Date(y, m)
+                dt.setMonth(dt.getMonth() + step);
+                console.log(dt);
             } while (dt <= maxDate);
 
         } else if (this.scale === TimeScale.DAY || this.scale === TimeScale.WEEK) {
@@ -225,12 +226,12 @@ export class TimeAxisTick extends ContinuousAxisTick {
             dt = new Date(y, m, d);
 
             if (dt < calcedMin && new Date(y, m, d + inc * step) > calcedMin) {
-                dt = new Date(calcedMin.getFullYear(), calcedMin.getMonth(), calcedMin.getDate());
+                d = calcedMin.getDate();
+                dt = new Date(calcedMin.getFullYear(), calcedMin.getMonth(), d);
             }
             do {
                 steps.push(+dt);
-                d += step * inc;
-                dt = new Date(y, m, d)
+                dt.setDate(dt.getDate() + step * inc);
             } while (dt <= maxDate);
 
         } else {
@@ -267,11 +268,14 @@ export class TimeAxisTick extends ContinuousAxisTick {
 
     protected _getStepsByInterval(interval: any, base: number, min: number, max: number): number[] {
         if (isString(interval)) {
+            const axis = this.axis as TimeAxis;
+            const calcedMin = new Date(axis._calcedMin);
             const steps: number[] = [];
             const scale = interval.charAt(interval.length - 1);
+            const step = parseFloat(interval);
             let v: number;
+            let dt: Date;
 
-            this._step = parseFloat(interval);
             this.scale = time_periods[scale];
             interval = time_scales[this.scale];
 
@@ -280,24 +284,48 @@ export class TimeAxisTick extends ContinuousAxisTick {
 
             switch (this.scale) {
                 case TimeScale.YEAR:
-                    d.setMonth(0);
-                    d.setDate(1);
+                    const yCalced = calcedMin.getFullYear();
+                    let yMin = d.getFullYear();
+
+                    d.setMonth(0, 1);
+                    if (yMin < yCalced && yCalced < yMin + step) {
+                        d = new Date(yCalced, 0);
+                    }
                     break;
+
                 case TimeScale.MONTH:
                     d.setDate(1);
+                    d.setHours(0, 0, 0, 0);
+
+                    dt = new Date(d);
+                    dt.setMonth(dt.getMonth() + step);
+                    if (d < calcedMin && calcedMin < dt) {
+                        d = new Date(calcedMin);
+                        d.setDate(1);
+                        d.setHours(0, 0, 0, 0);
+                    }
                     break;
+
                 case TimeScale.WEEK:
-                    d.setDate(d.getDate() - d.getDay() + this.chart.startOfWeek);
-                    break;
+                    // byPixels(...)에서 주초로 맞추지 않는다.
+                    // d.setDate(d.getDate() - d.getDay() + this.chart.startOfWeek);
                 case TimeScale.DAY:
-                    d = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+                    let inc = this.scale === TimeScale.WEEK ? 7 : 1;
+
+                    d.setHours(0, 0, 0, 0);
+
+                    dt = new Date(d);
+                    dt.setDate(dt.getDate() + step * inc);
+                    if (d < calcedMin && dt > calcedMin) {
+                        d = new Date(calcedMin);
+                        d.setHours(0, 0, 0, 0);
+                    }
                     break;
+
                 case TimeScale.HOUR:
                     d.setMinutes(0);
-                    break;
                 case TimeScale.MIN:
                     d.setSeconds(0);
-                    break;
                 case TimeScale.SEC:
                     d.setMilliseconds(0);
                     break;
@@ -305,6 +333,7 @@ export class TimeAxisTick extends ContinuousAxisTick {
                     break;
             }
 
+            this._step = step;
             min = +d;
 
             if (!isNaN(base)) {
@@ -336,11 +365,11 @@ const FORMATS = [
     { format: 'SSS', beginningFormat: 'mm:ss' },            // ms
     { format: "ss", beginningFormat: 'mm:ss' },             // s
     { format: "mm:ss", beginningFormat: 'HH:mm:ss'},        // m
-    { format: "HH:mm", beginningFormat: 'MM-dd' },          // H
-    { format: "MM-dd", beginningFormat: 'yyyy-MM' },        // d
-    { format: "MM W주", beginningFormat: 'yyyy-MM-dd' },        // w
+    { format: "HH:mm", beginningFormat: 'MM-dd HH:mm' },    // H
+    { format: "MM-dd", beginningFormat: 'yyyy-MM-dd' },     // d
+    { format: "MM W주", beginningFormat: 'yyyy-MM-dd' },     // w
     { format: "yyyy-MM", beginningFormat: 'yyyy-MM' },      // M
-    { format: "yyyy" }                                      // y
+    { format: "yyyy", beginningFormat: 'yyyy' }             // y
 ]   
 
 export class TimeAxisLabel extends AxisLabel {
@@ -359,14 +388,13 @@ export class TimeAxisLabel extends AxisLabel {
      */
     useBeginningFormat = true;
     /**
-     * [밀리초, 초, 분, 시, 일, 주, 월, 년] 순서대로 날찌/시간 형식을 지정한다.
+     * [밀리초, 초, 분, 시, 일, 주, 월, 년] 순서대로 날찌/시간 형식을 지정한다.<br/>
      * 각 형식은 문자열이거나, { format: string, beginningFormat: string} 형태의 json 객체로 지정한다.
-     * 지정하지 않은 스케일은 기본 형식에 따라 표시된다.
+     * 지정하지 않은 스케일은 {@link timeFormat}, {@link beginningFormat}이나 기본 형식에 따라 표시된다.
      */
     timeFormats: any[]; // string | { format: string, beginningFormat: string}
     /**
      * 날짜/시간 표시 형식.
-     * 이 속성이 지정되면 timeFormats는 무시된다.
      */
     timeFormat: string;
     /**
@@ -385,28 +413,37 @@ export class TimeAxisLabel extends AxisLabel {
         const fmts = this.timeFormats;
         const use = this.useBeginningFormat;
 
-        this._formatter = f1 ? DatetimeFormatter.getFormatter(f1) : void 0;
+        // this._formatter = (f1 && !b1 && !isArray(fmts)) ? DatetimeFormatter.getFormatter(f1) : void 0;
         this._formats = FORMATS.map(f => assign(f));
 
+        if (f1) {
+            this._formats.forEach(f => {
+                f.format = f.beginningFormat = f1;
+            })
+        }
+        if (use && b1) {
+            this._formats.forEach(f => {
+                f.beginningFormat = b1;
+            })
+        }
         if (isArray(fmts)) {
             for (let i = 0; i < fmts.length; i++) {
                 const f = this._formats[i];
 
-                if (f1) {
-                    f.format = f1;
-                    f.beginningFormat = b1 || f1;                    
-                } else {
+                // if (f1) {
+                //     f.format = f1;
+                //     f.beginningFormat = b1 || f1;                    
+                // } else {
                     const fmt = fmts[i];
     
-                    if (isString(fmt)) {
+                    if (isStringL(fmt)) {
+                        // f.format = f.beginningFormat = fmt;
                         f.format = fmt;
-                        if (!use) f.beginningFormat = fmt;
                     } else if (isObject(fmt)) {
-                        if (isString(fmt.format)) f.format = fmt.format;
-                        if (isString(fmt.beginningFormat)) f.beginningFormat = fmt.beginningFormat;
-                        else if (!use) f.beginningFormat = f.format;
+                        if (isStringL(fmt.format)) f.format = fmt.format;
+                        if (use && isStringL(fmt.beginningFormat)) f.beginningFormat = fmt.beginningFormat;
                     }
-                }
+                // }
             }
         }
     }
@@ -534,8 +571,8 @@ export class TimeAxis extends ContinuousAxis {
         if (isNumber(value)) {  
             return value;
         } else if (value instanceof Date) {
-            return value.getTime() + this._offset;
-        } else if (isString(value)) {
+            return value.getTime();
+        } else if (isString(value)) { // 표준시로 읽어들인다.
             return new Date(value).getTime() + this._offset;
         }
     }

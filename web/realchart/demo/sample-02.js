@@ -12,6 +12,7 @@ const config = {
     },
     xAxis: {
         type: 'time',
+        // padding: 0.8,
         tick: {
             stepInterval: '2m'
         },

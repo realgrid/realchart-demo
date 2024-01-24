@@ -45,19 +45,19 @@ test.describe('basic.html test', () => {
         // body
         const body = await page.$('.' + BodyView.BODY_CLASS);
         expect(body).exist;
-        const rBody = await PWTester.getBounds(body);
+        const rBody = await PWTester.getBounds(body as any);
 
         // title
         const title = await page.$('.' + TitleView.TITLE_CLASS);
         expect(title).exist;
-        const rTitle = await PWTester.getBounds(title);
+        const rTitle = await PWTester.getBounds(title as any);
         // body 위쪽에
         expect(rTitle.y).lt(rBody.y);
 
         // legend
         const legend = await page.$('.' + LegendView.LEGEND_CLASS);
         expect(legend).exist;
-        const rLegend = await PWTester.getBounds(legend);
+        const rLegend = await PWTester.getBounds(legend as any);
         // body 아래쪽에
         expect(rLegend.y).gt(rBody.y);
 

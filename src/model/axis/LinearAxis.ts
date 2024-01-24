@@ -1103,11 +1103,12 @@ export class LinearAxis extends ContinuousAxis {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /**
-     * @override
-     * @config
-     */
-    readonly label: LinearAxisLabel;
+    // [TODO] 아래처럼 재 선언하면 e2e에서 label이 undefined로 재설정된다.
+    // /**
+    //  * @override
+    //  * @config
+    //  */
+    // readonly label: LinearAxisLabel;
 
     //-------------------------------------------------------------------------
     // overriden members

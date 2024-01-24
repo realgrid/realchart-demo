@@ -437,7 +437,7 @@ export class AxisView extends ChartElement<Axis> {
         // h += t ? (t.rotation != 0 ? t.rotatedHeight : t.getBBounds().height) : 0;
 
         if (this.$_prepareLabels(m, width)) {
-            h += this.$_measureLabelsHorz(m, width);
+            h += this.$_measureLabelsHorz(m, width, true);
         }
 
         // title
@@ -463,7 +463,7 @@ export class AxisView extends ChartElement<Axis> {
         // w += t ? t.getBBounds().width : 0;
 
         if (this.$_prepareLabels(m, width)) {
-            w += this.$_measureLabelsVert(m, height);
+            w += this.$_measureLabelsVert(m, height, true);
         }
 
         // title
@@ -822,8 +822,10 @@ export class AxisView extends ChartElement<Axis> {
         }
     }
 
-    private _prepareLabel(view: AxisLabelView, tick: IAxisTick, model: AxisLabel, count: number): void {
-        if (view.value === tick.value) return;
+    private _prepareLabel(view: AxisLabelView, tick: IAxisTick, model: AxisLabel, count: number, init: boolean): void {
+        // value 체크만으로는 부족하다. #498
+        // charter.render() 시 처음 measure()에만 실행되도록 한다.
+        if (!init && view.value === tick.value) return;
 
         const text = model.getLabelText(tick, count);
         const label = tick.label;
@@ -917,7 +919,7 @@ export class AxisView extends ChartElement<Axis> {
         return overalpped;
     }
 
-    private $_checkOverlappedHorz2(axis: Axis, views: ElementPool<AxisLabelView>, width: number, step: number, rows: number, rotation: number, checkOnly = false): boolean {
+    private $_checkOverlappedHorz2(axis: Axis, views: ElementPool<AxisLabelView>, width: number, step: number, rows: number, rotation: number, checkOnly: boolean, init: boolean): boolean {
         const labels = axis.label;
         const ticks = axis._ticks;
         const nView = ticks.length;
@@ -945,7 +947,7 @@ export class AxisView extends ChartElement<Axis> {
                     v.rotation = a;
                     v.row = r;
                     v.index = i;
-                    this._prepareLabel(v, ticks[i], labels, nView)
+                    this._prepareLabel(v, ticks[i], labels, nView, init)
                     v.setVis(true);
     
                     if (a === 0 && v.getBBox().width >= w) {
@@ -971,7 +973,7 @@ export class AxisView extends ChartElement<Axis> {
                     v.row = r;
                     v.rotation = a;
                     v.index = i - inc;
-                    this._prepareLabel(v, ticks[i - inc], labels, nView)
+                    this._prepareLabel(v, ticks[i - inc], labels, nView, init);
                     v.setVis(true);
                 }
             } else {
@@ -993,13 +995,13 @@ export class AxisView extends ChartElement<Axis> {
         return views.filter(v => v.visible);
     }
 
-    private $_measureLabelsHorz(axis: Axis, width: number): number {
+    private $_measureLabelsHorz(axis: Axis, width: number, init = false): number {
         const m = axis.label;
         let step = +m.step >> 0;
         let rows = +m.rows >> 0;
         let rotation = +m.rotation % 360;
         //let overlapped = this.$_checkOverlappedHorz(axis, views, width, step, rows, rotation);
-        let overlapped = this.$_checkOverlappedHorz2(axis, this._labelViews, width, step, rows, rotation);
+        let overlapped = this.$_checkOverlappedHorz2(axis, this._labelViews, width, step, rows, rotation, false, init);
         let views = this._labelViews._internalItems();
         let sz: number;
 
@@ -1014,12 +1016,13 @@ export class AxisView extends ChartElement<Axis> {
                 v.rotation = rotation;
                 v.row = 0;
                 v.index = i;
-                this._prepareLabel(v, axis._ticks[i], axis.label, count);
+                this._prepareLabel(v, axis._ticks[i], axis.label, count, init);
                 v.setVis(true);
             });
             views = this.$_applyStep(axis, views, step || 1);
         } else {
-            step = rows = rotation = 0;
+            // step = rows = rotation = 0;
+            step = rows = 0;
 
             switch (m.autoArrange) {
                 case AxisLabelArrange.ROWS:
@@ -1039,7 +1042,7 @@ export class AxisView extends ChartElement<Axis> {
                 while (true) {
                 //while (save.length > 1) {
                     // views = this.$_applyStep(axis, save, step);
-                    if (!this.$_checkOverlappedHorz2(axis, this._labelViews, width, step, 1, 0)) {
+                    if (!this.$_checkOverlappedHorz2(axis, this._labelViews, width, step, 1, 0, false, init)) {
                     // if (!this.$_checkOverlappedHorz(axis, save, width, step, 1, 0)) {
                         break;
                     }
@@ -1054,7 +1057,7 @@ export class AxisView extends ChartElement<Axis> {
                         v.row = i % rows;
                         v.index = i;
                     });
-                    if (!this.$_checkOverlappedHorz2(axis, this._labelViews, width, 1, rows, 0)) {
+                    if (!this.$_checkOverlappedHorz2(axis, this._labelViews, width, 1, rows, 0, false, init)) {
                     //if (!this.$_checkOverlappedHorz(axis, views, width, 1, rows, 0)) {
                         break;
                     }
@@ -1063,21 +1066,23 @@ export class AxisView extends ChartElement<Axis> {
                 this._labelRowPts = [];
 
             } else {
-                rotation = -45;
+                if (isNaN(rotation) || Math.abs(Math.tan(rotation * DEG_RAD)) < 1) {
+                    rotation = -45;
+                }
                 // views.forEach((v, i) => {
                 //     v.index = i;
                 // });
 
-                if (this.$_checkOverlappedHorz2(axis, this._labelViews, width, step, rows, rotation)) {
+                if (this.$_checkOverlappedHorz2(axis, this._labelViews, width, step, rows, rotation, false, init)) {
                 //if (this.$_checkOverlappedHorz(axis, views, width, step, rows, rotation)) {
                     step = 2;
                     while (true) {
                         // const views2 = this.$_applyStep(axis, views, step);
 
-                        if (!this.$_checkOverlappedHorz2(axis, this._labelViews, width, step, rows, rotation)) {
+                        if (!this.$_checkOverlappedHorz2(axis, this._labelViews, width, step, rows, rotation, false, init)) {
                         //if (!this.$_checkOverlappedHorz(axis, views2, width, step, rows, rotation)) {
                             // rotation을 제거해도 문제없으면 제거한다.
-                            if (this.$_checkOverlappedHorz2(axis, this._labelViews, width, step, rows, 0, true)) {
+                            if (this.$_checkOverlappedHorz2(axis, this._labelViews, width, step, rows, 0, true, init)) {
                             //if (this.$_checkOverlappedHorz(axis, views2, width, step, rows, 0)) {
                                 // 0으로 설정된 rotation을 원복 시킨다.
                                 views.forEach((v, i) => {
@@ -1152,7 +1157,7 @@ export class AxisView extends ChartElement<Axis> {
         }
     }
 
-    private $_checkOverlappedVert2(axis: Axis, views: ElementPool<AxisLabelView>, height: number, step: number): boolean {
+    private $_checkOverlappedVert2(axis: Axis, views: ElementPool<AxisLabelView>, height: number, step: number, init: boolean): boolean {
         const labels = axis.label;
         const ticks = axis._ticks;
         const nView = ticks.length;
@@ -1174,7 +1179,7 @@ export class AxisView extends ChartElement<Axis> {
                 v = views.pull(n++);
                 v.rotation = 0;
                 v.index = i;
-                this._prepareLabel(v, ticks[i], labels, nView)
+                this._prepareLabel(v, ticks[i], labels, nView, init)
                 v.setVis(true);
     
                 if (v.getBBox().height >= h) {
@@ -1187,18 +1192,18 @@ export class AxisView extends ChartElement<Axis> {
             v = views.pull(n++);
             v.rotation = 0;
             v.index = i - inc;
-            this._prepareLabel(v, ticks[i - inc], labels, nView)
+            this._prepareLabel(v, ticks[i - inc], labels, nView, init)
             v.setVis(true);
         }
         views.freeFrom(n);
     }
 
-    private $_measureLabelsVert(axis: Axis, height: number): number {
+    private $_measureLabelsVert(axis: Axis, height: number, init = false): number {
         const m = axis.label;
         // let views = this._labelViews._internalItems();
         let step = maxv(1, +m.step >> 0);
         //const overalpped = this.$_checkOverlappedVert(axis, views, height, step);
-        const overalpped = this.$_checkOverlappedVert2(axis, this._labelViews, height, step);
+        const overalpped = this.$_checkOverlappedVert2(axis, this._labelViews, height, step, init);
         let views = this._labelViews._internalItems();
 
         if (!overalpped) {
@@ -1208,7 +1213,7 @@ export class AxisView extends ChartElement<Axis> {
             this._labelViews.prepare(axis._ticks.length, (v, i, count) => {
                 v.rotation = 0;
                 v.index = i;
-                this._prepareLabel(v, axis._ticks[i], axis.label, count);
+                this._prepareLabel(v, axis._ticks[i], axis.label, count, init);
                 v.setVis(true);
             });
             views = this.$_applyStep(axis, views, step || 1);
@@ -1218,7 +1223,7 @@ export class AxisView extends ChartElement<Axis> {
 
             while (true) {
             // while (save.length > 1 && step < save.length / 2) {
-                if (!this.$_checkOverlappedVert2(axis, this._labelViews, height, ++step)) {
+                if (!this.$_checkOverlappedVert2(axis, this._labelViews, height, ++step, init)) {
                 //if (!this.$_checkOverlappedHorz(axis, save, height, step, 1, 0)) {
                     break;
                 }

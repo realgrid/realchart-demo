@@ -18,6 +18,7 @@ const config = {
   xAxis: {
     type: "time",
     title: "Time",
+    grid: true,
   },
   yAxis: {
     title: "Temparature",
@@ -60,7 +61,7 @@ const config = {
         [2.4, -5.6],
         [1.4, -7.8],
       ],
-      xStart: "2023-11",
+      xStart: "2023-11-01",
       xStep: "1d",
       marker: {},
       style: {
