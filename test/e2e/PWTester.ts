@@ -56,7 +56,7 @@ export class PWTester {
 	}
 
 	static async getGridBounds(page: Page): Promise<IRect> {
-		const grids = await page.$('.rct-grids');
+		const grids = await page.$('.rct-axis-grids');
 		return await this.getBounds(grids);
 	}
 
