@@ -145,7 +145,7 @@ export class ChartItem extends RcObject {
                         redraw && this._changed();
                     }
                 }
-            } else if (prop in this) {
+            } else { //if (prop in this) { 'in'으로 check하면 기본값이 설정되지 않은 속성을 설정할 수 없다.
                 const v = this[prop];
 
                 if (v instanceof ChartItem) {

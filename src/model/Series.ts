@@ -1417,10 +1417,9 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         if (this._referents) {
             this._referents.forEach(r => r.reference(this, axis));
         }
-        /**
-         * @TODO: Review
-         */
-        this._visPoints = this._runPoints?.filter(p => p.visible);
+        if (this.visible) {
+            this._visPoints = this._runPoints.filter(p => p.visible);
+        }
     }
 
     reference(other: Series, axis: IAxis): void {
@@ -3105,4 +3104,16 @@ export abstract class MarkerSeries extends Series {
      * @config
      */
     shape: Shape;
+    /**
+     * 데이터포인트 {@link shape 도형} 회전 각도.<br/>
+     * 
+     * @config
+     */
+    rotation: number;
+    /**
+     * 데이터포인트 별로 다른 색상으로 그린다.<br/>
+     * 
+     * @config
+     */
+    colorByPoint = false;
 }

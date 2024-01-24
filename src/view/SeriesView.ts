@@ -999,6 +999,11 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 const yGroup = (yAxis.getPos(yLen, p.yGroup) - yBase - yVal) * gr;
                 const hPoint = yVal * gr;
                 let x = xAxis.getPos(xLen, p.xValue) - wUnit / 2;
+                if (isNaN(x)) {
+                    debugger;
+                    const wUnit2 = xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad);
+                    x = xAxis.getPos(xLen, p.xValue) - wUnit2 / 2;
+                }
                 let y = yOrg - yAxis.getPos(yLen, p.yGroup) * gr;
 
                 if (!isNaN(pr + pv.wSave)) {
@@ -1159,6 +1164,20 @@ export class MarkerSeriesPointView<T extends DataPoint> extends PathElement impl
 export abstract class MarkerSeriesView<T extends MarkerSeries> extends SeriesView<T> {
 
     //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    private static _createDrawers(...shapes: string[]): {[shape: string]: (rd: number) => (string | number)[]} {
+        const drawers = {};
+        shapes.forEach(shape => {
+            drawers[shape] = (rd) => SvgShapes[shape](0 - rd, 0 - rd, rd * 2, rd * 2);
+        })
+        return drawers;
+    }
+    private static _drawers: {[shape: string]: (rd: number) => (string | number)[] } = Object.assign({
+        circle: (rd: number) => SvgShapes.circle(0, 0, rd),
+    }, this._createDrawers('square', 'diamond', 'triangle', 'itriangle', 'star', 'rectangle'));
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     protected _markers: ElementPool<MarkerSeriesPointView<DataPoint>>;
@@ -1187,6 +1206,10 @@ export abstract class MarkerSeriesView<T extends MarkerSeries> extends SeriesVie
     // internal members
     //-------------------------------------------------------------------------
     protected abstract _getAutoPos(overflowed: boolean): PointItemPosition;
+
+    protected _getDrawer(shape: string): (rd: number) => (string | number)[] {
+        return MarkerSeriesView._drawers[shape] || MarkerSeriesView._drawers['circle'];
+    }
 
     protected _layoutLabelView(labelView: PointLabelView, pos: PointItemPosition, off: number, radius: number, x: number, y: number): void {
         let r = labelView.getBBox();

@@ -25,7 +25,7 @@ const config = {
     type: 'category',
     tick: {
       step: 3,
-    }
+    },
   },
   "yAxis": {
     "title": "Inflation CPI(%)"

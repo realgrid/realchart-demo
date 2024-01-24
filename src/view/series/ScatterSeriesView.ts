@@ -84,8 +84,10 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
         const yAxis = series._yAxisObj as Axis;
         const polar = this._polar = (series.chart as Chart).body.getPolar(xAxis);
         const gr = this._getGrowRate();
-        const jitterX = series.jitterX;
-        const jitterY = series.jitterY;
+        const sz = Math.max(0, (+series.radius || 0)) * gr;
+        const rotation = +series.rotation || 0;
+        const jitterX = +series.jitterX || 0;
+        const jitterY = +series.jitterY || 0;
         const labels = series.pointLabel;
         const labelPos = labels.position;
         const labelOff = labels.getOffset();
@@ -101,8 +103,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
             const lv = labelViews && (labelView = labelViews.get(p, 0));
 
             if (mv.setVis(!p.isNull)) {
-                const s = series.getShape(p);
-                const sz = series.radius * gr;
+                const drawer = this._getDrawer(series.getShape(p));
                 const xJitter = Utils.jitter(p.xValue, jitterX);
                 const yJitter = Utils.jitter(p.yGroup, jitterY);
                 let path: (string | number)[];
@@ -129,21 +130,8 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
                 p.yPos = y;
 
                 if (mv.setVis(!!polar || !needClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
-                    switch (s) {
-                        case 'square':
-                        case 'diamond':
-                        case 'triangle':
-                        case 'itriangle':
-                        case 'star':
-                        case 'rectangle':
-                            path = SvgShapes[s](0 - sz, 0 - sz, sz * 2, sz * 2);
-                            break;
-                        default:
-                            path = SvgShapes.circle(0, 0, sz);
-                            break;
-                    }
-                    mv.setPath(path);
-                    mv.trans(x, y);
+                    mv.setPath(drawer(sz));
+                    mv.trans(x, y).rotate(rotation);
     
                     // label
                     if (lv) {

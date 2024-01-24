@@ -26,7 +26,6 @@ export class BubbleSeriesPoint extends ZValuePoint {
 }
 
 export enum BubbleSizeMode {
-
     WIDTH = 'width',
     AREA = 'area'
 }
@@ -80,10 +79,24 @@ export class BubbleSeries extends MarkerSeries {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 버블 크기를 결정하는 방식.
+     * 
+     * @config
+     */
     sizeMode = BubbleSizeMode.AREA;
+    /**
+     * 버블 최소 크기.
+     * 
+     * @config
+     */
     minSize: RtPercentSize = 8;
+    /**
+     * 버블 최대 크기.
+     * 
+     * @config
+     */
     maxSize: RtPercentSize = '20%';
-    colorByPoint = false;
 
     //-------------------------------------------------------------------------
     // methods

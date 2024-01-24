@@ -45,7 +45,13 @@ test.describe('candlestick.html test', async function () {
 		expect(title).exist;
 
 		const titleText = await page.evaluate((el) => el.textContent, title);
-		expect(titleText).eq(config.title.text);
+
+		if (config?.title.text) {
+			expect(titleText).eq(config.title.text);
+		} else {
+			expect(titleText).eq(config.title);
+		}
+
 	});
 
 	test('xTitle', async ({ page }) => {
@@ -106,6 +112,7 @@ test.describe('candlestick.html test', async function () {
 
 		const xAxis = await PWTester.getAxis(page, 'x');
 		const xAxisTick = await xAxis.$$('.rct-axis-tick');
+
 		if (config.xAxis.tick === true || config.xAxis.tick?.visible) {
 			expect(xAxisTick.length).eq(config.series.data.length);
 		} else{

@@ -63,7 +63,7 @@ export abstract class BarSeriesBase extends BasedSeries {
     }
 
     protected _getGroupBase(): number {
-        return this.group ? (this.group as BarSeriesGroupBase<any>).baseValue: this.baseValue;
+        return this.group ? (this.group as BarSeriesGroupBase<any>).baseValue : this.baseValue;
     }
 }
 

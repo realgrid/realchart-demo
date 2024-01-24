@@ -101,7 +101,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
         const xLen = inverted ? height : width;
         const org = inverted ? 0 : height;
         // const color = new Color(this._getColor());
-        Utils.log('LAYOUT CELLS', gr);
+        // Utils.log('LAYOUT CELLS', gr);
 
         this._cells.forEach(cell => {
             const p = cell.point as HeatmapSeriesPoint;
