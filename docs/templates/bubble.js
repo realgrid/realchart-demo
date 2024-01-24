@@ -7,7 +7,6 @@ export const config = {
     type: 'bubble',
     pointLabel: { visible: true, suffix: 'm', effect: 'outline' },
     sizeMode: 'width',
-    shape: 'rectangle',
     radius: 0.1,
     data: [
       [ 9, 81, 63 ],  [ 98, 5, 89 ],
