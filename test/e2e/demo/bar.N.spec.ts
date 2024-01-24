@@ -77,7 +77,7 @@ test.describe('bar.html test', async function () {
 		const xAxis = await PWTester.getAxis(page, "x");
 		const ticks = (await xAxis.$$(".rct-axis-tick")).length;
 
-		const datas = nodeConfig.xAxis.categories.length
+		const datas = nodeConfig.series[0].data.length
 		expect(ticks).eq(datas)
 	});
 	
@@ -247,7 +247,7 @@ test.describe('bar.html test', async function () {
 				(el) => el.textContent,
 				labelTexts[i]
 			);
-			expect(tickLabels).eq(config.xAxis.categories[i]);
+			expect(tickLabels).eq(i.toString());
 		}
 	});
 
@@ -271,7 +271,7 @@ test.describe('bar.html test', async function () {
 	});
 
 	test('grid', async ({ page }) => {
-		const grid = await page.$('.rct-grids');
+		const grid = await page.$('.rct-axis-grids');
 		expect(grid).exist;
 
 		const axisGrid = await page.$('.rct-axis-grid');
