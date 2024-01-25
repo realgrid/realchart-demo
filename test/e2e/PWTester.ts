@@ -1,4 +1,4 @@
-import { Page, ElementHandle } from '@playwright/test';
+import { Page, ElementHandle, TestInfo, expect } from '@playwright/test';
 import { IPoint } from '../../src/common/Point';
 import { IRect } from '../../src/common/Rectangle';
 import { Chart } from '../../src/model/Chart';
@@ -95,5 +95,14 @@ export class PWTester {
 		await new Promise((resolve) => setTimeout(resolve, time));
 	}
 
-	
+	static async testChartBySnapshot(page: Page, testInfo: TestInfo, description?: string) {
+		const chartElementId = '#realchart';
+		const screenShot = await page.locator(chartElementId).screenshot();
+		await expect(screenShot).toMatchSnapshot({ maxDiffPixels: 10 });
+		await testInfo.attach('screenshot', { body: screenShot, contentType: 'image/png' });
+		if (!description) {
+			return;
+		}
+		await testInfo.attach('스냅샷 설명', { body: description, contentType: 'text/plain' });
+	}
 }
