@@ -645,6 +645,7 @@ export interface IDataPointCallbackArgs {
 
 export type PointStyleCallback = (args: IDataPointCallbackArgs) => SVGStyleOrClass;
 export type PointClickCallback = (args: IDataPointCallbackArgs) => boolean;
+export type PointHoverCallback = (args: IDataPointCallbackArgs) => void;
 
 const AXIS_VALUE = {
     'x': 'xValue',
@@ -1052,6 +1053,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      * @config
      */
     onPointClick: PointClickCallback;
+    onPointHover: PointHoverCallback;
 
     contains(p: DataPoint): boolean {
         return this._points.contains(p);
@@ -1504,6 +1506,13 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         if (this.onPointClick) {
             this._getPointCallbackArgs(this._pointArgs, p);
             return this.onPointClick(this._pointArgs);
+        }
+    }
+
+    pointHovered(p: DataPoint): void {
+        if (this.onPointHover) {
+            this._getPointCallbackArgs(this._pointArgs, p);
+            this.onPointHover(this._pointArgs);
         }
     }
 

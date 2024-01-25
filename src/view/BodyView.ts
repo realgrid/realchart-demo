@@ -989,12 +989,8 @@ export class BodyView extends ChartElement<Body> {
             let fs = this._focusedSeries;
 
             if (pv != this._focused) {
-                if (this._focused) {
-                    fs.setFocusPoint(this._focused, null);
-                }
-                if (pv) {
-                    sv.setFocusPoint(pv, p);
-                }
+                this._focused && fs.setFocusPoint(this._focused, null);
+                pv && sv.setFocusPoint(pv, p);
             }
 
             this._focused = pv;

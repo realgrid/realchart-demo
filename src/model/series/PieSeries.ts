@@ -71,8 +71,8 @@ class PieSeriesText extends IconedText {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor() {
-        super(null, true);
+    constructor(chart: IChart) {
+        super(chart, true);
     }
 
     //-------------------------------------------------------------------------
@@ -172,7 +172,7 @@ export class PieSeries extends RadialSeries {
      * 
      * @config
      */
-    innerText = new PieSeriesText();
+    innerText = new PieSeriesText(this.chart);
 
     //-------------------------------------------------------------------------
     // methods

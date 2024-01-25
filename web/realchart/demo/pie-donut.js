@@ -42,6 +42,9 @@ const config = {
             // 17,
             // 13
         ],
+        onPointHover: args => {
+            chart.series.set('innerText', `${args.x} - <b>${args.yValue}</b>`);
+        },
     }
 }
 
