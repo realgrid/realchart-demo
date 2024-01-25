@@ -144,11 +144,12 @@ test.describe('candlestick.html test', async function () {
 
 	test('xTickLabel 사용자가 지정하지 않은 경우', async ({ page }) => {
 		const config: any = await page.evaluate('config');
-
+		const data: any = await page.evaluate('stockData');
+		
 		const axis = await PWTester.getAxis(page, 'x');
 		const tickAxis = await axis.$('.rct-axis-labels');
 		const text = await tickAxis.$$('text');
-		const tickStart = new Date('2021-05-02');
+		const tickStart = new Date(data[0].date);
 		expect(config.xAxis.tick.stepInterval).equal('1w');
 		for (let i = 0; i < text.length; i++) {
 			const tickText = await page.evaluate(
