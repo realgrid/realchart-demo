@@ -25,15 +25,16 @@ test.describe('treemap-level.html test', () => {
 		const container = await page.$('#realchart');
 		expect(container).exist;
 
-		const markers = await page.$$('.' + SeriesView.POINT_CLASS);
-		expect(markers.length > 0).is.true;
+		const points = await page.$$('.' + SeriesView.POINT_CLASS);
+		expect(points.length > 0).is.true;
 
 		const config: any = await page.evaluate('config');
 		const data = (config.series || config.series[0]).data;
-
-		// TODO: check leafs
-		// expect(data.length).eq(markers.length);
-		expect(markers.length).lt(data.length);
+		let dataCount = 0;
+		data.forEach(v => {
+			v?.value > 0 && dataCount++;
+		});
+		expect(dataCount).eq(points.length);
 
 		// await page.screenshot({path: 'out/ss/treemap-level.png'});
 	});
