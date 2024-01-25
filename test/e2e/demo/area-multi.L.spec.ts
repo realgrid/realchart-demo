@@ -169,7 +169,7 @@ test.describe("area-multi.html test", () => {
         },
         Number.MAX_SAFE_INTEGER
       );
-      console.log({minValue})
+      // console.log({minValue})
       await page.evaluate((minValue) => {
         config.series[0].baseValue = minValue;
 
