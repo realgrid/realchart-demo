@@ -137,7 +137,7 @@ export class DatetimeFormatter {
 					s += len > 1 ? pad2(date.getDate()) : date.getDate();
 					break;
                 case U_W:
-                    s += len > 1 ? pad2(Utils.weekOfYear(date, startOfWeek)) : Utils.weekOfMonth(date, startOfWeek, true);
+                    s += len > 1 ? pad2(Utils.weekOfYear(date, startOfWeek) + 1) : (Utils.weekOfMonth(date, startOfWeek, true) + 1);
                     break;
                 case L_W:
                     s += len > 1 ? Utils.long_week_days[date.getDay()] : Utils.week_days[date.getDay()];
