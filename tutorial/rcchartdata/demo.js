@@ -402,8 +402,8 @@ function updateValue() {
   const high = ds.getValue(row, 'highprc');
   const low = ds.getValue(row, 'lowprc');
   const close = Math.floor(Math.random() * (high - low + 1) + low);
-  ds.setValue(row, 'close', close);
-  if (close == ds.getValue(row, 'close')) {
+  ds.setValue(row, 'closeprc', close);
+  if (close == ds.getValue(row, 'closeprc')) {
     console.log('updated', close);
   }
 }
