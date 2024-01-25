@@ -23,7 +23,6 @@ export const config = {
       type: 'bubble',
       tooltipText: 'country: ${country}<br>gdpPercap: ${x}<br>lifeExp: ${y}<br>pop: ${z}',
       sizeMode: 'width',
-      shape: 'rectangle',
       radius: 0.1,
       data: [
         {
@@ -116,7 +115,6 @@ export const config = {
       type: 'bubble',
       tooltipText: 'country: ${country}<br>gdpPercap: ${x}<br>lifeExp: ${y}<br>pop: ${z}',
       sizeMode: 'width',
-      shape: 'rectangle',
       radius: 0.1,
       data: [
         { x: 1601.056136, y: 55.23, z: 1282697, country: 'Albania' },
@@ -186,7 +184,6 @@ export const config = {
       type: 'bubble',
       tooltipText: 'country: ${country}<br>gdpPercap: ${x}<br>lifeExp: ${y}<br>pop: ${z}',
       sizeMode: 'width',
-      shape: 'rectangle',
       radius: 0.1,
       data: [
         { x: 2449.008185, y: 43.077, z: 9279525, country: 'Algeria' },
@@ -308,7 +305,6 @@ export const config = {
       type: 'bubble',
       tooltipText: 'country: ${country}<br>gdpPercap: ${x}<br>lifeExp: ${y}<br>pop: ${z}',
       sizeMode: 'width',
-      shape: 'rectangle',
       radius: 0.1,
       data: [
         {
@@ -368,7 +364,6 @@ export const config = {
       type: 'bubble',
       tooltipText: 'country: ${country}<br>gdpPercap: ${x}<br>lifeExp: ${y}<br>pop: ${z}',
       sizeMode: 'width',
-      shape: 'rectangle',
       radius: 0.1,
       data: [
         { x: 10039.59564, y: 69.12, z: 8691212, country: 'Australia' },
@@ -13987,7 +13982,7 @@ export const tool = {
   ],
   params: {
     continents: [ 'Asia', 'Europe', 'Africa', 'Americas', 'Oceania' ],
-    createSeries: (year) => { let result = []; const { data, params: { continents }, } = tool; const dataPerYear = data.filter((value) => value.year === year); continents.forEach((continent, index) => { result.push({ name: continent, type: 'bubble', tooltipText: 'country: ${country}<br>gdpPercap: ${x}<br>lifeExp: ${y}<br>pop: ${z}', sizeMode: 'width', shape: 'rectangle', radius: 0.1, data: dataPerYear .filter((value) => value.continent === continent) .map((value) => { if (value.country === 'Kuwait') return; return { x: value.gdpPercap, y: value.lifeExp, z: value.pop, country: value.country, }; }), }); }); return result;}
+    createSeries: (year) => { let result = []; const { data, params: { continents }, } = tool; const dataPerYear = data.filter((value) => value.year === year); continents.forEach((continent, index) => { result.push({ name: continent, type: 'bubble', tooltipText: 'country: ${country}<br>gdpPercap: ${x}<br>lifeExp: ${y}<br>pop: ${z}', sizeMode: 'width', radius: 0.1, data: dataPerYear .filter((value) => value.continent === continent) .map((value) => { if (value.country === 'Kuwait') return; return { x: value.gdpPercap, y: value.lifeExp, z: value.pop, country: value.country, }; }), }); }); return result;}
   },
   actions: [
     {

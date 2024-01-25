@@ -15,7 +15,7 @@ const createSeries = (year) => {
             tooltipText:
                 'country: ${country}<br>gdpPercap: ${x}<br>lifeExp: ${y}<br>pop: ${z}',
             sizeMode: 'width',
-            shape: 'rectangle',
+            // shape: 'rectangle',
             radius: 0.1,
             data: dataPerYear
                 .filter((value) => value.continent === continent)

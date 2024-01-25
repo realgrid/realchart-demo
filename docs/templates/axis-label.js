@@ -4,20 +4,6 @@ export const config = {
   xAxis: {
     title: 'X Axis',
     categories: [
-      'Alexander',  'Marie',
-      'Maximilian', 'Sophia',
-      'Lukas',      '마리아',
-      'Leon',       'Anna',
-      'Tim',        'Laura'
-    ],
-    categories_s: [
-      'Alexander',  'Marie',
-      'Maximilian', 'Sophia',
-      'Lukas',      '마리아',
-      'Leon',       'Anna',
-      'Tim',        'Laura'
-    ],
-    categories_l: [
       'Alexander-Long',
       'Marie-Long',
       'Maximilian-Long',
@@ -28,6 +14,13 @@ export const config = {
       'Anna-Long',
       'Tim-Long',
       'Laura-Long'
+    ],
+    categories_s: [
+      'Alexander',  'Marie',
+      'Maximilian', 'Sophia',
+      'Lukas',      '마리아',
+      'Leon',       'Anna',
+      'Tim',        'Laura'
     ],
     label: {}
   },

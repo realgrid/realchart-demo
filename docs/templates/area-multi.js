@@ -12,7 +12,7 @@ export const config = {
       '63', '64', '65', '66', '67',
       '68', '69', '71', '74', '76'
     ],
-    title: { text: 'dsdsd' }
+    title: { text: 'Ages' }
   },
   yAxis: { title: 'Vertical 수직축 Axis' },
   series: [
@@ -30,7 +30,7 @@ export const config = {
           ]
         },
         {
-          name: '여자',
+          name: '남자',
           data: [
              130,  118,  368, 130,  396,  258,
              402,  717,  794, 757, 1102,  599,

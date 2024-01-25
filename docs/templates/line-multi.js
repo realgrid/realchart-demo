@@ -2,7 +2,7 @@ export const config = {
   type: 'line',
   options: { theme: 'real', palette: 'unicorn' },
   title: '마스크 종류별 수출 현황',
-  xAxis: { title: '날짜', type: 'date' },
+  xAxis: { title: '날짜', type: 'time' },
   yAxis: { title: '수출량' },
   templates: {
     line: {
