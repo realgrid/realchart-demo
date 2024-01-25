@@ -34,11 +34,11 @@ test.describe("xAxis, time test", () => {
     ],
   };
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page }, testInfo) => {
     await PWTester.goto(page, url);
-  });  
+  });
 
-  test("init", async ({ page }) => {
+  test("init", async ({ page }, testInfo) => {
     const container = await page.$("#realchart");
     expect(container).exist;
 
@@ -53,13 +53,13 @@ test.describe("xAxis, time test", () => {
       return labels.map((e) => e.textContent);
     }, labels);
 
-    const expectTexts = ['00:00', '001', '002', '003']
+    const expectTexts = ["00:00", "001", "002", "003"];
 
     expect(labelTexts).is.deep.equal(expectTexts);
+    await PWTester.testChartBySnapshot(page, testInfo);
   });
 
-
-  test("tick and path", async ({ page }) => {
+  test("tick and path", async ({ page }, testInfo) => {
     const container = await page.$("#realchart");
 
     await page.evaluate((newConfig) => {
@@ -75,16 +75,17 @@ test.describe("xAxis, time test", () => {
 
     const points = await page.$$(".rct-point");
 
-    for(let point of points){
+    for (let point of points) {
       const bounds = await PWTester.getBounds(point);
       expect(bounds.x).is.greaterThan(0);
       const path = await PWTester.getPathDValue(point);
       expect(Number(path?.split(" ")[1])).is.greaterThan(0);
     }
-  }); 
+    await PWTester.testChartBySnapshot(page, testInfo);
+  });
 
   test.describe("title", () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({ page }, testInfo) => {
       await PWTester.goto(page, url);
 
       page.on("console", (consoleMessage) => {
@@ -95,7 +96,7 @@ test.describe("xAxis, time test", () => {
       });
     });
 
-    test("null title", async ({ page }) => {
+    test("null title", async ({ page }, testInfo) => {
       config.xAxis.title.text = null;
 
       await page.evaluate((newConfig) => {
@@ -110,9 +111,11 @@ test.describe("xAxis, time test", () => {
       }, title);
 
       expect(titleText).is.not.true;
+
+      await PWTester.testChartBySnapshot(page, testInfo);
     });
 
-    test("special character title", async ({ page }) => {
+    test("special character title", async ({ page }, testInfo) => {
       const character = "😄 ⸝ဗီူ⸜ ･ิĹ̯･ิ (˵¯͒⌄¯͒˵)";
       config.xAxis.title.text = character;
 
@@ -128,9 +131,11 @@ test.describe("xAxis, time test", () => {
       }, title);
 
       expect(titleText).is.equal(character);
+
+      await PWTester.testChartBySnapshot(page, testInfo);
     });
 
-    test("min value", async ({ page }) => {
+    test("min value", async ({ page }, testInfo) => {
       config.xAxis.title.text = "title 22";
       config.xAxis.title.align = "start";
       config.xAxis.title.gap = -100;
@@ -148,9 +153,11 @@ test.describe("xAxis, time test", () => {
       }, title);
 
       expect(titleText).is.equal("title 22");
+
+      await PWTester.testChartBySnapshot(page, testInfo);
     });
 
-    test("title length", async ({ page }) => {
+    test("title length", async ({ page }, testInfo) => {
       // 최대 길이를 초과하는 타이틀로 설정한 경우의 테스트
       const maxLengthTitle = "x".repeat(500);
       config.xAxis.title.text = maxLengthTitle;
@@ -175,9 +182,11 @@ test.describe("xAxis, time test", () => {
       expect(titleText).is.equal("x".repeat(500));
       // #Realchart보다 길어야한다.
       expect(rect.width).is.greaterThan(850);
+
+      await PWTester.testChartBySnapshot(page, testInfo);
     });
 
-    test("empty value", async ({ page }) => {
+    test("empty value", async ({ page }, testInfo) => {
       config.xAxis.title.text = null;
 
       await page.evaluate((newConfig) => {
@@ -195,9 +204,11 @@ test.describe("xAxis, time test", () => {
       }, title);
 
       expect(titleText).is.equal("");
+
+      await PWTester.testChartBySnapshot(page, testInfo);
     });
 
-    test("align", async ({ page }) => {
+    test("align", async ({ page }, testInfo) => {
       config.xAxis.title = {
         visible: true,
         text: "TITLE",
@@ -242,9 +253,11 @@ test.describe("xAxis, time test", () => {
       expect(startTranslate.x)
         .is.lessThan(defaultTranslate.x)
         .and.is.lessThan(endTranslate.x);
+
+      await PWTester.testChartBySnapshot(page, testInfo);
     });
 
-    test("gap", async ({ page }) => {
+    test("gap", async ({ page }, testInfo) => {
       config.xAxis.title.text = "TITLE";
       config.xAxis.title.gap = "";
 
@@ -288,8 +301,7 @@ test.describe("xAxis, time test", () => {
       expect(negativeTranslate.y)
         .is.lessThan(defaultTranslate.y)
         .and.is.lessThan(positiveTranslate.y);
+      await PWTester.testChartBySnapshot(page, testInfo);
     });
   });
-
-  
 });
