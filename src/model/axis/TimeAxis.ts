@@ -213,7 +213,6 @@ export class TimeAxisTick extends ContinuousAxisTick {
             do {
                 steps.push(+dt);
                 dt.setMonth(dt.getMonth() + step);
-                console.log(dt);
             } while (dt <= maxDate);
 
         } else if (this.scale === TimeScale.DAY || this.scale === TimeScale.WEEK) {

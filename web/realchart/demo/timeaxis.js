@@ -12,6 +12,10 @@ const config = {
         title: 'Time',
         crosshair: true,
         padding: 0,
+        // label: {
+        //     lastOverflow: 'pull'
+        // },
+        tick: true
     },
     // yAxis: {
     //     title: 'Temparature'

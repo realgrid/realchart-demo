@@ -18,7 +18,7 @@ import { LabelElement } from "../common/impl/LabelElement";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextElement } from "../common/impl/TextElement";
-import { Axis, AxisGuide, AxisLabel, AxisLabelArrange, AxisPosition, AxisScrollBar, AxisTick, AxisTitle, AxisTitleAlign, AxisZoom, IAxisTick } from "../model/Axis";
+import { Axis, AxisGuide, AxisLabel, AxisLabelArrange, AxisLabelOverflow, AxisPosition, AxisScrollBar, AxisTick, AxisTitle, AxisTitleAlign, AxisZoom, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { Crosshair } from "../model/Crosshair";
 import { AxisGuideContainer, AxisGuideView } from "./BodyView";
@@ -392,8 +392,10 @@ export class AxisView extends ChartElement<Axis> {
     _prevMin: number;
     _prevMax: number;
 
+    private _edgeStart = 0;
     private _marginStart = 0;
     private _marginEnd = 0;
+    private _edgeEnd = 0;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -512,9 +514,11 @@ export class AxisView extends ChartElement<Axis> {
         }
     }
 
-    setMargins(start: number, end: number): void {
+    setMargins(edgeStart: number, start: number, end: number, edgeEnd: number): void {
+        this._edgeStart = edgeStart;
         this._marginStart = start;
         this._marginEnd = end;
+        this._edgeEnd = edgeEnd;         
     }
 
     hideCrosshiar(): void {
@@ -955,16 +959,19 @@ export class AxisView extends ChartElement<Axis> {
                     v.index = i;
                     this._prepareLabel(v, ticks[i], labels, nView, init)
                     v.setVis(true);
-    
-                    if (a === 0 && v.getBBox().width >= w) {
+
+                    // 첫번째 label은 반절은 축 밖에 계산되므로...
+                    const w2 = i === 0 ? w * 2 : w;
+
+                    if (a === 0 && v.getBBox().width >= w2) {
                         overalpped = true;
                         break;
-                    } else if (acute && v.getBBox().width * cos(arad) >= w) {
+                    } else if (acute && v.getBBox().width * cos(arad) >= w2) {
                         overalpped = true;
                         break;
                     } 
                     // 30도 이상의 둔각이면 text 높이를 기준으로 한다.
-                    else if  (a !== 0 && v.getBBox().height >= w) {
+                    else if  (a !== 0 && v.getBBox().height >= w2) {
                     // } else if  (a !== 0 && views[i].getBBounds().width * cos(arad) >= w) {
                     // } else if  (a !== 0 && (views[i].getBBounds().width + views[i].getBBounds().height) * cos(arad) >= w) {
                         overalpped = true;
@@ -1252,15 +1259,23 @@ export class AxisView extends ChartElement<Axis> {
         const m = this.model;
         const align = Align.CENTER;
         const pts = this._labelRowPts;
+        const rot = views.get(0).rotation;
+        const a = rot * DEG_RAD;
+        const rotated = rot < -15 && rot >= -90 || rot > 15 && rot <= 90;
         let prev: AxisLabelView;
+        let vis: boolean;
+        let w2: number;
+        let x: number;
+        let y: number;
 
         views.freeHiddens();
+
         views.forEach((v, i, count) => {
-            const rot = v.rotation;
-            const a = rot * DEG_RAD;
             const r = v.getBBox();
-            let x = m.prev(ticks[v.index].pos);
-            let y = opp ? (h - gap - r.height - pts[v.row]) : (gap + pts[v.row]);
+            
+            vis = true;
+            x = m.prev(ticks[v.index].pos);
+            y = opp ? (h - gap - r.height - pts[v.row]) : (gap + pts[v.row]);
 
             if (rot < -15 && rot >= -90) {
                 if (opp) {
@@ -1286,30 +1301,62 @@ export class AxisView extends ChartElement<Axis> {
             }   
 
             // TODO: rotation이 0이 아닌 경우에도 필요(?)
-            if (i === count - 1 && v.rotation === 0) {
-                const w2 = v.rotatedWidth();
+            if (!rotated && i === count - 1) {
+                w2 = v.rotatedWidth();
+                w += this._marginEnd + this._edgeEnd;
 
-                w += this._marginEnd - 1;
-
-                // TODO: w 대신에 chart나 pane 전체 너비를 기준으로...(정책: 최대한 표시한다)
                 if (x + w2 > w) {
-                    x = w - w2;
+                    if (m.label.lastOverflow === AxisLabelOverflow.PULL) {
+                        x = w - w2;
 
-                    if (i > 0) {
-                        const x2 = prev.tx + prev.rotatedWidth();
-                        if (x < x2 + 12) {
-                            v.setVis(false);
-                            return;
+                        if (i > 0) {
+                            const x2 = prev.tx + prev.rotatedWidth();
+                            if (x < x2 + (+m.label.overflowGap || 12)) {
+                                vis = false;
+                            }
+                        } else {
+                            vis = false;
                         }
                     } else {
-                        v.setVis(false);
-                        return;
+                        vis = false;
                     }
                 }
-            } 
-            v.setContrast(null).layout(align).trans(x, y);
-            prev = v;
+                if (!vis) {
+                    v.setVis(false);
+                }
+            }
+            if (vis) {
+                v.setContrast(null).layout(align).trans(x, y);
+                prev = v;
+            }
         });
+
+        const v = views.get(0);
+        w2 = v.rotatedWidth();
+        x = v.tx;
+        vis = true;
+
+        if (x < -this._marginStart - this._edgeStart) {
+            if (m.label.lastOverflow === AxisLabelOverflow.PULL) {
+                x = -this._marginStart - this._edgeStart + 2;
+
+                if (views.count > 0) {
+                    const x2 = views.get(1).tx;
+                    if (x + w2 + (+m.label.overflowGap || 12) > x2) {
+                        vis = false;
+                    }
+                } else {
+                    vis = false;
+                }
+            } else {
+                vis = false;
+            }
+        }
+        if (vis) {
+            v.transX(x);
+        } else {
+            v.setVis(false);
+        }
     }
 
     private $_layoutLabelsVert(views: ElementPool<AxisLabelView>, ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, len: number): void {

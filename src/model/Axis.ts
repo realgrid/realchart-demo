@@ -668,6 +668,29 @@ export interface IAxisLabelArgs {
     value: number;
 }
 
+export enum AxisLabelOverflow {
+    /**
+     * 넘치면 표시하지 않는다.
+     * 
+     * @config
+     */
+    HIDDEN = 'hidden',
+    /**
+     * 차트나 분할 경계를 넘어선 만큼 끌어당겨서 표시한다.<br/>
+     * 실제 표시 위치와 달라지므로 tick을 반드시 표시해서 사용자에게 오차를 보여줘야 한다.
+     * 
+     * @config
+     */
+    PULL = 'pull',
+    /**
+     * 축 경계를 넘어선 만큼 끌어당겨서 표시한다.<br/>
+     * 실제 표시 위치와 달라지므로 tick을 반드시 표시해서 사용자에게 오차를 보여줘야 한다.
+     * 
+     * @config
+     */
+    FIT = 'fit'
+}
+
 /**
  * 축 label 설정 모델.<br/>
  * 
@@ -775,6 +798,25 @@ export abstract class AxisLabel extends IconedText {
      * @config
      */
     lastStyle: SVGStyleOrClass;
+    /**
+     * 첫번째 tick 라벨이 차트나 분할 경계를 넘어갈 때 표시 방식.<br/>
+     * 
+     * @config
+     */
+    firstOverflow = AxisLabelOverflow.PULL;
+    /**
+     * 마지막 tick 라벨이 차트나 분할 경계를 넘어갈 때 표시 방식.<br/>
+     * 
+     * @config
+     */
+    lastOverflow = AxisLabelOverflow.PULL;
+    /**
+     * 차트나 분할 경계를 넘어가는 첫번째나 마지막 tick 라벨을 끌어 당겨서 표시할 때 이전 라벨과의 최소 간격.<br/>
+     * 이 간격보다 작게 되면 표시하지 않는다.
+     * 
+     * @config
+     */
+    overflowGap = 12;
     /**
      * 축 tick 라벨에 표시될 텍스트를 리턴한다.\
      * undefined나 null을 리턴하면 {@link text} 속성 등에 설정된 값으로 표시하거나,

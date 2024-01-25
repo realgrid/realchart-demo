@@ -12,6 +12,7 @@ const config = {
   xAxis: {
     title: '날짜',
     type: 'time',
+    // tick: true
   },
   yAxis: {
     title: '수출량',

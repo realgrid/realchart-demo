@@ -483,8 +483,8 @@ class AxisSectionView extends SectionView {
         this.views.forEach(v => v.clean());
     }
 
-    setMargins(start: number, end: number): void {
-        this.views.forEach(v => v.setMargins(start, end));
+    setMargins(edgeStart: number, start: number, end: number, edgeEnd: number): void {
+        this.views.forEach(v => v.setMargins(edgeStart, start, end, edgeEnd));
     }
 
     //-------------------------------------------------------------------------
@@ -922,10 +922,12 @@ export class ChartView extends LayerElement {
             // axes
             const axisMap = this._axisSectionMap;
             const asvCenter = axisMap[SectionDir.CENTER];
-            const asvMiddle = axisMap[SectionDir.MIDDLE]
+            const asvMiddle = axisMap[SectionDir.MIDDLE];
             let asv: AxisSectionView;
 
             if (!polar) {
+                const padding = this.control._padding;
+
                 if (asvCenter && asvCenter.visible) {
                     wCenter = asvCenter.mw;
                 }
@@ -974,7 +976,7 @@ export class ChartView extends LayerElement {
                     //     asv.resize(w, asv.mh);
                     // }
 
-                    asv.setMargins(x, Math.max(this.width, this.control.contentRight() - 5) - x - w);
+                    asv.setMargins(padding.left, x, this.width - x - w, Math.max(0, padding.right - 2));
                     asv.resize(w, asv.mh);
                     asv.layout(wCenter);
                     y -= asv.mh;
@@ -986,7 +988,7 @@ export class ChartView extends LayerElement {
                     //     asv.resize(w, asv.mh);
                     // }
 
-                    asv.setMargins(x, Math.max(this.width, this.control.contentRight() - 5) - x - w);
+                    asv.setMargins(padding.left, x, this.width - x - w, Math.max(0, padding.right - 1));
                     asv.resize(w, asv.mh);
                     asv.layout(wCenter);
                 }
