@@ -1098,9 +1098,16 @@ export abstract class Axis extends ChartItem implements IAxis {
         this.title = new AxisTitle(this);
         this.line = new AxisLine(this, true);
         this.sectorLine = new AxisSectorLine(this, true);
+    }
+
+    /**
+     * 아래 모델들의 실제 type에 맞는 typedoc을 생성하기 위해 생성자에서 빼낸다.
+     */
+    init(): Axis {
         this.tick = this._createTickModel();
         this.label = this._createLabel();
         this.grid = this._createGrid();
+        return this;
     }
 
     //-------------------------------------------------------------------------
@@ -1115,32 +1122,32 @@ export abstract class Axis extends ChartItem implements IAxis {
     /**
      * @config
      */
-    readonly title: AxisTitle;
+    title: AxisTitle;
     /**
      * @config
      */
-    readonly line: AxisLine;
+    line: AxisLine;
     /**
      * 부채꼴 polar 좌표계의 X 축일 때 원호의 양 끝과 중심에 연결되는 선분들의 설정모델.<br/>
      * {@link config.xAxis.category#startAngle startAngle}, {@link config.xAxis.category#totalAngle totalAngle}을 참조한다.
      * 
      * @config
      */
-    readonly sectorLine: AxisSectorLine;
+    sectorLine: AxisSectorLine;
     /**
      * @config
      */
-    readonly tick: AxisTick;
+    tick: AxisTick;
     /**
      * @config
      */
-    readonly label: AxisLabel;
+    label: AxisLabel;
     /**
      * visible 기본값이 undefined이다.
      * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
      * @config
      */
-    readonly grid: AxisGrid;
+    grid: AxisGrid;
     /**
      * @config
      */
@@ -1786,7 +1793,7 @@ export class AxisCollection {
             cls = chart._getAxisType('linear');
         }
 
-        const axis = new cls(chart, this.isX, src.name);
+        const axis = new cls(chart, this.isX, src.name).init();
 
         axis.load(src);
         axis._index = index;

@@ -8,7 +8,7 @@
 
 import { isArray, isNumber, isObject, isString, pickNum, assign, maxv, isStringL } from "../../common/Common";
 import { DatetimeFormatter } from "../../common/DatetimeFormatter";
-import { AxisLabel, AxisTick } from "../Axis";
+import { Axis, AxisLabel, AxisTick } from "../Axis";
 import { IChart } from "../Chart";
 import { ContinuousAxis, ContinuousAxisTick } from "./LinearAxis";
 
@@ -524,10 +524,11 @@ export class TimeAxis extends ContinuousAxis {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart, isX: boolean, name?: string) {
-        super(chart, isX, name);
+    init(): Axis {
+        super.init();
 
         this.baseValue = NaN;
+        return this;
     }
 
     //-------------------------------------------------------------------------

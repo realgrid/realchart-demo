@@ -460,11 +460,12 @@ export abstract class ContinuousAxis extends Axis {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart, isX: boolean, name?: string) {
-        super(chart, isX, name);
+    init(): Axis {
+        super.init();
 
         this.baseLine = new AxisBaseLine(this, false);
         this.label.numberFormat = '0.##';
+        return this;
     }
 
     //-------------------------------------------------------------------------
@@ -476,7 +477,7 @@ export abstract class ContinuousAxis extends Axis {
      * 
      * @config
      */
-    readonly baseLine: AxisBaseLine;
+    baseLine: AxisBaseLine;
     /**
      * 명시적으로 지정하는 최소값.\
      * 축에 연결된 data point들의 값으로 계산된 최소값보다 이 속성 값이 작으면 대신 이 값이 축의 최소값이 되고,
@@ -1103,12 +1104,11 @@ export class LinearAxis extends ContinuousAxis {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    // [TODO] 아래처럼 재 선언하면 e2e에서 label이 undefined로 재설정된다.
-    // /**
-    //  * @override
-    //  * @config
-    //  */
-    // readonly label: LinearAxisLabel;
+    /**
+     * @override
+     * @config
+     */
+    readonly label: LinearAxisLabel;
 
     //-------------------------------------------------------------------------
     // overriden members

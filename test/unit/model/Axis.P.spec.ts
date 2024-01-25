@@ -93,7 +93,7 @@ class AxisImpl extends Axis {
         json = Tester.loadChartJson('axis');
         chart = new Chart();
         chart.prepareRender();
-        axis = new AxisImpl(chart, false, 'test');
+        axis = new AxisImpl(chart, false, 'test').init();
         axis.load(source);
     })
 

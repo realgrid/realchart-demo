@@ -26,7 +26,7 @@ Line 시리즈.<br/>
 y축 기준 위/아래 구분의 기준이 되는 값.  
 <DefaultValue value="0" contents=""></DefaultValue>
 ### belowStyle: `SVGStyles | string{:js}`[#belowStyle]
-[baseValue](#basevalue) 혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.  
+[baseValue](/config/config/series/line#basevalue) 혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.  
 - `SVGStyles{:js}` 
 
 | Name | Type | Optional |  
@@ -181,7 +181,7 @@ json 객체나 배열로 전달되는 데이터포인트 정보에서 x 값을 �
 ### xStart: `any{:js}`[#xStart]
 연결된 x축이 연속 축(카테고리축이 아닌)일 때, x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.<br/>
 이 후에는 [xStep](#xstep) 씩 증가시키면서 설정한다.
-이 속성이 지징되지 않은 경우 [xStart](/config/config/options#xstart) 가 적용된다.  
+이 속성이 지정되지 않은 경우 [xStart](/config/config/options#xstart) 가 적용된다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### xStep: `string | number{:js}`[#xStep]
 연결된 x축이 연속 축(카테고리축이 아닌)일 때, x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.<br/>
