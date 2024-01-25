@@ -483,6 +483,10 @@ class AxisSectionView extends SectionView {
         this.views.forEach(v => v.clean());
     }
 
+    setMargins(start: number, end: number): void {
+        this.views.forEach(v => v.setMargins(start, end));
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -969,6 +973,8 @@ export class ChartView extends LayerElement {
                     // } else {
                     //     asv.resize(w, asv.mh);
                     // }
+
+                    asv.setMargins(x, Math.max(this.width, this.control.contentRight() - 5) - x - w);
                     asv.resize(w, asv.mh);
                     asv.layout(wCenter);
                     y -= asv.mh;
@@ -979,6 +985,8 @@ export class ChartView extends LayerElement {
                     // } else {
                     //     asv.resize(w, asv.mh);
                     // }
+
+                    asv.setMargins(x, Math.max(this.width, this.control.contentRight() - 5) - x - w);
                     asv.resize(w, asv.mh);
                     asv.layout(wCenter);
                 }

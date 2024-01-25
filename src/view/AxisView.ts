@@ -21,8 +21,6 @@ import { TextElement } from "../common/impl/TextElement";
 import { Axis, AxisGuide, AxisLabel, AxisLabelArrange, AxisPosition, AxisScrollBar, AxisTick, AxisTitle, AxisTitleAlign, AxisZoom, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { Crosshair } from "../model/Crosshair";
-import { CategoryAxis, CategoryAxisTick } from "../model/axis/CategoryAxis";
-import { ContinuousAxis } from "../model/axis/LinearAxis";
 import { AxisGuideContainer, AxisGuideView } from "./BodyView";
 import { BoundableElement, ChartElement } from "./ChartElement";
 import { AxisAnimation } from "./animation/AxisAnimation";
@@ -394,6 +392,9 @@ export class AxisView extends ChartElement<Axis> {
     _prevMin: number;
     _prevMax: number;
 
+    private _marginStart = 0;
+    private _marginEnd = 0;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -509,6 +510,11 @@ export class AxisView extends ChartElement<Axis> {
             }
             cv.trans(x, pos - r.height / 2);
         }
+    }
+
+    setMargins(start: number, end: number): void {
+        this._marginStart = start;
+        this._marginEnd = end;
     }
 
     hideCrosshiar(): void {
@@ -1279,16 +1285,19 @@ export class AxisView extends ChartElement<Axis> {
                 v.setRotation(r.width / 2, 0, opp ? -rot : rot);
             }   
 
-            if (i === count - 1) {
+            // TODO: rotation이 0이 아닌 경우에도 필요(?)
+            if (i === count - 1 && v.rotation === 0) {
                 const w2 = v.rotatedWidth();
 
-                // TODO: w 대신에 chart나 pane 전체 너비를 기준으로...
-                if (x > w - w2) {
+                w += this._marginEnd - 1;
+
+                // TODO: w 대신에 chart나 pane 전체 너비를 기준으로...(정책: 최대한 표시한다)
+                if (x + w2 > w) {
                     x = w - w2;
 
                     if (i > 0) {
                         const x2 = prev.tx + prev.rotatedWidth();
-                        if (x < x2 + 16) {
+                        if (x < x2 + 12) {
                             v.setVis(false);
                             return;
                         }
