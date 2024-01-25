@@ -1091,6 +1091,10 @@ export class BodyView extends ChartElement<Body> {
         return {x: this.tx, y: this.ty};
     }
 
+    getFocusPointView(): IPointView {
+        return this._focused;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

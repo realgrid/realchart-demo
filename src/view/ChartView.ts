@@ -1201,7 +1201,7 @@ export class ChartView extends LayerElement {
         const tx = isFollowPointer ? p.x + bp.x : x + bp.x;
         const ty = isFollowPointer ? p.y + bp.y : y + bp.y;
 
-        this._tooltipView.show(series, point, tx, ty, true);
+        this._tooltipView.show(series, point, tx, ty, body, true);
     }
 
     hideTooltip(): void {

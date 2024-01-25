@@ -15,6 +15,8 @@ import { DataPoint } from "../model/DataPoint";
 import { Series, WidgetSeriesPoint } from "../model/Series";
 import { Tooltip } from "../model/Tooltip";
 import { PieSeries } from "../model/series/PieSeries";
+import { BodyView } from "./BodyView";
+import { PointElement } from "./SeriesView";
 
 export enum TooltipPosition {
     TOP = 'top',
@@ -72,17 +74,18 @@ export class TooltipView extends RcElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    show(series: Series, point: DataPoint, x: number, y: number, animate: boolean): void {
+    show(series: Series, point: DataPoint, x: number, y: number, body: BodyView, animate: boolean): void {
         const model = this._model = series.chart.tooltip;
         const ctx = model.setTarget(series, point);
+        const control = this.control;
 
         if (!ctx) return;
 
-        const cw = this.control.contentWidth();
-        const ch = this.control.contentHeight();
+        const cw = control.contentWidth();
+        const ch = control.contentHeight();
         const tv = this._textView;
         const inverted = series.chart.isInverted();
-        const reversed = series._yAxisObj.reversed;
+        let reversed = series._yAxisObj.reversed;
 
         // text
         this._richText.setFormat(model.text || ctx.getTooltipText(series, point));
@@ -105,14 +108,23 @@ export class TooltipView extends RcElement {
         let translate: number;
         const gap = model.offset + this._tailSize;
 
+        const focus = body.getFocusPointView() as PointElement;
+        const fb = focus.getBounds();
+        const cb = control.getBounds();
         if (inverted) {
             translate = (y - h / 2) - maxv(0, minv(y - h / 2, ch - h));
+            // data point 범위를 벗어났을 경우 반대로 그려준다. issue #456
+            let overed = fb.x - cb.x - gap > cw - w;
+            if (overed) reversed = !reversed;
             const position = reversed ? TooltipPosition.LEFT : TooltipPosition.RIGHT;
             this.drawTooltip(0, 0, w, h, position, translate);
             reversed ? x -= w + gap : x += gap;
             y -= h / 2;
         } else {
             translate = (x - w / 2) - maxv(0, minv(x - w / 2, cw - w));
+            // data point 범위를 벗어났을 경우 반대로 그려준다. issue #456
+            let overed = cb.bottom - fb.bottom + gap > ch - h;
+            if (overed) reversed = !reversed;
             const position = reversed ? TooltipPosition.BOTTOM : TooltipPosition.TOP;
             this.drawTooltip(0, 0, w, h, position, translate);
             x -= w / 2;
