@@ -52,4 +52,101 @@ for (let i = 0; i < configs.length; i++) {
 
         await browser.close();
     });
+
+    test('inverted-' + configs[i].name + '-test', async () => {
+        const browser = await chromium.launch();
+        const page = await browser.newPage();
+        await page.goto(snapshotTestPage);
+
+        await page.evaluate(`
+        const config = ${configs[i].config};
+        config.inverted = !config.inverted;
+        chart.load(config, false)`);
+
+        const snapshot = await page.locator('#realchart').screenshot();
+        await expect(snapshot).toMatchSnapshot('inverted-' + configs[i].name + '.png', {
+            maxDiffPixels: 1,
+        });
+
+        await browser.close();
+    });
+
+    test('reversed-' + configs[i].name + '-test', async () => {
+        const browser = await chromium.launch();
+        const page = await browser.newPage();
+        await page.goto(snapshotTestPage);
+
+        await page.evaluate(`
+        const config = ${configs[i].config};
+        if (config.xAxis) {
+            if (config.xAxis?.length > 1) {
+                config.xAxis.forEach((axis) => {
+                    axis.reversed = true;
+                })
+            } else {
+                config.xAxis.reversed = true;
+            }
+        } else {
+            config.xAxis = {reversed: true};
+        }
+        if (config.yAxis) {
+            if (config.yAxis?.length > 1) {
+                config.yAxis.forEach((axis) => {
+                    axis.reversed = true;
+                })
+            } else {
+                config.yAxis.reversed = true;
+            }
+        } else {
+            config.yAxis = {reversed: true};
+        }
+        chart.load(config, false)`);
+
+        const snapshot = await page.locator('#realchart').screenshot();
+        await expect(snapshot).toMatchSnapshot('reversed-' + configs[i].name + '.png', {
+            maxDiffPixels: 1,
+        });
+
+        await browser.close();
+    });
+
+    test('inverted-reversed-' + configs[i].name + '-test', async () => {
+        const browser = await chromium.launch();
+        const page = await browser.newPage();
+        await page.goto(snapshotTestPage);
+
+        await page.evaluate(`
+        const config = ${configs[i].config};
+        config.inverted = !config.inverted;
+        if (config.xAxis) {
+            if (config.xAxis?.length > 1) {
+                config.xAxis.forEach((axis) => {
+                    axis.reversed = true;
+                })
+            } else {
+                config.xAxis.reversed = true;
+            }
+        } else {
+            config.xAxis = {reversed: true};
+        }
+        if (config.yAxis) {
+            if (config.yAxis?.length > 1) {
+                config.yAxis.forEach((axis) => {
+                    axis.reversed = true;
+                })
+            } else {
+                config.yAxis.reversed = true;
+            }
+        } else {
+            config.yAxis = {reversed: true};
+        }
+        chart.load(config, false)`);
+
+        const snapshot = await page.locator('#realchart').screenshot();
+        await expect(snapshot).toMatchSnapshot('inverted-reversed-' + configs[i].name + '.png', {
+            maxDiffPixels: 1,
+        });
+
+        await browser.close();
+    });
 }
