@@ -177,12 +177,12 @@ export class AxisLabelView extends LabelElement {
         }
     }
 
-    // rotatedWidth(): number {
-    //     const d = this.rotation * DEG_RAD;
-    //     const r = this.getBBounds();
+    rotatedWidth(): number {
+        const d = this.rotation * DEG_RAD;
+        const r = this.getBBox();
 
-    //     return absv(sin(d) * r.height) + absv(cos(d) * r.width);
-    // }
+        return absv(sin(d) * r.height) + absv(cos(d) * r.width);
+    }
 
     rotatedHeight(): number {
         const d = this.rotation * DEG_RAD;
@@ -1246,9 +1246,10 @@ export class AxisView extends ChartElement<Axis> {
         const m = this.model;
         const align = Align.CENTER;
         const pts = this._labelRowPts;
+        let prev: AxisLabelView;
 
         views.freeHiddens();
-        views.forEach(v => {
+        views.forEach((v, i, count) => {
             const rot = v.rotation;
             const a = rot * DEG_RAD;
             const r = v.getBBox();
@@ -1277,7 +1278,28 @@ export class AxisView extends ChartElement<Axis> {
                 x -= r.width / 2;
                 v.setRotation(r.width / 2, 0, opp ? -rot : rot);
             }   
+
+            if (i === count - 1) {
+                const w2 = v.rotatedWidth();
+
+                // TODO: w 대신에 chart나 pane 전체 너비를 기준으로...
+                if (x > w - w2) {
+                    x = w - w2;
+
+                    if (i > 0) {
+                        const x2 = prev.tx + prev.rotatedWidth();
+                        if (x < x2 + 16) {
+                            v.setVis(false);
+                            return;
+                        }
+                    } else {
+                        v.setVis(false);
+                        return;
+                    }
+                }
+            } 
             v.setContrast(null).layout(align).trans(x, y);
+            prev = v;
         });
     }
 
