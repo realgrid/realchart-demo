@@ -1047,12 +1047,18 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      */
     pointStyleCallback: PointStyleCallback;
     /**
-     * 데이터 point가 클릭될 때 발생하는 이벤트 콜백.<br/>
+     * 데이터 point가 클릭될 때 호출되는 이벤트 콜백.<br/>
      * 명시적 true를 리턴하면 기본 동작이 진행되지 않는다.
      * 
      * @config
      */
     onPointClick: PointClickCallback;
+    /**
+     * 마우스가 데이터 point 위에 올라가거나 빠져나갈 때 호출되는 이벤트 콜백.<br/>
+     * 빠져나가는 경우 args 매개변수는 null이다.
+     * 
+     * @config
+     */
     onPointHover: PointHoverCallback;
 
     contains(p: DataPoint): boolean {
@@ -1511,8 +1517,8 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
 
     pointHovered(p: DataPoint): void {
         if (this.onPointHover) {
-            this._getPointCallbackArgs(this._pointArgs, p);
-            this.onPointHover(this._pointArgs);
+            p && this._getPointCallbackArgs(this._pointArgs, p);
+            this.onPointHover(p ? this._pointArgs : null);
         }
     }
 

@@ -447,7 +447,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         if (this._needFocusOrder()) {
             focused ? this._getPointPool().front(pv as any) : this._getPointPool().back(pv as any);
         }
-        focused && this.model.pointHovered(pv.point);
+        this.model.pointHovered(focused ? pv.point : null);
     }
 
     protected _needFocusOrder(): boolean {

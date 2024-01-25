@@ -43,7 +43,11 @@ const config = {
             // 13
         ],
         onPointHover: args => {
-            chart.series.set('innerText', `${args.x} - <b>${args.yValue}</b>`);
+            if (args) {
+                chart.series.set('innerText', `${args.x} - <b>${args.yValue}</b>`);
+            } else {
+                chart.series.set('innerText', config.series.innerText);
+            }
         },
     }
 }

@@ -55,8 +55,12 @@
 group에 포함되면 group의 noClip 설정을 따른다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### onPointClick[#onPointClick]
-데이터 point가 클릭될 때 발생하는 이벤트 콜백.<br/>
+데이터 point가 클릭될 때 호출되는 이벤트 콜백.<br/>
 명시적 <Content type="keyword" value="true"></Content>를 리턴하면 기본 동작이 진행되지 않는다.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
+### onPointHover[#onPointHover]
+마우스가 데이터 point 위에 올라가거나 빠져나갈 때 호출되는 이벤트 콜백.<br/>
+빠져나가는 경우 args 매개변수는 <Content type="keyword" value="null"></Content>이다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### pointColors: `string | string[]{:js}`[#pointColors]
 데이터 포인트별 색들을 지정한다.<br/>
