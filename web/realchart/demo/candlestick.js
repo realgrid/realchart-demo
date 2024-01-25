@@ -5,7 +5,7 @@
 
 const stockData = data
     .sort((a, b) => a.date > b.date)
-    .filter((r) => r.date >= '2021-05-01');
+    .filter((r) => r.date >= '2021-04-01');
 const tool = {
     actions: [
         {
