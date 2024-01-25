@@ -21,12 +21,6 @@ export class PWTester {
 	}
 
 	static async goto(page: Page, url: string): Promise<void> {
-		page.on('console', async (msg) => {
-			const values = [];
-			for (const arg of msg.args())
-				values.push((await arg) && arg.jsonValue());
-			console.log(...values);
-		});
 		page.on('domcontentloaded', (page) => {});
 		await page.setViewportSize(this.VIEWPORT_SIZE);
 		await page

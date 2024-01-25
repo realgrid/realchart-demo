@@ -240,14 +240,17 @@ test.describe('bar.html test', async function () {
 
 		const xAxis = await PWTester.getAxis(page, 'x');
 		const label = await xAxis.$('.rct-axis-labels');
-
-		const labelTexts = await label.$$('text');
-		for (let i = 0; i < labelTexts.length; i++) {
-			const tickLabels = await page.evaluate(
-				(el) => el.textContent,
-				labelTexts[i]
-			);
-			expect(tickLabels).eq(i.toString());
+		if (label) {
+			const labelTexts = await label.$$('text');
+			for (let i = 0; i < labelTexts.length; i++) {
+				const tickLabel = await page.evaluate(
+					(el) => el.textContent,
+					labelTexts[i]
+				);
+				expect(tickLabel).eq(config.xAxis.categories[i]);
+			}
+		} else {
+			expect.fail('Not found .rct-axis-labels')
 		}
 	});
 

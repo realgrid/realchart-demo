@@ -148,6 +148,7 @@ test.describe("xAxis, time test", () => {
       await page.evaluate((newConfig) => {
         chart.load(newConfig, false);
       }, config);
+      await PWTester.sleep();
 
       const xAxis = await PWTester.getAxis(page, "x");
       const title = await xAxis.$$(".rct-axis-title");
