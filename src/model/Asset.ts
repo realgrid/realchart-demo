@@ -190,6 +190,7 @@ export interface IPattern extends IAssetItem {
      */
     height?: number;
     style?: SVGStyles;
+    backgroundStyle?: SVGStyles;
 }
 
 
@@ -294,6 +295,11 @@ export class Pattern extends AssetItem<IPattern> {
         const elt = doc.createElementNS(SVGNS, 'pattern');
         const path = doc.createElementNS(SVGNS, 'path');
         let noFill = false;
+        let s: string;
+        let stockStyle: any;
+        let style: any;
+        let w: number;
+        let h: number;
 
         elt.setAttribute('id', src.id);
         elt.setAttribute('patternUnits', "userSpaceOnUse");
@@ -301,22 +307,38 @@ export class Pattern extends AssetItem<IPattern> {
 
         if (+src.pattern >= 0) {
             const stock = Pattern.STOCK[(+src.pattern) % Pattern.STOCK.length];
-            path.setAttribute('d', stock.path);
-            if (stock.style) assign(path.style, stock.style);
+
+            s = stock.path;
+            stockStyle = stock.style;
             noFill = !stock.fill;
-            elt.setAttribute('width', String(stock.width || 20));
-            elt.setAttribute('height', String(stock.height || 20));
+            w = stock.width || 20;
+            h = stock.height || 20;
+            
         } else if (isString(src.pattern)) {
-            path.setAttribute('d', src.pattern);
-            elt.setAttribute('width', String(src.width || src.height || 20));
-            elt.setAttribute('height', String(src.height || src.width || 20));
+            s = src.pattern;
+            style = src.style;
+            w = src.width || src.height || 20;
+            h = src.height || src.width || 20;
         }
 
-        if (isObject(src.style)) {
-            assign(path.style, src.style);
-        }
+        elt.setAttribute('width', String(w));
+        elt.setAttribute('height', String(h));
+        path.setAttribute('d', s);
+        style && assign(path.style, style);
+        stockStyle && assign(path.style, stockStyle);
         if (noFill) {
             path.style.fill = 'none';
+        }
+
+        // 배경
+        style = src.backgroundStyle;
+        if (isString(style) || isObject(style)) {
+            const rect = doc.createElementNS(SVGNS, 'rect');
+
+            elt.append(rect);
+            rect.style.fill = isString(style) ? style : style.fill;
+            rect.setAttribute('width', String(w));
+            rect.setAttribute('height', String(h));
         }
 
         elt.append(path);
