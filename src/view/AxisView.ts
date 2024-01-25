@@ -843,7 +843,7 @@ export class AxisView extends ChartElement<Axis> {
             if (m) {
                 view.setLabel(model, tick, text.replace(axis_label_reg, label), 1000, 1000);
             } else {
-                model.prepareRich(text + Math.random() * 10000);
+                model.prepareRich(text);
                 model._paramTick = tick;
                 view.setModel(this.doc, model, null, null);
                 model.buildSvg(view._text, view._outline, NaN, NaN, model, model._domain);
