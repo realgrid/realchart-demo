@@ -61,7 +61,6 @@ test.describe("xAxis, time test", () => {
 
     // xAxis labels
     expect(labelTexts).is.deep.equal(expectTexts);
-
   });
 
 
