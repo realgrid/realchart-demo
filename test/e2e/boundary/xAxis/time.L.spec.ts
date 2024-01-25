@@ -59,14 +59,14 @@ test.describe("xAxis, time test", () => {
   });
 
 
-  test("path", async ({ page }) => {
+  test("tick and path", async ({ page }) => {
     const container = await page.$("#realchart");
 
     await page.evaluate((newConfig) => {
       newConfig.xAxis.tick = true;
       chart.load(newConfig, false);
     }, config);
-    PWTester.sleep();
+    await PWTester.sleep();
     const xAxis = await PWTester.getAxis(page, "x");
     const ticks = await xAxis.$$(".rct-axis-tick");
 

@@ -51,6 +51,7 @@ test.describe("xAxis, category test", () => {
     await page.evaluate((newConfig) => {
       chart.load(newConfig, false);
     }, config);
+    await PWTester.sleep();
     const xAxis = await PWTester.getAxis(page, "x");
     const labels = await xAxis.$$(".rct-axis-label");
 
@@ -72,6 +73,7 @@ test.describe("xAxis, category test", () => {
     await page.evaluate((newConfig) => {
       chart.load(newConfig, false);
     }, config);
+    PWTester.sleep();
     const xAxis = await PWTester.getAxis(page, "x");
     const ticks = await xAxis.$$(".rct-axis-tick");
 
