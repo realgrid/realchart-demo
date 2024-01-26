@@ -98,7 +98,11 @@ export class PWTester {
 	static async testChartBySnapshot(page: Page, testInfo: TestInfo, description?: string) {
 		const chartElementId = '#realchart';
 		const screenShot = await page.locator(chartElementId).screenshot();
-		await expect(screenShot).toMatchSnapshot({ maxDiffPixels: 10 });
+		const oldPath = testInfo.snapshotDir.split("/");
+		const newPath = oldPath.slice(0, -1).join('/');
+		console.log(testInfo)
+		testInfo.snapshotDir = `${newPath}/snapshot`;
+		await expect(screenShot).toMatchSnapshot(`${newPath}/snapshot/test.png`,{ maxDiffPixels: 10 });
 		await testInfo.attach('screenshot', { body: screenShot, contentType: 'image/png' });
 		if (!description) {
 			return;

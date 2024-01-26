@@ -8,6 +8,7 @@ const config = {
         title: 'X Axis',
         // minValue: 0,
         // maxValue: 100
+        
     },
     yAxis: {
         title: 'Y Axis',

@@ -39,12 +39,15 @@ test.describe("xAxis, time test", () => {
   });
 
   test("init", async ({ page }, testInfo) => {
+
     const container = await page.$("#realchart");
     expect(container).exist;
 
     await page.evaluate((newConfig) => {
       chart.load(newConfig, false);
     }, config);
+
+
     await PWTester.sleep();
     const xAxis = await PWTester.getAxis(page, "x");
     const labels = await xAxis.$$(".rct-axis-label");
@@ -57,5 +60,8 @@ test.describe("xAxis, time test", () => {
 
     expect(labelTexts).is.deep.equal(expectTexts);
     await PWTester.testChartBySnapshot(page, testInfo);
+
   });
+
+
 });
