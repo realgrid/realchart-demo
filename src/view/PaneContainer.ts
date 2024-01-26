@@ -36,6 +36,13 @@ class AxisSectionView extends SectionView {
     private _gap = 0;
 
     //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    isEmpty(): boolean {
+        return this.views.length === 0;
+    }
+
+    //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     prepare(doc: Document, isX: boolean, paxes: PaneAxes, bodies: BodyView[][], mats: PaneAxisMatrix): void {
@@ -151,6 +158,10 @@ class AxisSectionView extends SectionView {
                 return v._scrollView;
             }
         }
+    }
+
+    setMargins(edgeStart: number, start: number, end: number, edgeEnd: number): void {
+        this.views.forEach(v => v.setMargins(edgeStart, start, end, edgeEnd));
     }
 
     //-------------------------------------------------------------------------
@@ -562,6 +573,7 @@ export class PaneContainer extends LayerElement {
     }
 
     private $_layoutAxes(model: Split, isX: boolean, w: number, h: number): void {
+        const padding = this.control._padding;
         const rowPts = this._rowPoints;
         const colPts = this._colPoints;
         const containers = isX ? this._xContainers : this._yContainers;
@@ -581,6 +593,47 @@ export class PaneContainer extends LayerElement {
                 const w2 = rowPts[rowPts.length - 2] - x;
 
                 containers.forEach((c, i) => {
+                    const sections = c.sections;
+
+                    for (let j = 0, n = sections.length; j < n; j++) {
+                        const s = sections[j];
+                        const edgeStart = j === 0 ? padding.left : 0;
+                        const edgeEnd = j === n - 1 ? padding.right : 0;
+                        let start = 0;
+                        let end = 0;
+
+                        if (n > 1) {
+                            start = rowPts[j * 2 + 1] - rowPts[j * 2];
+                            end = rowPts[(j + 1) * 2 + 1] - rowPts[(j + 1) * 2];
+    
+                            if (j === 0) {
+                                if (sections[j + 1].isEmpty()) {
+                                    end = rowPts[(j + 1) * 2] - rowPts[(j + 1) * 2 - 1];
+                                } else {
+                                    end /= 2;
+                                }
+                            } else if (j === n - 1) {
+                                if (sections[j - 1].isEmpty()) {
+                                    start = rowPts[(j - 1) * 2] - rowPts[(j - 1) * 2 - 1];
+                                } else {
+                                    start /= 2;
+                                }
+                            } else {
+                                if (sections[j - 1].isEmpty()) {
+                                    start = rowPts[(j - 1) * 2] - rowPts[(j - 1) * 2 - 1];
+                                } else {
+                                    start /= 2;
+                                }
+                                if (sections[j + 1].isEmpty()) {
+                                    end = rowPts[(j + 1) * 2] - rowPts[(j + 1) * 2 - 1];
+                                } else {
+                                    end /= 2;
+                                }
+                            }
+                        }
+                        s.setMargins(edgeStart, start, end, edgeEnd);
+                    }
+
                     // c.resize(w2, c.mh).translate(rowPts[i * 2 + 1], h - colPts[i * 2 + 1]);
                     c.resize(w2, c.mh);
                     c.trans(x, h - colPts[i * 2 + 1]);
@@ -593,6 +646,47 @@ export class PaneContainer extends LayerElement {
                 w = colPts[colPts.length - 2] - x;
 
                 containers.forEach((c, i) => {
+                    const sections = c.sections;
+
+                    for (let j = 0, n = sections.length; j < n; j++) {
+                        const s = sections[j];
+                        const edgeStart = i === 0 ? padding.left : 0;
+                        const edgeEnd = i === containers.length - 1 ? padding.right : 0;
+                        let start = 0;
+                        let end = 0;
+
+                        if (n > 1) {
+                            start = colPts[j * 2 + 1] - colPts[j * 2];
+                            end = colPts[(j + 1) * 2 + 1] - colPts[(j + 1) * 2];
+    
+                            if (j === 0) {
+                                if (sections[j + 1].isEmpty()) {
+                                    end = colPts[(j + 1) * 2] - colPts[(j + 1) * 2 - 1];
+                                } else {
+                                    end /= 2;
+                                }
+                            } else if (j === n - 1) {
+                                if (sections[j - 1].isEmpty()) {
+                                    start = colPts[(j - 1) * 2] - colPts[(j - 1) * 2 - 1];
+                                } else {
+                                    start /= 2;
+                                }
+                            } else {
+                                if (sections[j - 1].isEmpty()) {
+                                    start = colPts[(j - 1) * 2] - colPts[(j - 1) * 2 - 1];
+                                } else {
+                                    start /= 2;
+                                }
+                                if (sections[j + 1].isEmpty()) {
+                                    end = colPts[(j + 1) * 2] - rowPts[(j + 1) * 2 - 1];
+                                } else {
+                                    end /= 2;
+                                }
+                            }
+                        }
+                        s.setMargins(edgeStart, start, end, edgeEnd);
+                    }
+
                     c.resize(w, c.mh);
                     c.trans(x, h - rowPts[i * 2 + 1]);
                     c.layout(colPts);

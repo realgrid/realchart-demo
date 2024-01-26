@@ -14,7 +14,9 @@ const config = {
             stroke: 'white',
             strokeWidth: '1px',
         },
-        backgroundStyle: 'green'
+        backgroundStyle: {
+            fill: 'green'
+        }
     },
 	{
         type: 'pattern',
@@ -49,7 +51,9 @@ const config = {
             stroke: 'white',
             strokeWidth: '1px',
         },
-        backgroundStyle: '#88000080'
+        backgroundStyle: {
+            fill: '#88000080'
+        }
     },
 	{
         type: 'pattern',
@@ -69,7 +73,9 @@ const config = {
             stroke: 'red',
             strokeWidth: '1px',
         },
-        backgroundStyle: 'yellow'
+        backgroundStyle: {
+            fill: 'yellow'
+        }
     },
 	{
         type: 'pattern',

@@ -21,6 +21,7 @@ import { TextElement } from "../common/impl/TextElement";
 import { Axis, AxisGuide, AxisLabel, AxisLabelArrange, AxisLabelOverflow, AxisPosition, AxisScrollBar, AxisTick, AxisTitle, AxisTitleAlign, AxisZoom, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { Crosshair } from "../model/Crosshair";
+import { ContinuousAxis } from "../model/axis/LinearAxis";
 import { AxisGuideContainer, AxisGuideView } from "./BodyView";
 import { BoundableElement, ChartElement } from "./ChartElement";
 import { AxisAnimation } from "./animation/AxisAnimation";
@@ -961,7 +962,7 @@ export class AxisView extends ChartElement<Axis> {
                     v.setVis(true);
 
                     // 첫번째 label은 반절은 축 밖에 계산되므로...
-                    const w2 = i === 0 ? w * 2 : w;
+                    const w2 = w;// i === 0 ? w * 2 : w;
 
                     if (a === 0 && v.getBBox().width >= w2) {
                         overalpped = true;
@@ -1256,12 +1257,75 @@ export class AxisView extends ChartElement<Axis> {
     }
 
     private $_layoutLabelsHorz(views: ElementPool<AxisLabelView>, ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, gap: number): void {
+
+        function pullFirst(self: AxisView, v: AxisLabelView, next: AxisLabelView): boolean {
+            let vis = true;
+            const w2 = v.rotatedWidth();
+            let x = v.tx;
+    
+            if (x < -self._marginStart - self._edgeStart) {
+                if ((reversed ? m.label.lastOverflow : m.label.firstOverflow) === AxisLabelOverflow.PULL) {
+                    x = -self._marginStart - self._edgeStart + 2;
+    
+                    if (views.count > 0) {
+                        const x2 = next.tx;
+                        if (x + w2 + (+m.label.overflowGap || 12) > x2) {
+                            vis = false;
+                        }
+                    } else {
+                        vis = false;
+                    }
+                } else {
+                    vis = false;
+                }
+            }
+            if (vis) {
+                v.transX(x);
+            } else {
+                v.setVis(false);
+            }
+            return vis;
+        }
+
+        function pullLast(self: AxisView, v: AxisLabelView, prev: AxisLabelView): boolean {
+            let vis = true;
+            let x = v.tx;
+            const w2 = v.rotatedWidth();
+            
+            w += self._marginEnd + self._edgeEnd;
+
+            if (x + w2 > w) {
+                if ((reversed ? m.label.firstOverflow : m.label.lastOverflow) === AxisLabelOverflow.PULL) {
+                    x = w - w2;
+
+                    if (prev) {
+                        const x2 = prev.tx + prev.rotatedWidth();
+                        if (x < x2 + (+m.label.overflowGap || 12)) {
+                            vis = false;
+                        }
+                    } else {
+                        vis = false;
+                    }
+                } else {
+                    vis = false;
+                }
+            }
+            if (vis) {
+                v.transX(x);
+            } else {
+                v.setVis(false);
+            }
+            return vis;
+        }
+
         const m = this.model;
+        const reversed = m.reversed;
         const align = Align.CENTER;
         const pts = this._labelRowPts;
         const rot = views.get(0).rotation;
         const a = rot * DEG_RAD;
         const rotated = rot < -15 && rot >= -90 || rot > 15 && rot <= 90;
+        const count = views.count;
         let prev: AxisLabelView;
         let vis: boolean;
         let w2: number;
@@ -1270,7 +1334,7 @@ export class AxisView extends ChartElement<Axis> {
 
         views.freeHiddens();
 
-        views.forEach((v, i, count) => {
+        views.forEach((v, i) => {
             const r = v.getBBox();
             
             vis = true;
@@ -1300,62 +1364,13 @@ export class AxisView extends ChartElement<Axis> {
                 v.setRotation(r.width / 2, 0, opp ? -rot : rot);
             }   
 
-            // TODO: rotation이 0이 아닌 경우에도 필요(?)
-            if (!rotated && i === count - 1) {
-                w2 = v.rotatedWidth();
-                w += this._marginEnd + this._edgeEnd;
-
-                if (x + w2 > w) {
-                    if (m.label.lastOverflow === AxisLabelOverflow.PULL) {
-                        x = w - w2;
-
-                        if (i > 0) {
-                            const x2 = prev.tx + prev.rotatedWidth();
-                            if (x < x2 + (+m.label.overflowGap || 12)) {
-                                vis = false;
-                            }
-                        } else {
-                            vis = false;
-                        }
-                    } else {
-                        vis = false;
-                    }
-                }
-                if (!vis) {
-                    v.setVis(false);
-                }
-            }
-            if (vis) {
-                v.setContrast(null).layout(align).trans(x, y);
-                prev = v;
-            }
+            v.setContrast(null).layout(align).trans(x, y);
         });
 
-        const v = views.get(0);
-        w2 = v.rotatedWidth();
-        x = v.tx;
-        vis = true;
-
-        if (x < -this._marginStart - this._edgeStart) {
-            if (m.label.lastOverflow === AxisLabelOverflow.PULL) {
-                x = -this._marginStart - this._edgeStart + 2;
-
-                if (views.count > 0) {
-                    const x2 = views.get(1).tx;
-                    if (x + w2 + (+m.label.overflowGap || 12) > x2) {
-                        vis = false;
-                    }
-                } else {
-                    vis = false;
-                }
-            } else {
-                vis = false;
-            }
-        }
-        if (vis) {
-            v.transX(x);
-        } else {
-            v.setVis(false);
+        // TODO: rotation이 0이 아닌 경우에도 필요(?)
+        if (!rotated && m instanceof ContinuousAxis && count > 1) {
+            pullFirst(this, views.get(reversed ? count - 1 : 0), views.get(reversed ? count - 2 : 1));
+            pullLast(this, views.get(reversed ? 0 : count - 1), views.get(reversed ? 1 : count - 2))
         }
     }
 
