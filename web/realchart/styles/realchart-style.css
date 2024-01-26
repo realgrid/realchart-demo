@@ -699,12 +699,7 @@
     stroke-dasharray: none;
 }
 .rct-line-series .rct-point[data-focus] {
-    stroke: #0088ff20 !important; 
-    stroke-width: 9px !important;
-    opacity: inherit !important;
-    /** TODO: 아래가 적용되지 않고 있다 */
-    transition-property: opacity;
-    transition-duration: 0.7s;
+    fill: white;
 }
 .rct-line-series-flag {
     font-weight: bold;
@@ -742,6 +737,10 @@
 /** scatter series */
 .rct-scatter-series {
     fill-opacity: 0.7;
+}
+.rct-scatter-series .rct-point[data-focus] {
+    fill: white;
+    fill-opacity: 0.9;
 }
 
 /** boxplot series */

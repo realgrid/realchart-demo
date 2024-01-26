@@ -22,19 +22,55 @@ import { ContinuousAxis } from "../../model/axis/LinearAxis";
 import { IPointPos, LinePointLabel, LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection, PointLine } from "../../model/series/LineSeries";
 import { LineLegendMarkerView } from "../../model/series/legend/LineLegendMarkerView";
 import { LegendItemView } from "../LegendView";
-import { IPointView, PointContainer, PointElement, SeriesView } from "../SeriesView";
+import { IPointView, MarkerSeriesPointView, PointContainer, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-export class LineMarkerView extends PointElement implements IPointView {
+export class LineMarkerView extends MarkerSeriesPointView implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     _radius: number;
+    private _saveRadius: number;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    beginHover(series: LineSeriesBaseView<LineSeries>, focused: boolean): void {
+        if (focused) {
+            this._saveRadius = this._radius;
+        }
+        // this.internalImportantStylesOrClass({
+        //     stroke: 'red',
+        //     strokeWidth: '3px',
+        //     fill: 'white'
+        // });
+    }
+
+    setHoverRate(series: LineSeriesBaseView<LineSeries>, focused: boolean, rate: number): void {
+        const p = this.point as LineSeriesPoint;
+        const r = 0.8;
+        let rd = this._radius;
+
+        if (focused) {
+            if (!isNaN(rate)) {
+                rd = this._radius = this._saveRadius * (1 + rate * r);
+            }
+        } else {
+            rd = this._radius = this._saveRadius * (1 + r - (isNaN(rate) ? r : r * rate));
+        }
+
+        SvgShapes.setShape(this, series.model.getShape(p), rd, rd);
+        this.trans(p.xPos - rd, p.yPos - rd);
+    }
+
+    endHover(series: LineSeriesBaseView<LineSeries>, focused: boolean): void {
+        if (!focused) {
+            this._radius = this._saveRadius;
+            // this.clearStyleAndClass();
+            // series.model.marker.style && this.internalSetStyleOrClass(series.model.marker.style);
+        }
+    }
 }
 
 export class LineContainer extends PointContainer {
@@ -332,6 +368,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                 mv.setStyle('opacity', (vis || (i == 0 && marker.firstVisible === true) || (i === count - 1 && marker.lastVisible === true)) ? '1' : '0');
 
                 if (lv) {
+                    const rd = mv._radius;
                     const r = lv.getBBox();
 
                     lv.visible = true;
@@ -342,18 +379,22 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                             py -= r.height / 2 + labelOff;
                             break;
                         case PointItemPosition.FOOT:
-                            py += labelOff + (vis ? mv._radius : 0);                            
+                            // py += labelOff + (vis ? mv._radius : 0);                            
+                            py += labelOff + (vis ? rd : 0);                            
                             break;
                         default:
-                            py -= r.height + labelOff + (vis ? mv._radius : 0);
+                            // py -= r.height + labelOff + (vis ? mv._radius : 0);
+                            py -= r.height + labelOff + (vis ? rd : 0);
                             break;
                     }
                     switch (labelAlign) {
                         case Align.LEFT:
-                            px -= r.width + (vis ? mv._radius : 0) + alignOff;
+                            // px -= r.width + (vis ? mv._radius : 0) + alignOff;
+                            px -= r.width + (vis ? rd : 0) + alignOff;
                             break;
                         case Align.RIGHT:
-                            px += (vis ? mv._radius : 0) + alignOff;
+                            // px += (vis ? mv._radius : 0) + alignOff;
+                            px += (vis ? rd : 0) + alignOff;
                             break;
                         default:
                             px -= r.width / 2 + alignOff;

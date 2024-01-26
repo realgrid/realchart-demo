@@ -7,21 +7,33 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { cos, sin } from "../../common/Common";
+import { ElementPool } from "../../common/ElementPool";
 import { Align, PI_2 } from "../../common/Types";
-import { SvgShapes } from "../../common/impl/SvgShape";
 import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
 import { PointItemPosition } from "../../model/Series";
 import { BubbleSeries, BubbleSeriesPoint } from "../../model/series/BubbleSeries";
-import { MarkerSeriesView, PointLabelView } from "../SeriesView";
+import { MarkerSeriesPointView, MarkerSeriesView, PointContainer, PointLabelView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
+
+export class BubbleSeriesPointView extends MarkerSeriesPointView {
+
+    beginHover(series: BubbleSeriesView, focused: boolean): void {
+    }
+
+    setHoverRate(series: BubbleSeriesView, focused: boolean, rate: number): void {
+    }
+
+    endHover(series: BubbleSeriesView, focused: boolean): void {
+    }
+}
 
 /**
  * @internal 
  * 
  * View for BubbleSeries.
  */
-export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
+export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries, BubbleSeriesPoint> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -38,6 +50,10 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _createMarkers(container: PointContainer): ElementPool<MarkerSeriesPointView> {
+        return new ElementPool(container, BubbleSeriesPointView)
+    }
+
     protected _prepareSeries(doc: Document, model: BubbleSeries): void {
         this.$_prepareMarkers(model, this._visPoints as BubbleSeriesPoint[]);
     }

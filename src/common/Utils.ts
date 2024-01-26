@@ -326,19 +326,19 @@ export class Utils {
 		return undefined;
 	}
 
-    static alert(message: string): void {
-        window.alert(message);
-    }
+    // static alert(message: string): void {
+    //     window.alert(message);
+    // }
 
-    static toInt(v: string, radix?: number): number {
-        const n = parseInt(v, radix || 10);
-        return isNaN(n) ? 0 : n;
-    }
+    // static toInt(v: string, radix?: number): number {
+    //     const n = parseInt(v, radix || 10);
+    //     return isNaN(n) ? 0 : n;
+    // }
 
-    static toFloat(v: string): number {
-        const n = parseFloat(v);
-        return isNaN(n) ? 0 : n;
-    }
+    // static toFloat(v: string): number {
+    //     const n = parseFloat(v);
+    //     return isNaN(n) ? 0 : n;
+    // }
 
     // static toEven(v: number): number {
     //     return (v & 1) ? v + 1 : v;
@@ -388,51 +388,51 @@ export class Utils {
         return true;
     }
 
-    // 1 level comparison
-    static equalObjects(obj1: any, obj2: any): boolean {
-        if (obj1 === obj2) return true;
-        if (!obj1 && !obj2) return true;
-        if (!obj1 || !obj2) return false;
-        for(var p in obj1){
-            if(obj1.hasOwnProperty(p)){
-                if(obj1[p] !== obj2[p]){
-                    return false;
-                }
-            }
-        }
-        for(var p in obj2){
-            if(obj2.hasOwnProperty(p)){
-                if(obj1[p] !== obj2[p]){
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
+    // // 1 level comparison
+    // static equalObjects(obj1: any, obj2: any): boolean {
+    //     if (obj1 === obj2) return true;
+    //     if (!obj1 && !obj2) return true;
+    //     if (!obj1 || !obj2) return false;
+    //     for(var p in obj1){
+    //         if(obj1.hasOwnProperty(p)){
+    //             if(obj1[p] !== obj2[p]){
+    //                 return false;
+    //             }
+    //         }
+    //     }
+    //     for(var p in obj2){
+    //         if(obj2.hasOwnProperty(p)){
+    //             if(obj1[p] !== obj2[p]){
+    //                 return false;
+    //             }
+    //         }
+    //     }
+    //     return true;
+    // }
     
-    // 문자열이 한글이면 2, 영/숫자/기호 이면 1.
-    static getTextLength2(s: string): number {
-        let b = 0, i = 0, c = 0;
-        for(; c = s.charCodeAt(i++); b += c >> 7 ? 2 : 1);
-        return b;
-    }
+    // // 문자열이 한글이면 2, 영/숫자/기호 이면 1.
+    // static getTextLength2(s: string): number {
+    //     let b = 0, i = 0, c = 0;
+    //     for(; c = s.charCodeAt(i++); b += c >> 7 ? 2 : 1);
+    //     return b;
+    // }
 
-    static getClassName(model: any) {
-        function getFuncName(clazz: object): string {
-            let ret: string = clazz.toString();
-            ret = ret.substring('function '.length);
-            ret = ret.substring(0, ret.indexOf('('));
-            return ret;            
-        }
-        if (model && model.constructor) {
-            return model.constructor.name || getFuncName(model.constructor);
-        }
-    }
+    // static getClassName(model: any) {
+    //     function getFuncName(clazz: object): string {
+    //         let ret: string = clazz.toString();
+    //         ret = ret.substring('function '.length);
+    //         ret = ret.substring(0, ret.indexOf('('));
+    //         return ret;            
+    //     }
+    //     if (model && model.constructor) {
+    //         return model.constructor.name || getFuncName(model.constructor);
+    //     }
+    // }
 
-    static isInteger(value: any): boolean {
-        if (Number.isInteger) return Number.isInteger(value);
-        return typeof value === "number" && isFinite(value) && Math.floor(value) === value;
-    }
+    // static isInteger(value: any): boolean {
+    //     if (Number.isInteger) return Number.isInteger(value);
+    //     return typeof value === "number" && isFinite(value) && Math.floor(value) === value;
+    // }
 
     static isEmpty(obj: {}) {
         if (obj) {

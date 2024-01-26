@@ -15,23 +15,6 @@ import { Utils } from '../../../src/common/Utils';
  */
  describe("Utils test", function() {
 
-    it('equalObjects', function() {
-        const obj1: any = {};
-        const obj2: any = {};
-
-        expect(Utils.equalObjects(null, null)).true;
-        expect(Utils.equalObjects(null, {})).false;
-        expect(Utils.equalObjects(obj1, obj1)).true;
-        expect(Utils.equalObjects(obj1, obj2)).true;
-
-        obj1.name = 'xxx';
-        expect(Utils.equalObjects(obj1, obj2)).false;
-        obj2.name = 'abc';
-        expect(Utils.equalObjects(obj1, obj2)).false;
-        obj2.name = 'xxx';
-        expect(Utils.equalObjects(obj1, obj2)).true;
-    });
-
     it('deep clone', () => {
         let obj: any = {}
         let obj2: any = Utils.deepClone(obj);

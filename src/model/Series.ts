@@ -25,7 +25,6 @@ import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource, LegendItem } from "./Legend";
 import { ITooltipContext } from "./Tooltip";
 import { CategoryAxis } from "./axis/CategoryAxis";
-import { ContinuousAxis } from "./axis/LinearAxis";
 
 export enum PointItemPosition {
     AUTO = 'auto',
@@ -1040,6 +1039,12 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      * 차트 설정 로드 시 실행되는 animation 종류.
      */
     loadAnimation = SeriesLoadAnimation.DEFAULT;
+    // /**
+    //  * 데이터포인트 위에 마우스가 있을 때 적용되는 스타일셋 혹은 class selector.
+    //  * 
+    //  * @config
+    //  */
+    // hoverStyle: SVGStyleOrClass;
     /**
      * 데이터 point의 동적 스타일 콜백.
      * 

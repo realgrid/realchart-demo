@@ -1131,6 +1131,17 @@ export class RcElement extends RcObject {
         }
     }
 
+    internalImportantStylesOrClass(style: any): void {
+        if (isString(style)) {
+            this._dom.classList.add(style);
+        } else {
+            const css = (this.dom as SVGElement | HTMLElement).style;
+            for (let p in style) {
+                css.setProperty(getCssProp(p), this._styles[p] = style[p], 'important');
+            }
+        }
+    }
+
     setStyles(styles: any): boolean {
         let changed = false;
 

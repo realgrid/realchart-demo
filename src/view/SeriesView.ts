@@ -9,7 +9,7 @@
 import { pickNum, assign, isObject, isString, absv, maxv, minv } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
-import { IPoint } from "../common/Point";
+import { IPoint, Point } from "../common/Point";
 import { RcAnimation, createAnimation } from "../common/RcAnimation";
 import { ClipRectElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
@@ -24,6 +24,7 @@ import { LegendItem } from "../model/Legend";
 import { ClusterableSeries, DataPointLabel, MarkerSeries, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
 import { ContentView } from "./ChartElement";
 import { LegendItemView } from "./LegendView";
+import { HoverAnimation } from "./animation/HoverAnimation";
 import { PrevAnimation, SeriesAnimation } from "./animation/SeriesAnimation";
 
 export interface IPointView {
@@ -289,6 +290,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     private _posRate = NaN;
     protected _prevRate = NaN;
     _animations: Animation[] = [];
+    _hoverAni: HoverAnimation;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -442,11 +444,39 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
 
     setFocusPoint(pv: IPointView, p: IPoint): void {
         const focused = !!p;
+        let ani = this._hoverAni;
 
         (pv as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, focused);
+
         if (this._needFocusOrder()) {
             focused ? this._getPointPool().front(pv as any) : this._getPointPool().back(pv as any);
         }
+
+        if (pv instanceof MarkerSeriesPointView) {
+            if (focused) {
+                if (ani && !ani._focused) {
+                    ani.stop();
+                    ani = null;
+                }
+                if (!ani) {
+                    this._hoverAni = new HoverAnimation(this, pv, true, () => {
+                        (pv as MarkerSeriesPointView).endHover(this, true);
+                    });
+                }
+            } else {
+                if (ani && ani._focused) {
+                    ani.stop();
+                    ani = null;
+                }
+                if (!ani) {
+                    this._hoverAni = new HoverAnimation(this, pv, false, () => {
+                        (pv as MarkerSeriesPointView).endHover(this, false);
+                        this._hoverAni = null;
+                    });
+                }
+            }
+        }
+
         this.model.pointHovered(focused ? pv.point : null);
     }
 
@@ -1146,23 +1176,20 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
     //-------------------------------------------------------------------------
 }
 
-export class MarkerSeriesPointView<T extends DataPoint> extends PathElement implements IPointView {
+export abstract class MarkerSeriesPointView extends PointElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    point: T;
-    // saveVal: number;
-
     //-------------------------------------------------------------------------
-    // constructor
+    // methods
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS);
-    }
+    abstract beginHover(series: SeriesView<Series>, focused: boolean): void;
+    abstract setHoverRate(series: SeriesView<Series>, focused: boolean, rate: number): void;
+    abstract endHover(series: SeriesView<Series>, focused: boolean): void;
 }
 
-export abstract class MarkerSeriesView<T extends MarkerSeries> extends SeriesView<T> {
+export abstract class MarkerSeriesView<T extends MarkerSeries, P extends DataPoint> extends SeriesView<T> {
 
     //-------------------------------------------------------------------------
     // static members
@@ -1170,7 +1197,7 @@ export abstract class MarkerSeriesView<T extends MarkerSeries> extends SeriesVie
     private static _createDrawers(...shapes: string[]): {[shape: string]: (rd: number) => (string | number)[]} {
         const drawers = {};
         shapes.forEach(shape => {
-            drawers[shape] = (rd) => SvgShapes[shape](0 - rd, 0 - rd, rd * 2, rd * 2);
+            drawers[shape] = (rd: number) => SvgShapes[shape](0 - rd, 0 - rd, rd * 2, rd * 2);
         })
         return drawers;
     }
@@ -1181,7 +1208,7 @@ export abstract class MarkerSeriesView<T extends MarkerSeries> extends SeriesVie
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    protected _markers: ElementPool<MarkerSeriesPointView<DataPoint>>;
+    protected _markers: ElementPool<MarkerSeriesPointView>;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1189,8 +1216,10 @@ export abstract class MarkerSeriesView<T extends MarkerSeries> extends SeriesVie
     constructor(doc: Document, styleName: string) {
         super(doc, styleName)
 
-        this._markers = new ElementPool(this._pointContainer, MarkerSeriesPointView);
+        this._markers = this._createMarkers(this._pointContainer);
     }
+
+    protected abstract _createMarkers(container: PointContainer): ElementPool<MarkerSeriesPointView>;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -1208,7 +1237,7 @@ export abstract class MarkerSeriesView<T extends MarkerSeries> extends SeriesVie
     //-------------------------------------------------------------------------
     protected abstract _getAutoPos(overflowed: boolean): PointItemPosition;
 
-    protected _getDrawer(shape: string): (rd: number) => (string | number)[] {
+    _getDrawer(shape: string): (rd: number) => (string | number)[] {
         return MarkerSeriesView._drawers[shape] || MarkerSeriesView._drawers['circle'];
     }
 

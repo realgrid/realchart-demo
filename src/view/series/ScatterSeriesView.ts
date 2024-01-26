@@ -7,23 +7,58 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { cos, sin } from "../../common/Common";
+import { ElementPool } from "../../common/ElementPool";
 import { IRect } from "../../common/Rectangle";
 import { PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
-import { SvgShapes } from "../../common/impl/SvgShape";
 import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
 import { PointItemPosition } from "../../model/Series";
 import { ScatterSeries, ScatterSeriesPoint } from "../../model/series/ScatterSeries";
-import { MarkerSeriesView, PointLabelView } from "../SeriesView";
+import { MarkerSeriesPointView, MarkerSeriesView, PointContainer, PointLabelView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
+export class ScatterSeriesPointView extends MarkerSeriesPointView {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _radius: number;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    beginHover(series: ScatterSeriesView, focused: boolean): void {
+    }
+
+    setHoverRate(series: ScatterSeriesView, focused: boolean, rate: number): void {
+        const p = this.point as ScatterSeriesPoint;
+        const drawer = series._getDrawer(series.model.getShape(this.point));
+        const r = 0.8;
+        let rd = series._radius;
+
+        if (focused) {
+            // rate가 nan(종료)면 최대값을 유지한다.
+            this._radius = rd = series._radius * (1 + (isNaN(rate) ? 1 : rate) * r);
+        } else {
+            rd = series._radius * (1 + r - (isNaN(rate) ? r : r * rate));
+        }
+
+        this.setPath(drawer(rd));
+        this.trans(p.xPos, p.yPos);
+    }
+
+    endHover(series: ScatterSeriesView, focused: boolean): void {
+    }
+}
+
+export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries, ScatterSeriesPoint> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _polar: any;
+    _radius: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -35,6 +70,10 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _createMarkers(container: PointContainer): ElementPool<MarkerSeriesPointView> {
+        return new ElementPool(container, ScatterSeriesPointView);
+    }
+
     protected _prepareSeries(doc: Document, model: ScatterSeries): void {
         this.$_prepareMarkers(model, this._visPoints as ScatterSeriesPoint[]);
     }
@@ -84,7 +123,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
         const yAxis = series._yAxisObj as Axis;
         const polar = this._polar = (series.chart as Chart).body.getPolar(xAxis);
         const gr = this._getGrowRate();
-        const sz = Math.max(0, (+series.radius || 0)) * gr;
+        const rd = this._radius = Math.max(0, (+series.radius || 0)) * gr;
         const rotation = +series.rotation || 0;
         const jitterX = +series.jitterX || 0;
         const jitterY = +series.jitterY || 0;
@@ -130,12 +169,12 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
                 p.yPos = y;
 
                 if (mv.setVis(!!polar || !needClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
-                    mv.setPath(drawer(sz));
+                    mv.setPath(drawer((mv as ScatterSeriesPointView)._radius || rd));
                     mv.trans(x, y).rotate(rotation);
     
                     // label
                     if (lv) {
-                        this._layoutLabelView(labelView, labelPos, labelOff, sz, x, y);
+                        this._layoutLabelView(labelView, labelPos, labelOff, rd, x, y);
                     }
                 } else if (lv) {
                     lv.setVis(false);
