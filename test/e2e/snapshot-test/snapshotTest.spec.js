@@ -36,7 +36,8 @@ samples.forEach((sample) => {
 });
 
 for (let i = 0; i < configs.length; i++) {
-    test(configs[i].name + '-test', async () => {
+    const link = i < demos.length ? demoPath + demos[i] : samplePath + samples[i];
+    test(configs[i].name + '-test', async ({}, testInfo) => {
         const browser = await chromium.launch();
         const page = await browser.newPage();
         await page.goto(snapshotTestPage);
@@ -46,7 +47,7 @@ for (let i = 0; i < configs.length; i++) {
         chart.load(config, false)`);
 
         const snapshot = await page.locator('#realchart').screenshot();
-        await expect(snapshot).toMatchSnapshot(configs[i].name + '.png', {
+        await expect(snapshot, {message: link}).toMatchSnapshot(configs[i].name + '.png', {
             maxDiffPixels: 1,
         });
 
@@ -64,7 +65,7 @@ for (let i = 0; i < configs.length; i++) {
         chart.load(config, false)`);
 
         const snapshot = await page.locator('#realchart').screenshot();
-        await expect(snapshot).toMatchSnapshot('inverted-' + configs[i].name + '.png', {
+        await expect(snapshot, {message: link}).toMatchSnapshot('inverted-' + configs[i].name + '.png', {
             maxDiffPixels: 1,
         });
 
@@ -103,7 +104,7 @@ for (let i = 0; i < configs.length; i++) {
         chart.load(config, false)`);
 
         const snapshot = await page.locator('#realchart').screenshot();
-        await expect(snapshot).toMatchSnapshot('reversed-' + configs[i].name + '.png', {
+        await expect(snapshot, {message: link}).toMatchSnapshot('reversed-' + configs[i].name + '.png', {
             maxDiffPixels: 1,
         });
 
@@ -143,7 +144,7 @@ for (let i = 0; i < configs.length; i++) {
         chart.load(config, false)`);
 
         const snapshot = await page.locator('#realchart').screenshot();
-        await expect(snapshot).toMatchSnapshot('inverted-reversed-' + configs[i].name + '.png', {
+        await expect(snapshot, {message: link}).toMatchSnapshot('inverted-reversed-' + configs[i].name + '.png', {
             maxDiffPixels: 1,
         });
 
