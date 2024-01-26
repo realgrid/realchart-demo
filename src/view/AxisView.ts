@@ -1368,7 +1368,7 @@ export class AxisView extends ChartElement<Axis> {
         });
 
         // TODO: rotation이 0이 아닌 경우에도 필요(?)
-        if (!rotated && m instanceof ContinuousAxis && count > 1) {
+        if (!rotated && count > 1) {
             pullFirst(this, views.get(reversed ? count - 1 : 0), views.get(reversed ? count - 2 : 1));
             pullLast(this, views.get(reversed ? 0 : count - 1), views.get(reversed ? 1 : count - 2))
         }
