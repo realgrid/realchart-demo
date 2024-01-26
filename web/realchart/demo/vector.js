@@ -16,6 +16,7 @@ const config = {
         type: 'vector',
         tooltipText: 'length: ${length}<br>angle: ${angle}',
         // arrowHead: 'open',
+        // arrowHead: 'none',
         data: [
             [5, 5, 190, 18],
             [5, 10, 185, 27],
