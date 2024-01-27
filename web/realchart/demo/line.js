@@ -16,7 +16,9 @@ const config = {
     },
     series: {
         type: 'line',
-        marker: true,
+        marker: {
+            visible: true,
+        },
         pointLabel: true,
         data: [
             ['home', 7], 
@@ -69,6 +71,14 @@ function setActions(container) {
         config.series.pointLabel = _getChecked(e);
         chart.load(config, animate);
     }, true);
+    createCheckBox(container, 'Hover Style', function (e) {
+        config.series.hoverStyle = _getChecked(e) ? {fill: 'white', stroke: 'red', strokeWidth: '3px'} : '';
+        chart.load(config, animate);
+    }, false);
+    createListBox(container, "Hover Scale", ['', 2, 2.5], function (e) {
+        config.series.marker.hoverScale = _getValue(e);
+        chart.load(config, animate);
+    }, '');
 }
 
 function init() {

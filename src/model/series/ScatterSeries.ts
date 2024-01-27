@@ -84,6 +84,12 @@ export class ScatterSeries extends MarkerSeries {
      * @config
      */
     radius = 5;
+    /**
+     * 데이터포인트 위에 마우스가 있을 때 표시되는 기본 확장 효과에 적용되는 scale.
+     * 
+     * @config
+     */
+    hoverScale = 1.8;
 
     //-------------------------------------------------------------------------
     // overriden members

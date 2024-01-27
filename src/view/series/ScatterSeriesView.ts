@@ -34,7 +34,7 @@ export class ScatterSeriesPointView extends MarkerSeriesPointView {
     setHoverRate(series: ScatterSeriesView, focused: boolean, rate: number): void {
         const p = this.point as ScatterSeriesPoint;
         const drawer = series._getDrawer(series.model.getShape(this.point));
-        const r = 0.8;
+        const r = (+series.model.hoverScale || 1.8) - 1;
         let rd = series._radius;
 
         if (focused) {

@@ -25,11 +25,17 @@ export class HoverAnimation extends RcAnimation {
     constructor(series: SeriesView<Series>, marker: MarkerSeriesPointView, focused: boolean, endHandler: RcAnimationEndHandler) {
         super();
 
-        this.duration = focused ? 300 : 300;
+        this.duration = focused ? 200 : 200;
 
         this._series = series;
         this._focused = focused;
         this._marker = marker;
+        if (!focused) {
+            this._marker.setBoolData('unfocus', true);
+            // 사라지는 중에 hover style이 유지되도록 한다.
+            this._marker.saveStyles();
+            series.setHoverStyle(this._marker);
+    }
         this.start(endHandler);
     }
 
@@ -49,6 +55,8 @@ export class HoverAnimation extends RcAnimation {
     }
 
     protected _doStop(): void {
+        this._marker.setBoolData('unfocus', false);
+        !this._focused && this._marker.restoreStyles();
         this._marker.setHoverRate(this._series, this._focused, NaN);
         this._marker = null;
     }

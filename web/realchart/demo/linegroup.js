@@ -28,6 +28,7 @@ const config = {
         }, {
             name: 'Sales & Distribution',
             marker: {},
+            hoverStyle: { fill: 'white', stroke: 'blue', strokeWidth: '3px' },
             data: [11744, 30000, 16005, 19771, 20185, 24377,
                 32147, 30912, 29243, 29213, 25663]
         }, {

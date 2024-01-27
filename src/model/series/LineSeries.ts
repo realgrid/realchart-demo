@@ -74,7 +74,7 @@ export class LineSeriesMarker extends SeriesMarker {
     //-------------------------------------------------------------------------
     radius = 4;
     /**
-     * 첫번째 point의 marker 표시 여부.<br>
+     * 첫번째 point의 marker 표시 여부.<br/>
      * true로 지정하면 모델 visible과 상관없이 표시하고,
      * false면 상관없이 표시하지 않는다.
      * 아니면 모델의 visible을 따른다.
@@ -83,7 +83,7 @@ export class LineSeriesMarker extends SeriesMarker {
      */
     firstVisible: boolean;
     /**
-     * 첫번째 point의 marker 표시 여부.<br>
+     * 첫번째 point의 marker 표시 여부.<br/>
      * true로 지정하면 모델 visible과 상관없이 표시하고,
      * false면 상관없이 표시하지 않는다.
      * 아니면 모델의 visible을 따른다.
@@ -92,7 +92,7 @@ export class LineSeriesMarker extends SeriesMarker {
      */
     lastVisible: boolean;
     /**
-     * 최소값 point들의 marker 표시 여부.<br>
+     * 최소값 point들의 marker 표시 여부.<br/>
      * true로 지정하면 모델 visible과 상관없이 표시하고,
      * false면 상관없이 표시하지 않는다.
      * 아니면 모델의 visible을 따른다.
@@ -101,7 +101,7 @@ export class LineSeriesMarker extends SeriesMarker {
      */
     minVisible: boolean;
     /**
-     * 최대값 point들의 marker 표시 여부.<br>
+     * 최대값 point들의 marker 표시 여부.<br/>
      * true로 지정하면 모델 visible과 상관없이 표시하고,
      * false면 상관없이 표시하지 않는다.
      * 아니면 모델의 visible을 따른다.
@@ -109,6 +109,19 @@ export class LineSeriesMarker extends SeriesMarker {
      * @config
      */
     maxVisible: boolean;
+    /**
+     * 데이터포인트 위에 마우스가 있을 때 표시되는 기본 확장 효과에 적용되는 scale.
+     * 
+     * @config
+     */
+    hoverScale = 1.8;
+    /**
+     * 데이터포인트 위에 마우스가 있을 때 적용되는 스타일셋 혹은 class selector.<br/>
+     * {@link config.series.hoverStyle} 보다 우선 적용된다. 
+     * 
+     * @config
+     */
+    hoverStyle: SVGStyleOrClass;
 }
 
 export class LinePointLabel extends DataPointLabel {

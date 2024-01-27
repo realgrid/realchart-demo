@@ -49,7 +49,7 @@ export class LineMarkerView extends MarkerSeriesPointView implements IPointView 
 
     setHoverRate(series: LineSeriesBaseView<LineSeries>, focused: boolean, rate: number): void {
         const p = this.point as LineSeriesPoint;
-        const r = 0.8;
+        const r = (+series.model.marker.hoverScale || 1.8) - 1;
         let rd = this._radius;
 
         if (focused) {
@@ -579,6 +579,11 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             this._buildLine2(line2, t2, true, sb);
         }
         return sb.end(true);
+    }
+
+    setHoverStyle(pv: RcElement): void {
+        super.setHoverStyle(pv);
+        pv.internalImportantStylesOrClass(this.model.marker.hoverStyle);
     }
 }
 

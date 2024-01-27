@@ -1080,6 +1080,25 @@ export class RcElement extends RcObject {
         }
     }
 
+    private _saveStyle: string;
+    private _saveClass: string;
+
+    saveStyles(): void {
+        this._saveStyle = this._dom.getAttribute('style');
+        this._saveClass = this._dom.getAttribute('class');
+    }
+
+    restoreStyles(): void {
+        if (this._saveStyle) {
+            this._dom.setAttribute('style', this._saveStyle);
+            this._saveStyle = _undef;
+        }
+        if (this._saveClass) {
+            this._dom.setAttribute('class', this._saveClass);
+            this._saveClass = _undef;
+        }
+    }
+
     internalClearStyles(): void {
         const css = (this.dom as SVGElement | HTMLElement).style;
 
@@ -1134,7 +1153,7 @@ export class RcElement extends RcObject {
     internalImportantStylesOrClass(style: any): void {
         if (isString(style)) {
             this._dom.classList.add(style);
-        } else {
+        } else if (isObject(style)) {
             const css = (this.dom as SVGElement | HTMLElement).style;
             for (let p in style) {
                 css.setProperty(getCssProp(p), this._styles[p] = style[p], 'important');

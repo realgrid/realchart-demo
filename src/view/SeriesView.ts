@@ -442,16 +442,28 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         this._doAfterLayout();
     }
 
+    setHoverStyle(pv: RcElement): void {
+        pv.internalImportantStylesOrClass(this.model.hoverStyle);
+    }
+
     setFocusPoint(pv: IPointView, p: IPoint): void {
         const focused = !!p;
         let ani = this._hoverAni;
 
-        (pv as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, focused);
-
-        if (this._needFocusOrder()) {
-            focused ? this._getPointPool().front(pv as any) : this._getPointPool().back(pv as any);
+        if (pv instanceof RcElement) {
+            pv.setBoolData(SeriesView.DATA_FOUCS, focused);
+    
+            if (focused) {
+                pv.saveStyles();
+                this.setHoverStyle(pv);
+            } else {
+                pv.restoreStyles();
+            }
+    
+            if (this._needFocusOrder()) {
+                focused ? this._getPointPool().front(pv) : this._getPointPool().back(pv);
+            }
         }
-
         if (pv instanceof MarkerSeriesPointView) {
             if (focused) {
                 if (ani && !ani._focused) {
