@@ -49,6 +49,7 @@ export class ScatterSeriesPointView extends MarkerSeriesPointView {
     }
 
     endHover(series: ScatterSeriesView, focused: boolean): void {
+        delete this._radius;
     }
 }
 

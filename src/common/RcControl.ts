@@ -1089,14 +1089,10 @@ export class RcElement extends RcObject {
     }
 
     restoreStyles(): void {
-        if (this._saveStyle) {
-            this._dom.setAttribute('style', this._saveStyle);
-            this._saveStyle = _undef;
-        }
-        if (this._saveClass) {
-            this._dom.setAttribute('class', this._saveClass);
-            this._saveClass = _undef;
-        }
+        this._dom.setAttribute('style', this._saveStyle);
+        this._saveStyle = _undef;
+        this._dom.setAttribute('class', this._saveClass);
+        this._saveClass = _undef;
     }
 
     internalClearStyles(): void {
