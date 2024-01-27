@@ -32,7 +32,7 @@ import { LegendView } from "./LegendView";
 import { NavigatorView } from "./NavigatorView";
 import { PaneContainer } from "./PaneContainer";
 import { PolarBodyView } from "./PolarBodyView";
-import { SeriesView } from "./SeriesView";
+import { IPointView, SeriesView } from "./SeriesView";
 import { TitleView } from "./TitleView";
 import { TooltipView } from "./TooltipView";
 
@@ -1204,14 +1204,18 @@ export class ChartView extends LayerElement {
         this._tooltipView.close(true, false);
     }
 
-    showTooltip(series: Series, point: DataPoint, body: BodyView, p: IPoint): void {
-        const {x, y} = point.getTooltipPos();
-        const isFollowPointer =  this._model.chart.tooltip.followPointer;
+    showTooltip(series: Series, pv: IPointView, body: BodyView, p: IPoint): void {
+        const {x, y} = pv.getTooltipPos ? pv.getTooltipPos() : {x: pv.point.xPos, y: pv.point.yPos };
+        const isFollowPointer = this._model.chart.tooltip.followPointer;
         const bp = body.getTooltipPos();
         const tx = isFollowPointer ? p.x + bp.x : x + bp.x;
         const ty = isFollowPointer ? p.y + bp.y : y + bp.y;
 
-        this._tooltipView.show(series, point, tx, ty, body, true);
+        this._tooltipView.show(series, pv, tx, ty, body, true);
+    }
+
+    tooltipVisible(): boolean {
+        return this._tooltipView.isVisible();
     }
 
     hideTooltip(): void {
@@ -1286,6 +1290,7 @@ export class ChartView extends LayerElement {
     
                     if (flag) {
                         av.showCrosshair(pos, flag);
+                        body.hoverPoints(av.model, pos);
                         av.model.crosshair.moved(pos, flag);
                     } else {
                         av.hideCrosshiar();

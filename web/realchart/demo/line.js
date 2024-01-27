@@ -72,7 +72,11 @@ function setActions(container) {
         chart.load(config, animate);
     }, true);
     createCheckBox(container, 'Hover Style', function (e) {
-        config.series.hoverStyle = _getChecked(e) ? {fill: 'white', stroke: 'red', strokeWidth: '3px'} : '';
+        config.series.hoverStyle = _getChecked(e) ? {
+            fill: 'white', 
+            strokeWidth: '3px',
+            filter: 'drop-shadow(2px 2px 2px #555)'
+        } : '';
         chart.load(config, animate);
     }, false);
     createListBox(container, "Hover Scale", ['', 2, 2.5], function (e) {

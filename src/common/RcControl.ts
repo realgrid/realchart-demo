@@ -1084,15 +1084,19 @@ export class RcElement extends RcObject {
     private _saveClass: string;
 
     saveStyles(): void {
-        this._saveStyle = this._dom.getAttribute('style');
+        this._saveStyle = this._dom.getAttribute('style') || null;
         this._saveClass = this._dom.getAttribute('class');
     }
 
     restoreStyles(): void {
-        this._dom.setAttribute('style', this._saveStyle);
-        this._saveStyle = _undef;
-        this._dom.setAttribute('class', this._saveClass);
-        this._saveClass = _undef;
+        if (this._saveStyle !== _undef) {
+            this._dom.setAttribute('style', this._saveStyle);
+            delete this._saveStyle;
+        }
+        if (this._saveClass) {
+            this._dom.setAttribute('class', this._saveClass);
+            delete this._saveClass;
+        }
     }
 
     internalClearStyles(): void {
@@ -1282,6 +1286,10 @@ export class RcElement extends RcObject {
         } else {
             delete this.dom.dataset[data];
         }
+    }
+
+    hasData(data: string): boolean {
+        return this.dom.dataset[data] != null;
     }
 
     removeLater(delay: number, callback?: (v: RcElement) => void): RcElement {

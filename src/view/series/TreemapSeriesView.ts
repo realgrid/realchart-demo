@@ -11,6 +11,7 @@ import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { Align } from "../../common/Types";
 import { RectElement } from "../../common/impl/RectElement";
+import { Axis } from "../../model/Axis";
 import { DataPoint } from "../../model/DataPoint";
 import { TreeNode, TreemapSeries } from "../../model/series/TreemapSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";

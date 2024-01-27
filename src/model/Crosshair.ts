@@ -81,13 +81,7 @@ export class Crosshair extends ChartItem {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    /**
-     * 축 상에 crosshair의 정보를 표시하는 view.
-     * 
-     * @config
-     */
-    readonly flag: CrosshairFlag;
-    _args: ICrosshairCallbackArgs;
+    private _args: ICrosshairCallbackArgs;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -107,6 +101,12 @@ export class Crosshair extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 축 상에 crosshair의 정보를 표시하는 view.
+     * 
+     * @config
+     */
+    readonly flag: CrosshairFlag;
     /**
      * 표시 방식.
      * 
@@ -138,6 +138,7 @@ export class Crosshair extends ChartItem {
      */
     timeFormat = 'yyyy-MM-dd HH:mm'
     onChange: any;
+    hovering = true;
 
     //-------------------------------------------------------------------------
     // methods
@@ -163,6 +164,10 @@ export class Crosshair extends ChartItem {
             this._args.flag = flag;
             this.onChange(this._args);
         }
+    }
+
+    _setAxis(axis: any): void {
+        this._args.axis = axis;
     }
 
     //-------------------------------------------------------------------------

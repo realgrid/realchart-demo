@@ -21,7 +21,7 @@ import { SvgShapes } from "../common/impl/SvgShape";
 import { Axis } from "../model/Axis";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
-import { ClusterableSeries, DataPointLabel, MarkerSeries, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
+import { ClusterableSeries, DataPointLabel, HoverEffect, MarkerSeries, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
 import { ContentView } from "./ChartElement";
 import { LegendItemView } from "./LegendView";
 import { HoverAnimation } from "./animation/HoverAnimation";
@@ -30,6 +30,10 @@ import { PrevAnimation, SeriesAnimation } from "./animation/SeriesAnimation";
 export interface IPointView {
     point: DataPoint;
     // saveVal: number;
+
+    getTooltipPos?(): IPoint;
+    saveStyles(): void;
+    restoreStyles(): void;
 }
 
 export class PointLabelView extends LabelElement {
@@ -290,7 +294,8 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     private _posRate = NaN;
     protected _prevRate = NaN;
     _animations: Animation[] = [];
-    _hoverAni: HoverAnimation;
+    _hoverAnis: HoverAnimation[] = [];
+    _hoverPts: IPointView[] = [];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -446,45 +451,48 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         pv.internalImportantStylesOrClass(this.model.hoverStyle);
     }
 
-    setFocusPoint(pv: IPointView, p: IPoint): void {
-        const focused = !!p;
-        let ani = this._hoverAni;
+    setFocusPoint(pv: IPointView, focused: boolean): void {
+        let ani = this._hoverAnis[0];
 
-        if (pv instanceof RcElement) {
-            pv.setBoolData(SeriesView.DATA_FOUCS, focused);
+        if (this.model.hoverEffect !== HoverEffect.NONE) {
+            if (pv instanceof RcElement) {
+                pv.setBoolData(SeriesView.DATA_FOUCS, focused);
     
-            if (focused) {
-                pv.saveStyles();
-                this.setHoverStyle(pv);
-            } else {
-                pv.restoreStyles();
+                if (focused) {
+                    pv.saveStyles();
+                    this.setHoverStyle(pv);
+                } else {
+                    pv.restoreStyles();
+                }
+        
+                if (this._needFocusOrder()) {
+                    focused ? this._getPointPool().front(pv) : this._getPointPool().back(pv);
+                }
             }
-    
-            if (this._needFocusOrder()) {
-                focused ? this._getPointPool().front(pv) : this._getPointPool().back(pv);
-            }
-        }
-        if (pv instanceof MarkerSeriesPointView) {
-            if (focused) {
-                if (ani && !ani._focused) {
-                    ani.stop();
-                    ani = null;
-                }
-                if (!ani) {
-                    this._hoverAni = new HoverAnimation(this, pv, true, () => {
-                        (pv as MarkerSeriesPointView).endHover(this, true);
-                    });
-                }
-            } else {
-                if (ani && ani._focused) {
-                    ani.stop();
-                    ani = null;
-                }
-                if (!ani) {
-                    this._hoverAni = new HoverAnimation(this, pv, false, () => {
-                        (pv as MarkerSeriesPointView).endHover(this, false);
-                        this._hoverAni = null;
-                    });
+            if (pv instanceof MarkerSeriesPointView) {
+                if (focused) {
+                    if (ani && !ani._focused) {
+                        ani.stop();
+                        ani = null;
+                        this._hoverAnis.length = 0;
+                    }
+                    if (!ani) {
+                        this._hoverAnis.push(new HoverAnimation(this, pv, true, () => {
+                            (pv as MarkerSeriesPointView).endHover(this, true);
+                        }));
+                    }
+                } else {
+                    if (ani && ani._focused) {
+                        ani.stop();
+                        ani = null;
+                        this._hoverAnis.length = 0;
+                    }
+                    if (!ani) {
+                        this._hoverAnis.push(new HoverAnimation(this, pv, false, () => {
+                            (pv as MarkerSeriesPointView).endHover(this, false);
+                            this._hoverAnis.length = 0;
+                        }));
+                    }
                 }
             }
         }
@@ -492,8 +500,52 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         this.model.pointHovered(focused ? pv.point : null);
     }
 
+    setFocusPoint2(pvs: IPointView[], focused: boolean): void {
+        const oldAnis = this._hoverAnis;
+        const oldPts = this._hoverPts;
+        const anis: HoverAnimation[] = [];
+        const pts: IPointView[] = [];
+
+        if (this.model.hoverEffect !== HoverEffect.NONE) {
+            if (focused) {
+                pts.push(...pvs);
+            }
+            oldAnis.forEach(ani => {
+                if (pts.indexOf(ani._marker) < 0) {
+                    ani.stop();
+                } else {
+                    anis.push(ani);
+                }
+            });
+            pts.forEach(pv => {
+                if (pv instanceof MarkerSeriesPointView) {
+                    if (!anis.find(ani => ani._marker === pv)) {
+                        anis.push(new HoverAnimation(this, pv, true, () => {
+                            (pv as MarkerSeriesPointView).endHover(this, true);
+                        }));
+                    }
+                }
+            })
+        } else {
+            oldAnis.forEach(ani => {
+                ani.stop();
+            });
+            oldPts.forEach(pv => {
+                pv.restoreStyles();
+            });
+        }
+
+        this._hoverAnis = anis;
+        this._hoverPts = pts;
+        this.model.pointHovered(focused ? pvs[0].point : null);
+    }
+
     protected _needFocusOrder(): boolean {
         return true;
+    }
+
+    getPointsAt(axis: Axis, pos: number): IPointView[] {
+        return;
     }
 
     //-------------------------------------------------------------------------
@@ -986,6 +1038,10 @@ export abstract class ClusterableSeriesView<T extends Series> extends SeriesView
         this._getPointPool().forEach(v => v['savePrevs']());
     }
 
+    getPointsAt(axis: Axis, pos: number): IPointView[] {
+        return [];
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -1242,6 +1298,10 @@ export abstract class MarkerSeriesView<T extends MarkerSeries, P extends DataPoi
 
     clipInvertable(): boolean {
         return false; // TODO: true로 개선할 것!, bubble, scatter view 참조.
+    }
+
+    getPointsAt(axis: Axis, pos: number): IPointView[] {
+        return [];
     }
 
     //-------------------------------------------------------------------------

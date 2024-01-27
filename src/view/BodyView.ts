@@ -19,7 +19,6 @@ import { Axis, AxisGrid, AxisGuide, AxisLineGuide, AxisRangeGuide, IAxisGridRow 
 import { Body, IPolar } from "../model/Body";
 import { Chart, IChart } from "../model/Chart";
 import { Crosshair } from "../model/Crosshair";
-import { DataPoint } from "../model/DataPoint";
 import { Series } from "../model/Series";
 import { AxisBreak, ContinuousAxis, LinearAxis } from "../model/axis/LinearAxis";
 import { Gauge, GaugeBase } from "../model/Gauge";
@@ -42,7 +41,7 @@ import { ErrorBarSeriesView } from "./series/ErrorBarSeriesView";
 import { FunnelSeriesView } from "./series/FunnelSeriesView";
 import { HeatmapSeriesView } from "./series/HeatmapSeriesView";
 import { HistogramSeriesView } from "./series/HistogramSeriesView";
-import { LineSeriesView } from "./series/LineSeriesView";
+import { LineSeriesBaseView, LineSeriesView } from "./series/LineSeriesView";
 import { LollipopSeriesView } from "./series/LollipopSeriesView";
 import { OhlcSeriesView } from "./series/OhlcSeriesView";
 import { ParetoSeriesView } from "./series/ParetoSeriesView";
@@ -832,8 +831,9 @@ export class ZoomButton extends ButtonElement {
 export interface IPlottingOwner {
 
     // clipSeries(view: RcElement, view2: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void;
-    showTooltip(series: Series, point: DataPoint, body: RcElement, p: IPoint): void;
+    showTooltip(series: Series, pv: IPointView, body: RcElement, p: IPoint): void;
     hideTooltip(): void;
+    tooltipVisible(): boolean;
 }
 
 export class BodyView extends ChartElement<Body> {
@@ -884,8 +884,8 @@ export class BodyView extends ChartElement<Body> {
     private _feedbackContainer: LayerElement;
     private _crosshairViews: ElementPool<CrosshairView>;
 
-    private _focused: IPointView = null;
     private _focusedSeries: SeriesView<Series>;
+    private _focused: IPointView;
 
     private _inverted: boolean;
     private _zoomRequested: boolean;
@@ -985,15 +985,16 @@ export class BodyView extends ChartElement<Body> {
     }
 
     private $_setFocused(sv: SeriesView<Series>, pv: IPointView, p: IPoint): void {
-        if (pv != this._focused || this.model.chart.tooltip.followPointer) {
+        const old = this._focused;
+
+        if (pv !== old) {
             let fs = this._focusedSeries;
 
-            if (pv != this._focused) {
-                this._focused && fs.setFocusPoint(this._focused, null);
-                pv && sv.setFocusPoint(pv, p);
-            }
-
+            old && fs.setFocusPoint(old, false);
+            pv && sv.setFocusPoint(pv, true);
+            // pv && sv.setFocusPoint2([pv], true);
             this._focused = pv;
+
             if (sv !== fs) {
                 fs && this.$_focusSeries(fs, false);
                 fs = this._focusedSeries = sv;
@@ -1002,12 +1003,12 @@ export class BodyView extends ChartElement<Body> {
                     this.$_hoverSeries(sv);
                 }
             }
-            
-            if (this._focused) {
-                this._owner.showTooltip(sv.model, pv.point, this, p);
-            } else {
-                this._owner.hideTooltip();
-            }
+        }
+
+        if (this._focused && (this._focused !== old || !this._owner.tooltipVisible() ||  this.model.chart.tooltip.followPointer)) {
+            this._owner.showTooltip(sv.model, pv, this, p);
+        } else {
+            this._owner.hideTooltip();
         }
     }
 
@@ -1089,6 +1090,16 @@ export class BodyView extends ChartElement<Body> {
 
     getFocusPointView(): IPointView {
         return this._focused;
+    }
+
+    hoverPoints(axis: Axis, pos: number): void {
+        const pts: IPointView[] = [];
+
+        this._seriesViews.forEach(sv => {
+            const pts2 = sv.getPointsAt(axis, pos);
+            pts2 && pts.push(...pts2);
+        });
+        console.log('HOVER', pts.length);
     }
 
     //-------------------------------------------------------------------------

@@ -11,6 +11,9 @@ const config = {
         },
     },
     title: '경기도 성남시 인구 현황',
+    tooltip: {
+        // followPointer: true
+    },
     legend: true,
     body: {
         style: {

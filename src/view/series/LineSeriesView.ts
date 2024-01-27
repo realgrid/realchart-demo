@@ -10,6 +10,7 @@ import { cos, sin } from "../../common/Common";
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
+import { IPoint } from "../../common/Point";
 import { ClipRectElement, PathElement, RcElement } from "../../common/RcControl";
 import { Align, FILL, IValueRange, PI_2, SVGStyleOrClass, _undef } from "../../common/Types";
 import { LabelElement } from "../../common/impl/LabelElement";
@@ -32,6 +33,7 @@ export class LineMarkerView extends MarkerSeriesPointView implements IPointView 
     //-------------------------------------------------------------------------
     _radius: number;
     private _saveRadius: number;
+    index: number;
 
     //-------------------------------------------------------------------------
     // methods
@@ -70,6 +72,10 @@ export class LineMarkerView extends MarkerSeriesPointView implements IPointView 
             // this.clearStyleAndClass();
             // series.model.marker.style && this.internalSetStyleOrClass(series.model.marker.style);
         }
+    }
+
+    getTooltipPos(): IPoint {
+        return { x: this.point.xPos, y: this.point.yPos };
     }
 }
 
@@ -174,6 +180,10 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     protected _doViewRateChanged(rate: number): void {
         this._layoutMarkers(this._visPoints as LineSeriesPoint[], this.width, this.height);
         this._layoutLines();
+    }
+
+    getPointsAt(axis: Axis, pos: number): IPointView[] {
+        return [];
     }
 
     //-------------------------------------------------------------------------
@@ -296,6 +306,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     sts[1] = needBelow && p.yValue < base ? series.belowStyle : null;
                     this._setPointStyle(mv, series, p, sts);
                 }
+                mv.index = i < count ? 0 : 1;
             });
         } else {
             this._markers.prepare(0);

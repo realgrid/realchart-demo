@@ -149,10 +149,6 @@ export class DataPoint {
         this.yPos = x;
     }
 
-    getTooltipPos(): IPoint {
-        return { x: this.xPos, y: this.yPos };
-    }
-
     // updateYValue(value: number, animation: ValueAnimation): void {
     //     if (animation) {
     //         this.yPrev = this.yValue;

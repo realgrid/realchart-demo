@@ -676,6 +676,11 @@ export class ValueAnimation extends RcAnimation {
     }
 }
 
+export enum HoverEffect {
+    NONE = 'none',
+    DEFAULT = 'default'
+};
+
 /**
  * 시리즈는 {@link data}로 지정된 값들을 데이터포인트로 표시하는 차트의 핵심 구성 요소이다.<br/>
  * 차트 설정의 다른 부분이나 API에 참조하기 위해서는 {@link name}을 반드시 지정해야 햔다.
@@ -1039,6 +1044,10 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      * 차트 설정 로드 시 실행되는 animation 종류.
      */
     loadAnimation = SeriesLoadAnimation.DEFAULT;
+    /**
+     * 데이터포인트 hover 효과.<br/>
+     */
+    hoverEffect = HoverEffect.DEFAULT;
     /**
      * 데이터포인트 위에 마우스가 있을 때 적용되는 스타일셋 혹은 class selector.
      * 

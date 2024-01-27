@@ -8,6 +8,7 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
+import { Axis } from "../../model/Axis";
 import { ArrowHead, VectorSeries, VectorSeriesPoint } from "../../model/series/VectorSeries";
 import { IPointView, PointElement, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
@@ -152,6 +153,10 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
 
     protected _doViewRateChanged(rate: number): void {
         this._renderSeries(this.width, this.height);
+    }
+
+    getPointsAt(axis: Axis, pos: number): IPointView[] {
+        return [];
     }
 
     //-------------------------------------------------------------------------

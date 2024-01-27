@@ -12,6 +12,7 @@ import { RcElement } from "../../common/RcControl";
 import { Align, _undef } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { RectElement } from "../../common/impl/RectElement";
+import { Axis } from "../../model/Axis";
 import { HeatmapSeries, HeatmapSeriesPoint } from "../../model/series/HeatmapSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";

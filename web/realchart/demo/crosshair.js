@@ -31,7 +31,8 @@ const config = {
     },
     series: { 
         hoverStyle: {
-            fill: 'white'
+            fill: 'white',
+            filter: 'drop-shadow(2px 2px 2px #555)'
         },
         data: [
             [161.2, 51.6], [167.5, 59.0], [159.5, 49.2], [157.0, 63.0], [155.8, 53.6],

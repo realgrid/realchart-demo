@@ -30,12 +30,14 @@ export class HoverAnimation extends RcAnimation {
         this._series = series;
         this._focused = focused;
         this._marker = marker;
+
         if (!focused) {
             this._marker.setBoolData('unfocus', true);
             // 사라지는 중에 hover style이 유지되도록 한다.
             this._marker.saveStyles();
             series.setHoverStyle(this._marker);
-    }
+        }
+
         this.start(endHandler);
     }
 

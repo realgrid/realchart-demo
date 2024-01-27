@@ -114,7 +114,7 @@ export class LineSeriesMarker extends SeriesMarker {
      * 
      * @config
      */
-    hoverScale = 1.8;
+    hoverScale = 1.75;
     /**
      * 데이터포인트 위에 마우스가 있을 때 적용되는 스타일셋 혹은 class selector.<br/>
      * {@link config.series.hoverStyle} 보다 우선 적용된다. 
@@ -681,10 +681,6 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
     applyValueRate(prev: any, vr: number): void {
         // yValue는 series.collectValues()에서 한다.
         this.lowValue = incv(prev.lowValue, this.lowValue, vr);
-    }
-
-    getTooltipPos(): IPoint {
-        return { x: this.xPos, y: this.yLow };
     }
 }
 

@@ -47,6 +47,7 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
         super.decoreateLegend(legendView);
 
         const cs = getComputedStyle(this._area.dom);
+
         (legendView._marker as AreaRangeLegendMarkerView)._area.setStroke('none');
         (legendView._marker as AreaRangeLegendMarkerView)._area.setFill(cs.fill);
         (legendView._marker as AreaRangeLegendMarkerView)._area.setStyle('fillOpacity', cs.fillOpacity);
@@ -83,7 +84,7 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
 
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
             const p = pts[i];
-            const mv = markers.get(i + cnt);
+            const mv = markers.get(cnt + i);
             let x: number;
             let y: number;
 
@@ -124,8 +125,4 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
         this._setFill(area, series.style);
         series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
     }
-
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
 }
