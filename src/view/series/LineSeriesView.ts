@@ -42,11 +42,6 @@ export class LineMarkerView extends MarkerSeriesPointView implements IPointView 
         if (focused) {
             this._saveRadius = this._radius;
         }
-        // this.internalImportantStylesOrClass({
-        //     stroke: 'red',
-        //     strokeWidth: '3px',
-        //     fill: 'white'
-        // });
     }
 
     setHoverRate(series: LineSeriesBaseView<LineSeries>, focused: boolean, rate: number): void {
@@ -69,8 +64,6 @@ export class LineMarkerView extends MarkerSeriesPointView implements IPointView 
     endHover(series: LineSeriesBaseView<LineSeries>, focused: boolean): void {
         if (!focused) {
             this._radius = this._saveRadius;
-            // this.clearStyleAndClass();
-            // series.model.marker.style && this.internalSetStyleOrClass(series.model.marker.style);
         }
     }
 

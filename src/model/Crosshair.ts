@@ -138,7 +138,13 @@ export class Crosshair extends ChartItem {
      */
     timeFormat = 'yyyy-MM-dd HH:mm'
     onChange: any;
-    hovering = true;
+    /**
+     * x축 crosshair 영역에 포함된 marker 데이터포인트들이
+     * 마우스 아래 있을 때와 동일한 효과를 표시한다.
+     * 
+     * @config
+     */
+    markerHovering = false;
 
     //-------------------------------------------------------------------------
     // methods

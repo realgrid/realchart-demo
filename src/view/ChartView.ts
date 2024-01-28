@@ -1283,15 +1283,16 @@ export class ChartView extends LayerElement {
             
             for (const dir in this._axisSectionMap) {
                 this._axisSectionMap[dir].views.forEach(av => {
-                    const m = av.model.crosshair;
-                    const len = av.model._isHorz ? body.width : body.height;
-                    const pos = av.model._isHorz ? p.x : p.y;
+                    const axis = av.model;
+                    const m = axis.crosshair;
+                    const len = axis._isHorz ? body.width : body.height;
+                    const pos = axis._isHorz ? p.x : p.y;
                     const flag = inBody && m.visible && !isContextMenu && m.flag.visible && !m.isBar() && m.getFlag(len, pos);
     
                     if (flag) {
                         av.showCrosshair(pos, flag);
-                        body.hoverPoints(av.model, pos);
-                        av.model.crosshair.moved(pos, flag);
+                        axis._isX && body.hoverPoints(axis, pos);
+                        axis.crosshair.moved(pos, flag);
                     } else {
                         av.hideCrosshiar();
                     }

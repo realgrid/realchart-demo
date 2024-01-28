@@ -963,8 +963,8 @@ export class BodyView extends ChartElement<Body> {
 
         const cl = (target as Element)?.classList;
         const isContextMenu = cl?.value && (cl.contains('rct-contextmenu-item') || cl.contains('rct-contextmenu-list'));
-
         const vis = inBody && !this._zoomRequested && !this.chart().isEmpty(true) && !isContextMenu;
+
         this._crosshairViews.forEach(v => {
             if (v.setVis(vis)) {
                 v.layout(pv, p.x, p.y, w, h);
@@ -1098,11 +1098,8 @@ export class BodyView extends ChartElement<Body> {
     }
 
     hoverPoints(axis: Axis, pos: number): void {
-        const pts: IPointView[] = [];
-
         this._seriesViews.forEach(sv => {
-            const pts2 = sv.getPointsAt(axis, pos);
-            pts2 && pts.push(...pts2);
+            sv.hoverPoints(sv.getPointsAt(axis, pos));
         });
     }
 

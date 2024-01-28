@@ -321,6 +321,17 @@ export class ChartOptions extends ChartItem {
      * 데이터포인트에 마우스가 올라가면 나머지 시리즈들을 반투명 처리해서 연결된 데이터포인터의 시리즈를 강조한다.
      */
     seriesHovering = false;
+    /**
+     * {@link config.series.line 'line'}, 
+     * {@link config.series.bubble 'bubble'}, 
+     * {@link config.series.scatter 'scatter'} 시리즈처럼 marker로 표시되는 데이터포인트의 위치를 찾을 때
+     * 데이터포인트 maker 외부로 추가되는 가상의 두께.<br/>
+     * 0이하면 표시되는 크기로 계산된다.
+     * 상당히 큰 크기로 지정하면 마우스가 어느 위치에 있든 마우스에 가장 가까운 marker가 찾아진다.<br/>
+     * 물론 마우스가 실제 표시되는 marker 위에 있다면 그 것으로 결정된다.
+     * 찾아진 데이터포인트가 마우스 아래 있는 것으로 여겨져서 hover 효과가 표시되거나 관련 이벤트가 발생한다.
+     */
+    markerHoverSize = 30;
 
     //-------------------------------------------------------------------------
     // methods

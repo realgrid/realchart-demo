@@ -509,25 +509,30 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
 
         if (animatable) {
             // 기존 포인트들 중 새 목록에 포함되지 않은 것들은 unhover 시킨다.
-            oldPts.forEach(pv => {
-                if (pv instanceof MarkerSeriesPointView && (!pvs || pvs.indexOf(pv) < 0)) {
+            oldPts.forEach((pv => {
+                if (pv instanceof RcElement && (!pvs || pvs.indexOf(pv) < 0)) {
                     pv.setBoolData(SeriesView.DATA_FOUCS, false);
                     pv.restoreStyles();
-                    anis.push(new HoverAnimation(this, pv, false, () => {
-                        (pv as MarkerSeriesPointView).endHover(this, false);
-                    }));
+                    if (pv instanceof MarkerSeriesPointView) {
+                        anis.push(new HoverAnimation(this, pv, false, () => {
+                            pv.endHover(this, false);
+                        }));
+                    }
                 }
-            })
+            }));
             // 새 포인트들 중 hovering 상태가 아닌 것들을 hover 시킨다.
             pvs && pvs.forEach(pv => {
-                if (pv instanceof MarkerSeriesPointView && !oldAnis.find(ani => ani._marker === pv)) {
+                if (pv instanceof RcElement && !oldAnis.find(ani => ani._marker === pv)) {
                     pv.setBoolData(SeriesView.DATA_FOUCS, true);
+                    pts.push(pv);
+
                     pv.saveStyles();
                     this.setHoverStyle(pv);
-                    anis.push(new HoverAnimation(this, pv, true, () => {
-                        (pv as MarkerSeriesPointView).endHover(this, true);
-                    }));
-                    pts.push(pv);
+                    if (pv instanceof MarkerSeriesPointView) {
+                        anis.push(new HoverAnimation(this, pv, true, () => {
+                            pv.endHover(this, true);
+                        }));
+                    }
                 }
             })
         }

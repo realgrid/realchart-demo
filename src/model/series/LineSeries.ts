@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum, pickProp, assign, minv, pickProp3, incv } from "../../common/Common";
-import { IPoint } from "../../common/Point";
 import { RcElement } from "../../common/RcControl";
 import { Align, IValueRange, SVGStyleOrClass } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";

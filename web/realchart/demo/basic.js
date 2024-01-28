@@ -63,6 +63,7 @@ const config = {
         // color: 3,
         pointLabel: {
             visible: true,
+            rotation: -90,
             //   textField: 'label',
             //   textCallback: ({index, y}) => {
             //       return index === 0 ? y + '%' : y;
