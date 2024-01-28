@@ -63,7 +63,7 @@ export class LineMarkerView extends MarkerSeriesPointView implements IPointView 
         }
 
         SvgShapes.setShape(this, series.model.getShape(p), rd, rd);
-        this.trans(p.xPos - rd, p.yPos - rd);
+        this.trans(p.xPos - rd, (this.index > 0 ? p['yLow'] : p.yPos) - rd);
     }
 
     endHover(series: LineSeriesBaseView<LineSeries>, focused: boolean): void {

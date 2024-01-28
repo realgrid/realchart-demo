@@ -1534,6 +1534,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
             p && this._getPointCallbackArgs(this._pointArgs, p);
             this.onPointHover(p ? this._pointArgs : null);
         }
+        // Utils.log('point hovered', p);
     }
 
     getViewRangeAxis(): 'x' | 'y' | 'z' {

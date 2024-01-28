@@ -11,6 +11,7 @@ import { PathElement } from "../../common/RcControl";
 import { AreaRangeSeries, AreaRangeSeriesPoint } from "../../model/series/LineSeries";
 import { AreaRangeLegendMarkerView } from "../../model/series/legend/AreaRangeLegendMarkerView";
 import { LegendItemView } from "../LegendView";
+import { IPointView } from "../SeriesView";
 import { LineContainer, LineSeriesBaseView } from "./LineSeriesView";
 
 export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
@@ -41,6 +42,10 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
     //-------------------------------------------------------------------------
     protected _markersPerPoint(): number {
         return 2;
+    }
+
+    getSiblings(pv: IPointView): IPointView[] {
+        return [pv, this._markers.find(m => m !== pv && m.point === pv.point)];
     }
 
     decoreateLegend(legendView: LegendItemView): void {

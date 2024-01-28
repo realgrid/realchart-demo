@@ -990,9 +990,14 @@ export class BodyView extends ChartElement<Body> {
         if (pv !== old) {
             let fs = this._focusedSeries;
 
-            old && fs.setFocusPoint(old, false);
-            pv && sv.setFocusPoint(pv, true);
+            // old && fs.setFocusPoint(old, false);
+            // pv && sv.setFocusPoint(pv, true);
             // pv && sv.setFocusPoint2([pv], true);
+            if (sv) {
+                sv.hoverPoints(sv.getSiblings(pv));
+            } else if (fs) {
+                fs.hoverPoints(null);
+            }
             this._focused = pv;
 
             if (sv !== fs) {
@@ -1007,7 +1012,7 @@ export class BodyView extends ChartElement<Body> {
 
         if (this._focused && (this._focused !== old || !this._owner.tooltipVisible() ||  this.model.chart.tooltip.followPointer)) {
             this._owner.showTooltip(sv.model, pv, this, p);
-        } else {
+        } else if (!this._focused && this._owner.tooltipVisible()) {
             this._owner.hideTooltip();
         }
     }
@@ -1099,7 +1104,6 @@ export class BodyView extends ChartElement<Body> {
             const pts2 = sv.getPointsAt(axis, pos);
             pts2 && pts.push(...pts2);
         });
-        console.log('HOVER', pts.length);
     }
 
     //-------------------------------------------------------------------------

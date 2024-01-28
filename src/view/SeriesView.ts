@@ -500,44 +500,41 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         this.model.pointHovered(focused ? pv.point : null);
     }
 
-    setFocusPoint2(pvs: IPointView[], focused: boolean): void {
+    hoverPoints(pvs: IPointView[]): void {
+        const animatable = this.model.hoverEffect !== HoverEffect.NONE;
         const oldAnis = this._hoverAnis;
         const oldPts = this._hoverPts;
         const anis: HoverAnimation[] = [];
         const pts: IPointView[] = [];
 
-        if (this.model.hoverEffect !== HoverEffect.NONE) {
-            if (focused) {
-                pts.push(...pvs);
-            }
-            oldAnis.forEach(ani => {
-                if (pts.indexOf(ani._marker) < 0) {
-                    ani.stop();
-                } else {
-                    anis.push(ani);
-                }
-            });
-            pts.forEach(pv => {
-                if (pv instanceof MarkerSeriesPointView) {
-                    if (!anis.find(ani => ani._marker === pv)) {
-                        anis.push(new HoverAnimation(this, pv, true, () => {
-                            (pv as MarkerSeriesPointView).endHover(this, true);
-                        }));
-                    }
+        if (animatable) {
+            // 기존 포인트들 중 새 목록에 포함되지 않은 것들은 unhover 시킨다.
+            oldPts.forEach(pv => {
+                if (pv instanceof MarkerSeriesPointView && (!pvs || pvs.indexOf(pv) < 0)) {
+                    pv.setBoolData(SeriesView.DATA_FOUCS, false);
+                    pv.restoreStyles();
+                    anis.push(new HoverAnimation(this, pv, false, () => {
+                        (pv as MarkerSeriesPointView).endHover(this, false);
+                    }));
                 }
             })
-        } else {
-            oldAnis.forEach(ani => {
-                ani.stop();
-            });
-            oldPts.forEach(pv => {
-                pv.restoreStyles();
-            });
+            // 새 포인트들 중 hovering 상태가 아닌 것들을 hover 시킨다.
+            pvs && pvs.forEach(pv => {
+                if (pv instanceof MarkerSeriesPointView && !oldAnis.find(ani => ani._marker === pv)) {
+                    pv.setBoolData(SeriesView.DATA_FOUCS, true);
+                    pv.saveStyles();
+                    this.setHoverStyle(pv);
+                    anis.push(new HoverAnimation(this, pv, true, () => {
+                        (pv as MarkerSeriesPointView).endHover(this, true);
+                    }));
+                    pts.push(pv);
+                }
+            })
         }
 
         this._hoverAnis = anis;
         this._hoverPts = pts;
-        this.model.pointHovered(focused ? pvs[0].point : null);
+        this.model.pointHovered((pts && pts.length > 0) ? pts[0].point : null);
     }
 
     protected _needFocusOrder(): boolean {
@@ -546,6 +543,10 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
 
     getPointsAt(axis: Axis, pos: number): IPointView[] {
         return;
+    }
+
+    getSiblings(pv: IPointView): IPointView[] {
+        return [pv];
     }
 
     //-------------------------------------------------------------------------
