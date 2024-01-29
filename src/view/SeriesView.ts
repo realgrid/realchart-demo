@@ -1262,8 +1262,12 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
 export abstract class MarkerSeriesPointView extends PointElement implements IPointView {
 
     //-------------------------------------------------------------------------
-    // fields
+    // static members
     //-------------------------------------------------------------------------
+    static getDistance(pv: MarkerSeriesPointView, rd: number, x: number, y: number): number {
+        return;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -1319,7 +1323,7 @@ export abstract class MarkerSeriesView<T extends MarkerSeries, P extends DataPoi
         return [];
     }
 
-    getNearset(x: number, y: number): IPointView {
+    getNearest(x: number, y: number): IPointView {
         return;
     }
 

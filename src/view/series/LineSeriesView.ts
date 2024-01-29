@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { cos, sin } from "../../common/Common";
+import { cos, distance, sin } from "../../common/Common";
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
@@ -180,8 +180,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         return [];
     }
 
-    getNearset(x: number, y: number): IPointView {
-        return;
+    getNearest(x: number, y: number): IPointView {
+        return this._markers._internalItems().sort((p1, p2) => distance(p1.point.xPos, p1.point.yPos, x, y) - distance(p2.point.xPos, p2.point.yPos, x, y))[0];
     }
 
     //-------------------------------------------------------------------------
