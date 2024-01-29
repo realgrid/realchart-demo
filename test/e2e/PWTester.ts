@@ -2,7 +2,7 @@ import { Page, ElementHandle, TestInfo, expect } from '@playwright/test';
 import { IPoint } from '../../src/common/Point';
 import { IRect } from '../../src/common/Rectangle';
 import { Chart } from '../../src/model/Chart';
-
+import path from 'path';
 export class PWTester {
 
 	//-------------------------------------------------------------------------
@@ -97,12 +97,13 @@ export class PWTester {
 
 	static async testChartBySnapshot(page: Page, testInfo: TestInfo, description?: string) {
 		const chartElementId = '#realchart';
+		// const folderPath = testInfo.snapshotDir.split("/").slice(0, -1).join("/");
+		// const snapshotFolder = path.join(folderPath, 'snapshot');
+		// console.log(path.join(snapshotFolder, 'test.png'))
+		// const screenShot = await page.locator(chartElementId).screenshot({path: path.join(snapshotFolder, 'test.png')});
 		const screenShot = await page.locator(chartElementId).screenshot();
-		const oldPath = testInfo.snapshotDir.split("/");
-		const newPath = oldPath.slice(0, -1).join('/');
-		console.log(testInfo)
-		testInfo.snapshotDir = `${newPath}/snapshot`;
-		await expect(screenShot).toMatchSnapshot(`${newPath}/snapshot/test.png`,{ maxDiffPixels: 10 });
+
+		await expect(screenShot).toMatchSnapshot({ maxDiffPixels: 10 });
 		await testInfo.attach('screenshot', { body: screenShot, contentType: 'image/png' });
 		if (!description) {
 			return;
