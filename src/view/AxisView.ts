@@ -671,7 +671,7 @@ export class AxisView extends ChartElement<Axis> {
         // labels
         const len = markLen + (m.tick.gap || 0);
 
-        if (this._labelContainer.visible) {
+        if (this._labelContainer.visible && labelViews.count > 0) { /// #527
             if (horz) {
                 this.$_layoutLabelsHorz(labelViews, ticks, between, opp, w, h, len);
             } else {
