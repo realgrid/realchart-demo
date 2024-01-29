@@ -1299,7 +1299,7 @@ export class ChartView extends LayerElement {
     
                     if (flag) {
                         av.showCrosshair(pos, flag);
-                        axis._isX && body.hoverPoints(axis, pos);
+                        // axis._isX && body.hoverPoints(axis, pos);
                         axis.crosshair.moved(pos, flag);
                     } else {
                         av.hideCrosshiar();

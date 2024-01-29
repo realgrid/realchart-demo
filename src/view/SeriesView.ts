@@ -501,7 +501,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     }
 
     hoverPoints(pvs: IPointView[]): void {
-        const animatable = this.model.hoverEffect !== HoverEffect.NONE;
+        const animatable = /*this.model.chart.animatable() &&*/ this.model.hoverEffect !== HoverEffect.NONE;
         const oldAnis = this._hoverAnis;
         const oldPts = this._hoverPts;
         const anis: HoverAnimation[] = [];
@@ -511,8 +511,12 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
             // 기존 포인트들 중 새 목록에 포함되지 않은 것들은 unhover 시킨다.
             oldPts.forEach((pv => {
                 if (pv instanceof RcElement && (!pvs || pvs.indexOf(pv) < 0)) {
+                    const ani = oldAnis.find(ani => ani._marker === pv && ani._focused);
+                    ani && ani.stop();
+
                     pv.setBoolData(SeriesView.DATA_FOUCS, false);
                     pv.restoreStyles();
+
                     if (pv instanceof MarkerSeriesPointView) {
                         anis.push(new HoverAnimation(this, pv, false, () => {
                             pv.endHover(this, false);
@@ -522,12 +526,17 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
             }));
             // 새 포인트들 중 hovering 상태가 아닌 것들을 hover 시킨다.
             pvs && pvs.forEach(pv => {
+                const ani = oldAnis.find(ani => ani._marker === pv && !ani._focused);
+                ani && ani.stop();
+
                 if (pv instanceof RcElement && !oldAnis.find(ani => ani._marker === pv)) {
                     pv.setBoolData(SeriesView.DATA_FOUCS, true);
                     pts.push(pv);
 
+                    pv.restoreStyles(); // TODO: 이것이 필요한 상황은?
                     pv.saveStyles();
                     this.setHoverStyle(pv);
+
                     if (pv instanceof MarkerSeriesPointView) {
                         anis.push(new HoverAnimation(this, pv, true, () => {
                             pv.endHover(this, true);
@@ -1308,6 +1317,10 @@ export abstract class MarkerSeriesView<T extends MarkerSeries, P extends DataPoi
 
     getPointsAt(axis: Axis, pos: number): IPointView[] {
         return [];
+    }
+
+    getNearset(x: number, y: number): IPointView {
+        return;
     }
 
     //-------------------------------------------------------------------------

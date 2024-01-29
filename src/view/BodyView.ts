@@ -990,12 +990,10 @@ export class BodyView extends ChartElement<Body> {
         if (pv !== old) {
             let fs = this._focusedSeries;
 
-            // old && fs.setFocusPoint(old, false);
-            // pv && sv.setFocusPoint(pv, true);
-            // pv && sv.setFocusPoint2([pv], true);
             if (sv) {
                 sv.hoverPoints(sv.getSiblings(pv));
-            } else if (fs) {
+            } 
+            if (fs && fs !== sv) {
                 fs.hoverPoints(null);
             }
             this._focused = pv;

@@ -34,14 +34,15 @@ export class LineMarkerView extends MarkerSeriesPointView implements IPointView 
     _radius: number;
     private _saveRadius: number;
     index: number;
+    _t: string;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     beginHover(series: LineSeriesBaseView<LineSeries>, focused: boolean): void {
-        if (focused) {
+        //if (focused) {
             this._saveRadius = this._radius;
-        }
+        //}
     }
 
     setHoverRate(series: LineSeriesBaseView<LineSeries>, focused: boolean, rate: number): void {
@@ -62,9 +63,9 @@ export class LineMarkerView extends MarkerSeriesPointView implements IPointView 
     }
 
     endHover(series: LineSeriesBaseView<LineSeries>, focused: boolean): void {
-        if (!focused) {
+        //if (focused) {
             this._radius = this._saveRadius;
-        }
+        //}
     }
 
     getTooltipPos(): IPoint {
@@ -177,6 +178,10 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     getPointsAt(axis: Axis, pos: number): IPointView[] {
         return [];
+    }
+
+    getNearset(x: number, y: number): IPointView {
+        return;
     }
 
     //-------------------------------------------------------------------------
