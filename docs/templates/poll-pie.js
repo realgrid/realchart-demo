@@ -1,5 +1,4 @@
 export const config = {
-  height: 550,
   templates: {
     series: {
       radius: '50%',
@@ -32,7 +31,7 @@ export const config = {
       style: { fill: '#593219', textAlign: 'center' }
     },
     {
-      imageUrl: '../assets/images/seoul.png',
+      imageUrl: 'https://realchart.co.kr/demo/assets/images/seoul.png',
       front: true,
       width: 260,
       align: 'center',
@@ -76,9 +75,9 @@ export const config = {
       ],
       pointLabel: {
         style: { fill: '#fff' },
-        textCallback: ({x, y}) => { const fontSize = Math.max(15, y); return `${x}<br><b style="font-size:${fontSize}px">${y}</b>` }
+        textCallback: ({ x, y }) => { const fontSize = Math.max(15, y); return `${x}<br><b style="font-size:${fontSize}px">${y}</b>`; }
       }
     }
   ]
 }
-export const tool = false
+export const tool = { height: 550 }

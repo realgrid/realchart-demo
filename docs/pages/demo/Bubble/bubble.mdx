@@ -2,8 +2,8 @@
 title: "Bubble"
 ---
 import { RealChartReact } from "@/components/RealChart/RealChartReact";
-import { config, tool } from "@/templates/bubble";
+import { tool } from "@/templates/bubble";
 
 # Bubble
 			
-<RealChartReact config={config} tool={tool} showEditor={true} autoUpdate={false} />
+<RealChartReact configString="%7B%0A%20%20options:%20%7B%7D,%0A%20%20title:%20'Bubble%20Series',%0A%20%20xAxis:%20%7B%20title:%20'xAxis'%20%7D,%0A%20%20yAxis:%20%7B%20title:%20'yAxis'%20%7D,%0A%20%20series:%20%7B%0A%20%20%20%20type:%20'bubble',%0A%20%20%20%20pointLabel:%20%7B%20visible:%20true,%20suffix:%20'm',%20effect:%20'outline'%20%7D,%0A%20%20%20%20sizeMode:%20'width',%0A%20%20%20%20radius:%200.1,%0A%20%20%20%20data:%20%5B%0A%20%20%20%20%20%20%5B%209,%2081,%2063%20%5D,%20%20%5B%2098,%205,%2089%20%5D,%0A%20%20%20%20%20%20%5B%2051,%2050,%2073%20%5D,%20%5B%2041,%2022,%2014%20%5D,%0A%20%20%20%20%20%20%5B%2058,%2024,%2020%20%5D,%20%5B%2078,%2037,%2034%20%5D,%0A%20%20%20%20%20%20%5B%2055,%2056,%2053%20%5D,%20%5B%2018,%2045,%2070%20%5D,%0A%20%20%20%20%20%20%5B%2042,%2044,%2028%20%5D,%20%5B%203,%2052,%2059%20%5D,%0A%20%20%20%20%20%20%5B%2031,%2018,%2097%20%5D,%20%5B%2079,%2091,%2063%20%5D,%0A%20%20%20%20%20%20%5B%2093,%2023,%2023%20%5D,%20%5B%2044,%2083,%2022%20%5D%0A%20%20%20%20%5D%0A%20%20%7D%0A%7D" tool={tool} showEditor={true} autoUpdate={false}/>

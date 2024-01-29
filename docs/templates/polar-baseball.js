@@ -77,7 +77,7 @@ export const config = {
       }
     ]
   },
-  tooltip: { level: 'series' },
+  tooltip: { scope: 'point' },
   series: {
     layout: 'overlap',
     groupPadding: 0,

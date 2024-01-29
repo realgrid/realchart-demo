@@ -11,7 +11,8 @@ import {
     copyFileSync,
     writeFileSync,
 } from 'fs';
-import fs from 'fs/promises';
+// import fs from 'fs/promises';
+// import beautify from 'js-beautify';
 import util from 'util';
 
 function readFile(file) {
@@ -109,7 +110,8 @@ function createMetaJson() {
                         ) {
                             obj[key] = functionToStirng(obj[key]);
                         } else {
-                            if (typeof obj[key] === 'function') {
+                            const type = typeof obj[key];
+                            if (type === 'function') {
                                 obj[key] = obj[key]
                                     .toString()
                                     .replace(/\/\/.*|\/\*[\s\S]*?\*\//g, '') // 주석제거
@@ -150,39 +152,37 @@ function createMetaJson() {
                 return obj;
             };
 
-            let configString = util.inspect(config, {
-                showHidden: false,
-                depth: null,
-                maxArrayLength: null,
-            });
-            // const toolString = JSON.stringify(tool, null, 2);
-            let toolString = util.inspect(tool, {
-                showHidden: false,
-                depth: null,
-                maxArrayLength: null,
-            });
+            const inspectConf = (conf) => {
+                return util.inspect(conf, {
+                    showHidden: false,
+                    depth: null,
+                    maxArrayLength: null,
+                });
+            };
 
-            callbacks.forEach((callback) => {
-                const index = configString.indexOf(callback);
-                if (index > 0) {
-                    let temp =
-                        configString.slice(0, index - 1) +
-                        configString.slice(index, index + callback.length) +
-                        configString.slice(index + callback.length + 1);
-                    configString = temp;
-                }
-            });
+            /**
+             * function 문자열 제거
+             */
+            const escapeFunc = (conf) => {
+                return callbacks.reduce((agg, callback) => {
+                    const index = agg.indexOf(callback);
+                    if (index > 0) {
+                        agg =
+                            agg.slice(0, index - 1) +
+                            agg.slice(index, index + callback.length) +
+                            agg.slice(index + callback.length + 1);
+                    }
+                    return agg;
+                }, conf);
+            };
 
-            callbacks.forEach((callback) => {
-                const index = toolString.indexOf(callback);
-                if (index > 0) {
-                    let temp =
-                        toolString.slice(0, index - 1) +
-                        toolString.slice(index, index + callback.length) +
-                        toolString.slice(index + callback.length + 1);
-                    toolString = temp;
-                }
-            });
+            const parseConfigToString = (conf) => {
+                let str = inspectConf(conf);
+                return escapeFunc(str);
+            };
+
+            const configString = parseConfigToString(config);
+            const toolString = parseConfigToString(tool);
 
             writeFileSync(
                 './docs/templates/' + value2 + '.js',
@@ -198,18 +198,19 @@ function createMetaJson() {
 title: "${key2}"
 ---
 import { RealChartReact } from "@/components/RealChart/RealChartReact";
-import { config, tool } from "@/templates/${value2}";
+import { tool } from "@/templates/${value2}";
 
 # ${key2}
 			
-<RealChartReact config={config} tool={tool} showEditor={true} autoUpdate={false} />
+<RealChartReact configString="${encodeURI(
+                    configString
+                )}" tool={tool} showEditor={true} autoUpdate={false}/>
 `
             );
             ++count;
             console.log(count, `${target}/${value2}.mdx`);
         }
     }
-
     console.log(`총 ${count}개의 mdx파일을 생성했습니다.`);
     try {
         createMetaJson();

@@ -644,10 +644,7 @@ export abstract class ContinuousAxis extends Axis {
 
     protected _doPrepareRender(): void {
         this._baseVal = parseFloat(this.baseValue as any);
-        /**
-         * @TODO: Review
-         */
-        (this.tick as ContinuousAxisTick)?._findBaseAxis();
+        (this.tick as ContinuousAxisTick)._findBaseAxis();
     }
 
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {

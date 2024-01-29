@@ -2,8 +2,8 @@
 title: "Area Negative"
 ---
 import { RealChartReact } from "@/components/RealChart/RealChartReact";
-import { config, tool } from "@/templates/area-negative";
+import { tool } from "@/templates/area-negative";
 
 # Area Negative
 			
-<RealChartReact config={config} tool={tool} showEditor={true} autoUpdate={false} />
+<RealChartReact configString="%7B%0A%20%20options:%20%7B%7D,%0A%20%20title:%20'Area%20-%20Negative',%0A%20%20xAxis:%20%7B%20type:%20'category'%20%7D,%0A%20%20yAxis:%20%7B%7D,%0A%20%20series:%20%7B%0A%20%20%20%20type:%20'area',%0A%20%20%20%20style:%20%7B%20strokeWidth:%20'3px'%20%7D,%0A%20%20%20%20belowStyle:%20%7B%20stroke:%20'red',%20fill:%20'red'%20%7D,%0A%20%20%20%20data:%20%5B%0A%20%20%20%20%20%20%5B%20'home',%207%20%5D,%0A%20%20%20%20%20%20%5B%20'sky',%2011%20%5D,%0A%20%20%20%20%20%20%5B%20'%EC%A0%95%EC%9A%B0%EC%84%B1',%20-7%20%5D,%0A%20%20%20%20%20%20%5B%20'def',%209%20%5D,%0A%20%20%20%20%20%20%5B%20'%EA%B3%BD%EC%9E%AC%EC%8B%9D',%20-3%20%5D,%0A%20%20%20%20%20%20%5B%20'%EC%A7%80%EB%A6%AC%EC%82%B0',%2015.3%20%5D,%0A%20%20%20%20%20%20%5B%20'zzz',%2013%20%5D,%0A%20%20%20%20%20%20%5B%20'%EB%82%99%EB%8F%99%EA%B0%95',%2012.5%20%5D%0A%20%20%20%20%5D%0A%20%20%7D%0A%7D" tool={tool} showEditor={true} autoUpdate={false}/>

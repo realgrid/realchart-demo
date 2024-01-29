@@ -18,7 +18,8 @@ export const config = {
       { name: 'hong', y: 13 },
       { name: 'america', y: 23 },
       { name: 'asia', y: 29 }
-    ]
+    ],
+    onPointHover: args => { if (args) { chart.series.set('innerText', `${args.x} - <b>${args.yValue}</b>`); } else { chart.series.set('innerText', config.series.innerText); } }
   }
 }
 export const tool = false
