@@ -10,10 +10,8 @@ import { TestInfo } from '@playwright/test';
 import { test } from "@playwright/test";
 import { expect } from "chai";
 import { PWTester } from "../../PWTester";
-/**
- * PlayWright Tests for area.html
- */
 
+/** @TODO: 코드테스트 추가 */
 test.describe("xAxis, log test", () => {
   const url = "boundary/empty.html?debug";
 

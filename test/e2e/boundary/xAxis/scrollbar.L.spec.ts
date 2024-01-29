@@ -9,9 +9,7 @@
 import { test } from "@playwright/test";
 import { expect } from "chai";
 import { PWTester } from "../../PWTester";
-/**
- * PlayWright Tests for area.html
- */
+  /** @TODO: 코드테스트 추가 */
 
 /**
  * TITLE 테스트

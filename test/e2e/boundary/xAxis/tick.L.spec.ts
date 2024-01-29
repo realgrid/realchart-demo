@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // time.L.spec.ts
-// 2024. 01. 18. created by dltlghkd930217
+// 2024. 01. 29. created by dltlghkd930217
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
@@ -9,13 +9,7 @@
 import { test } from "@playwright/test";
 import { expect } from "chai";
 import { PWTester } from "../../PWTester";
-/**
- * PlayWright Tests for area.html
- */
-
-  /**
-   * TITLE 테스트
-   */
+/** @TODO: 코드테스트 추가 */
   const TYPES = ["linear", "category", "time", "log"];
 
   for(let type of TYPES){
