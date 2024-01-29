@@ -51,8 +51,6 @@ import { PWTester } from "../../PWTester";
         }, config);
         await PWTester.sleep(500);
 
-  
-
         await PWTester.testChartBySnapshot(page, testInfo);
       });
 
@@ -81,8 +79,6 @@ import { PWTester } from "../../PWTester";
   
         await PWTester.testChartBySnapshot(page, testInfo);
       });
-
-
 
       test("positive length", async ({ page }, testInfo) => {
 
