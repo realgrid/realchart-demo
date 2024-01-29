@@ -17,12 +17,6 @@ import { MarkerSeries } from "../Series";
  * [x, y, z]
  */
 export class BubbleSeriesPoint extends ZValuePoint {
-
-    //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
-    radius: number;
-    shape: Shape;
 }
 
 export enum BubbleSizeMode {

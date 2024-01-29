@@ -190,6 +190,13 @@ export abstract class LineSeriesBase extends Series {
      * @config
      */
     nullAsBase = false;
+    /**
+     * true로 지정하면 마우스가 데이터포인트 근처에 있어도 hover 상태인 것처럼 표시한다.<br/>
+     * 근처로 인정되는 거리는 {@config chart.options.pointHovering.hintDistance}로 지정한다.
+     * 
+     * @config
+     */
+    nearHovering = true;
 
     //-------------------------------------------------------------------------
     // methods
@@ -419,6 +426,7 @@ export class LineSeries extends LineSeriesBase {
         
     }
     getLineType(): LineType {
+        // [주의] 그룹에 소속된 시리즈의 lineType이 모두 동일해야 한다.
         return (this.group instanceof LineSeriesGroup || this.group instanceof AreaSeriesGroup) ? this.group.lineType : this.lineType;
     }
 
@@ -449,7 +457,7 @@ export class SplineSeries extends LineSeries {
      * 
      * @config
      */
-    lineType: LineType
+    lineType: LineType;
 }
 
 export class AreaSeriesPoint extends LineSeriesPoint {

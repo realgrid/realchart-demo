@@ -3146,4 +3146,11 @@ export abstract class MarkerSeries extends Series {
      * @config
      */
     colorByPoint = false;
+    /**
+     * true로 지정하면 마우스가 데이터포인트 근처에 있어도 hover 상태인 것처럼 표시한다.<br/>
+     * 근처로 인정되는 거리는 {@config chart.options.pointHovering.hintDistance}로 지정한다.
+     * 
+     * @config
+     */
+    nearHovering = true;
 }

@@ -281,6 +281,17 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     static readonly LEGEND_MARKER = 'rct-legend-item-marker';
 
     //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    static seriesOf(pv: RcElement): SeriesView<Series> {
+        let p = pv.parent;
+        while (p) {
+            if (p instanceof SeriesView) return p
+            p = p.parent;
+        }
+    }
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     _simpleMode = false; // navigator에 들어가면 true
@@ -1262,18 +1273,15 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
 export abstract class MarkerSeriesPointView extends PointElement implements IPointView {
 
     //-------------------------------------------------------------------------
-    // static members
-    //-------------------------------------------------------------------------
-    static getDistance(pv: MarkerSeriesPointView, rd: number, x: number, y: number): number {
-        return;
-    }
-
-    //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     abstract beginHover(series: SeriesView<Series>, focused: boolean): void;
     abstract setHoverRate(series: SeriesView<Series>, focused: boolean, rate: number): void;
     abstract endHover(series: SeriesView<Series>, focused: boolean): void;
+
+    distance(rd: number, x: number, y: number): number {
+        return this.point.isNull ? Number.MAX_VALUE : Math.sqrt((this.point.xPos - x) ** 2 + (this.point.yPos - y) ** 2) - rd;
+    }
 }
 
 export abstract class MarkerSeriesView<T extends MarkerSeries, P extends DataPoint> extends SeriesView<T> {
@@ -1321,10 +1329,6 @@ export abstract class MarkerSeriesView<T extends MarkerSeries, P extends DataPoi
 
     getPointsAt(axis: Axis, pos: number): IPointView[] {
         return [];
-    }
-
-    getNearest(x: number, y: number): IPointView {
-        return;
     }
 
     //-------------------------------------------------------------------------

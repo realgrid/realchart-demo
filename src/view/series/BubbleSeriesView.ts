@@ -9,15 +9,25 @@
 import { cos, sin } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { Align, PI_2 } from "../../common/Types";
+import { Shape } from "../../common/impl/SvgShape";
 import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
 import { PointItemPosition } from "../../model/Series";
 import { BubbleSeries, BubbleSeriesPoint } from "../../model/series/BubbleSeries";
-import { MarkerSeriesPointView, MarkerSeriesView, PointContainer, PointLabelView } from "../SeriesView";
+import { IPointView, MarkerSeriesPointView, MarkerSeriesView, PointContainer, PointLabelView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 export class BubbleSeriesPointView extends MarkerSeriesPointView {
 
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _radius: number;
+    _shape: Shape;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
     beginHover(series: BubbleSeriesView, focused: boolean): void {
     }
 
@@ -81,10 +91,10 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries, BubbleSerie
         const count = points.length;
         // const {min, max} = series.getPixelMinMax(len);
 
-        this._markers.prepare(count, (mv, i) => {
+        this._markers.prepare(count, (mv: BubbleSeriesPointView, i: number) => {
             const p = mv.point = points[i];
 
-            p.shape = series.shape;
+            mv._shape = series.shape;
             this._setPointStyle(mv, series, p);
         });
     }
@@ -115,12 +125,12 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries, BubbleSerie
         const drawer = this._getDrawer(series.shape);
         let labelView: PointLabelView;
 
-        this._markers.forEach((mv, i) => {
+        this._markers.forEach((mv: BubbleSeriesPointView, i: number) => {
             const p = mv.point as BubbleSeriesPoint;
             const lv = labelViews && (labelView = labelViews.get(p, 0));
 
             if (mv.setVis(!p.isNull && !isNaN(p.zValue))) {
-                const sz = (p.radius = series.getRadius(p.zValue, min, max)) * gr;
+                const sz = (mv._radius = series.getRadius(p.zValue, min, max)) * gr;
                 let path: (string | number)[];
                 let x: number;
                 let y: number;
@@ -158,5 +168,14 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries, BubbleSerie
                 lv.setVis(false);
             }
         });
+    }
+
+    getNearest(x: number, y: number): {pv: IPointView, dist: number} {
+        const pv = this._markers._internalItems().sort((p1: BubbleSeriesPointView, p2: BubbleSeriesPointView) => p1.distance(p1._radius, x, y) - p2.distance(p2._radius, x, y))[0] as BubbleSeriesPointView;
+        return { pv, dist: pv.distance(pv._radius, x, y) };
+    }
+
+    canHover(dist: number, pv: BubbleSeriesPointView, hint: number): boolean {
+        return dist <= pv._radius + hint;
     }
 }
