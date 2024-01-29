@@ -29,10 +29,8 @@
       window.addEventListener("DOMContentLoaded", function () {
         config = {
           title: "Boundary",
-          xAxis: {
-          },
-          series: [
-          ],
+          xAxis: {},
+          series: [],
         };
 
         try {
@@ -42,6 +40,14 @@
           console.error(err);
         }
       });
+
+      var loadChart = (newConfig) => {
+        return new Promise((resolve) => {
+          chart.load(newConfig, false, () => {
+              resolve()
+          });
+        });
+      }
     </script>
   </head>
   <body>

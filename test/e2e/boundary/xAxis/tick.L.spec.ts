@@ -9,6 +9,9 @@
 import { test } from "@playwright/test";
 import { expect } from "chai";
 import { PWTester } from "../../PWTester";
+declare global{
+  var loadChart : (newConfig: any) => Promise<void>
+}
 /** @TODO: 코드테스트 추가 */
   const TYPES = ["linear", "category", "time", "log"];
 
@@ -39,12 +42,10 @@ import { PWTester } from "../../PWTester";
       test("visible", async ({ page }, testInfo) => {
 
         config.xAxis.tick.visible = true;
-
         await page.evaluate((newConfig) => {
-          chart.load(newConfig, false);
+          return loadChart(newConfig);
         }, config);
-        await PWTester.sleep(500);
-
+  
         await PWTester.testChartBySnapshot(page, testInfo);
       });
 
@@ -52,11 +53,9 @@ import { PWTester } from "../../PWTester";
 
         config.xAxis.tick.visible = true;
         config.xAxis.tick.gap = 100;
-
         await page.evaluate((newConfig) => {
-          chart.load(newConfig, false);
+          return loadChart(newConfig);
         }, config);
-        await PWTester.sleep(500);
   
         await PWTester.testChartBySnapshot(page, testInfo);
       });
@@ -65,11 +64,9 @@ import { PWTester } from "../../PWTester";
 
         config.xAxis.tick.visible = true;
         config.xAxis.tick.gap = -100;
-
         await page.evaluate((newConfig) => {
-          chart.load(newConfig, false);
+          return loadChart(newConfig);
         }, config);
-        await PWTester.sleep(500);
   
         await PWTester.testChartBySnapshot(page, testInfo);
       });
@@ -78,11 +75,9 @@ import { PWTester } from "../../PWTester";
 
         config.xAxis.tick.visible = true;
         config.xAxis.tick.length = 100;
-
         await page.evaluate((newConfig) => {
-          chart.load(newConfig, false);
+          return loadChart(newConfig);
         }, config);
-        await PWTester.sleep(500);
   
         await PWTester.testChartBySnapshot(page, testInfo);
       });
@@ -90,11 +85,9 @@ import { PWTester } from "../../PWTester";
 
         config.xAxis.tick.visible = true;
         config.xAxis.tick.length = -100;
-
         await page.evaluate((newConfig) => {
-          chart.load(newConfig, false);
+          return loadChart(newConfig);
         }, config);
-        await PWTester.sleep(500);
   
         await PWTester.testChartBySnapshot(page, testInfo);
       });

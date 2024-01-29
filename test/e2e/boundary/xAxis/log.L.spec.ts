@@ -12,6 +12,9 @@ import { expect } from "chai";
 import { PWTester } from "../../PWTester";
 
 /** @TODO: 코드테스트 추가 */
+declare global{
+  var loadChart : (newConfig: any) => Promise<void>
+}
 test.describe("xAxis, log test", () => {
   const url = "boundary/empty.html?debug";
 
@@ -45,20 +48,9 @@ test.describe("xAxis, log test", () => {
     expect(container).exist;
 
     await page.evaluate((newConfig) => {
-      chart.load(newConfig, false);
+      return loadChart(newConfig);
     }, config);
 
-    await PWTester.sleep();
-
-    const xAxis = await PWTester.getAxis(page, "x");
-    const labels = await xAxis.$$(".rct-axis-label");
-
-    const labelTexts = await page.evaluate((labels) => {
-      return labels.map((e) => e.textContent);
-    }, labels);
-
-    const expectTexts = ["1", "2", "4", "8", "16"]
-    // expect(labelTexts).is.deep.equal(expectTexts);
     await PWTester.testChartBySnapshot(page, testInfo);
   });
 

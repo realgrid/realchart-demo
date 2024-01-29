@@ -10,6 +10,9 @@ import { test } from "@playwright/test";
 import { expect } from "chai";
 import { PWTester } from "../../PWTester";
 /** @TODO: 코드테스트 추가 */
+declare global{
+  var loadChart : (newConfig: any) => Promise<void>
+}
 test.describe("xAxis, linear test", () => {
   const url = "boundary/empty.html?debug";
 
@@ -38,11 +41,9 @@ test.describe("xAxis, linear test", () => {
   test("init", async ({ page }, testInfo) => {
     const container = await page.$("#realchart");
     expect(container).exist;
-
     await page.evaluate((newConfig) => {
-      chart.load(newConfig, false);
+      return loadChart(newConfig);
     }, config);
-    await PWTester.sleep();
 
     await PWTester.testChartBySnapshot(page, testInfo);
   });
@@ -54,10 +55,8 @@ test.describe("xAxis, linear test", () => {
       visible: true
     };
     await page.evaluate((newConfig) => {
-      chart.load(newConfig, false);
+      return loadChart(newConfig);
     }, config);
-    await PWTester.sleep();
-
 
     await PWTester.testChartBySnapshot(page, testInfo);
   });

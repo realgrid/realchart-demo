@@ -9,6 +9,9 @@
 import { test } from "@playwright/test";
 import { expect } from "chai";
 import { PWTester } from "../../PWTester";
+declare global{
+  var loadChart : (newConfig: any) => Promise<void>
+}
 /** @TODO: 코드테스트 추가 */
   const TYPES = ["linear", "category", "time", "log"];
 
@@ -40,11 +43,11 @@ import { PWTester } from "../../PWTester";
   
       test("null title", async ({ page }, testInfo) => {
         config.xAxis.title.text = null;
-  
         await page.evaluate((newConfig) => {
-          chart.load(newConfig, false);
+          return loadChart(newConfig);
         }, config);
-        await PWTester.sleep(500);
+  
+        await PWTester.testChartBySnapshot(page, testInfo);
         const xAxis = await PWTester.getAxis(page, "x");
         const title = await xAxis.$$(".rct-axis-title");
   
@@ -54,7 +57,6 @@ import { PWTester } from "../../PWTester";
   
         expect(titleText).is.not.true;
   
-        await PWTester.testChartBySnapshot(page, testInfo);
       });
   
       test("special character title", async ({ page }, testInfo) => {
@@ -62,9 +64,10 @@ import { PWTester } from "../../PWTester";
         config.xAxis.title.text = character;
   
         await page.evaluate((newConfig) => {
-          chart.load(newConfig, false);
+          return loadChart(newConfig);
         }, config);
-        await PWTester.sleep(500);
+  
+        await PWTester.testChartBySnapshot(page, testInfo);
         const xAxis = await PWTester.getAxis(page, "x");
         const title = await xAxis.$$(".rct-axis-title");
   
@@ -73,8 +76,6 @@ import { PWTester } from "../../PWTester";
         }, title);
   
         expect(titleText).is.equal(character);
-  
-        await PWTester.testChartBySnapshot(page, testInfo);
       });
   
       test("min value", async ({ page }, testInfo) => {
@@ -84,9 +85,10 @@ import { PWTester } from "../../PWTester";
         config.xAxis.title.offset = -100;
   
         await page.evaluate((newConfig) => {
-          chart.load(newConfig, false);
+          return loadChart(newConfig);
         }, config);
-        await PWTester.sleep(500);
+  
+        await PWTester.testChartBySnapshot(page, testInfo);
         const xAxis = await PWTester.getAxis(page, "x");
         const title = await xAxis.$$(".rct-axis-title");
   
@@ -96,18 +98,17 @@ import { PWTester } from "../../PWTester";
   
         expect(titleText).is.equal("title 22");
   
-        await PWTester.testChartBySnapshot(page, testInfo);
       });
   
       test("title length", async ({ page }, testInfo) => {
         // 최대 길이를 초과하는 타이틀로 설정한 경우의 테스트
         const maxLengthTitle = "x".repeat(500);
         config.xAxis.title.text = maxLengthTitle;
-  
         await page.evaluate((newConfig) => {
-          chart.load(newConfig, false);
+          return loadChart(newConfig);
         }, config);
-        await PWTester.sleep(500);
+  
+        await PWTester.testChartBySnapshot(page, testInfo);
         const xAxis = await PWTester.getAxis(page, "x");
         const title = await xAxis.$$(".rct-axis-title");
   
@@ -122,17 +123,16 @@ import { PWTester } from "../../PWTester";
         expect(titleText).is.equal("x".repeat(500));
   
         expect(rect.width).is.greaterThan(850);
-  
-        await PWTester.testChartBySnapshot(page, testInfo);
       });
   
       test("empty value", async ({ page }, testInfo) => {
         config.xAxis.title.text = null;
   
         await page.evaluate((newConfig) => {
-          return chart.load(newConfig, false);
+          return loadChart(newConfig);
         }, config);
-        await PWTester.sleep(500);
+  
+        await PWTester.testChartBySnapshot(page, testInfo);
         const xAxis = await PWTester.getAxis(page, "x");
         const title = await xAxis.$$(".rct-axis-title");
         const titleText = await page.evaluate((title) => {
@@ -142,8 +142,6 @@ import { PWTester } from "../../PWTester";
         }, title);
   
         expect(titleText).is.equal("");
-  
-        await PWTester.testChartBySnapshot(page, testInfo);
       });
   
       test("align middle", async ({ page }, testInfo) => {
@@ -154,10 +152,8 @@ import { PWTester } from "../../PWTester";
         };
   
         await page.evaluate((newConfig) => {
-          return chart.load(newConfig, false);
+          return loadChart(newConfig);
         }, config);
-  
-        await PWTester.sleep(500);
   
         await PWTester.testChartBySnapshot(page, testInfo);
       });
@@ -170,10 +166,9 @@ import { PWTester } from "../../PWTester";
         // align end
         config.xAxis.title.align = "end";
         await page.evaluate((newConfig) => {
-          return chart.load(newConfig, false);
+          return loadChart(newConfig);
         }, config);
   
-        await PWTester.sleep(500);
         await PWTester.testChartBySnapshot(page, testInfo);
       });
   
@@ -186,10 +181,9 @@ import { PWTester } from "../../PWTester";
         // align start
         config.xAxis.title.align = "start";
         await page.evaluate((newConfig) => {
-          return chart.load(newConfig, false);
+          return loadChart(newConfig);
         }, config);
   
-        await PWTester.sleep(500);
         await PWTester.testChartBySnapshot(page, testInfo);
       });
   
@@ -200,9 +194,8 @@ import { PWTester } from "../../PWTester";
           gap: 100,
         };
         await page.evaluate((newConfig) => {
-          return chart.load(newConfig, false);
+          return loadChart(newConfig);
         }, config);
-        await PWTester.sleep(500);
   
         await PWTester.testChartBySnapshot(page, testInfo);
       });
@@ -214,10 +207,8 @@ import { PWTester } from "../../PWTester";
           gap: -100,
         };
         await page.evaluate((newConfig) => {
-          return chart.load(newConfig, false);
+          return loadChart(newConfig);
         }, config);
-  
-        await PWTester.sleep(500);
   
         await PWTester.testChartBySnapshot(page, testInfo);
       });

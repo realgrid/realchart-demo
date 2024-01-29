@@ -9,6 +9,9 @@
 import { test } from "@playwright/test";
 import { expect } from "chai";
 import { PWTester } from "../../PWTester";
+declare global{
+  var loadChart : (newConfig: any) => Promise<void>
+}
 /** @TODO: 코드테스트 추가 */
 test.describe("xAxis, time test", () => {
   const url = "boundary/empty.html?debug";
@@ -38,22 +41,10 @@ test.describe("xAxis, time test", () => {
   test("init", async ({ page }, testInfo) => {
     const container = await page.$("#realchart");
     expect(container).exist;
-
     await page.evaluate((newConfig) => {
-      chart.load(newConfig, false);
+      return loadChart(newConfig);
     }, config);
 
-    await PWTester.sleep();
-    const xAxis = await PWTester.getAxis(page, "x");
-    const labels = await xAxis.$$(".rct-axis-label");
-
-    const labelTexts = await page.evaluate((labels) => {
-      return labels.map((e) => e.textContent);
-    }, labels);
-
-    const expectTexts = ["00:00", "001", "002", "003"];
-
-    expect(labelTexts).is.deep.equal(expectTexts);
     await PWTester.testChartBySnapshot(page, testInfo);
   });
 

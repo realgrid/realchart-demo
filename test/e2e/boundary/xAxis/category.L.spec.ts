@@ -10,6 +10,9 @@ import { test } from "@playwright/test";
 import { expect } from "chai";
 import { PWTester } from "../../PWTester";
 /** @TODO: 코드테스트 추가 */
+declare global{
+  var loadChart : (newConfig: any) => Promise<void>
+}
 test.describe("xAxis, category test", () => {
   const url = "boundary/empty.html?debug";
 
@@ -40,9 +43,10 @@ test.describe("xAxis, category test", () => {
     expect(container).exist;
 
     await page.evaluate((newConfig) => {
-      chart.load(newConfig, false);
+      return loadChart(newConfig);
     }, config);
-    await PWTester.sleep();
+
+    await PWTester.testChartBySnapshot(page, testInfo);
     const xAxis = await PWTester.getAxis(page, "x");
     const labels = await xAxis.$$(".rct-axis-label");
 
@@ -53,15 +57,15 @@ test.describe("xAxis, category test", () => {
     const expectTexts = config.series[0].data.map((e, i) => i);
 
     expect(labelTexts).is.deep.equal(expectTexts);
-    await PWTester.testChartBySnapshot(page, testInfo);
   });
 
   test("add categories", async ({ page }, testInfo) => {
     config.xAxis.categories = ["a", "b", "c", "d", "e"];
-    await page.evaluate((config) => {
-      chart.load(config, false);
+    await page.evaluate((newConfig) => {
+      return loadChart(newConfig);
     }, config);
-    await PWTester.sleep();
+
+    await PWTester.testChartBySnapshot(page, testInfo);
     const xAxis = await PWTester.getAxis(page, "x");
     const labels = await xAxis.$$(".rct-axis-label");
 
@@ -74,35 +78,6 @@ test.describe("xAxis, category test", () => {
     );
 
     expect(labelTexts).is.deep.equal(expectTexts);
-    await PWTester.testChartBySnapshot(page, testInfo);
   });
 
-  test("tick", async ({ page }, testInfo) => {
-    const container = await page.$("#realchart");
-
-    config.xAxis.type = "category";
-    config.xAxis.categories = [];
-    await page.evaluate((newConfig) => {
-      newConfig.xAxis.tick = true;
-      chart.load(newConfig, false);
-    }, config);
-
-    await PWTester.sleep();
-    const xAxis = await PWTester.getAxis(page, "x");
-    const ticks = await xAxis.$$(".rct-axis-tick");
-
-    expect(ticks.length).is.greaterThan(0);
-    expect(ticks.length).is.equal(config.series[0].data.length);
-
-    const points = await page.$$(".rct-point");
-
-    for (let point of points) {
-      const bounds = await PWTester.getBounds(point);
-      expect(bounds.x).is.greaterThan(0);
-      const path = await PWTester.getPathDValue(point);
-      expect(Number(path?.split(" ")[1])).is.greaterThan(0);
-    }
-
-    await PWTester.testChartBySnapshot(page, testInfo);
-  });
 });

@@ -1,3 +1,4 @@
+import { Globals } from './../../../../src/globals';
 ////////////////////////////////////////////////////////////////////////////////
 // time.L.spec.ts
 // 2024. 01. 29. created by dltlghkd930217
@@ -9,8 +10,10 @@
 import { test } from "@playwright/test";
 import { expect } from "chai";
 import { PWTester } from "../../PWTester";
-  /** @TODO: 코드테스트 추가 */
-
+/** @TODO: 코드테스트 추가 */
+declare global{
+  var loadChart : (newConfig: any) => Promise<void>
+}
 /**
  * TITLE 테스트
  */
@@ -43,9 +46,8 @@ for (let type of TYPES) {
       config.xAxis.scrollBar.visible = true;
 
       await page.evaluate((newConfig) => {
-        chart.load(newConfig, false);
+        return loadChart(newConfig);
       }, config);
-      await PWTester.sleep(500);
 
       await PWTester.testChartBySnapshot(page, testInfo);
     });
@@ -55,9 +57,8 @@ for (let type of TYPES) {
       config.xAxis.scrollBar.gap = 100;
 
       await page.evaluate((newConfig) => {
-        chart.load(newConfig, false);
+        return loadChart(newConfig);
       }, config);
-      await PWTester.sleep(500);
 
       await PWTester.testChartBySnapshot(page, testInfo);
     });
@@ -67,9 +68,8 @@ for (let type of TYPES) {
       config.xAxis.scrollBar.gap = -100;
 
       await page.evaluate((newConfig) => {
-        chart.load(newConfig, false);
+        return loadChart(newConfig);
       }, config);
-      await PWTester.sleep(500);
 
       await PWTester.testChartBySnapshot(page, testInfo);
     });
@@ -79,11 +79,9 @@ for (let type of TYPES) {
         visible: true,
         gapFar: 100,
       };
-
       await page.evaluate((newConfig) => {
-        chart.load(newConfig, false);
+        return loadChart(newConfig);
       }, config);
-      await PWTester.sleep(500);
 
       await PWTester.testChartBySnapshot(page, testInfo);
     });
@@ -93,11 +91,9 @@ for (let type of TYPES) {
         visible: true,
         gapFar: -100,
       };
-
       await page.evaluate((newConfig) => {
-        chart.load(newConfig, false);
+        return loadChart(newConfig);
       }, config);
-      await PWTester.sleep(500);
 
       await PWTester.testChartBySnapshot(page, testInfo);
     });
@@ -106,11 +102,10 @@ for (let type of TYPES) {
       config.xAxis.scrollBar = {
         visible: true,
         thickness: 50,
-      };
+      };  
       await page.evaluate((newConfig) => {
-        chart.load(newConfig, false);
+        return loadChart(newConfig);
       }, config);
-      await PWTester.sleep(500);
 
       await PWTester.testChartBySnapshot(page, testInfo);
     });
