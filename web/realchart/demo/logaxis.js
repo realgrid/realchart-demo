@@ -11,20 +11,12 @@ const config = {
         // type: 'category',
         // type: 'linear'
         type: 'log',
-        tick: {
-            stepInterval: 0.1
-        },
-        label: {
-            // numberFormat: '#.0'
-        }
     },
     yAxis: {
         type: 'log'
     },
     series: {
         type: 'line',
-        xStart: 1,
-        xStep: 1,
         data: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
     }
 }
