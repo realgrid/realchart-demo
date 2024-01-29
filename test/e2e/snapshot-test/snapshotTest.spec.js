@@ -23,6 +23,7 @@ const configs = [];
 demos.forEach((demo) => {
     if (ingnoreList.includes(demo)) return;
     configs.push({
+        path: demoPath + demo,
         name: demo.replace('.js', ''),
         config: getConfig(demoPath + demo),
     });
@@ -30,13 +31,14 @@ demos.forEach((demo) => {
 
 samples.forEach((sample) => {
     configs.push({
+        path: samplePath + sample,
         name: 'sample-' + sample.replace('.js', ''),
         config: getConfig(samplePath + sample),
     });
 });
 
 for (let i = 0; i < configs.length; i++) {
-    const link = i < demos.length ? demoPath + demos[i] : samplePath + samples[i];
+    const path = configs[i].path;
     test(configs[i].name + '-test', async ({}, testInfo) => {
         const browser = await chromium.launch();
         const page = await browser.newPage();
@@ -47,7 +49,7 @@ for (let i = 0; i < configs.length; i++) {
         chart.load(config, false)`);
 
         const snapshot = await page.locator('#realchart').screenshot();
-        await expect(snapshot, {message: link}).toMatchSnapshot(configs[i].name + '.png', {
+        await expect(snapshot, {message: path}).toMatchSnapshot(configs[i].name + '.png', {
             maxDiffPixels: 1,
         });
 
@@ -65,7 +67,7 @@ for (let i = 0; i < configs.length; i++) {
         chart.load(config, false)`);
 
         const snapshot = await page.locator('#realchart').screenshot();
-        await expect(snapshot, {message: link}).toMatchSnapshot('inverted-' + configs[i].name + '.png', {
+        await expect(snapshot, {message: path}).toMatchSnapshot('inverted-' + configs[i].name + '.png', {
             maxDiffPixels: 1,
         });
 
@@ -104,7 +106,7 @@ for (let i = 0; i < configs.length; i++) {
         chart.load(config, false)`);
 
         const snapshot = await page.locator('#realchart').screenshot();
-        await expect(snapshot, {message: link}).toMatchSnapshot('reversed-' + configs[i].name + '.png', {
+        await expect(snapshot, {message: path}).toMatchSnapshot('reversed-' + configs[i].name + '.png', {
             maxDiffPixels: 1,
         });
 
@@ -144,7 +146,7 @@ for (let i = 0; i < configs.length; i++) {
         chart.load(config, false)`);
 
         const snapshot = await page.locator('#realchart').screenshot();
-        await expect(snapshot, {message: link}).toMatchSnapshot('inverted-reversed-' + configs[i].name + '.png', {
+        await expect(snapshot, {message: path}).toMatchSnapshot('inverted-reversed-' + configs[i].name + '.png', {
             maxDiffPixels: 1,
         });
 
