@@ -31,7 +31,7 @@ export class LogAxisTick extends ContinuousAxisTick {
     }
 
     protected _getStepMultiples(scale: number): number[] {
-        console.log(scale);
+        // console.log(scale);
         // return [1, 2, 3, 4, 5, 6, 7, 8, 9];
         // return [1, 2, 3, 4, 5, 10];
         return [1, 2, 5, 10];

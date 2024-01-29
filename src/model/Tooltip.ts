@@ -16,9 +16,14 @@ import { ChartItem } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
 import { ISeries } from "./Series";
 
-export enum TooltipLevel {
-    AUTO = 'auto',
-    SERIES = 'series',
+/**
+ * 툴팁에 표시할 데이터포인트들을 선택하는 방식.<br/>
+ * 
+ * @config
+ */
+export enum TooltipScope {
+    HOVER = 'hover',
+    POINT = 'point',
     GROUP = 'group',
     AXIS = 'axis'
 }
@@ -30,7 +35,7 @@ export interface ITooltipContext {
 
 export interface ITooltipOwner {
     chart: IChart;
-    getTooltipContext(level: TooltipLevel, series: ISeries, point: DataPoint): ITooltipContext;
+    getTooltipContext(level: TooltipScope, series: ISeries, point: DataPoint): ITooltipContext;
 }
 
 /**
@@ -76,7 +81,7 @@ export class Tooltip extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    level = TooltipLevel.AUTO;
+    scope = TooltipScope.HOVER;
     html: string;
     /**
      * 툴팁에 표시할 텍스트 형식.<br/>
@@ -156,7 +161,7 @@ export class Tooltip extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     setTarget(series: ISeries, point: DataPoint): ITooltipContext {
-        return this._ctx = this.visible && this.owner.getTooltipContext(this.level, this._series = series, this._point = point);
+        return this._ctx = this.visible && this.owner.getTooltipContext(this.scope, this._series = series, this._point = point);
     }
 
     getTextDomain(): IRichTextDomain {

@@ -1228,14 +1228,14 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
     }
 
     private $_getXStart(axis: Axis): number {
-        let s = axis.getValue(this.xStart);
-        const v = !isNaN(s) ? s : axis.getValue(this.chart.options.xStart);
+        const s = axis.getValue(this.xStart);
+        const v = !isNaN(s) ? s : axis.getValue(this.chart.options.getXStart(axis));
 
-        return axis._zoom ? Math.floor(axis._zoom.start) : v;
+        return axis._zoom ? Math.floor(axis._zoom.start) : (v || 0);
     }
 
     private $_getXStep(axis: Axis): number {
-        return pickProp(this.xStep, this.chart.options.xStep);
+        return pickProp(this.xStep, this.chart.options.xStep) || 1;
     }
 
     prepareRender(): void {
@@ -1278,8 +1278,8 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      */
     collectValues(axis: IAxis, vals: number[]): void {
         if (axis === this._xAxisObj) {
-            let x = this.$_getXStart(axis as Axis) || 0;
-            let xStep: any = this.$_getXStep(axis as Axis) || 1;
+            let x = this.$_getXStart(axis as Axis);
+            let xStep: any = this.$_getXStep(axis as Axis);
 
             if (isString(xStep)) {
                 xStep = xStep.trim();

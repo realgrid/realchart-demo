@@ -1450,6 +1450,7 @@ export class BodyView extends ChartElement<Body> {
 
         views.prepare(hairs.length, (v, i) => {
             v.setModel(hairs[i]);
+            v.setClip(this._bodyClip);
         });
     }
 

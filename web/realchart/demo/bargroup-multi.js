@@ -15,7 +15,7 @@ const config = {
     },  
     tooltip: {
         // visible: false,
-        // level: 'axis'
+        // scope: 'axis'
     },
 	xAxis: {
 		title: '기업',

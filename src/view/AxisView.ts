@@ -320,6 +320,7 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
         const fill = this._len === 0;
         const page = this._page;
         const pos = fill ? 0 : this._pos - zoom.min;
+        const gaps = model.gap + model.gapFar;
         let w = this.width;
         let h = this.height;
 

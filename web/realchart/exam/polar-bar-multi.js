@@ -144,7 +144,7 @@ const config = {
         radius: '70%',
     },
     tooltip: {
-        level: 'series',
+        scope: 'point',
     },
     series: [
         {

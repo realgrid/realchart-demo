@@ -36,6 +36,26 @@ Scatter 시리즈.<br/>
 ### data: `any{:js}`[#data]
 데이터포인터들을 생성하는 데 사용되는 값 목록.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
+### hoverScale: `number{:js}`[#hoverScale]
+데이터포인트 위에 마우스가 있을 때 표시되는 기본 확장 효과에 적용되는 scale.  
+<DefaultValue value="1.8" contents=""></DefaultValue>
+### hoverStyle: `SVGStyles | string{:js}`[#hoverStyle]
+데이터포인트 위에 마우스가 있을 때 적용되는 스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### jitterX: `number{:js}`[#jitterX]
 시리즈 데이터포인트들의 **x** 위치에 추가되는 무작위 변화 값.<br/>
 동일하거나 유사한 값의 여러 데이터 포인트가 있는 경우 

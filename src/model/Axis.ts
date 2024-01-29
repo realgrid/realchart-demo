@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isObject, isString, maxv, minv, pickNum, pickProp } from "../common/Common";
-import { RcAnimation } from "../common/RcAnimation";
 import { IRichTextDomain } from "../common/RichText";
 import { Align, DEG_RAD, ORG_ANGLE, SVGStyleOrClass, VerticalAlign, _undef, fixnum, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
@@ -32,6 +31,7 @@ export interface IAxis {
     reversed: boolean;
     _vlen: number;
     _zoom: IAxisZoom;
+    crosshair: Crosshair;
 
     continuous(): boolean;
     getBaseValue(): number;
@@ -977,7 +977,7 @@ export class AxisScrollBar extends AxisItem {
         return this._thickness;
     }
     set thickness(value: number) {
-        this._thickness = +value || this._thickness;
+        this._thickness = Math.max(0, +value || this._thickness);
     }
     /**
      * 최소 thumb 길이.
@@ -989,10 +989,11 @@ export class AxisScrollBar extends AxisItem {
         return this._minThumbSize;
     }
     set minThumbSize(value: number) {
-        this._minThumbSize = +value || this._minThumbSize;
+        this._minThumbSize = Math.max(0, +value || this._minThumbSize);
     }
     /**
-     * 스크롤바와 차트 본체 방향 사이의 간격.
+     * 스크롤바와 차트 본체 방향 사이의 간격.<br/>
+     * 0 이상의 값이어야 한다. // #529
      * 
      * @default 3 픽셀
      * @config
@@ -1001,10 +1002,11 @@ export class AxisScrollBar extends AxisItem {
         return this._gap;
     }
     set gap(value: number) {
-        this._gap = +value || this._gap;
+        this._gap = Math.max(0, +value || this._gap);
     }
     /**
-     * 스크롤바와 차트 본체 반대 방향 사이의 간격.
+     * 스크롤바와 차트 본체 반대 방향 사이의 간격.<br/>
+     * 0 이상의 값이어야 한다. // #529
      * 
      * @default 3 픽셀
      * @config
@@ -1013,7 +1015,7 @@ export class AxisScrollBar extends AxisItem {
         return this._gapFar;
     }
     set gapFar(value: number) {
-        this._gapFar = +value || this._gapFar;
+        this._gapFar = Math.max(0, +value || this._gapFar);
     }
 
     //-------------------------------------------------------------------------

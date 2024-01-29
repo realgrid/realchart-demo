@@ -14,7 +14,9 @@ import { IAxis } from "./Axis";
 import { ChartItem } from "./ChartItem";
 
 /**
- * 크로스헤어 표시 방식.
+ * 크로스헤어 표시 방식.<br/>
+ * 
+ * @config
  */
 export enum CrosshairType {
     /**
@@ -39,6 +41,8 @@ export enum CrosshairType {
 
 /**
  * 축 상에 crosshair의 정보를 표시하는 view 설정 모델.
+ * 
+ * @config
  */
 export class CrosshairFlag extends ChartItem {
 

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, mergeObj, pickProp3, assign, isNumber } from "../common/Common";
+import { isArray, isObject, isString, mergeObj, pickProp3, assign } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign, _undef } from "../common/Types";
 import { AssetCollection } from "./Asset";
@@ -56,7 +56,7 @@ import { Annotation, AnnotationCollection } from "./Annotation";
 import { ShapeAnnotation } from "./annotation/ShapeAnnotation";
 import { CircleBarSeries, CircleBarSeriesGroup } from "./series/CircleBarSeries";
 import { Utils } from "../common/Utils";
-import { ITooltipContext, ITooltipOwner, Tooltip, TooltipLevel } from "./Tooltip";
+import { ITooltipContext, ITooltipOwner, Tooltip, TooltipScope } from "./Tooltip";
 import { PaletteMode } from "./ChartTypes";
 import { ChartDataCollection } from "../data/ChartData";
 
@@ -262,6 +262,92 @@ export class Credits extends ChartItem {
 }
 
 /**
+ * 데이터포인트 hover시 동일한 효과를 표시할 연관된 포인트들을 선택하는 방식.<br/>
+ * 
+ * @config
+ */
+export enum PointHoverScope {
+    /**
+     * hover된 데이터포인터의 상태에 따라 자동으로 결정한다.<br/>
+     * 데이터포인트의 x축에 'crosshair'가 동작 중이면 'axis',
+     * 데이터포인트가 series group에 포함된 경우이면 'group',
+     * 아니면 'point'가 된다.
+     * 
+     * @config
+     */
+    AUTO = 'auto',
+    /**
+     * 마우스 아래 있는 데이터포인트만 효과가 표시된다.<br/>
+     * 
+     * @config
+     */
+    POINT = 'point',
+    /**
+     * 마우스 아래 있는 데이터포인트와 같은 series group에 포함된 데이터포인트들을 모두 선택한다.<br/>
+     * 
+     * @config
+     */
+    GROUP = 'group',
+    /**
+     * 마우스 아래 있는 데이터포인트와 같은 x축에 연결되고 x값이 같은 데이터포인트들을 모두 선택한다.<br/> 
+     * 
+     * @config
+     */
+    AXIS = 'axis'
+}
+
+/**
+ * 데이터포인트에 마우수가 올라갈 때 처리하는 방식 설정 모델.<br/>
+ * 
+ * @config
+ */
+export class PointHovering {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 데이터포인트 hover시 동일한 효과를 표시할 연관된 포인트들을 선택하는 방식.<br/>
+     * 
+     * @config
+     */
+    scope = PointHoverScope.AUTO;
+    /**
+     * {@link config.series.line 'line'}, 
+     * {@link config.series.bubble 'bubble'}, 
+     * {@link config.series.scatter 'scatter'} 시리즈처럼 marker로 표시되는 데이터포인트의 위치를 찾을 때
+     * 데이터포인트 maker 외부로 추가되는 가상의 두께.<br/>
+     * 0이하면 표시되는 크기로 계산된다.
+     * 상당히 큰 크기로 지정하면 마우스가 어느 위치에 있든 마우스에 가장 가까운 marker가 찾아진다.<br/>
+     * 물론 마우스가 실제 표시되는 marker 위에 있다면 그 것으로 결정된다.
+     * 찾아진 데이터포인트가 마우스 아래 있는 것으로 여겨져서 hover 효과가 표시되거나 관련 이벤트가 발생한다.
+     * 
+     * @config
+     */
+    hintDistance = 30;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getScope(series: ISeries, p: DataPoint): PointHoverScope {
+        if (this.scope === PointHoverScope.POINT || this.scope === PointHoverScope.GROUP || this.scope === PointHoverScope.AXIS) {
+            return this.scope;
+        } else {
+            if ((series as Series)._xAxisObj.crosshair.visible) {
+                return PointHoverScope.AXIS;
+            }
+
+            const g = series.group;
+            if (g && (g.layout === SeriesGroupLayout.OVERLAP || g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
+                return PointHoverScope.GROUP;
+            } 
+
+            return PointHoverScope.POINT;
+        }
+    }
+}
+
+/**
  * @config chart.options
  */
 export class ChartOptions extends ChartItem {
@@ -288,13 +374,14 @@ export class ChartOptions extends ChartItem {
      */
     animatable = true;
     /**
-     * x축 값이 설정되지 않은 시리즈 첫번째 데이터 point에 설정되는 x값.\
+     * x축 값이 설정되지 않은 시리즈 첫번째 데이터 point에 설정되는 x값.<br/>
      * 이 후에는 {@link xStep}씩 증가시키면서 설정한다.
      * 시리즈의 {@link Series.xStart}가 설정되면 그 값이 사용된다.
+     * 값이 지정되지 않으면 'log' 축일 때 1, 아니면 0으로 계산된다. // #528
      * 
      * @config
      */
-    xStart: any = 0;
+    xStart: any;
     /**
      * x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\
      * 첫번째 값은 {@link xStart}로 설정한다.
@@ -319,23 +406,26 @@ export class ChartOptions extends ChartItem {
     credits = new Credits(null, true);
     /**
      * 데이터포인트에 마우스가 올라가면 나머지 시리즈들을 반투명 처리해서 연결된 데이터포인터의 시리즈를 강조한다.
+     * 
+     * @config
      */
     seriesHovering = false;
     /**
-     * {@link config.series.line 'line'}, 
-     * {@link config.series.bubble 'bubble'}, 
-     * {@link config.series.scatter 'scatter'} 시리즈처럼 marker로 표시되는 데이터포인트의 위치를 찾을 때
-     * 데이터포인트 maker 외부로 추가되는 가상의 두께.<br/>
-     * 0이하면 표시되는 크기로 계산된다.
-     * 상당히 큰 크기로 지정하면 마우스가 어느 위치에 있든 마우스에 가장 가까운 marker가 찾아진다.<br/>
-     * 물론 마우스가 실제 표시되는 marker 위에 있다면 그 것으로 결정된다.
-     * 찾아진 데이터포인트가 마우스 아래 있는 것으로 여겨져서 hover 효과가 표시되거나 관련 이벤트가 발생한다.
+     * 데이터포인트에 마우수가 올라갈 때 처리하는 방식.<br/>
+     * 
+     * @config
      */
-    markerHoverSize = 30;
+    pointHovering = new PointHovering();
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getXStart(axis: IAxis): number | string {
+        if (axis instanceof LogAxis && isNaN(this.xStart as any)) {
+            return 1;
+        }
+        return this.xStart || 0;
+    }
 }
 
 export enum ExportType {
@@ -502,7 +592,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     // ITooltipOwner
     //-------------------------------------------------------------------------
-    getTooltipContext(level: TooltipLevel, series: ISeries, point: DataPoint): ITooltipContext {
+    getTooltipContext(scope: TooltipScope, series: ISeries, point: DataPoint): ITooltipContext {
 
         // [주의] Axis class에서 SeriesGroup 등을 직접 참조할 수 없어서 여기서 생성한다.
         class AxisContext {
@@ -518,18 +608,16 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
             }
         }
 
-        if (level === TooltipLevel.AUTO) {
-            const g = series.group;
-            if (g && (g.layout === SeriesGroupLayout.OVERLAP || g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
-                level = TooltipLevel.GROUP;
-            } 
+        if (scope !== TooltipScope.POINT && scope !== TooltipScope.AXIS && scope !== TooltipScope.GROUP) {
+            scope = this.options.pointHovering.getScope(series, point) as any;
         }
 
-        switch (level) {
-            case TooltipLevel.AXIS:
+        switch (scope) {
+            case TooltipScope.AXIS:
                 return new AxisContext((series as Series)._xAxisObj as Axis);
-            case TooltipLevel.GROUP:
+            case TooltipScope.GROUP:
                 return series.group as SeriesGroup<Series>;
+            case TooltipScope.POINT:
             default:
                 return series as Series;
         }

@@ -196,7 +196,7 @@ const config = {
         ],
     },
     tooltip: {
-        level: 'series',
+        scope: 'point',
     },
     series: {
         // layout: 'stack',

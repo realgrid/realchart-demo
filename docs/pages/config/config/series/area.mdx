@@ -96,6 +96,23 @@ base 아래쪽 area 영역에 추가적으로 적용되는 스타일셋이나 cl
 ### [flag](./area/flag)
 시리즈의 마지막 데이터포인트 옆에 표시되는 아이콘과 텍스트 설정 모델.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
+### hoverStyle: `SVGStyles | string{:js}`[#hoverStyle]
+데이터포인트 위에 마우스가 있을 때 적용되는 스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |<DefaultValue value="undefined" contents=""></DefaultValue>
 ### label: `string{:js}`[#label]
 이 시리즈를 나타내는 텍스트.<br/>
 레전드나 툴팁에서 시리즈를 대표한다.

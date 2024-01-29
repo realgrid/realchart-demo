@@ -46,6 +46,7 @@ const config = {
     scrollBar: {
       visible: true,
     },
+    crosshair: true
   },
   yAxis: {
     title: 'Hestavollane',
