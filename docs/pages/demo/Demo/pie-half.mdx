@@ -2,8 +2,8 @@
 title: "Half Pie"
 ---
 import { RealChartReact } from "@/components/RealChart/RealChartReact";
-import { config, tool } from "@/templates/pie-half";
+import { tool } from "@/templates/pie-half";
 
 # Half Pie
 			
-<RealChartReact config={config} tool={tool} showEditor={true} autoUpdate={false} />
+<RealChartReact configString="%7B%0A%20%20title:%20%7B%0A%20%20%20%20text:%20'Number%20of%20Mobile%20Users%20in%20the%20World%20(Users%20In%20Millions)',%0A%20%20%20%20alignBase:%20'chart'%0A%20%20%7D,%0A%20%20options:%20%7B%7D,%0A%20%20legend:%20%7B%20location:%20'right'%20%7D,%0A%20%20series:%20%7B%0A%20%20%20%20type:%20'pie',%0A%20%20%20%20totalAngle:%20180,%0A%20%20%20%20startAngle:%20270,%0A%20%20%20%20legendByPoint:%20true,%0A%20%20%20%20radius:%20'70%25',%0A%20%20%20%20centerY:%20'80%25',%0A%20%20%20%20innerRadius:%20'50%25',%0A%20%20%20%20innerText:%20'%3Ct%20style=%22fill:#002F5C;font-weight:bold;%22%3ENumber%20of%20Mobile%20Users%3C/t%3E%3Cbr%3Ein%20the%20world',%0A%20%20%20%20pointLabel:%20%7B%20visible:%20true,%20text:%20'$%7By%7D'%20%7D,%0A%20%20%20%20pointColors:%20%5B%0A%20%20%20%20%20%20'#002F5C',%0A%20%20%20%20%20%20'#004987',%0A%20%20%20%20%20%20'#004F92',%0A%20%20%20%20%20%20'#00569D',%0A%20%20%20%20%20%20'#3E77B6',%0A%20%20%20%20%20%20'#90B1D8',%0A%20%20%20%20%20%20'#BBD2Ec'%0A%20%20%20%20%5D,%0A%20%20%20%20tooltipText:%20'$%7Bx%7D%20-%20$%7By%7D',%0A%20%20%20%20data:%20%5B%0A%20%20%20%20%20%20%7B%20name:%20'Lava',%20y:%2050%20%7D,%0A%20%20%20%20%20%20%7B%20name:%20'HP',%20y:%2048%20%7D,%0A%20%20%20%20%20%20%7B%20name:%20'Moto',%20y:%2055%20%7D,%0A%20%20%20%20%20%20%7B%20name:%20'Sony',%20y:%2045%20%7D,%0A%20%20%20%20%20%20%7B%20name:%20'LG',%20y:%2048%20%7D,%0A%20%20%20%20%20%20%7B%20name:%20'Samsung',%20y:%2050%20%7D,%0A%20%20%20%20%20%20%7B%20name:%20'Redmi',%20y:%2053%20%7D%0A%20%20%20%20%5D%0A%20%20%7D%0A%7D" tool={tool} showEditor={true} autoUpdate={false}/>

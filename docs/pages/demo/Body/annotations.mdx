@@ -2,8 +2,8 @@
 title: "Annotations"
 ---
 import { RealChartReact } from "@/components/RealChart/RealChartReact";
-import { config, tool } from "@/templates/annotations";
+import { tool } from "@/templates/annotations";
 
 # Annotations
 			
-<RealChartReact config={config} tool={tool} showEditor={true} autoUpdate={false} />
+<RealChartReact configString="%7B%0A%20%20options:%20%7B%7D,%0A%20%20title:%20'Annotations',%0A%20%20legend:%20true,%0A%20%20xAxis:%20%7B%20tick:%20true,%20title:%20'X%20Axis',%20grid:%20true%20%7D,%0A%20%20yAxis:%20%7B%20tick:%20true,%20title:%20'Y%20Axis'%20%7D,%0A%20%20series:%20%7B%0A%20%20%20%20pointLabel:%20%7B%20visible:%20true,%20position:%20'head',%20effect:%20'outline',%20style:%20%7B%7D%20%7D,%0A%20%20%20%20data:%20%5B%0A%20%20%20%20%20%20%5B%20'home',%207%20%5D,%0A%20%20%20%20%20%20%5B%20'sky',%2011%20%5D,%0A%20%20%20%20%20%20%5B%20'def',%209%20%5D,%0A%20%20%20%20%20%20%5B%20'%EC%A7%80%EB%A6%AC%EC%82%B0',%2014.3%20%5D,%0A%20%20%20%20%20%20%5B%20'zzz',%2013%20%5D,%0A%20%20%20%20%20%20%5B%20'%EB%82%99%EB%8F%99%EA%B0%95',%2012.5%20%5D%0A%20%20%20%20%5D,%0A%20%20%20%20style:%20%7B%7D%0A%20%20%7D,%0A%20%20body:%20%7B%0A%20%20%20%20annotations:%20%5B%0A%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20offsetX:%2030,%0A%20%20%20%20%20%20%20%20offsetY:%2040,%0A%20%20%20%20%20%20%20%20rotation:%20-20,%0A%20%20%20%20%20%20%20%20text:%20'Annotation%20Sample',%0A%20%20%20%20%20%20%20%20style:%20%7B%20fill:%20'white'%20%7D,%0A%20%20%20%20%20%20%20%20backgroundStyle:%20%7B%20padding:%20'3px%205px',%20fill:%20'#33f',%20rx:%205,%20fillOpacity:%200.7%20%7D%0A%20%20%20%20%20%20%7D,%0A%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20imageUrl:%20'../assets/images/daum.png',%0A%20%20%20%20%20%20%20%20align:%20'right',%0A%20%20%20%20%20%20%20%20offsetX:%2050,%0A%20%20%20%20%20%20%20%20offsetY:%200,%0A%20%20%20%20%20%20%20%20width:%20150%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%5D%0A%20%20%7D%0A%7D" tool={tool} showEditor={true} autoUpdate={false}/>

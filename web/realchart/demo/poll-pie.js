@@ -1,13 +1,14 @@
-
-const [catiMainData] = data.filter(row => row['구분'] == '전체')
+const [catiMainData] = data.filter((row) => row['구분'] == '전체');
 const colors = ['#009D92', '#47AFA8', '#835337', '#593219', '#937B6F'];
 const pieData = Object.entries(catiMainData)
-    .filter((_, i) => [3,4,5,6,9].includes(i))
+    .filter((_, i) => [3, 4, 5, 6, 9].includes(i))
     .map(([key, value], i) => {
-        return { label: key, value, color: colors[i] }
+        return { label: key, value, color: colors[i] };
     });
-const config = {
+const tool = {
     height: 550,
+};
+const config = {
     templates: {
         series: {
             // startAngle: -90,
@@ -34,23 +35,23 @@ const config = {
         xAxis: {
             line: false,
             label: false,
-        }
+        },
     },
     annotations: [
-        { 
+        {
             text: `<t>긍정적으로 평가한다</t><br>
-                <b style="font-size:20pt">${catiMainData["긍정"]}</b>`,
-                offsetX: 160,
-                offsetY: 50,
-                align: 'center',
-                style: {
-                    fill: colors[0],
-                    textAlign: 'center',
-                },
+                <b style="font-size:20pt">${catiMainData['긍정']}</b>`,
+            offsetX: 160,
+            offsetY: 50,
+            align: 'center',
+            style: {
+                fill: colors[0],
+                textAlign: 'center',
             },
-        { 
+        },
+        {
             text: `<t>부정적으로 평가한다</t><br>
-                <b style="font-size:30pt">${catiMainData["부정"]}</b>`,
+                <b style="font-size:30pt">${catiMainData['부정']}</b>`,
             offsetX: -250,
             verticalAlign: 'bottom',
             align: 'center',
@@ -60,14 +61,14 @@ const config = {
             },
         },
         {
-            imageUrl: '../assets/images/seoul.png',
+            imageUrl: 'https://realchart.co.kr/demo/assets/images/seoul.png',
             front: true,
             width: 260,
             align: 'center',
             verticalAlign: 'middle',
             offsetX: -10,
-            offsetY: -25
-        }
+            offsetY: -25,
+        },
     ],
     // inverted: true,
     options: {
@@ -85,7 +86,7 @@ const config = {
             // fill: '#fff',
             fontSize: '16px',
             padding: '2px 5px',
-        }
+        },
     },
     subtitle: {
         align: 'left',
@@ -94,8 +95,8 @@ const config = {
             fill: 'black',
             fontSize: '32px',
             fontWeight: 'bold',
-            marginBottom: '10px'
-        }
+            marginBottom: '10px',
+        },
     },
     legend: false,
     xAxis: {
@@ -113,47 +114,78 @@ const config = {
             data: pieData,
             pointLabel: {
                 style: {
-                    fill: '#fff'
+                    fill: '#fff',
                 },
-                textCallback: ({x, y}) => {
+                textCallback: ({ x, y }) => {
                     const fontSize = Math.max(15, y);
-                    return `${x}<br><b style="font-size:${fontSize}px">${y}</b>`
-                }
-            }
-        }
-    ]
-}
+                    return `${x}<br><b style="font-size:${fontSize}px">${y}</b>`;
+                },
+            },
+        },
+    ],
+};
 
 let animate = false;
 let chart;
 
 function setActions(container) {
-    createCheckBox(container, 'Debug', function (e) {
-        RealChart.setDebugging(_getChecked(e));
-        chart.render();
-    }, false);
-    createCheckBox(container, 'Always Animate', function (e) {
-        animate = _getChecked(e);
-    }, false);
-    createButton(container, 'Test', function(e) {
+    createCheckBox(
+        container,
+        'Debug',
+        function (e) {
+            RealChart.setDebugging(_getChecked(e));
+            chart.render();
+        },
+        false
+    );
+    createCheckBox(
+        container,
+        'Always Animate',
+        function (e) {
+            animate = _getChecked(e);
+        },
+        false
+    );
+    createButton(container, 'Test', function (e) {
         alert('hello');
     });
-    createListBox(container, "Line Type", ['default', 'spline', 'step'], function (e) {
-        config.series.lineType = _getValue(e);
-        chart.load(config, animate);
-    }, 'default');
-    createCheckBox(container, 'Inverted', function (e) {
-        config.inverted = _getChecked(e);
-        chart.load(config, animate);
-    }, false);
-    createCheckBox(container, 'X Reversed', function (e) {
-        config.xAxis.reversed = _getChecked(e);
-        chart.load(config, animate);
-    }, false);
-    createCheckBox(container, 'Y Reversed', function (e) {
-        config.yAxis.reversed = _getChecked(e);
-        chart.load(config, animate);
-    }, false);
+    createListBox(
+        container,
+        'Line Type',
+        ['default', 'spline', 'step'],
+        function (e) {
+            config.series.lineType = _getValue(e);
+            chart.load(config, animate);
+        },
+        'default'
+    );
+    createCheckBox(
+        container,
+        'Inverted',
+        function (e) {
+            config.inverted = _getChecked(e);
+            chart.load(config, animate);
+        },
+        false
+    );
+    createCheckBox(
+        container,
+        'X Reversed',
+        function (e) {
+            config.xAxis.reversed = _getChecked(e);
+            chart.load(config, animate);
+        },
+        false
+    );
+    createCheckBox(
+        container,
+        'Y Reversed',
+        function (e) {
+            config.yAxis.reversed = _getChecked(e);
+            chart.load(config, animate);
+        },
+        false
+    );
 }
 
 function init() {
@@ -162,5 +194,5 @@ function init() {
     RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
-    setActions('actions')
+    setActions('actions');
 }

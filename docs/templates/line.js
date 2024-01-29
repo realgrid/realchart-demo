@@ -5,7 +5,7 @@ export const config = {
   yAxis: {},
   series: {
     type: 'line',
-    marker: true,
+    marker: { visible: true },
     pointLabel: true,
     data: [
       [ 'home', 7 ],
