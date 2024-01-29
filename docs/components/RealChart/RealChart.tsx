@@ -114,7 +114,6 @@ export function RealChartReact({
   autoUpdate: boolean;
 }) {
   configString = beautify(decodeURI(configString));
-  // console.log({configString})
   const config = evalCode(configString);
   const chartRef = useRef(null);
   const editorRef = useRef(null);
@@ -386,7 +385,7 @@ export function RealChartReact({
             language="javascript"
             // options - https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor.IStandaloneEditorConstructionOptions.html
             options={{ autoIndent: true }}
-            value={'const config = ' + configString}
+            value={configString}
             onChange={onChangeEditor}
             onMount={handleDidMount}
           />

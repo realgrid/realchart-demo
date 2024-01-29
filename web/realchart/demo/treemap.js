@@ -439,6 +439,9 @@ const config = {
     pointLabel: {
       visible: true,
       textCallback: (args) => {
+        if (typeof config === "undefined") {
+          return;
+        }
         const { groupMaxValues, groupSum } = config.vars;
         if (groupMaxValues[args.group].value === args.yValue) {
           const percent = (args.yValue / groupSum) * 100;

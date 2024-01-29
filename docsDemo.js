@@ -118,6 +118,10 @@ function createMetaJson() {
                                     .replace(/[\r\n\t]/g, '') // 이스케이프 문자 제거
                                     .replace(/\s{2,}/g, ' '); // 공백 최소화
                                 callbacks.push(obj[key]);
+                            } else if (type == 'string') {
+                                // @TODO: 필요여부 재검토. rich text style
+                                obj[key] = obj[key]
+                                    .replace(/"/g, '\"');
                             }
                         }
                     }
@@ -202,7 +206,7 @@ import { tool } from "@/templates/${value2}";
 
 # ${key2}
 			
-<RealChartReact configString="${encodeURI(
+<RealChartReact configString="const config = ${encodeURI(
                     configString
                 )}" tool={tool} showEditor={true} autoUpdate={false}/>
 `
