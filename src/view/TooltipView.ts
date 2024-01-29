@@ -115,7 +115,7 @@ export class TooltipView extends RcElement {
         if (inverted) {
             translate = (y - h / 2) - maxv(0, minv(y - h / 2, ch - h));
             // data point 범위를 벗어났을 경우 반대로 그려준다. issue #456
-            let overed = fb.x - cb.x - gap > cw - w;
+            let overed = reversed ? w + gap > fb.x - cb.x + fb.width : fb.x - cb.x - gap > cw - w;
             if (overed) reversed = !reversed;
             const position = reversed ? TooltipPosition.LEFT : TooltipPosition.RIGHT;
 
@@ -125,7 +125,7 @@ export class TooltipView extends RcElement {
         } else {
             translate = (x - w / 2) - maxv(0, minv(x - w / 2, cw - w));
             // data point 범위를 벗어났을 경우 반대로 그려준다. issue #456
-            let overed = cb.bottom - fb.bottom + gap > ch - h;
+            let overed = reversed ? ch - (fb.y - cb.y - control._padding.top) < h + gap : cb.bottom - fb.bottom + gap > ch - h;
             if (overed) reversed = !reversed;
             const position = reversed ? TooltipPosition.BOTTOM : TooltipPosition.TOP;
 
