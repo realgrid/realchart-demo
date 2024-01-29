@@ -30,21 +30,12 @@
         config = {
           title: "Boundary",
           xAxis: {
-            categories: ["😄", "⸝ဗီူ⸜", "･ิĹ̯･ิ", "(˵¯͒⌄¯͒˵)"],
-            title: {
-              visible: true,
-            },
+
           },
           series: [
-            {
-              name: "column",
-              data: [1, 2, 3, 4],
-            },
+
           ],
         };
-        config.xAxis.title.align = "start";
-        config.xAxis.title.gap = -100;
-        config.xAxis.title.offset = -100;
 
         try {
           chart = RealChart.createChart(document, "realchart", config);
