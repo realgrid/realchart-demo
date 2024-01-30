@@ -10,31 +10,32 @@ import { test } from "@playwright/test";
 import { expect } from "chai";
 import { PWTester } from "../../PWTester";
 /** @TODO: 코드테스트 추가 */
-declare global{
-  var loadChart : (newConfig: any) => Promise<void>
+declare global {
+  var loadChart: (newConfig: any) => Promise<void>;
 }
 test.describe("xAxis, linear test", () => {
   const url = "boundary/empty.html?debug";
 
   let chart;
 
-  let config: any = {
-    title: "Boundary",
-    xAxis: {
-      type: "linear",
-      title: {
-        visible: true,
-      },
-    },
-    series: [
-      {
-        name: "column1",
-        data: [1, 2, 3, 4],
-      },
-    ],
-  };
+  let config: any;
 
   test.beforeEach(async ({ page }) => {
+    config = {
+      title: "Boundary",
+      xAxis: {
+        type: "linear",
+        title: {
+          visible: true,
+        },
+      },
+      series: [
+        {
+          name: "column1",
+          data: [1, 2, 3, 4],
+        },
+      ],
+    };
     await PWTester.goto(page, url);
   });
 
@@ -42,7 +43,7 @@ test.describe("xAxis, linear test", () => {
     const container = await page.$("#realchart");
     expect(container).exist;
     await page.evaluate((newConfig) => {
-      return loadChart(newConfig);
+      chart.load(newConfig, false).render();
     }, config);
 
     await PWTester.testChartBySnapshot(page, testInfo);
@@ -52,12 +53,11 @@ test.describe("xAxis, linear test", () => {
     config.xAxis.type = "category";
     config.xAxis.categories = [];
     config.xAxis.tick = {
-      visible: true
+      visible: true,
     };
     await page.evaluate((newConfig) => {
-      return loadChart(newConfig);
+      chart.load(newConfig, false).render();
     }, config);
-
     await PWTester.testChartBySnapshot(page, testInfo);
   });
 });

@@ -20,33 +20,33 @@ declare global{
       const url = "boundary/empty.html?debug";
       let chart;
   
-      let config: any = {
-        title: "Boundary",
-        xAxis: {
-          type,
-          title: {
-            visible: true,
-          },
-        },
-        series: [
-          {
-            name: "column1",
-            data: [1, 2, 3, 4],
-          },
-        ],
-      };
+      let config: any ;
   
   
       test.beforeEach(async ({ page }, testInfo) => {
+        config = {
+          title: "Boundary",
+          xAxis: {
+            type,
+            title: {
+              visible: true,
+            },
+          },
+          series: [
+            {
+              name: "column1",
+              data: [1, 2, 3, 4],
+            },
+          ],
+        };
         await PWTester.goto(page, url);
       });
   
       test("null title", async ({ page }, testInfo) => {
         config.xAxis.title.text = null;
         await page.evaluate((newConfig) => {
-          return loadChart(newConfig);
+          chart.load(newConfig, false).render();
         }, config);
-  
         await PWTester.testChartBySnapshot(page, testInfo);
         const xAxis = await PWTester.getAxis(page, "x");
         const title = await xAxis.$$(".rct-axis-title");
@@ -64,7 +64,7 @@ declare global{
         config.xAxis.title.text = character;
   
         await page.evaluate((newConfig) => {
-          return loadChart(newConfig);
+          chart.load(newConfig, false).render();
         }, config);
   
         await PWTester.testChartBySnapshot(page, testInfo);
@@ -85,9 +85,8 @@ declare global{
         config.xAxis.title.offset = -100;
   
         await page.evaluate((newConfig) => {
-          return loadChart(newConfig);
+          chart.load(newConfig, false).render();
         }, config);
-  
         await PWTester.testChartBySnapshot(page, testInfo);
         const xAxis = await PWTester.getAxis(page, "x");
         const title = await xAxis.$$(".rct-axis-title");
@@ -105,7 +104,7 @@ declare global{
         const maxLengthTitle = "x".repeat(500);
         config.xAxis.title.text = maxLengthTitle;
         await page.evaluate((newConfig) => {
-          return loadChart(newConfig);
+          chart.load(newConfig, false).render();
         }, config);
   
         await PWTester.testChartBySnapshot(page, testInfo);
@@ -127,9 +126,8 @@ declare global{
   
       test("empty value", async ({ page }, testInfo) => {
         config.xAxis.title.text = null;
-  
         await page.evaluate((newConfig) => {
-          return loadChart(newConfig);
+          chart.load(newConfig, false).render();
         }, config);
   
         await PWTester.testChartBySnapshot(page, testInfo);
@@ -152,7 +150,7 @@ declare global{
         };
   
         await page.evaluate((newConfig) => {
-          return loadChart(newConfig);
+          chart.load(newConfig, false).render();
         }, config);
   
         await PWTester.testChartBySnapshot(page, testInfo);
@@ -166,7 +164,7 @@ declare global{
         // align end
         config.xAxis.title.align = "end";
         await page.evaluate((newConfig) => {
-          return loadChart(newConfig);
+          chart.load(newConfig, false).render();
         }, config);
   
         await PWTester.testChartBySnapshot(page, testInfo);
@@ -181,7 +179,7 @@ declare global{
         // align start
         config.xAxis.title.align = "start";
         await page.evaluate((newConfig) => {
-          return loadChart(newConfig);
+          chart.load(newConfig, false).render();
         }, config);
   
         await PWTester.testChartBySnapshot(page, testInfo);
@@ -194,7 +192,7 @@ declare global{
           gap: 100,
         };
         await page.evaluate((newConfig) => {
-          return loadChart(newConfig);
+          chart.load(newConfig, false).render();
         }, config);
   
         await PWTester.testChartBySnapshot(page, testInfo);
@@ -207,7 +205,7 @@ declare global{
           gap: -100,
         };
         await page.evaluate((newConfig) => {
-          return loadChart(newConfig);
+          chart.load(newConfig, false).render();
         }, config);
   
         await PWTester.testChartBySnapshot(page, testInfo);

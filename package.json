@@ -30,6 +30,7 @@
     "test:model": "mocha --exit --timeout 10000 -r ts-node/register -r test/unit/dom-mock.js 'test/{,!(e2e)/**/}/*.spec.ts' 'test/unit/**/*Test*.ts'",
     "test:pw": "yarn dbundle && npx playwright test --trace on",
     "test:s2": "yarn dbundle && npx playwright test --trace on --project=chromium ./test/e2e/snapshot-test/snapshotTest.spec.js",
+    "test:boundary": "yarn dbundle && npx playwright test --trace on --project=chromium ./test/e2e/boundary/**/*.spec.ts",
     "tsdoc": "npx typedoc --entryPointStrategy expand ./src/model --entryPointStrategy expand ./src/common --json ./docs/.tdout/model.json",
     "jsdoc": "rm -rf api/jsdoc && npx jsdoc -c jsdoc.json",
     "dldoc": "npm run tsdoc && node dldoc && npx typedoc && node docs/typedoc",

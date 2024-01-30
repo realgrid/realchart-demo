@@ -18,23 +18,24 @@ test.describe("xAxis, time test", () => {
 
   let chart;
 
-  let config: any = {
-    title: "Boundary",
-    xAxis: {
-      type: "time",
-      title: {
-        visible: true,
-      },
-    },
-    series: [
-      {
-        name: "column1",
-        data: [1, 2, 3, 4],
-      },
-    ],
-  };
+  let config: any 
 
   test.beforeEach(async ({ page }, testInfo) => {
+    config = {
+      title: "Boundary",
+      xAxis: {
+        type: "time",
+        title: {
+          visible: true,
+        },
+      },
+      series: [
+        {
+          name: "column1",
+          data: [1, 2, 3, 4],
+        },
+      ],
+    };
     await PWTester.goto(page, url);
   });
 
@@ -42,7 +43,7 @@ test.describe("xAxis, time test", () => {
     const container = await page.$("#realchart");
     expect(container).exist;
     await page.evaluate((newConfig) => {
-      return loadChart(newConfig);
+      chart.load(newConfig, false).render();
     }, config);
 
     await PWTester.testChartBySnapshot(page, testInfo);

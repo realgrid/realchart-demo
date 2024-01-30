@@ -1,4 +1,4 @@
-import { TestInfo } from '@playwright/test';
+import { TestInfo } from "@playwright/test";
 ////////////////////////////////////////////////////////////////////////////////
 // time.L.spec.ts
 // 2024. 01. 18. created by dltlghkd930217
@@ -12,55 +12,52 @@ import { expect } from "chai";
 import { PWTester } from "../../PWTester";
 
 /** @TODO: 코드테스트 추가 */
-declare global{
-  var loadChart : (newConfig: any) => Promise<void>
+declare global {
+  var loadChart: (newConfig: any) => Promise<void>;
 }
 test.describe("xAxis, log test", () => {
   const url = "boundary/empty.html?debug";
 
   let chart;
 
-  let config: any = {
-    title: "Boundary",
-    xAxis: {
-      type: 'log',
-
-      title: {
-        visible: true,
-      },
-    },
-    series: [
-      {
-        name: "column1",
-        type: "line",
-        
-        data: [1, 2, 4, 8, 16]
-      },
-    ],
-  };
+  let config: any;
 
   test.beforeEach(async ({ page }) => {
+    config = {
+      title: "Boundary",
+      xAxis: {
+        type: "log",
+
+        title: {
+          visible: true,
+        },
+      },
+      series: [
+        {
+          name: "column1",
+          type: "line",
+
+          data: [1, 2, 4, 8, 16],
+        },
+      ],
+    };
     await PWTester.goto(page, url);
-  });  
+  });
 
   test("init", async ({ page }, testInfo) => {
     const container = await page.$("#realchart");
     expect(container).exist;
 
     await page.evaluate((newConfig) => {
-      return loadChart(newConfig);
+      chart.load(newConfig, false).render();
     }, config);
 
     await PWTester.testChartBySnapshot(page, testInfo);
   });
 
-
-
   /** @TODO: yValues */
   // test("log yValues", async ({ page }) => {})
 
-
-  
   /**
    * "" 테스트
    */
