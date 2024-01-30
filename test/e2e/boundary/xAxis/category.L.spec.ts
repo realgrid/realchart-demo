@@ -50,7 +50,7 @@ test.describe("xAxis, category test", () => {
     expect(container).exist;
 
     await page.evaluate((newConfig) => {
-      return loadChart(newConfig);
+      chart.load(newConfig, false).render();
     }, config);
 
     await PWTester.testChartBySnapshot(page, testInfo);
@@ -69,7 +69,7 @@ test.describe("xAxis, category test", () => {
   test("add categories", async ({ page }, testInfo) => {
     config.xAxis.categories = ["a", "b", "c", "d", "e"];
     await page.evaluate((newConfig) => {
-      return loadChart(newConfig);
+      chart.load(newConfig, false).render();
     }, config);
 
     await PWTester.testChartBySnapshot(page, testInfo);
@@ -95,7 +95,7 @@ test.describe("xAxis, category test", () => {
         autoArrange,
       };
       await page.evaluate((newConfig) => {
-        return loadChart(newConfig);
+        chart.load(newConfig, false).render();
       }, config);
 
       await PWTester.testChartBySnapshot(page, testInfo);
@@ -116,7 +116,7 @@ test.describe("xAxis, category test", () => {
         },
       };
       await page.evaluate((newConfig) => {
-        return loadChart(newConfig);
+        chart.load(newConfig, false).render();
       }, config);
 
       await PWTester.testChartBySnapshot(page, testInfo);
@@ -132,7 +132,7 @@ test.describe("xAxis, category test", () => {
       },
     };
     await page.evaluate((newConfig) => {
-      return loadChart(newConfig);
+      chart.load(newConfig, false).render();
     }, config);
 
     await PWTester.testChartBySnapshot(page, testInfo);
@@ -146,7 +146,7 @@ test.describe("xAxis, category test", () => {
       },
     };
     await page.evaluate((newConfig) => {
-      return loadChart(newConfig);
+      chart.load(newConfig, false).render();
     }, config);
 
     await PWTester.testChartBySnapshot(page, testInfo);
@@ -157,7 +157,7 @@ test.describe("xAxis, category test", () => {
       firstText: "첫번째 라벨",
     };
     await page.evaluate((newConfig) => {
-      return loadChart(newConfig);
+      chart.load(newConfig, false).render();
     }, config);
 
     await PWTester.testChartBySnapshot(page, testInfo);
@@ -168,7 +168,7 @@ test.describe("xAxis, category test", () => {
       lastText: "마지막 라벨",
     };
     await page.evaluate((newConfig) => {
-      return loadChart(newConfig);
+      chart.load(newConfig, false).render();
     }, config);
 
     await PWTester.testChartBySnapshot(page, testInfo);
@@ -188,7 +188,7 @@ test.describe("xAxis, category test", () => {
       prefix: " prefix ",
     };
     await page.evaluate((newConfig) => {
-      return loadChart(newConfig);
+      chart.load(newConfig, false).render();
     }, config);
 
     await PWTester.testChartBySnapshot(page, testInfo);
@@ -200,7 +200,7 @@ test.describe("xAxis, category test", () => {
       rotation: 90,
     };
     await page.evaluate((newConfig) => {
-      return loadChart(newConfig);
+      chart.load(newConfig, false).render();
     }, config);
 
     await PWTester.testChartBySnapshot(page, testInfo);
@@ -213,7 +213,7 @@ test.describe("xAxis, category test", () => {
     };
 
     await page.evaluate((newConfig) => {
-      return loadChart(newConfig);
+      chart.load(newConfig, false).render();
     }, config);
 
     await PWTester.testChartBySnapshot(page, testInfo);
@@ -226,7 +226,7 @@ test.describe("xAxis, category test", () => {
     };
 
     await page.evaluate((newConfig) => {
-      return loadChart(newConfig);
+      chart.load(newConfig, false).render();
     }, config);
 
     await PWTester.testChartBySnapshot(page, testInfo);
@@ -240,7 +240,7 @@ test.describe("xAxis, category test", () => {
     };
 
     await page.evaluate((newConfig) => {
-      return loadChart(newConfig);
+      chart.load(newConfig, false).render();
     }, config);
 
     await PWTester.testChartBySnapshot(page, testInfo);
