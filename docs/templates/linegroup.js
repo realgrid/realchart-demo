@@ -49,6 +49,7 @@ export const config = {
       },
       {
         name: 'Other',
+        lineType: 'spline',
         marker: {},
         data: [
           21908,  5548,  8105,

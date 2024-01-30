@@ -37,7 +37,7 @@ import { Codepen } from "../Codepen/Codepen";
  * - ts에서는 ComponentType<{}>에 맞춰주기 위해 import(..).then(({Type}) => ({default: Type})) 으로 처리
  */
 
-type RealChartConfig = unknown;
+// type RealChartConfig = unknown;
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -93,7 +93,7 @@ const evalCode = (text: string) => {
   try {
     const found = text.indexOf('=');
     const conf = text.slice(found + 1).trim();
-    return eval(`(() => {return ${conf};})()`);
+    return window['config'] = eval(`(() => {return ${conf};})()`);;
   } catch(err) {
     console.error(err);
     return null;
