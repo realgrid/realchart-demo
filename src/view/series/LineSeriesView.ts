@@ -62,7 +62,13 @@ export class LineMarkerView extends MarkerSeriesPointView implements IPointView 
         }
 
         SvgShapes.setShape(this, series.model.getShape(p), rd, rd);
-        this.trans(p.xPos - rd, (this.index > 0 ? p['yLow'] : p.yPos) - rd);
+        // this.trans(p.xPos - rd, (this.index > 0 ? p['yLow'] : p.yPos) - rd);
+        if (this.index > 0) {
+            this.trans(p['px2'] - rd, p['py2'] - rd);
+        } else {
+            this.trans(p.xPos - rd, p.yPos - rd);
+        }
+        console.log(p.xPos, p.yPos, p['px2'], p['yLow']);
     }
 
     endHover(series: LineSeriesBaseView<LineSeries>, focused: boolean): void {
@@ -74,6 +80,12 @@ export class LineMarkerView extends MarkerSeriesPointView implements IPointView 
 
     getTooltipPos(): IPoint {
         return { x: this.point.xPos, y: this.point.yPos };
+    }
+
+    distance(rd: number, x: number, y: number): number {
+        const px = this.index === 0 ? this.point.xPos : (this.point as any).px2;
+        const py = this.index === 0 ? this.point.yPos : (this.point as any).py2;
+        return this.point.isNull ? Number.MAX_VALUE : Math.sqrt((px - x) ** 2 + (py - y) ** 2) - rd;
     }
 }
 
@@ -186,7 +198,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     getNearest(x: number, y: number): {pv: IPointView, dist: number} {
         const rd = this.model.marker.radius;
-        const pv = this._markers._internalItems().sort((p1, p2) => p1.distance(rd, x, y) - p2.distance(rd, x, y))[0];
+        const pv = this._markers._internalItems().reduce((s, c) => s.distance(rd, x, y) < c.distance(rd, x, y) ? s : c);
         return { pv, dist: pv.distance(rd, x, y) };
     }
 

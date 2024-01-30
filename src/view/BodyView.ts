@@ -997,8 +997,8 @@ export class BodyView extends ChartElement<Body> {
                     if (hint2 > 0) {
                         let pv2: {pv: IPointView, dist: number};
     
-                        if ((sv2 instanceof LineSeriesBaseView || sv2 instanceof ScatterSeriesView || sv2 instanceof BubbleSeriesView)) {
-                            pv2 = sv2.getNearest(p.x, p.y);
+                        if (sv2.model.isMarker()) {
+                            pv2 = sv2['getNearest'](p.x, p.y);
                         }
                         if (!pv || pv2.dist < pv.dist) {
                             sv = sv2;
@@ -1055,7 +1055,7 @@ export class BodyView extends ChartElement<Body> {
         svs && svs.forEach((sv, i) => {
             pvs2.push(...sv.getSiblings(pvs[i]));
         })
-        pvs2 = pvs2.length > 0 ? pvs2.sort((p1: any, p2: any) => p1.hash - p2.hash) : null;
+        pvs2 = pvs2.length > 1 ? pvs2.sort((p1: any, p2: any) => p1.hash - p2.hash) : pvs2.length  > 0 ? pvs2 : null;
         // pv && assert(pvs2.indexOf(pv) >= 0, '');
 
         if (!Utils.equalArrays(oldPvs, pvs2)) {
@@ -1075,12 +1075,6 @@ export class BodyView extends ChartElement<Body> {
         if (pv !== old) {
             let fs = this._focusedSeries;
 
-            // if (sv) {
-            //     sv.hoverPoints(sv.getSiblings(pv));
-            // } 
-            // if (fs && fs !== sv) {
-            //     fs.hoverPoints(null);
-            // }
             this._focused = pv;
 
             if (sv !== fs) {

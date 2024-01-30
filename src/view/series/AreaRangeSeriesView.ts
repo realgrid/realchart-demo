@@ -77,7 +77,9 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
         const markerStyle = marker.style;
         const vis = marker.visible;
         const inverted = this._inverted;
+        const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
+        const xLen = inverted ? height : width;
         const yLen = inverted ? width : height;
         const yOrg = inverted ? 0 : height;
 
@@ -98,11 +100,11 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
             let y: number;
 
             if (inverted) {
-                x = yAxis.getPos(yLen, p.lowValue);
-                y = markers.get(i).ty + series.getRadius(p);
+                x = p.px2 = yAxis.getPos(yLen, p.lowValue);
+                y = p.py2 = markers.get(i).ty + series.getRadius(p);
             } else {
-                x = p.xPos;
-                y = p.yLow;
+                x = p.px2 = p.xPos;
+                y = p.py2 = p.yLow;
             }
 
             if (mv && mv.setVis(!p.isNull && x >= 0 && x <= width && y >= 0 && y <= height)) {

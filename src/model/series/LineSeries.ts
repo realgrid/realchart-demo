@@ -225,6 +225,10 @@ export abstract class LineSeriesBase extends Series {
         return new LineSeriesPoint(source);
     }
 
+    isMarker(): boolean {
+        return true;
+    }
+
     hasMarker(): boolean {
         return true;
     }
@@ -627,6 +631,8 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
     lowValue: number;
     get high(): number { return this.y; }
     get highValue(): number { return this.yValue; }
+    px2: number;
+    py2: number;
 
     //-------------------------------------------------------------------------
     // overriden members

@@ -197,9 +197,9 @@ export class BarSeriesView extends BarSeriesViewBase<BarSeries> {
         return new ElementPool(container, BarElement);
     }
 
-    needFronting(): boolean {
-        return this.model.group?._stacked || this.model.group?.layout == SeriesGroupLayout.OVERLAP;
-    }
+    // needFronting(): boolean {
+    //     return this.model.group?._stacked || this.model.group?.layout == SeriesGroupLayout.OVERLAP;
+    // }
 
     protected _prepareSeries(doc: Document, model: BarSeries): void {
         super._prepareSeries(doc, model);

@@ -188,7 +188,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries, ScatterSe
 
     getNearest(x: number, y: number): {pv: IPointView, dist: number} {
         const rd = this.model.radius;
-        const pv = this._markers._internalItems().sort((p1, p2) => p1.distance(rd, x, y) - p2.distance(rd, x, y))[0];
+        const pv = this._markers._internalItems().reduce((a, c) => a.distance(rd, x, y) < c.distance(rd, x, y) ? a : c);
         return { pv, dist: pv.distance(rd, x, y) };
     }
 

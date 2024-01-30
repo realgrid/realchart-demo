@@ -171,7 +171,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries, BubbleSerie
     }
 
     getNearest(x: number, y: number): {pv: IPointView, dist: number} {
-        const pv = this._markers._internalItems().sort((p1: BubbleSeriesPointView, p2: BubbleSeriesPointView) => p1.distance(p1._radius, x, y) - p2.distance(p2._radius, x, y))[0] as BubbleSeriesPointView;
+        const pv = this._markers._internalItems().reduce((s: BubbleSeriesPointView, c: BubbleSeriesPointView) => s.distance(s._radius, x, y) < c.distance(c._radius, x, y) ? s : c) as BubbleSeriesPointView;
         return { pv, dist: pv.distance(pv._radius, x, y) };
     }
 

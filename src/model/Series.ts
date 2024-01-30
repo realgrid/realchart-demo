@@ -612,6 +612,7 @@ export interface ISeries extends IPlottingItem {
     color: string | number;
 
     displayName(): string;
+    isMarker(): boolean;
     initPoints(source: any[]): DataPoint[];
     getPoints(): DataPointCollection;
     isVisible(p: DataPoint): boolean;
@@ -1127,6 +1128,10 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
      * 병렬 배치 가능한가?
      */
     isClusterable(): boolean {
+        return false;
+    }
+
+    isMarker(): boolean {
         return false;
     }
 
@@ -3151,4 +3156,8 @@ export abstract class MarkerSeries extends Series {
      * 지정하지 않으면 {@link config.chart.options.pointHovering.hintDistance} 설정을 따른다.
      */
     hintDistance: number;
+
+    isMarker(): boolean {
+        return true;
+    }
 }

@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, isString, mergeObj, pickProp3, assign } from "../common/Common";
-import { RcEventProvider, RcObject } from "../common/RcObject";
+import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign, _undef } from "../common/Types";
 import { AssetCollection } from "./Asset";
 import { Axis, AxisCollection, IAxis, PaneXAxisMatrix, PaneYAxisMatrix } from "./Axis";
@@ -37,7 +37,7 @@ import { ErrorBarSeries } from "./series/ErrorBarSeries";
 import { FunnelSeries } from "./series/FunnelSeries";
 import { HeatmapSeries } from "./series/HeatmapSeries";
 import { HistogramSeries } from "./series/HistogramSeries";
-import { AreaRangeSeries, AreaSeries, AreaSeriesGroup, LineSeries, LineSeriesGroup, SplineSeries } from "./series/LineSeries";
+import { AreaRangeSeries, AreaSeries, AreaSeriesGroup, LineSeries, LineSeriesBase, LineSeriesGroup, SplineSeries } from "./series/LineSeries";
 import { LollipopSeries } from "./series/LollipopSeries";
 import { OhlcSeries } from "./series/OhlcSeries";
 import { ParetoSeries } from "./series/ParetoSeries";
@@ -341,7 +341,7 @@ export class PointHovering extends ChartItem {
             // if (g && (g.layout === SeriesGroupLayout.OVERLAP || g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
             //     return PointHoverScope.GROUP;
             // } 
-            if (series.group) {
+            if (series.isMarker() && series.group) {
                 return PointHoverScope.GROUP;
             }
             return PointHoverScope.POINT;
