@@ -35,11 +35,14 @@ export class LineMarkerView extends MarkerSeriesPointView implements IPointView 
     private _saveRadius: number;
     index: number;
     _t: string;
+    _started = false;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     beginHover(series: LineSeriesBaseView<LineSeries>, focused: boolean): void {
+        if (this._started) debugger;
+        this._started = true;
         //if (focused) {
             this._saveRadius = this._radius;
         //}
@@ -63,6 +66,7 @@ export class LineMarkerView extends MarkerSeriesPointView implements IPointView 
     }
 
     endHover(series: LineSeriesBaseView<LineSeries>, focused: boolean): void {
+        this._started = false;
         //if (focused) {
             this._radius = this._saveRadius;
         //}

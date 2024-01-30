@@ -11,7 +11,7 @@ import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
 import { ClipRectElement, LayerElement, PathElement, RcControl, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
-import { Align, FILL, PI_2, VerticalAlign, _undef } from "../common/Types";
+import { Align, FILL, PI_2, VerticalAlign, _undef, assert } from "../common/Types";
 import { ImageElement } from "../common/impl/ImageElement";
 import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
@@ -64,6 +64,7 @@ import { cos, maxv, minv, pickNum, sin } from "../common/Common";
 import { ArcPolyElement } from "../common/impl/CircleElement";
 import { SectorElement } from "../common/impl/SectorElement";
 import { SvgShapes } from "../common/impl/SvgShape";
+import { Utils } from "../common/Utils";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -887,6 +888,7 @@ export class BodyView extends ChartElement<Body> {
 
     private _focusedSeries: SeriesView<Series>;
     private _focused: IPointView;
+    private _siblingSeries: SeriesView<Series>[];
     private _siblings: IPointView[];
 
     private _inverted: boolean;
@@ -991,7 +993,7 @@ export class BodyView extends ChartElement<Body> {
                 if (sv2['getHintDistance']) {
                     hint2 = pickNum(sv2['getHintDistance'](), hint);
 
-                    const t1 = +new Date();
+                    // const t1 = +new Date();
                     if (hint2 > 0) {
                         let pv2: {pv: IPointView, dist: number};
     
@@ -1003,7 +1005,7 @@ export class BodyView extends ChartElement<Body> {
                             pv = pv2;
                         }
                     }
-                    console.log('get nearests', +new Date() - t1, 'ms.');
+                    // console.log('get nearests', +new Date() - t1, 'ms.');
                 }
             })
             if (pv && (sv as any).canHover(pv.dist, pv.pv, hint2)) {
@@ -1023,32 +1025,62 @@ export class BodyView extends ChartElement<Body> {
     private $_setFocused(sv: SeriesView<Series>, pv: IPointView, p: IPoint): void {
         const old = this._focused;
         const oldPvs = this._siblings;
+        const oldSeries = this._siblingSeries;
         let svs: SeriesView<Series>[];
         let pvs: IPointView[];
+        let sers: Series[];
 
         if (sv && pv) {
             switch (this.chart().options.pointHovering.getScope(sv.model, pv.point)) {
                 case PointHoverScope.AXIS:
-                    break;
+                    sers = (sv.model._xAxisObj as Axis).getSeries() as any;
                 case PointHoverScope.GROUP:
-                    const ser = sv.model.group.getVisibleSeries();
-                    const pts = ser.map(ser => ser.getPoints().pointAt(pv.point.xValue));
-                    console.log(pts);
+                    if (!sers) sers = sv.model.group.getVisibleSeries() as any;
+                    const pts = sers.map(ser => ser.getPoints().pointAt(pv.point.xValue));
+                    
+                    svs = sers.map(s => this._owner.getSeriesView(s));
+                    pvs = [];
+                    pts.forEach((p, i) => {
+                        pvs.push(svs[i].getPointView(p) as any);
+                    })
                     break;
                 default:
+                    svs = [sv];
+                    pvs = [pv];
                     break;
             }
+        }
+
+        let pvs2: IPointView[] = [];
+        svs && svs.forEach((sv, i) => {
+            pvs2.push(...sv.getSiblings(pvs[i]));
+        })
+        pvs2 = pvs2.length > 0 ? pvs2.sort((p1: any, p2: any) => p1.hash - p2.hash) : null;
+        // pv && assert(pvs2.indexOf(pv) >= 0, '');
+
+        if (!Utils.equalArrays(oldPvs, pvs2)) {
+            svs && svs.forEach((sv, i) => {
+                sv.hoverPoints(sv.getSiblings(pvs[i]));
+            })
+            oldSeries && oldSeries.forEach(sv => {
+                if (!svs || svs.indexOf(sv) < 0) {
+                    sv.hoverPoints(null);
+                }
+            })
+
+            this._siblingSeries = svs;
+            this._siblings = pvs2;
         }
 
         if (pv !== old) {
             let fs = this._focusedSeries;
 
-            if (sv) {
-                sv.hoverPoints(sv.getSiblings(pv));
-            } 
-            if (fs && fs !== sv) {
-                fs.hoverPoints(null);
-            }
+            // if (sv) {
+            //     sv.hoverPoints(sv.getSiblings(pv));
+            // } 
+            // if (fs && fs !== sv) {
+            //     fs.hoverPoints(null);
+            // }
             this._focused = pv;
 
             if (sv !== fs) {
@@ -1154,6 +1186,10 @@ export class BodyView extends ChartElement<Body> {
         this._seriesViews.forEach(sv => {
             sv.hoverPoints(sv.getPointsAt(axis, pos));
         });
+    }
+
+    getSeries(series: ISeries): SeriesView<Series> {
+        return this._seriesViews.find(sv => sv.model === series);
     }
 
     //-------------------------------------------------------------------------

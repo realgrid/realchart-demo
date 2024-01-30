@@ -13,7 +13,7 @@ import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem, ChartTextOverflow, FormattableText, IconedText, LabelIconPostion } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
-import { IClusterable, IPlottingItem, ISeries } from "./Series";
+import { IClusterable, IPlottingItem, ISeries, SeriesGroup } from "./Series";
 
 /**
  * @internal
@@ -1385,6 +1385,14 @@ export abstract class Axis extends ChartItem implements IAxis {
     disconnect(): void {
         this._series = [];
         // this._values = [];
+    }
+
+    getSeries(): ISeries[] {
+        const ser: ISeries[] = [];
+        this._series.forEach(s => {
+            ser.push(...s.getVisibleSeries());
+        })
+        return ser;
     }
 
     collectValues(): void {

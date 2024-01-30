@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, isString, mergeObj, pickProp3, assign } from "../common/Common";
-import { RcEventProvider } from "../common/RcObject";
+import { RcEventProvider, RcObject } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign, _undef } from "../common/Types";
 import { AssetCollection } from "./Asset";
 import { Axis, AxisCollection, IAxis, PaneXAxisMatrix, PaneYAxisMatrix } from "./Axis";
@@ -301,7 +301,7 @@ export enum PointHoverScope {
  * 
  * @config
  */
-export class PointHovering {
+export class PointHovering extends ChartItem {
 
     //-------------------------------------------------------------------------
     // properties
@@ -337,11 +337,13 @@ export class PointHovering {
                 return PointHoverScope.AXIS;
             }
 
-            const g = series.group;
-            if (g && (g.layout === SeriesGroupLayout.OVERLAP || g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
+            // const g = series.group;
+            // if (g && (g.layout === SeriesGroupLayout.OVERLAP || g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
+            //     return PointHoverScope.GROUP;
+            // } 
+            if (series.group) {
                 return PointHoverScope.GROUP;
-            } 
-
+            }
             return PointHoverScope.POINT;
         }
     }
@@ -415,7 +417,7 @@ export class ChartOptions extends ChartItem {
      * 
      * @config
      */
-    pointHovering = new PointHovering();
+    pointHovering = new PointHovering(this.chart, true);
 
     //-------------------------------------------------------------------------
     // methods

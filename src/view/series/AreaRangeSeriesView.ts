@@ -48,6 +48,10 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
         return [pv, this._markers.find(m => m !== pv && m.point === pv.point)];
     }
 
+    getSibling(pv: IPointView): IPointView {
+        return pv && this._markers.find(m => m !== pv && m.point === pv.point);
+    }
+
     decoreateLegend(legendView: LegendItemView): void {
         super.decoreateLegend(legendView);
 

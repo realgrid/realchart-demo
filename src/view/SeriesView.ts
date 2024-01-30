@@ -511,7 +511,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         this.model.pointHovered(focused ? pv.point : null);
     }
 
-    hoverPoints(pvs: IPointView[]): void {
+        hoverPoints(pvs: IPointView[]): void {
         const animatable = /*this.model.chart.animatable() &&*/ this.model.hoverEffect !== HoverEffect.NONE;
         const oldAnis = this._hoverAnis;
         const oldPts = this._hoverPts;
@@ -522,7 +522,8 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
             // 기존 포인트들 중 새 목록에 포함되지 않은 것들은 unhover 시킨다.
             oldPts.forEach((pv => {
                 if (pv instanceof RcElement && (!pvs || pvs.indexOf(pv) < 0)) {
-                    const ani = oldAnis.find(ani => ani._marker === pv && ani._focused);
+                    const ani = oldAnis.find(ani => ani._marker === pv);
+                    // const ani = oldAnis.find(ani => ani._marker === pv && ani._focused);
                     ani && ani.stop();
 
                     pv.setBoolData(SeriesView.DATA_FOUCS, false);
@@ -537,25 +538,40 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
             }));
             // 새 포인트들 중 hovering 상태가 아닌 것들을 hover 시킨다.
             pvs && pvs.forEach(pv => {
-                const ani = oldAnis.find(ani => ani._marker === pv && !ani._focused);
-                ani && ani.stop();
-
-                if (pv instanceof RcElement && !oldAnis.find(ani => ani._marker === pv)) {
-                    pv.setBoolData(SeriesView.DATA_FOUCS, true);
-                    pts.push(pv);
-
-                    pv.restoreStyles(); // TODO: 이것이 필요한 상황은?
-                    pv.saveStyles();
-                    this.setHoverStyle(pv);
-
-                    if (pv instanceof MarkerSeriesPointView) {
-                        anis.push(new HoverAnimation(this, pv, true, () => {
-                            pv.endHover(this, true);
-                        }));
+                if (!pv.point.isNull) {
+                    // const ani = oldAnis.find(ani => ani._marker === pv);
+                    let ani = oldAnis.find(ani => ani._marker === pv && !ani._focused);
+                    ani && ani.stop();
+    
+                    if (pv instanceof RcElement) {
+                        ani = oldAnis.find(ani => ani._marker === pv);
+                        if (ani) {
+                            ani.stop();
+                        } else {
+                            pv.setBoolData(SeriesView.DATA_FOUCS, true);
+                            pts.push(pv);
+        
+                            pv.restoreStyles(); // TODO: 이것이 필요한 상황은?
+                            pv.saveStyles();
+                            this.setHoverStyle(pv);
+        
+                            if (pv instanceof MarkerSeriesPointView) {
+                                anis.push(new HoverAnimation(this, pv, true, () => {
+                                    pv.endHover(this, true);
+                                }));
+                            }
+                        }
                     }
                 }
             })
         }
+
+        oldAnis && oldAnis.forEach((ani, i) => {
+            if (ani['_started']) {
+                anis.push(ani);
+                // pts.push(oldPts[i]);
+            }
+        })
 
         this._hoverAnis = anis;
         this._hoverPts = pts;
@@ -572,6 +588,10 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
 
     getSiblings(pv: IPointView): IPointView[] {
         return [pv];
+    }
+
+    getSibling(pv: IPointView): IPointView {
+        return;
     }
 
     //-------------------------------------------------------------------------

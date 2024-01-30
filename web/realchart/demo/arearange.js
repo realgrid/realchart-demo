@@ -63,7 +63,9 @@ const config = {
       ],
       xStart: "2023-11-01",
       xStep: "1d",
-      marker: {},
+      marker: {
+        // hintDistance: 0
+      },
       style: {
         fill: "#66d0ff",
         stroke: "none",

@@ -4,7 +4,10 @@
  */
 const config = {
     options: {
-        // animatable: false
+        // animatable: false,
+        pointHovering: {
+            scope: 'axis'
+        }
     },
     title: "AreaRange & Line",
     xAxis: {
@@ -14,7 +17,9 @@ const config = {
     },
     series: [{
         type: 'arearange',
-        marker: false,
+        marker: {
+            visible: false,
+        },
         pointLabel: {
         },
         data: [

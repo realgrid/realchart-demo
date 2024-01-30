@@ -1233,7 +1233,10 @@ export class ChartView extends LayerElement {
     }
 
     getSeriesView(series: ISeries): SeriesView<Series> {
-        return;
+        if (this._model.isSplitted()) {
+        } else {
+            return this._currBody.getSeries(series);
+        }
     }
 
     legendByDom(dom: Element): LegendItem {

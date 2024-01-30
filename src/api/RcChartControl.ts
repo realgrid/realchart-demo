@@ -112,6 +112,8 @@ export class RcChartControl {
      * 다음 rendering frame을 기다리지 않고, 차트를 즉시 다시 그린다.<br/>
      * 차트 rendering 작업은 자원 소모가 많고 소용 시간도 적지 않으므로,
      * data나 여러 모델을 수정하는 경우 모든 작업이 완료된 후 한 번 호출해야 한다.
+     * 가능하면 이 함수는 호출하지 않고 
+     * 차트 기본 동작(다음 frame에 이전 변경 사항들을 모아서 한 번 rendering)으로 실행되게 해야 한다.
      */
     render(): void {
         this.$_p.refresh();
