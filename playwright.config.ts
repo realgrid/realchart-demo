@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import * as os from 'os';
 
 /**
  * Read environment variables from file.
@@ -31,7 +32,17 @@ export default defineConfig({
   },
 
   /* Configure projects for major browsers */
-  projects: [
+  projects: process.platform === 'win32' ? [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'Microsoft Edge',
+      use: { ...devices['Desktop Edge'], channel: 'msedge' },
+    },
+  ] :
+  [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
@@ -44,7 +55,6 @@ export default defineConfig({
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
     },
-
     /* Test against mobile viewports. */
     // {
     //   name: 'Mobile Chrome',
