@@ -313,9 +313,9 @@ export class PointHovering {
      */
     scope = PointHoverScope.AUTO;
     /**
-     * {@link config.series.line 'line'}, 
-     * {@link config.series.bubble 'bubble'}, 
-     * {@link config.series.scatter 'scatter'} 시리즈처럼 marker로 표시되는 데이터포인트의 위치를 찾을 때
+     * {@link config.series.line line}, 
+     * {@link config.series.bubble bubble}, 
+     * {@link config.series.scatter scatter} 시리즈처럼 marker로 표시되는 데이터포인트의 위치를 찾을 때
      * 데이터포인트 maker 외부로 추가되는 가상의 두께.<br/>
      * 0이하면 표시되는 크기로 계산된다.
      * 상당히 큰 크기로 지정하면 마우스가 어느 위치에 있든 마우스에 가장 가까운 marker가 찾아진다.<br/>
