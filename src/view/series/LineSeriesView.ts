@@ -35,14 +35,14 @@ export class LineMarkerView extends MarkerSeriesPointView implements IPointView 
     private _saveRadius: number;
     index: number;
     _t: string;
-    _started = false;
+    // _started = false;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     beginHover(series: LineSeriesBaseView<LineSeries>, focused: boolean): void {
-        if (this._started) debugger;
-        this._started = true;
+        // if (this._started) debugger;
+        // this._started = true;
         //if (focused) {
             this._saveRadius = this._radius;
         //}
@@ -62,17 +62,16 @@ export class LineMarkerView extends MarkerSeriesPointView implements IPointView 
         }
 
         SvgShapes.setShape(this, series.model.getShape(p), rd, rd);
-        // this.trans(p.xPos - rd, (this.index > 0 ? p['yLow'] : p.yPos) - rd);
+     
         if (this.index > 0) {
             this.trans(p['px2'] - rd, p['py2'] - rd);
         } else {
             this.trans(p.xPos - rd, p.yPos - rd);
         }
-        console.log(p.xPos, p.yPos, p['px2'], p['yLow']);
     }
 
     endHover(series: LineSeriesBaseView<LineSeries>, focused: boolean): void {
-        this._started = false;
+        // this._started = false;
         //if (focused) {
             this._radius = this._saveRadius;
         //}

@@ -1388,7 +1388,7 @@ export class RcElement extends RcObject {
                 }
             }
         } else {
-            if (len > 1 && this !== siblings[len - 1]) {
+            if (len > 1 && dom !== p.lastElementChild) {
                 dom.remove();
                 p.appendChild(dom);
             }

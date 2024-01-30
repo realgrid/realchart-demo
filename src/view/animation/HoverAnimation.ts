@@ -25,7 +25,7 @@ export class HoverAnimation extends RcAnimation {
     constructor(series: SeriesView<Series>, marker: MarkerSeriesPointView, focused: boolean, endHandler: RcAnimationEndHandler) {
         super();
 
-        this.duration = focused ? 200 : 90;
+        this.duration = focused ? 200 : 80;
 
         this._series = series;
         this._focused = focused;

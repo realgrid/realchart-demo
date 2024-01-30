@@ -191,7 +191,7 @@ export class PieSeries extends RadialSeries {
     }
 
     getSliceOffset(rd: number): number {
-        return this._sliceDim ? calcPercent(this._sliceDim, rd) : 0;
+        return !this.group && this._sliceDim ? calcPercent(this._sliceDim, rd) : 0;
     }
 
     //-------------------------------------------------------------------------

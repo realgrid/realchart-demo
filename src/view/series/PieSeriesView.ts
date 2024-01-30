@@ -118,8 +118,10 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     private $_calcGroup(width: number, height: number): void {
         const m = this.model;
         const g = m.group as PieSeriesGroup;
-        const sz = Math.floor(g ? g.getPolarSize(width, height) / 2 : m.getRadius(width, height));
-        const szInner = g ? g.getInnerRadius(sz) * sz : m.getInnerRadius(sz);
+        // const sz = Math.floor(g ? g.getPolarSize(width, height) / 2 : m.getRadius(width, height));
+        // const szInner = g ? g.getInnerRadius(sz) * sz : m.getInnerRadius(sz);
+        const sz = Math.floor(g.getPolarSize(width, height) / 2);
+        const szInner = g.getInnerRadius(sz) * sz;
         const len = sz - szInner;
 
         this._rd = szInner + (m._groupPos + m._groupSize) * len;
