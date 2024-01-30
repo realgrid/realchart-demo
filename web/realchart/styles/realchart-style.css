@@ -219,7 +219,7 @@
     --rct-navigator-thumb-fill:#0098ff;
 }
 .rct-root[data-theme='dark'] {
-    --rct-focus-stroke: yellow;
+    --rct-focus-stroke: #ccc;
     --rct-text-fill: #fff;
 
     --rct-title-fill: #fff;
