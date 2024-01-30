@@ -105,7 +105,7 @@ test.describe("xAxis, category test", () => {
   const effects = ["background", "none", "outline"];
   for (let effect of effects) {
     test("label effect : " + effect, async ({ page }, testInfo) => {
-      config.xAxis.categories = longCategories;
+      config.xAxis.categories = shortCategories;
       config.xAxis.label = {
         effect,
         style: {
