@@ -189,6 +189,7 @@ export abstract class RcAnimation {
     private _easing: (x: number) => number;
     private _started: number;
     private _timer: any;
+    private _ani: any;
     private _handler = () => {
         const dt = +new Date() - this._started - this.delay;
         let rate = minv(1, maxv(0, fixnum(dt / this.duration)));
@@ -205,7 +206,7 @@ export abstract class RcAnimation {
             if (dt >= this.duration) {
                 this._stop();
             } else if (this._started && this._timer) {
-                window.requestAnimationFrame(this._handler)
+                this._ani = window.requestAnimationFrame(this._handler)
             }
         }
     }
@@ -249,6 +250,7 @@ export abstract class RcAnimation {
 
     protected _stop(): void {
         if (this._started) {
+            cancelAnimationFrame(this._ani);
             clearTimeout(this._timer);
             this._timer = null;
             this._started = null;

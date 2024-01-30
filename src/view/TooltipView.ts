@@ -74,10 +74,10 @@ export class TooltipView extends RcElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    show(series: Series, pv: IPointView, x: number, y: number, body: BodyView, animate: boolean): void {
+    show(series: Series, pv: IPointView, siblings: IPointView[], x: number, y: number, body: BodyView, animate: boolean): void {
         const point = pv.point;
         const model = this._model = series.chart.tooltip;
-        const ctx = model.setTarget(series, point);
+        const ctx = model.setTarget(series, point, siblings && siblings.map(pv => pv.point));
         const control = this.control;
 
         if (!ctx) return;

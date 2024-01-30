@@ -92,8 +92,10 @@ export class RcChartControl {
 
     /**
      * 기존 설정 모델을 제거하고 새로운 설정으로 차트를 재구성한다.
+     * 
+     * @returns 컨트롤 자신.
      */
-    load(config: any, animate?: boolean, callback?: () => void): void {
+    load(config: any, animate?: boolean, callback?: () => void): RcChartControl {
         this.$_p.load(config, animate, callback);
         const model = this.$_p.model;
         model._proxy = this._proxy;
@@ -104,14 +106,15 @@ export class RcChartControl {
         };
 
         this._objects.clear();
+        return this;
     }
     /**
-     * 차트를 다시 그린다.
-     * 
-     * @param now true로 지정하면 즉시 차트 SVG를 디시 구축한다.
+     * 다음 rendering frame을 기다리지 않고, 차트를 즉시 다시 그린다.<br/>
+     * 차트 rendering 작업은 자원 소모가 많고 소용 시간도 적지 않으므로,
+     * data나 여러 모델을 수정하는 경우 모든 작업이 완료된 후 한 번 호출해야 한다.
      */
-    render(now = false): void {
-        this.$_p.refresh(now);
+    render(): void {
+        this.$_p.refresh();
         this._exporter && this._exporter.render(this.$_p.model.exportOptions);
     }
     /**

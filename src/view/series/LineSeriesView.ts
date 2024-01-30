@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { cos, sin } from "../../common/Common";
+import { cos, pickNum, sin } from "../../common/Common";
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
@@ -184,6 +184,10 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const rd = this.model.marker.radius;
         const pv = this._markers._internalItems().sort((p1, p2) => p1.distance(rd, x, y) - p2.distance(rd, x, y))[0];
         return { pv, dist: pv.distance(rd, x, y) };
+    }
+
+    getHintDistance(): number {
+        return this.model.marker.hintDistance;
     }
 
     canHover(dist: number, pv: LineSeriesMarker, hint: number): boolean {

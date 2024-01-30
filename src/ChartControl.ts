@@ -111,12 +111,8 @@ export class ChartControl extends RcControl implements IChartEventListener {
 
     }
 
-    refresh(now: boolean): void {
-        if (now) {
-            this._render();
-        } else {
-            this.invalidateLayout();
-        }
+    refresh(): void {
+        this._render();
     }
 
     scroll(axis: Axis, pos: number): void {

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { cos, sin } from "../../common/Common";
+import { cos, pickNum, sin } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { IRect } from "../../common/Rectangle";
 import { PI_2 } from "../../common/Types";

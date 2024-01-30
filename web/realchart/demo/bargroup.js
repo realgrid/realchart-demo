@@ -132,6 +132,15 @@ function setActions(container) {
 		},
 		false
 	);
+	createCheckBox(
+		container,
+		'Series Hovering',
+		function (e) {
+			config.options.seriesHovering = _getChecked(e);
+			chart.load(config, animate);
+		},
+		false
+	);
 }
 
 function init() {

@@ -20,7 +20,7 @@ import { Chart, Credits } from "../model/Chart";
 import { ChartItem } from "../model/ChartItem";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem, LegendLocation } from "../model/Legend";
-import { Series } from "../model/Series";
+import { ISeries, Series } from "../model/Series";
 import { Split } from "../model/Split";
 import { Subtitle, SubtitlePosition, Title } from "../model/Title";
 import { AnnotationView } from "./AnnotationView";
@@ -1205,9 +1205,10 @@ export class ChartView extends LayerElement {
         this._tooltipView.close(true, false);
     }
 
-    showTooltip(series: Series, pv: IPointView, body: BodyView, p: IPoint): void {
+    showTooltip(series: Series, pv: IPointView, siblings: IPointView[], body: BodyView, p: IPoint): void {
         const {x, y} = pv.getTooltipPos ? pv.getTooltipPos() : {x: pv.point.xPos, y: pv.point.yPos };
         const isFollowPointer = this._model.chart.tooltip.followPointer;
+
         if (isFollowPointer) {
             if (!this._beforeTime || new Date().getTime() - this._beforeTime > 200){
                 this._beforeTime = new Date().getTime();
@@ -1215,11 +1216,12 @@ export class ChartView extends LayerElement {
                 return;
             }
         }
+
         const bp = body.getTooltipPos();
         const tx = isFollowPointer ? p.x + bp.x : x + bp.x;
         const ty = isFollowPointer ? p.y + bp.y : y + bp.y;
 
-        this._tooltipView.show(series, pv, tx, ty, body, true);
+        this._tooltipView.show(series, pv, siblings, tx, ty, body, true);
     }
 
     tooltipVisible(): boolean {
@@ -1228,6 +1230,10 @@ export class ChartView extends LayerElement {
 
     hideTooltip(): void {
         this._tooltipView.close(false, true);
+    }
+
+    getSeriesView(series: ISeries): SeriesView<Series> {
+        return;
     }
 
     legendByDom(dom: Element): LegendItem {

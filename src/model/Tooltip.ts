@@ -62,6 +62,7 @@ export class Tooltip extends ChartItem {
     private _ctx: ITooltipContext;
     private _series: ISeries;
     private _point: DataPoint;
+    private _siblings: DataPoint[];
     private _domain: IRichTextDomain = {
         callback: (target: any, param: string): string => {
             return this._ctx.getTooltipParam(this._series, this._point, param);
@@ -160,7 +161,7 @@ export class Tooltip extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    setTarget(series: ISeries, point: DataPoint): ITooltipContext {
+    setTarget(series: ISeries, point: DataPoint, siblings: DataPoint[]): ITooltipContext {
         return this._ctx = this.visible && this.owner.getTooltipContext(this.scope, this._series = series, this._point = point);
     }
 

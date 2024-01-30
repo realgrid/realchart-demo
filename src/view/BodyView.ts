@@ -17,14 +17,14 @@ import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
 import { Axis, AxisGrid, AxisGuide, AxisLineGuide, AxisRangeGuide, IAxisGridRow } from "../model/Axis";
 import { Body, IPolar } from "../model/Body";
-import { Chart, IChart } from "../model/Chart";
+import { Chart, IChart, PointHoverScope } from "../model/Chart";
 import { Crosshair } from "../model/Crosshair";
-import { Series } from "../model/Series";
+import { ISeries, Series } from "../model/Series";
 import { AxisBreak, ContinuousAxis, LinearAxis } from "../model/axis/LinearAxis";
 import { Gauge, GaugeBase } from "../model/Gauge";
 import { ChartElement } from "./ChartElement";
 import { GaugeView } from "./GaugeView";
-import { IPointView, MarkerSeriesPointView, SeriesView } from "./SeriesView";
+import { IPointView, SeriesView } from "./SeriesView";
 import { CircleGaugeGroupView, CircleGaugeView } from "./gauge/CircleGaugeView";
 import { ClockGaugeView } from "./gauge/ClockGaugeView";
 import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
@@ -60,7 +60,7 @@ import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
 import { LabelElement } from "../common/impl/LabelElement";
 import { CircleBarSeriesView } from "./series/CircleBarSeriesView";
-import { cos, isArray, maxv, minv, pickNum, sin } from "../common/Common";
+import { cos, maxv, minv, pickNum, sin } from "../common/Common";
 import { ArcPolyElement } from "../common/impl/CircleElement";
 import { SectorElement } from "../common/impl/SectorElement";
 import { SvgShapes } from "../common/impl/SvgShape";
@@ -831,9 +831,10 @@ export class ZoomButton extends ButtonElement {
 export interface IPlottingOwner {
 
     // clipSeries(view: RcElement, view2: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void;
-    showTooltip(series: Series, pv: IPointView, body: RcElement, p: IPoint): void;
+    showTooltip(series: Series, pv: IPointView, siblings: IPointView[], body: RcElement, p: IPoint): void;
     hideTooltip(): void;
     tooltipVisible(): boolean;
+    getSeriesView(series: ISeries): SeriesView<Series>;
 }
 
 export class BodyView extends ChartElement<Body> {
@@ -886,6 +887,7 @@ export class BodyView extends ChartElement<Body> {
 
     private _focusedSeries: SeriesView<Series>;
     private _focused: IPointView;
+    private _siblings: IPointView[];
 
     private _inverted: boolean;
     private _zoomRequested: boolean;
@@ -921,6 +923,12 @@ export class BodyView extends ChartElement<Body> {
         this.add(this._zoomButton = new ZoomButton(doc));
         
         this._crosshairViews = new ElementPool(this._feedbackContainer, CrosshairView);
+
+        // TODO: 검토할 것!
+        // this.dom.onpointerleave = () => {
+        //     this._seriesViews.forEach(sv => sv.hoverPoints(null));
+        //     this._owner.hideTooltip(); 
+        // }
     }
 
     //-------------------------------------------------------------------------
@@ -975,21 +983,30 @@ export class BodyView extends ChartElement<Body> {
             this.$_setFocused(sv, pv, p);
         } else {
             const hint = this.chart().options.pointHovering.hintDistance || 0;
+            let hint2: number;
             let sv: SeriesView<Series>;
             let pv: {pv: IPointView, dist: number};
 
             this._seriesViews.forEach(sv2 => {
-                let pv2: {pv: IPointView, dist: number};
+                if (sv2['getHintDistance']) {
+                    hint2 = pickNum(sv2['getHintDistance'](), hint);
 
-                if ((sv2 instanceof LineSeriesBaseView || sv2 instanceof ScatterSeriesView || sv2 instanceof BubbleSeriesView) && sv2.model.nearHovering) {
-                    pv2 = sv2.getNearest(p.x, p.y);
-                }
-                if (!pv || pv2.dist < pv.dist) {
-                    sv = sv2;
-                    pv = pv2;
+                    const t1 = +new Date();
+                    if (hint2 > 0) {
+                        let pv2: {pv: IPointView, dist: number};
+    
+                        if ((sv2 instanceof LineSeriesBaseView || sv2 instanceof ScatterSeriesView || sv2 instanceof BubbleSeriesView)) {
+                            pv2 = sv2.getNearest(p.x, p.y);
+                        }
+                        if (!pv || pv2.dist < pv.dist) {
+                            sv = sv2;
+                            pv = pv2;
+                        }
+                    }
+                    console.log('get nearests', +new Date() - t1, 'ms.');
                 }
             })
-            if (pv && (sv as any).canHover(pv.dist, pv.pv, hint)) {
+            if (pv && (sv as any).canHover(pv.dist, pv.pv, hint2)) {
                 this.$_setFocused(sv, pv.pv, p);
             } else {
                 this.$_setFocused(null, null, p);
@@ -1005,6 +1022,23 @@ export class BodyView extends ChartElement<Body> {
 
     private $_setFocused(sv: SeriesView<Series>, pv: IPointView, p: IPoint): void {
         const old = this._focused;
+        const oldPvs = this._siblings;
+        let svs: SeriesView<Series>[];
+        let pvs: IPointView[];
+
+        if (sv && pv) {
+            switch (this.chart().options.pointHovering.getScope(sv.model, pv.point)) {
+                case PointHoverScope.AXIS:
+                    break;
+                case PointHoverScope.GROUP:
+                    const ser = sv.model.group.getVisibleSeries();
+                    const pts = ser.map(ser => ser.getPoints().pointAt(pv.point.xValue));
+                    console.log(pts);
+                    break;
+                default:
+                    break;
+            }
+        }
 
         if (pv !== old) {
             let fs = this._focusedSeries;
@@ -1019,8 +1053,10 @@ export class BodyView extends ChartElement<Body> {
 
             if (sv !== fs) {
                 fs && this.$_focusSeries(fs, false);
-                fs = this._focusedSeries = sv;
-                fs && this.$_focusSeries(fs, true);
+                
+                this._focusedSeries = sv;
+                sv && this.$_focusSeries(sv, true);
+
                 if (this.chart().options.seriesHovering) {
                     this.$_hoverSeries(sv);
                 }
@@ -1028,7 +1064,7 @@ export class BodyView extends ChartElement<Body> {
         }
 
         if (this._focused && (this._focused !== old || !this._owner.tooltipVisible() ||  this.model.chart.tooltip.followPointer)) {
-            this._owner.showTooltip(sv.model, pv, this, p);
+            this._owner.showTooltip(sv.model, pv, [], this, p);
         } else if (!this._focused && this._owner.tooltipVisible()) {
             this._owner.hideTooltip();
         }

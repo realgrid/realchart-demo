@@ -1317,6 +1317,13 @@ export abstract class MarkerSeriesView<T extends MarkerSeries, P extends DataPoi
     protected abstract _createMarkers(container: PointContainer): ElementPool<MarkerSeriesPointView>;
 
     //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getHintDistance(): number {
+        return this.model.hintDistance;
+    }
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _getPointPool(): ElementPool<RcElement> {
