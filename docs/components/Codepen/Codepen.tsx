@@ -1,22 +1,22 @@
 import { Button, createStyles } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 
-export const Codepen = ({ config }) => {
-  useEffect(() => {
+export const Codepen = ({ configString }) => {
+  const createForm = (configString) => {
+
     let data = {
       title: "Cool Pen",
       description: "",
       html: '<script>var realChartLic = \'upVcPE+wPOkOR/egW8JuxkM/nBOseBrflwxYpzGZyYmhB+vWdw2W7OeKriArSGg/tcphfKS2Musnm9T+R9R8ZnQHkEFeJWIE\';</script><script src="https://unpkg.com/realchart"></script>\n<div id="realchart"></div>',
       html_pre_processor: "none",
-      css: '@import url("https://unpkg.com/realchart/dist/realchart-style.css");\n#realchart {\n    width: 100%;\n    height: 550px;\n    border: 1px solid lightgray;\n    margin-bottom: 20px;\n}',
+      css: '@import url("https://unpkg.com/realchart/dist/realchart-style.css");\n#realchart {\n    width: 800px;\n    height: 500px;\n    border: 1px solid lightgray;\n    margin: 20px auto;\n}',
       css_pre_processor: "none",
       css_starter: "neither",
       css_prefix_free: false,
       js:
-        "var realChartLic = 'upVcPE+wPOkOR/egW8JuxkM/nBOseBrflwxYpzGZyYmhB+vWdw2W7OeKriArSGg/tcphfKS2Musnm9T+R9R8ZnQHkEFeJWIE'; \n" +
-        "const config = " +
-        JSON.stringify(config, null, 2) +
-        '; \n  chart = RealChart.createChart(document, "realchart", config);',
+        "var realChartLic = 'upVcPE+wPOkOR/egW8JuxkM/nBOseBrflwxYpzGZyYmhB+vWdw2W7OeKriArSGg/tcphfKS2Musnm9T+R9R8ZnQHkEFeJWIE';\n" +
+        `${configString}` +
+        ';\nchart = RealChart.createChart(document, "realchart", config);',
       js_pre_processor: "none",
       js_modernizr: false,
       js_library: "",
@@ -48,15 +48,19 @@ export const Codepen = ({ config }) => {
     form.appendChild(inputSubmit);
 
     document.body.appendChild(form);
-  }, [config]);
+
+    return form;
+  }
+  // useEffect(() => {
+  //   createForm(config);
+  // }, [config]);
 
   const handleSubmit = () => {
-    let form = document.getElementById("codepenForm") as HTMLFormElement | null;
-    if (form) {
-      form.submit();
-      const parent = form.parentNode;
-      parent.removeChild(form);
-    }
+    // let form = document.getElementById("codepenForm") as HTMLFormElement | null;
+    let form = createForm(configString);
+    form.submit();
+    const parent = form.parentNode;
+    parent.removeChild(form);
   };
 
   return (

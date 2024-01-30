@@ -20,7 +20,7 @@ import { Chart } from "../../model/Chart";
 import { LineType } from "../../model/ChartTypes";
 import { PointItemPosition } from "../../model/Series";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
-import { IPointPos, LinePointLabel, LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection, PointLine } from "../../model/series/LineSeries";
+import { IPointPos, LinePointLabel, LineSeries, LineSeriesBase, LineSeriesMarker, LineSeriesPoint, LineStepDirection, PointLine } from "../../model/series/LineSeries";
 import { LineLegendMarkerView } from "../../model/series/legend/LineLegendMarkerView";
 import { LegendItemView } from "../LegendView";
 import { IPointView, MarkerSeriesPointView, PointContainer, SeriesView } from "../SeriesView";
@@ -34,14 +34,15 @@ export class LineMarkerView extends MarkerSeriesPointView implements IPointView 
     _radius: number;
     private _saveRadius: number;
     index: number;
+    _t: string;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     beginHover(series: LineSeriesBaseView<LineSeries>, focused: boolean): void {
-        if (focused) {
+        //if (focused) {
             this._saveRadius = this._radius;
-        }
+        //}
     }
 
     setHoverRate(series: LineSeriesBaseView<LineSeries>, focused: boolean, rate: number): void {
@@ -62,9 +63,9 @@ export class LineMarkerView extends MarkerSeriesPointView implements IPointView 
     }
 
     endHover(series: LineSeriesBaseView<LineSeries>, focused: boolean): void {
-        if (!focused) {
+        //if (focused) {
             this._radius = this._saveRadius;
-        }
+        //}
     }
 
     getTooltipPos(): IPoint {
@@ -177,6 +178,16 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     getPointsAt(axis: Axis, pos: number): IPointView[] {
         return [];
+    }
+
+    getNearest(x: number, y: number): {pv: IPointView, dist: number} {
+        const rd = this.model.marker.radius;
+        const pv = this._markers._internalItems().sort((p1, p2) => p1.distance(rd, x, y) - p2.distance(rd, x, y))[0];
+        return { pv, dist: pv.distance(rd, x, y) };
+    }
+
+    canHover(dist: number, pv: LineSeriesMarker, hint: number): boolean {
+        return dist <= this.model.marker.radius + hint;
     }
 
     //-------------------------------------------------------------------------
@@ -299,6 +310,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     sts[1] = needBelow && p.yValue < base ? series.belowStyle : null;
                     this._setPointStyle(mv, series, p, sts);
                 }
+                mv.point = p;
                 mv.index = i < count ? 0 : 1;
             });
         } else {

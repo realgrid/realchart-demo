@@ -15,7 +15,7 @@ import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
 import { PointItemPosition } from "../../model/Series";
 import { ScatterSeries, ScatterSeriesPoint } from "../../model/series/ScatterSeries";
-import { MarkerSeriesPointView, MarkerSeriesView, PointContainer, PointLabelView } from "../SeriesView";
+import { IPointView, MarkerSeriesPointView, MarkerSeriesView, PointContainer, PointLabelView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 export class ScatterSeriesPointView extends MarkerSeriesPointView {
@@ -184,5 +184,15 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries, ScatterSe
                 lv.setVis(false);
             }
         });
+    }
+
+    getNearest(x: number, y: number): {pv: IPointView, dist: number} {
+        const rd = this.model.radius;
+        const pv = this._markers._internalItems().sort((p1, p2) => p1.distance(rd, x, y) - p2.distance(rd, x, y))[0];
+        return { pv, dist: pv.distance(rd, x, y) };
+    }
+
+    canHover(dist: number, pv: MarkerSeriesPointView, hint: number): boolean {
+        return dist <= this.model.radius + hint;
     }
 }

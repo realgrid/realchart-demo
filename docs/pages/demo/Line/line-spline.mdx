@@ -2,8 +2,8 @@
 title: "Spline"
 ---
 import { RealChartReact } from "@/components/RealChart/RealChartReact";
-import { config, tool } from "@/templates/line-spline";
+import { tool } from "@/templates/line-spline";
 
 # Spline
 			
-<RealChartReact config={config} tool={tool} showEditor={true} autoUpdate={false} />
+<RealChartReact configString="const config = %7B%0A%20%20options:%20%7B%7D,%0A%20%20title:%20'Line%20Series%20-%20Spline',%0A%20%20xAxis:%20%7B%20type:%20'category'%20%7D,%0A%20%20yAxis:%20%7B%7D,%0A%20%20series:%20%7B%0A%20%20%20%20type:%20'line',%0A%20%20%20%20lineType:%20'spline',%0A%20%20%20%20pointLabel:%20true,%0A%20%20%20%20data:%20%5B%0A%20%20%20%20%20%20%5B%20'home',%207%20%5D,%0A%20%20%20%20%20%20%5B%20'sky',%2011%20%5D,%0A%20%20%20%20%20%20%5B%20'%ED%83%9C%ED%92%8D',%209%20%5D,%0A%20%20%20%20%20%20%5B%20'def',%207.5%20%5D,%0A%20%20%20%20%20%20%5B%20'%EC%A7%80%EB%A6%AC%EC%82%B0',%2015.3%20%5D,%0A%20%20%20%20%20%20%5B%20'zzz',%2013%20%5D,%0A%20%20%20%20%20%20%5B%20'ttt',%207%20%5D,%0A%20%20%20%20%20%20%5B%20'taaatt',%209%20%5D,%0A%20%20%20%20%20%20%5B%20'%EB%B0%B1%EB%91%90%EC%82%B0',%2011%20%5D,%0A%20%20%20%20%20%20%5B%20'%EB%82%99%EB%8F%99%EA%B0%95',%202.5%20%5D%0A%20%20%20%20%5D%0A%20%20%7D%0A%7D" tool={tool} showEditor={true} autoUpdate={false}/>

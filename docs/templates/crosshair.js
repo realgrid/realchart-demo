@@ -19,6 +19,7 @@ export const config = {
     ]
   },
   series: {
+    hoverStyle: { fill: 'white', filter: 'drop-shadow(2px 2px 2px #555)' },
     data: [
       [ 161.2, 51.6 ], [ 167.5, 59 ],   [ 159.5, 49.2 ],  [ 157, 63 ],
       [ 155.8, 53.6 ], [ 170, 59 ],     [ 159.1, 47.6 ],  [ 166, 69.8 ],

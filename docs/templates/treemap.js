@@ -30,7 +30,7 @@ export const config = {
     algorithm: 'squarify',
     pointLabel: {
       visible: true,
-      textCallback: (args) => { const { groupMaxValues, groupSum } = config.vars; if (groupMaxValues[args.group].value === args.yValue) { const percent = (args.yValue / groupSum) * 100; return ( groupMaxValues[args.group].title + "<br>" + percent.toFixed(2) + "%" ); } else { return " "; } },
+      textCallback: (args) => { const { groupMaxValues, groupSum } = config.vars; if (groupMaxValues[args.group].value === args.yValue) { const percent = (args.yValue / groupSum) * 100; return ( groupMaxValues[args.group].title + '<br>' + percent.toFixed(2) + '%' ); } else { return ' '; } },
       style: { fontSize: '20px', fill: '#FFF' }
     },
     data: [

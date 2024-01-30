@@ -646,6 +646,7 @@ export class ChartView extends LayerElement {
     // private _seriesClip: ClipRectElement;
     // private _seriesClip2: ClipRectElement; // bubble, scatter처럼 transform으로 inverted를 하지 않는 시리즈를 위한.
     // private _lineSeriesClip: ClipRectElement;
+    private _beforeTime: number;
 
     _org: IPoint;
     private _plotWidth: number;
@@ -1207,6 +1208,13 @@ export class ChartView extends LayerElement {
     showTooltip(series: Series, pv: IPointView, body: BodyView, p: IPoint): void {
         const {x, y} = pv.getTooltipPos ? pv.getTooltipPos() : {x: pv.point.xPos, y: pv.point.yPos };
         const isFollowPointer = this._model.chart.tooltip.followPointer;
+        if (isFollowPointer) {
+            if (!this._beforeTime || new Date().getTime() - this._beforeTime > 200){
+                this._beforeTime = new Date().getTime();
+            } else {
+                return;
+            }
+        }
         const bp = body.getTooltipPos();
         const tx = isFollowPointer ? p.x + bp.x : x + bp.x;
         const ty = isFollowPointer ? p.y + bp.y : y + bp.y;
@@ -1291,7 +1299,7 @@ export class ChartView extends LayerElement {
     
                     if (flag) {
                         av.showCrosshair(pos, flag);
-                        axis._isX && body.hoverPoints(axis, pos);
+                        // axis._isX && body.hoverPoints(axis, pos);
                         axis.crosshair.moved(pos, flag);
                     } else {
                         av.hideCrosshiar();

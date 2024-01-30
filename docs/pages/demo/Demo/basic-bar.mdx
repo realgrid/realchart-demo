@@ -2,8 +2,8 @@
 title: "Bar"
 ---
 import { RealChartReact } from "@/components/RealChart/RealChartReact";
-import { config, tool } from "@/templates/basic-bar";
+import { tool } from "@/templates/basic-bar";
 
 # Bar
 			
-<RealChartReact config={config} tool={tool} showEditor={true} autoUpdate={false} />
+<RealChartReact configString="const config = %7B%0A%20%20type:%20'bar',%0A%20%20title:%20'%EC%9B%94%EB%B3%84%20%EB%A7%A4%EC%B6%9C%20%ED%98%84%ED%99%A9%20%EB%B6%84%EC%84%9D',%0A%20%20subtitle:%20'1%EC%9B%94%EB%B6%80%ED%84%B0%2012%EC%9B%94%EA%B9%8C%EC%A7%80%EC%9D%98%20%EB%A7%A4%EC%B6%9C%20%EB%B3%80%ED%99%94%20%EC%B6%94%EC%A0%81',%0A%20%20options:%20%7B%20palette:%20'default'%20%7D,%0A%20%20xAxis:%20%7B%0A%20%20%20%20title:%20'%EC%9B%94%20(1%EC%9B%94%20-%2012%EC%9B%94)',%0A%20%20%20%20categories:%20%5B%0A%20%20%20%20%20%20'Jan',%20'Feb',%20'Mar',%0A%20%20%20%20%20%20'Apr',%20'May',%20'Jun',%0A%20%20%20%20%20%20'Jul',%20'Aug',%20'Sep',%0A%20%20%20%20%20%20'Oct',%20'Nov',%20'Dec'%0A%20%20%20%20%5D%0A%20%20%7D,%0A%20%20yAxis:%20%5B%5D,%0A%20%20series:%20%5B%0A%20%20%20%20%7B%0A%20%20%20%20%20%20name:%20'%EC%9B%94%20%EB%A7%A4%EC%B6%9C',%0A%20%20%20%20%20%20colorByPoint:%20true,%0A%20%20%20%20%20%20pointLabel:%20true,%0A%20%20%20%20%20%20pointWidth:%2030,%0A%20%20%20%20%20%20yAxis:%200,%0A%20%20%20%20%20%20data:%20%5B%0A%20%20%20%20%20%20%20%20%5B%20-130%20%5D,%20%5B%20-100%20%5D,%0A%20%20%20%20%20%20%20%20%5B%20-50%20%5D,%20%20%5B%2060%20%5D,%0A%20%20%20%20%20%20%20%20%5B%2070%20%5D,%20%20%20%5B%20115%20%5D,%0A%20%20%20%20%20%20%20%20%5B%2090%20%5D,%20%20%20%5B%20100%20%5D,%0A%20%20%20%20%20%20%20%20%5B%20120%20%5D,%20%20%5B%20130%20%5D,%0A%20%20%20%20%20%20%20%20%5B%20140%20%5D,%20%20%5B%20160%20%5D%0A%20%20%20%20%20%20%5D%0A%20%20%20%20%7D%0A%20%20%5D%0A%7D" tool={tool} showEditor={true} autoUpdate={false}/>

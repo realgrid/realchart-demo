@@ -27,6 +27,9 @@ export const log10 = Math.log10;
 export const minv = Math.min;
 export const maxv = Math.max;
 export const absv = Math.abs;
+export const distance = function (x1: number, y1: number, x2: number, y2: number): number {
+    return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+}
 export const pickNum = function(v1: any, v2: any): number {
     v1 = parseFloat(v1);
     return !isNaN(v1) ? v1 : parseFloat(v2);

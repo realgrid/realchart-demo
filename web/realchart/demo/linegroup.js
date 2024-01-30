@@ -38,6 +38,7 @@ const config = {
                 null, 11164, 11218, 10077]
         }, {
             name: 'Other',
+            lineType: 'spline',
             marker: {},
             data: [21908, 5548, 8105, 11248, 8989, 11816, 18274,
                 17300, 13053, 11906, 10073]
@@ -64,11 +65,11 @@ function setActions(container) {
         chart.load(config, animate);
     }, 'default');
     createListBox(container, "Line Type", ['default', 'spline', 'step'], function (e) {
-        config.series.series.forEach(s => s.lineType = _getValue(e));
+        config.series.children.forEach(s => s.lineType = _getValue(e));
         chart.load(config, animate);
     }, 'default');
     createCheckBox(container, 'Point Marker', function (e) {
-        config.series.series.forEach(s => s.marker.visible = _getChecked(e));
+        config.series.children.forEach(s => s.marker.visible = _getChecked(e));
         chart.load(config, animate);
     }, true);
     createCheckBox(container, 'Inverted', function (e) {

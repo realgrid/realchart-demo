@@ -2,8 +2,8 @@
 title: "Pareto"
 ---
 import { RealChartReact } from "@/components/RealChart/RealChartReact";
-import { config, tool } from "@/templates/pareto";
+import { tool } from "@/templates/pareto";
 
 # Pareto
 			
-<RealChartReact config={config} tool={tool} showEditor={true} autoUpdate={false} />
+<RealChartReact configString="const config = %7B%0A%20%20title:%20'Pareto%20Series',%0A%20%20options:%20%7B%7D,%0A%20%20xAxis:%20%7B%20title:%20'X%20Axis'%20%7D,%0A%20%20yAxis:%20%5B%0A%20%20%20%20%7B%20title:%20'Y%20Axis'%20%7D,%0A%20%20%20%20%7B%0A%20%20%20%20%20%20minValue:%200,%0A%20%20%20%20%20%20maxValue:%20100,%0A%20%20%20%20%20%20padding:%200,%0A%20%20%20%20%20%20position:%20'opposite',%0A%20%20%20%20%20%20tick:%20%7B%20baseAxis:%200%20%7D,%0A%20%20%20%20%20%20grid:%20false,%0A%20%20%20%20%20%20label:%20%7B%20suffix:%20'%25'%20%7D%0A%20%20%20%20%7D%0A%20%20%5D,%0A%20%20series:%20%5B%0A%20%20%20%20%7B%0A%20%20%20%20%20%20name:%20'main',%0A%20%20%20%20%20%20pointLabel:%20true,%0A%20%20%20%20%20%20data:%20%5B%0A%20%20%20%20%20%20%20%20755,%20222,%20151,%2086,%0A%20%20%20%20%20%20%20%20%2072,%20%2051,%20%2036,%2010%0A%20%20%20%20%20%20%5D%0A%20%20%20%20%7D,%0A%20%20%20%20%7B%0A%20%20%20%20%20%20name:%20'pareto',%0A%20%20%20%20%20%20type:%20'pareto',%0A%20%20%20%20%20%20pointLabel:%20true,%0A%20%20%20%20%20%20curved:%20true,%0A%20%20%20%20%20%20source:%20'main',%0A%20%20%20%20%20%20yAxis:%201%0A%20%20%20%20%7D%0A%20%20%5D%0A%7D" tool={tool} showEditor={true} autoUpdate={false}/>

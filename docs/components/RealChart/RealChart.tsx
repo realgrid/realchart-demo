@@ -20,6 +20,8 @@ import {
   Flex,
 } from "@mantine/core";
 
+import beautify from 'js-beautify';
+
 import { createChart, getVersion } from "realchart";
 import { useEffect, useRef, useState } from "react";
 import "node_modules/realchart/dist/realchart-style.css";
@@ -35,7 +37,7 @@ import { Codepen } from "../Codepen/Codepen";
  * - ts에서는 ComponentType<{}>에 맞춰주기 위해 import(..).then(({Type}) => ({default: Type})) 으로 처리
  */
 
-type RealChartConfig = unknown;
+// type RealChartConfig = unknown;
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -84,17 +86,35 @@ const parseOptionsByConfig = (
   };
 };
 
+/**
+ * const config = {} 로 지정된 config object를 반환한다.
+ */
+const evalCode = (text: string) => {
+  try {
+    const found = text.indexOf('=');
+    const conf = text.slice(found + 1).trim();
+    return window['config'] = eval(`(() => {return ${conf};})()`);;
+  } catch(err) {
+    console.error(err);
+    return null;
+  }
+}
+
 export function RealChartReact({
-  config,
+  // config,
+  configString,
   tool,
   showEditor,
   autoUpdate,
 }: {
-  config: RealChartConfig;
+  // config: RealChartConfig;
+  configString: string;
   tool: unknown;
   showEditor: boolean;
   autoUpdate: boolean;
 }) {
+  configString = beautify(decodeURI(configString));
+  const config = evalCode(configString);
   const chartRef = useRef(null);
   const editorRef = useRef(null);
   const [chart, setChart] = useState(null);
@@ -120,26 +140,40 @@ export function RealChartReact({
   useEffect(() => {
     if (!chartRef.current) return;
     document.getElementById("realchart").innerHTML = "";
+
     const chart = createChart(document, chartRef.current, config);
     setChart(chart);
     window["chart"] = chart;
     setVersion(getVersion());
 
-    if (editorRef) {
-    }
-  }, [chartRef, editorRef]);
-
-  const handleDidMount = (editor, monaco) => {
-    // monaco.model.updateOptions({ tabSize: 2})
-    editorRef.current = editor;
-  };
+  }, [chartRef]);
 
   const handleSave = () => {
     chart.load(code);
   };
 
-  const onChangeEditor = (value, evnet) => {
-    setCode(JSON.parse(value));
+  const handleDidMount = (editor, monaco) => {
+    // ctrl(cmd) + s 로 적용
+    editor.addAction({
+      id: 'apply',
+      label: 'Apply',
+      keybindings: [
+        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
+      ],
+      run: ((ed) => {
+        // @TODO: 코드 개선
+        // handleSave에서 chart, code 변수를 사용할 수 없다.. 
+        window['chart']?.load(evalCode(ed.getValue()));
+      })
+    });
+
+    editorRef.current = editor;
+  };
+
+  const onChangeEditor = (value, event) => {
+    // 'const config =' 에서 뒷 문자열만 사용한다.
+    setCode(evalCode(value));
+    // setCode(value);
   };
 
   const applyChart = (option) => {
@@ -342,16 +376,16 @@ export function RealChartReact({
         >
           적용
         </Button>
-        {/* <Codepen config={config} /> */}
+        <Codepen configString={configString} />
       </Grid>
       {showEditor ? (
         <Grid>
           <Editor
             height="400px"
-            language="json"
+            language="javascript"
             // options - https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor.IStandaloneEditorConstructionOptions.html
             options={{ autoIndent: true }}
-            value={JSON.stringify(config, null, 2)}
+            value={configString}
             onChange={onChangeEditor}
             onMount={handleDidMount}
           />

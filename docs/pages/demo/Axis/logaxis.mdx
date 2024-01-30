@@ -2,8 +2,8 @@
 title: "Log Axis"
 ---
 import { RealChartReact } from "@/components/RealChart/RealChartReact";
-import { config, tool } from "@/templates/logaxis";
+import { tool } from "@/templates/logaxis";
 
 # Log Axis
 			
-<RealChartReact config={config} tool={tool} showEditor={true} autoUpdate={false} />
+<RealChartReact configString="const config = %7B%0A%20%20options:%20%7B%7D,%0A%20%20title:%20'Log%20Axis',%0A%20%20xAxis:%20%7B%20type:%20'log'%20%7D,%0A%20%20yAxis:%20%7B%20type:%20'log'%20%7D,%0A%20%20series:%20%7B%0A%20%20%20%20type:%20'line',%0A%20%20%20%20data:%20%5B%0A%20%20%20%20%20%20%201,%20%202,%20%20%204,%20%20%208,%20%2016,%0A%20%20%20%20%20%2032,%2064,%20128,%20256,%20512%0A%20%20%20%20%5D%0A%20%20%7D%0A%7D" tool={tool} showEditor={true} autoUpdate={false}/>

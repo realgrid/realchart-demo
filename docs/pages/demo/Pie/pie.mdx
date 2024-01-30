@@ -2,8 +2,8 @@
 title: "Pie"
 ---
 import { RealChartReact } from "@/components/RealChart/RealChartReact";
-import { config, tool } from "@/templates/pie";
+import { tool } from "@/templates/pie";
 
 # Pie
 			
-<RealChartReact config={config} tool={tool} showEditor={true} autoUpdate={false} />
+<RealChartReact configString="const config = %7B%0A%20%20title:%20'Pie%20Series',%0A%20%20options:%20%7B%7D,%0A%20%20legend:%20%7B%20position:%20'right',%20style:%20%7B%20marginRight:%20'20px'%20%7D%20%7D,%0A%20%20plot:%20%7B%7D,%0A%20%20series:%20%7B%0A%20%20%20%20type:%20'pie',%0A%20%20%20%20legendByPoint:%20true,%0A%20%20%20%20pointLabel:%20%7B%20visible:%20true,%20text:%20'$%7Bname%7D%20($%7By%7D)',%20style:%20%7B%7D%20%7D,%0A%20%20%20%20data:%20%5B%0A%20%20%20%20%20%20%7B%20name:%20'moon',%20y:%2053,%20sliced:%20true%20%7D,%0A%20%20%20%20%20%20%7B%20name:%20'yeon',%20y:%2097%20%7D,%0A%20%20%20%20%20%20%7B%20name:%20'lim',%20y:%2017%20%7D,%0A%20%20%20%20%20%20%7B%20name:%20'moon',%20y:%209%20%7D,%0A%20%20%20%20%20%20%7B%20name:%20'hong',%20y:%2013%20%7D,%0A%20%20%20%20%20%20%7B%20name:%20'america',%20y:%2023%20%7D,%0A%20%20%20%20%20%20%7B%20name:%20'asia',%20y:%2029%20%7D%0A%20%20%20%20%5D%0A%20%20%7D%0A%7D" tool={tool} showEditor={true} autoUpdate={false}/>

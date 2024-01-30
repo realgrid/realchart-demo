@@ -29,6 +29,7 @@ export const config = {
       {
         name: 'Sales & Distribution',
         marker: {},
+        hoverStyle: { fill: 'white', stroke: 'blue', strokeWidth: '3px' },
         data: [
           11744, 30000, 16005,
           19771, 20185, 24377,
@@ -48,6 +49,7 @@ export const config = {
       },
       {
         name: 'Other',
+        lineType: 'spline',
         marker: {},
         data: [
           21908,  5548,  8105,

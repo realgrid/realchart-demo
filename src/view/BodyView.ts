@@ -24,7 +24,7 @@ import { AxisBreak, ContinuousAxis, LinearAxis } from "../model/axis/LinearAxis"
 import { Gauge, GaugeBase } from "../model/Gauge";
 import { ChartElement } from "./ChartElement";
 import { GaugeView } from "./GaugeView";
-import { IPointView, SeriesView } from "./SeriesView";
+import { IPointView, MarkerSeriesPointView, SeriesView } from "./SeriesView";
 import { CircleGaugeGroupView, CircleGaugeView } from "./gauge/CircleGaugeView";
 import { ClockGaugeView } from "./gauge/ClockGaugeView";
 import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
@@ -974,7 +974,26 @@ export class BodyView extends ChartElement<Body> {
         if (pv) {
             this.$_setFocused(sv, pv, p);
         } else {
-            this.$_setFocused(null, null, p);
+            const hint = this.chart().options.pointHovering.hintDistance || 0;
+            let sv: SeriesView<Series>;
+            let pv: {pv: IPointView, dist: number};
+
+            this._seriesViews.forEach(sv2 => {
+                let pv2: {pv: IPointView, dist: number};
+
+                if ((sv2 instanceof LineSeriesBaseView || sv2 instanceof ScatterSeriesView || sv2 instanceof BubbleSeriesView) && sv2.model.nearHovering) {
+                    pv2 = sv2.getNearest(p.x, p.y);
+                }
+                if (!pv || pv2.dist < pv.dist) {
+                    sv = sv2;
+                    pv = pv2;
+                }
+            })
+            if (pv && (sv as any).canHover(pv.dist, pv.pv, hint)) {
+                this.$_setFocused(sv, pv.pv, p);
+            } else {
+                this.$_setFocused(null, null, p);
+            }
         }
         return inBody;
     }
@@ -990,12 +1009,10 @@ export class BodyView extends ChartElement<Body> {
         if (pv !== old) {
             let fs = this._focusedSeries;
 
-            // old && fs.setFocusPoint(old, false);
-            // pv && sv.setFocusPoint(pv, true);
-            // pv && sv.setFocusPoint2([pv], true);
             if (sv) {
                 sv.hoverPoints(sv.getSiblings(pv));
-            } else if (fs) {
+            } 
+            if (fs && fs !== sv) {
                 fs.hoverPoints(null);
             }
             this._focused = pv;
