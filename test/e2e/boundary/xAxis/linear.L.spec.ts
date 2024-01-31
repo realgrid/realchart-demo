@@ -28,7 +28,6 @@ test.describe("xAxis, linear test", () => {
         title: {
           visible: true,
         },
-        baseValue: 1000,
         label: {
           
         }
@@ -180,7 +179,7 @@ test.describe("xAxis, linear test", () => {
     await page.evaluate((newConfig) => {
       chart.load(newConfig, false).render();
     }, config);
-
+debugger
     await PWTester.testChartBySnapshot(page, testInfo);
   });
 
