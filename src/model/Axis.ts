@@ -632,7 +632,7 @@ export abstract class AxisTick extends AxisItem {
 
 export enum AxisLabelArrange {
     /**
-     * label들이 겹치도록 놔둔다.
+     * label들이 겹치도록 놔둔다.<br/>
      * // TODO: @{link overflow} 설정이 적용된다.
      * 
      * @config
@@ -645,8 +645,7 @@ export enum AxisLabelArrange {
      */
     ROTATE = 'rotate',
     /**
-     * label들이 겹치지 않도록 건너 뛰면서 배치한다.
-     * <br>
+     * label들이 겹치지 않도록 건너 뛰면서 배치한다.<br/>
      * {@link startStep}으로 지정된 step부터 배치된다.
      * 
      * @config
@@ -728,7 +727,7 @@ export abstract class AxisLabel extends IconedText {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * label 표시 간격.\
+     * label 표시 간격.<br/>
      * 1이면 모든 tick 표시. 2이면 하나씩 건너 띄어서 표시.
      * 2 이상일 때 {@link startStep}으로 지정된 step부터 배치된다.
      * 
@@ -742,20 +741,20 @@ export abstract class AxisLabel extends IconedText {
      */
     startStep = 0;
     /**
-     * 수평 축일 때 tick label 배치 행 수.\
+     * 수평 축일 때 tick label 배치 행 수.<br/>
      * 1은 한 줄, 2면 두 줄 등으로 여러 줄로 나눠서 표시한다.
      * 
      * @config
      */
     rows = 0;
     /**
-     * {@link autoArrange} {@link AxisLabelArrange.ROWS}로 자동 정렬되는 경우 최대 행 수.
+     * {@link autoArrange} {@link AxisLabelArrange.ROWS}로 자동 정렬되는 경우 최대 행 수.<br/>
      * 이 행 수 이상이 필요한 경우 label 간격을 두어 표시한다.
      * // TODO: 구현할 것!
      */
     maxRows = 3;
     /**
-     * 수평 축일 때, tick label 표시 회전 각도.
+     * 수평 축일 때, tick label 표시 회전 각도.<br/>
      * -90 ~ 90 사이의 각도로 지정할 수 있다.
      * 
      * @config
@@ -818,7 +817,7 @@ export abstract class AxisLabel extends IconedText {
      */
     overflowGap = 12;
     /**
-     * 축 tick 라벨에 표시될 텍스트를 리턴한다.\
+     * 축 tick 라벨에 표시될 텍스트를 리턴한다.<br/>
      * undefined나 null을 리턴하면 {@link text} 속성 등에 설정된 값으로 표시하거나,
      * 값에 따라 자동 생성되는 텍스트를 사용한다.
      * 빈 문자열 등 정상적인 문자열을 리턴하면 그 문자열대로 표시된다. 
@@ -828,7 +827,7 @@ export abstract class AxisLabel extends IconedText {
      */    
     textCallback: (args: IAxisLabelArgs) => string;
     /**
-     * 라벨 별로 추가 적용되는 스타일을 리턴한다.\
+     * 라벨 별로 추가 적용되는 스타일을 리턴한다.<br/>
      * 기본 설정을 따르게 하고 싶으면 undefined나 null을 리턴한다.
      * 
      * @config
@@ -904,30 +903,27 @@ export interface IAxisTick {
 
 export enum AxisPosition {
     /**
-     * 상대 축에 따라 위치를 조정한다.
+     * 상대 축에 따라 위치를 조정한다.<br/>
      * x축이 reversed이면 y축이 반대 쪽에 표시되고,
      * y축이 reversed이면 x축이 반대 쪽에 표시된다.
      */
     AUTO = 'auto',
     /**
-     * X축은 아래쪽에 수평으로, Y축은 왼쪽에 수직으로 표시된다.
-     * <br>
+     * X축은 아래쪽에 수평으로, Y축은 왼쪽에 수직으로 표시된다.<br/>
      * {@link Chart.inverted}이면 Y축이 아래쪽에 수평으로, X축은 왼쪽에 수직으로 표시된다.
      * 
      * @config
      */
     NORMAL = 'normal',
     /**
-     * X축은 위쪽에 수평으로, Y축은 오른쪽에 수직으로 표시된다.
-     * <br>
+     * X축은 위쪽에 수평으로, Y축은 오른쪽에 수직으로 표시된다.<br/>
      * {@link Chart.inverted}이면 Y축이 위쪽에 수평으로, X축은 오른쪽에 수직으로 표시된다.
      * 
      * @config
      */
     OPPOSITE = 'opposite',
     /**
-     * 상대 축의 baseValue 지점에 표시된다.
-     * <br>
+     * 상대 축의 baseValue 지점에 표시된다.<br/>
      * [주의] 
      * 1. 축에 연결된 시리즈들이 BarSeries 계열일 때만 가능하다.
      * 2. 차트의 X축 하나에만 적용할 수 있다. 두번째로 지정된 축의 속성은 {@link NORMAL}로 적용된다.
@@ -1090,8 +1086,8 @@ export class AxisSectorLine extends AxisLine {
 }
 
 /**
- * 축 모델.\
- * 차트에서 축을 명식적으로 지정하지 않으면, 첫번째 시리즈에 합당한 축이 기본 생성된다.\
+ * 축 모델.<br/>
+ * 차트에서 축을 명식적으로 지정하지 않으면, 첫번째 시리즈에 합당한 축이 기본 생성된다.<br/>
  * {@link guide.axes 축 개요} 페이지를 참조한다.
  * @config chart.axis[base]
  */
@@ -1187,7 +1183,7 @@ export abstract class Axis extends ChartItem implements IAxis {
      */
     label: AxisLabel;
     /**
-     * visible 기본값이 undefined이다.
+     * visible 기본값이 undefined이다.<br/>
      * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
      * @config
      */
@@ -1222,7 +1218,7 @@ export abstract class Axis extends ChartItem implements IAxis {
      */
     startAngle = 0;
     /**
-     * Polar 차트에서 사용될 때 원호 전체 각도.
+     * Polar 차트에서 사용될 때 원호 전체 각도.<br/>
      * 0 ~ 360 사이의 값으로 지정해야 한다.
      * 범위를 벗어난 값은 범위 안으로 조정된다.
      * 지정하지 않거나 잘못된 값이면 360으로 계산된다.
@@ -1274,7 +1270,7 @@ export abstract class Axis extends ChartItem implements IAxis {
      */
     unit: string;
     /**
-     * 축에 포함된 시리즈들 툴팁의 위쪽에 표시되는 텍스트.
+     * 축에 포함된 시리즈들 툴팁의 위쪽에 표시되는 텍스트.<br/>
      * 
      * tooltipHeader
      * tooltipRow,

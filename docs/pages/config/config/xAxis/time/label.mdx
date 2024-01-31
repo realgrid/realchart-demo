@@ -6,10 +6,10 @@
 기본 설정이나 [step](#step) , [rows](#rows) , [rotation](#rotation) 속성들을 명시적으로 설정한 경우에도
 label들이 본래 차지하는 공간을 초과할 때,
 label들을 재배치하는 방식을 지정한다.  
-- `'none'` label들이 겹치도록 놔둔다.
+- `'none'` label들이 겹치도록 놔둔다.<br/>
 - `'rotate'` -45도 회전시킨다.
 - `'rows'` label들이 겹치지 않도록 여러 줄로 나누어 배치한다.
-- `'step'` label들이 겹치지 않도록 건너 뛰면서 배치한다.     [startStep](#startStep) 으로 지정된 step부터 배치된다.
+- `'step'` label들이 겹치지 않도록 건너 뛰면서 배치한다.<br/> [startStep](#startStep) 으로 지정된 step부터 배치된다.
 
 <DefaultValue value="'rotate'" contents=""></DefaultValue>
 ### autoContrast: `boolean{:js}`[#autoContrast]
@@ -144,20 +144,18 @@ label이 숫자일 때 표시 형식.
 label 문자열 앞에 추가되는 문자열.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### rotation: `number{:js}`[#rotation]
-수평 축일 때, tick label 표시 회전 각도.
+수평 축일 때, tick label 표시 회전 각도.<br/>
 -90 ~ 90 사이의 각도로 지정할 수 있다.  
 <DefaultValue value="undefined" contents=""></DefaultValue>
 ### rows: `number{:js}`[#rows]
-수평 축일 때 tick label 배치 행 수.
-
+수평 축일 때 tick label 배치 행 수.<br/>
 1은 한 줄, 2면 두 줄 등으로 여러 줄로 나눠서 표시한다.  
 <DefaultValue value="0" contents=""></DefaultValue>
 ### startStep: `number{:js}`[#startStep]
 step이 2 이상이 될 때, 표시가 시작되는 label 위치.  
 <DefaultValue value="0" contents=""></DefaultValue>
 ### step: `number{:js}`[#step]
-label 표시 간격.
-
+label 표시 간격.<br/>
 1이면 모든 tick 표시. 2이면 하나씩 건너 띄어서 표시.
 2 이상일 때 [startStep](#startstep) 으로 지정된 step부터 배치된다.  
 <DefaultValue value="0" contents=""></DefaultValue>

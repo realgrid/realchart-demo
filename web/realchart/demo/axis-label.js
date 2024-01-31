@@ -77,6 +77,10 @@ function setActions(container) {
         config.xAxis.label.step = +_getValue(e);
         chart.load(config);
     }, '0');
+    createListBox(container, "X.startStep", ['0', '1', '2', '3'], function (e) {
+        config.xAxis.label.startStep = +_getValue(e);
+        chart.load(config);
+    }, '0');
     createListBox(container, "X.label.rows", ['0', '1', '2', '3'], function (e) {
         config.xAxis.label.rows = +_getValue(e);
         chart.load(config);
