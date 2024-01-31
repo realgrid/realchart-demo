@@ -5,8 +5,7 @@ export const config = {
     type: 'time',
     title: 'Time',
     crosshair: true,
-    padding: 0,
-    tick: true
+    padding: 0
   },
   yAxis: { title: 'Hestavollane' },
   series: {

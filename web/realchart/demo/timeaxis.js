@@ -15,7 +15,6 @@ const config = {
         // label: {
         //     lastOverflow: 'pull'
         // },
-        tick: true
     },
     // yAxis: {
     //     title: 'Temparature'

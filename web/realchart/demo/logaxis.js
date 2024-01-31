@@ -3,22 +3,19 @@
  * 
  */
 const config = {
+    options: {
+        // animatable: false
+    },
     title: "Log Axis",
     xAxis: {
         type: 'log',
-        label: {
-            firstStyle: {
-                fill: 'gray',
-                fontSize: '24px'
-            }
-        }
     },
     yAxis: {
         type: 'log'
     },
     series: {
         type: 'line',
-        data: [1, 2, 4, 8, 16]
+        data: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
     }
 }
 

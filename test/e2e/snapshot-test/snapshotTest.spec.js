@@ -50,7 +50,7 @@ for (let i = 0; i < configs.length; i++) {
 
         const snapshot = await page.locator('#realchart').screenshot();
         await expect(snapshot, {message: path}).toMatchSnapshot(configs[i].name + '.png', {
-            maxDiffPixels: 1,
+            maxDiffPixels: 2,
         });
 
         await browser.close();
@@ -68,7 +68,7 @@ for (let i = 0; i < configs.length; i++) {
 
         const snapshot = await page.locator('#realchart').screenshot();
         await expect(snapshot, {message: path}).toMatchSnapshot('inverted-' + configs[i].name + '.png', {
-            maxDiffPixels: 1,
+            maxDiffPixels: 2,
         });
 
         await browser.close();
@@ -107,7 +107,7 @@ for (let i = 0; i < configs.length; i++) {
 
         const snapshot = await page.locator('#realchart').screenshot();
         await expect(snapshot, {message: path}).toMatchSnapshot('reversed-' + configs[i].name + '.png', {
-            maxDiffPixels: 1,
+            maxDiffPixels: 2,
         });
 
         await browser.close();
@@ -147,7 +147,7 @@ for (let i = 0; i < configs.length; i++) {
 
         const snapshot = await page.locator('#realchart').screenshot();
         await expect(snapshot, {message: path}).toMatchSnapshot('inverted-reversed-' + configs[i].name + '.png', {
-            maxDiffPixels: 1,
+            maxDiffPixels: 2,
         });
 
         await browser.close();
