@@ -1,4 +1,5 @@
 {
   "globals": "Globals",
-  "classes": "Classes"
+  "classes": "Classes",
+  "interfaces": "Interfaces"
 }

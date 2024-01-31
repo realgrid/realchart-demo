@@ -843,9 +843,11 @@ ${ctor}
         if (t.properties.some((p) => p.description && p.description.trim().length > 0))
           tableHead.push("Description");
         const tableBody = t.properties.map((n) => {
+          var _a2;
           const params = [escape(n.name), this.linker(n.type || "any", [n.type || "any"]), escape(n.value || "N/A")];
-          if (tableHead.includes("Description"))
-            params.push(n.description || "N/A");
+          if (tableHead.includes("Description")) {
+            params.push(((_a2 = n.description) == null ? void 0 : _a2.replace(/\\n/g, "<br/>").replace(/\\/g, "<br/>")) || "N/A");
+          }
           return params;
         });
         return `
@@ -1055,7 +1057,6 @@ function createDocumentation(options) {
           return escape(t);
         const linkKeys = Object.entries(links);
         const linkTypes = /* @__PURE__ */ __name((type) => {
-          var _a2;
           type = escape(type);
           for (const [li, val] of linkKeys) {
             if (li.toLowerCase() === type.toLowerCase()) {
@@ -1063,8 +1064,8 @@ function createDocumentation(options) {
               return hyl;
             }
           }
-          const isClass = (_a2 = data == null ? void 0 : data.children) == null ? void 0 : _a2.some((c) => c.name.toLowerCase() === type.toLowerCase());
-          return isClass ? hyperlink(type, `../classes/${type}`) : type;
+          const clsOrItf = type.startsWith("Rc") ? "classes" : type.startsWith("IRc") ? "interfaces" : "";
+          return clsOrItf ? hyperlink(type, `../${clsOrItf}/${type}`) : type;
         }, "linkTypes");
         const linked = r.map((p) => linkTypes(p)).join(" &#124; ");
         return linked;
