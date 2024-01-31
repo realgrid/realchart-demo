@@ -152,7 +152,9 @@ label 문자열 앞에 추가되는 문자열.
 1은 한 줄, 2면 두 줄 등으로 여러 줄로 나눠서 표시한다.  
 <DefaultValue value="0" contents=""></DefaultValue>
 ### startStep: `number{:js}`[#startStep]
-step이 2 이상이 될 때, 표시가 시작되는 label 위치.  
+step이 2 이상이 될 때, 표시가 시작되는 label 위치.<br/>
+0 ~ [step](#step) - 1 사이의 값으로 지정한다.
+<Content type="expression" value="'category'"></Content> 축에서 의미있게 사용할 수 있다.  
 <DefaultValue value="0" contents=""></DefaultValue>
 ### step: `number{:js}`[#step]
 label 표시 간격.<br/>

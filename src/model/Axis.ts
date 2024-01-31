@@ -737,6 +737,7 @@ export abstract class AxisLabel extends IconedText {
     /**
      * step이 2 이상이 될 때, 표시가 시작되는 label 위치.<br/>
      * 0 ~ {@link step} - 1 사이의 값으로 지정한다.
+     * 'category' 축에서 의미있게 사용할 수 있다.
      * 
      * @config
      */
