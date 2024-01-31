@@ -32,8 +32,7 @@ const config = {
             pointLabel: true,
             // pointWidth: '100%',
             // colorByPoint: true,
-            data: [111],
-            data2: [
+            data: [
                 155, 138, 97, 89, 122, 133, 114, 113, 123, 77, 121, 231,
                 135, 138, 97, 89, 122, 133, 114, 113, 123, 77, 121, 131
             ],

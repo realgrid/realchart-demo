@@ -60,11 +60,12 @@ import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
 import { LabelElement } from "../common/impl/LabelElement";
 import { CircleBarSeriesView } from "./series/CircleBarSeriesView";
-import { cos, maxv, minv, pickNum, sin } from "../common/Common";
+import { cos, floor, maxv, minv, pickNum, sin } from "../common/Common";
 import { ArcPolyElement } from "../common/impl/CircleElement";
 import { SectorElement } from "../common/impl/SectorElement";
 import { SvgShapes } from "../common/impl/SvgShape";
 import { Utils } from "../common/Utils";
+import { CategoryAxis } from "../model/axis/CategoryAxis";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -791,6 +792,10 @@ class CrosshairView extends PathElement {
                 } else {
                     xVal = axis.xValueAt(horz ? x : height - y);
                 }
+            }
+            if (axis instanceof CategoryAxis) {
+                console.log(x, xVal, floor(xVal));
+                xVal = floor(xVal);
             }
 
             // TODO: scrolling

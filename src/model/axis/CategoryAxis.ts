@@ -249,7 +249,9 @@ export class CategoryAxis extends Axis {
     xValueAt(pos: number): number {
         for (let i = 2; i < this._pts.length - 1; i++) {
             if (pos >= this._pts[i - 1] && pos < this._pts[i]) {
-                return (this._zoom ? this._zoom.start : this._catMin) + i - 2;
+                // TODO: _zoom.start는 소숫점일 수 있다. 현재 카테고리 중간은 표시하지 않는다. (linear는 표시한다.)
+                // return (this._zoom ? this._zoom.start : this._catMin) + i - 2;
+                return this._catMin + i - 2;
             }
         }
         return -1;

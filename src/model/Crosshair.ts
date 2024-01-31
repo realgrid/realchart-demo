@@ -154,7 +154,8 @@ export class Crosshair extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     isBar(): boolean {
-        return !this.axis.continuous() && this.type === CrosshairType.AUTO;
+        return !this.axis.continuous() && this.type !== CrosshairType.LINE;
+        // return !this.axis.continuous() && this.type === CrosshairType.AUTO;
         // return this.type === CrosshairType.BAR || !this.axis.continuous() && this.type === CrosshairType.AUTO;
     }
 
