@@ -558,3 +558,24 @@ export interface IAnnotationFadeInAnimtaion extends IAnnotationAnimation {
 
 export interface IAnnotationZoomInAnimtaion extends IAnnotationAnimation {
 }
+
+export enum ExportType {
+    /** @config */
+    PNG = 'png',
+    /** @config */
+    JPEG = 'jpeg',
+    /** @config */
+    SVG = 'svg',
+    /** @config */
+    PDF = 'pdf',
+    /** @config */
+    PRINT = 'print',
+}
+
+export interface RealChartExporter {
+    exportToImage: (dom: HTMLElement, options: any, type: any) => void;
+    exportToSvg: (dom: HTMLElement, options: any) => void;
+    exportToPrint: (dom: HTMLElement, options: any) => void;
+    // exportToPDF: (dom: HTMLElement, options: any) => void;
+    render: (doc: Document, dom: HTMLElement, options: any) => void;
+}

@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ChartControl } from "../ChartControl";
+import { ExportType } from "../common/Types";
 import { Annotation } from "../model/Annotation";
 import { Axis } from "../model/Axis";
 import { Body } from "../model/Body";
@@ -45,19 +46,6 @@ function getObject(map: Map<any, any>, obj: ChartItem): RcChartObject {
     }
 }
 
-export enum ImageType {
-    /** @config */
-    PNG = 'png',
-    /** @config */
-    JPEG = 'jpeg',
-}
-
-export interface RealChartExporter {
-    exportImage: (dom: HTMLElement, options: any, type: ImageType) => void;
-    // print: (options) => void;
-    render: (options: any) => void;
-}
-
 /**
  * RealChart 컨트롤.
  */
@@ -70,7 +58,6 @@ export class RcChartControl {
             return getObject(this._objects, model);
         },
     };
-    private _exporter: RealChartExporter;
 
     /** 
      * @internal 
@@ -100,11 +87,6 @@ export class RcChartControl {
         const model = this.$_p.model;
         model._proxy = this._proxy;
 
-        const realChartExporter = window['RealChartExporter'];
-        if (realChartExporter) {
-            this._exporter = realChartExporter.render(this.$_p.doc(), this.$_p.dom(), model.exportOptions);
-        };
-
         this._objects.clear();
         return this;
     }
@@ -117,7 +99,6 @@ export class RcChartControl {
      */
     render(): void {
         this.$_p.refresh();
-        this._exporter && this._exporter.render(this.$_p.model.exportOptions);
     }
     /**
      * 첫번째 x 축.
@@ -303,8 +284,24 @@ export class RcChartControl {
     /**
      * 차트를 이미지 파일로 다운로드한다.
      */
-    exportImage(type = ImageType.PNG) {
+    export(type = ExportType.PNG) {
         const model = this.$_p.model;
-        this._exporter && this._exporter.exportImage(this.$_p.dom(), model.exportOptions, type);
+        if (!model || !this.$_p._exporter) return;
+
+        const dom = this.$_p.dom();
+        const options = model.exportOptions;
+
+        switch (type) {
+            case ExportType.PNG:
+            case ExportType.JPEG:
+                this.$_p._exporter.exportToImage(dom, options, type);
+                break;
+            case ExportType.SVG:
+                this.$_p._exporter.exportToImage(dom, options, type);
+                break;
+            case ExportType.PRINT:
+                this.$_p._exporter.exportToPrint(dom, options);
+                break;
+        }
     }
 }

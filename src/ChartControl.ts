@@ -9,7 +9,7 @@
 import { isObject } from "./common/Common";
 import { RcControl, RcElement } from "./common/RcControl";
 import { IRect } from "./common/Rectangle";
-import { _undef } from "./common/Types";
+import { RealChartExporter, _undef } from "./common/Types";
 import { Annotation } from "./model/Annotation";
 import { Axis } from "./model/Axis";
 import { Chart, IChartEventListener } from "./model/Chart";
@@ -18,6 +18,7 @@ import { DataPoint } from "./model/DataPoint";
 import { Series } from "./model/Series";
 import { ChartPointerHandler } from "./tool/PointerHandler";
 import { ChartView } from "./view/ChartView";
+
 
 export class ChartControl extends RcControl implements IChartEventListener {
 
@@ -30,6 +31,7 @@ export class ChartControl extends RcControl implements IChartEventListener {
     private _model: Chart;
     private _chartView: ChartView;
     private _loadCallback: () => void;
+    _exporter: RealChartExporter;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -108,7 +110,6 @@ export class ChartControl extends RcControl implements IChartEventListener {
         this.model = new Chart(config);
         this.model._loadAnimatable = loadAnimation;
         this._loadCallback = callback;
-
     }
 
     refresh(): void {
@@ -133,6 +134,8 @@ export class ChartControl extends RcControl implements IChartEventListener {
             this.setData('palette', model.options.palette);
 
             model.prepareRender();
+            this._loadModules();
+            this._prepareModules();
         }
         if (!this.loaded) {
             view.clean();
@@ -163,6 +166,19 @@ export class ChartControl extends RcControl implements IChartEventListener {
                 }
             }
         }
+    }
+
+    private _loadModules(): void {
+        if (!this._exporter) {
+            const realChartExporter = window['$$_RealChartExporter'];
+            if (realChartExporter) {
+                this._exporter = realChartExporter;
+            }
+        }
+    }
+
+    private _prepareModules(): void {
+        this._exporter && this._exporter.render(this.doc(), this.dom(), this.model.exportOptions);
     }
 
     //-------------------------------------------------------------------------

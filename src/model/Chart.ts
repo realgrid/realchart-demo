@@ -8,7 +8,7 @@
 
 import { isArray, isObject, isString, mergeObj, pickProp3, assign } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
-import { Align, SectionDir, VerticalAlign, _undef } from "../common/Types";
+import { Align, ExportType, SectionDir, VerticalAlign, _undef } from "../common/Types";
 import { AssetCollection } from "./Asset";
 import { Axis, AxisCollection, IAxis, PaneXAxisMatrix, PaneYAxisMatrix } from "./Axis";
 import { Body } from "./Body";
@@ -430,18 +430,6 @@ export class ChartOptions extends ChartItem {
     }
 }
 
-export enum ExportType {
-    /** @config */
-    PNG = 'png',
-    /** @config */
-    JPEG = 'jpeg',
-    /** @config */
-    SVG = 'svg',
-    /** @config */
-    PDF = 'pdf',
-    /** @config */
-    PRINT = 'print',
-}
 
 export interface IExportOptions {
     //-------------------------------------------------------------------------
@@ -468,7 +456,7 @@ export interface IExportOptions {
      */
     scale?: number;
     /**
-     * 내보내기 실패시 api요청을 보낼 경로
+     * 내보내기 실패시 api요청을 보낼 url
      */
     url?: string;
     /**
