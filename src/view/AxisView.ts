@@ -891,44 +891,44 @@ export class AxisView extends ChartElement<Axis> {
         return 2;
     }
 
-    private $_checkOverlappedHorz(axis: Axis, views: AxisLabelView[], width: number, step: number, rows: number, rotation: number): boolean {
-        const nView = views.length;
-        const inc = maxv(1, step) * maxv(1, rows);
-        const a = rotation || 0;
-        const arad = absv(a) * DEG_RAD;
-        const acute = arad < 35 * DEG_RAD;
-        let overalpped = false;
+    // private $_checkOverlappedHorz(axis: Axis, views: AxisLabelView[], width: number, step: number, rows: number, rotation: number): boolean {
+    //     const nView = views.length;
+    //     const inc = maxv(1, step) * maxv(1, rows);
+    //     const a = rotation || 0;
+    //     const arad = absv(a) * DEG_RAD;
+    //     const acute = arad < 35 * DEG_RAD;
+    //     let overalpped = false;
 
-        views.forEach(v => v.rotation = a);
+    //     views.forEach(v => v.rotation = a);
 
-        for (let i = 0; i < nView; i += inc) {
-            let w = 0;
-            let j = i;
+    //     for (let i = 0; i < nView; i += inc) {
+    //         let w = 0;
+    //         let j = i;
 
-            for (; j < i + inc && j < nView; j++) {
-                w += axis.getLabelLength(width, views[j].value);
-            }
+    //         for (; j < i + inc && j < nView; j++) {
+    //             w += axis.getLabelLength(width, views[j].value);
+    //         }
 
-            // [주의] 끝 차투리는 무시한다.
-            if (i + inc < nView) {
-                if (a === 0 && views[i].getBBox().width >= w) {
-                    overalpped = true;
-                    break;
-                } else if (acute && views[i].getBBox().width * cos(arad) >= w) {
-                    overalpped = true;
-                    break;
-                } 
-                // 30도 이상의 둔각이면 text 높이를 기준으로 한다.
-                else if  (a !== 0 && views[i].getBBox().height >= w) {
-                // } else if  (a !== 0 && views[i].getBBounds().width * cos(arad) >= w) {
-                // } else if  (a !== 0 && (views[i].getBBounds().width + views[i].getBBounds().height) * cos(arad) >= w) {
-                    overalpped = true;
-                    break;
-                }
-            }
-        }
-        return overalpped;
-    }
+    //         // [주의] 끝 차투리는 무시한다.
+    //         if (i + inc < nView) {
+    //             if (a === 0 && views[i].getBBox().width >= w) {
+    //                 overalpped = true;
+    //                 break;
+    //             } else if (acute && views[i].getBBox().width * cos(arad) >= w) {
+    //                 overalpped = true;
+    //                 break;
+    //             } 
+    //             // 30도 이상의 둔각이면 text 높이를 기준으로 한다.
+    //             else if  (a !== 0 && views[i].getBBox().height >= w) {
+    //             // } else if  (a !== 0 && views[i].getBBounds().width * cos(arad) >= w) {
+    //             // } else if  (a !== 0 && (views[i].getBBounds().width + views[i].getBBounds().height) * cos(arad) >= w) {
+    //                 overalpped = true;
+    //                 break;
+    //             }
+    //         }
+    //     }
+    //     return overalpped;
+    // }
 
     private $_checkOverlappedHorz2(axis: Axis, views: ElementPool<AxisLabelView>, width: number, step: number, rows: number, rotation: number, checkOnly: boolean, init: boolean): boolean {
         const labels = axis.label;

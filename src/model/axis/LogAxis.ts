@@ -48,11 +48,12 @@ export class LogAxisTick extends ContinuousAxisTick {
         let gap = max - min;
 
         for (let i = 0; i < steps.length; i++) {
+            const len = pts.length;
             let v = steps[i];
             let f = floor(v);
 
             if (v === f) {
-                let v2 = pts[pts.length - 1];
+                let v2 = pts[len - 1];
                 if (i > 1 && v - v2 < gap) {
                     v2 = Math.pow(10, v2);
                     // 간격 좁고 정수가 아니면 뺀다.
@@ -64,8 +65,10 @@ export class LogAxisTick extends ContinuousAxisTick {
             } else  if (v > 0 && v > f) {
                 v = f + log10((v - f) * 10);
                 if (v <= max) {
-                    pts.push(v);
-                } else if (i > 0) {
+                    if (len === 0 || v > pts[len - 1]) {
+                        pts.push(v);
+                    }
+                } else if (len > 0) {
                     if (pts[i - 1] >= max) {
                         break;
                     } else {
@@ -87,12 +90,12 @@ export class LogAxisTick extends ContinuousAxisTick {
                         pts.push(v);
                     }
                 }
-            } else if (i > 0 && v <= max && v > pts[pts.length - 1]) {
+            } else if (i > 0 && v <= max && v > pts[len - 1]) {
                 pts.push(v);
             } else if (v > max) {
                 break;
             }
-            if (i > 0) {
+            if (pts.length > 1) {
                 gap = Math.min(0.5, gap, pts[pts.length - 1] - pts[pts.length - 2]);
             }
         }

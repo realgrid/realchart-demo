@@ -1772,9 +1772,9 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
             }
             if (d) {
                 if (d !== this._cdata) {
-                    if (this._cdata) this._cdata.removeListener(this);
+                    this._cdata && this._cdata.removeListener(this);
                     this._cdata = d;
-                    if (this._cdata) this._cdata.addListener(this);
+                    this._cdata && this._cdata.addListener(this);
                 }
                 return d._internalValues();
             }

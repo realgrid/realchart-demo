@@ -14,8 +14,10 @@ export const setLogging = Globals.setLogging;
 export const setAnimatable = Globals.setAnimatable;
 export const createChart = Globals.createChart;
 export const createData = Globals.createData;
-export {IRcChartDataOptions} from './data/ChartData';
 
+export {
+    IRcChartDataOptions
+} from './data/ChartData';
 export { 
     RcChartData 
 } from "./api/RcChartData";
