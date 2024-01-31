@@ -245,4 +245,31 @@ test.describe("xAxis, category test", () => {
 
     await PWTester.testChartBySnapshot(page, testInfo);
   });
+
+  test("suffix", async ({ page }, testInfo) => {
+    config.xAxis.categories = shortCategories;
+    config.xAxis.label = {
+      suffix: "suffix"
+    };
+
+    await page.evaluate((newConfig) => {
+      chart.load(newConfig, false).render();
+    }, config);
+
+    await PWTester.testChartBySnapshot(page, testInfo);
+  });
+
+  test("rich text", async ({ page }, testInfo) => {
+    config.xAxis.categories = shortCategories;
+    config.xAxis.label = {
+      text: "<t style='fill: red; font-weight: bold'>rich text</t>"
+    };
+
+    await page.evaluate((newConfig) => {
+      chart.load(newConfig, false).render();
+    }, config);
+
+    await PWTester.testChartBySnapshot(page, testInfo);
+  });
+  
 });
