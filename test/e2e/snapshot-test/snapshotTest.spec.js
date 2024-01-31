@@ -48,6 +48,8 @@ for (let i = 0; i < configs.length; i++) {
         const config = ${configs[i].config};
         chart.load(config, false)`);
 
+        // poll pie예제 imageUrl이미지가 나오기 전 스크린샷을 찍기때문에 아래 코드 추가
+        await page.mainFrame().waitForLoadState("networkidle");
         const snapshot = await page.locator('#realchart').screenshot();
         await expect(snapshot, {message: path}).toMatchSnapshot(configs[i].name + '.png', {
             maxDiffPixels: 2,
@@ -66,6 +68,8 @@ for (let i = 0; i < configs.length; i++) {
         config.inverted = !config.inverted;
         chart.load(config, false)`);
 
+        // poll pie예제 imageUrl이미지가 나오기 전 스크린샷을 찍기때문에 아래 코드 추가
+        await page.mainFrame().waitForLoadState("networkidle");
         const snapshot = await page.locator('#realchart').screenshot();
         await expect(snapshot, {message: path}).toMatchSnapshot('inverted-' + configs[i].name + '.png', {
             maxDiffPixels: 2,
@@ -105,6 +109,8 @@ for (let i = 0; i < configs.length; i++) {
         }
         chart.load(config, false)`);
 
+        // poll pie예제 imageUrl이미지가 나오기 전 스크린샷을 찍기때문에 아래 코드 추가
+        await page.mainFrame().waitForLoadState("networkidle");
         const snapshot = await page.locator('#realchart').screenshot();
         await expect(snapshot, {message: path}).toMatchSnapshot('reversed-' + configs[i].name + '.png', {
             maxDiffPixels: 2,
@@ -145,6 +151,8 @@ for (let i = 0; i < configs.length; i++) {
         }
         chart.load(config, false)`);
 
+        // poll pie예제 imageUrl이미지가 나오기 전 스크린샷을 찍기때문에 아래 코드 추가
+        await page.mainFrame().waitForLoadState("networkidle");
         const snapshot = await page.locator('#realchart').screenshot();
         await expect(snapshot, {message: path}).toMatchSnapshot('inverted-reversed-' + configs[i].name + '.png', {
             maxDiffPixels: 2,
