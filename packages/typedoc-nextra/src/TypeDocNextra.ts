@@ -139,7 +139,9 @@ export class TypeDocNextra {
                       const tableBody = t.properties.map((n) => {
                           const params = [escape(n.name), this.linker(n.type || 'any', [n.type || 'any']), escape(n.value || 'N/A')];
 
-                          if (tableHead.includes('Description')) params.push(n.description || 'N/A');
+                          if (tableHead.includes('Description')) { 
+                            params.push(n.description?.replace(/\\n/g, '<br/>').replace(/\\/g, '<br/>') || 'N/A');
+                          }
 
                           return params;
                       });

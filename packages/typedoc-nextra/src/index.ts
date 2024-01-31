@@ -145,8 +145,8 @@ export async function createDocumentation(options: TypeDocNextraInit): Promise<D
                         return hyl;
                     }
                 }
-                const isClass = data?.children?.some(c => c.name.toLowerCase() === type.toLowerCase());
-                return isClass ? hyperlink(type, `../classes/${type}`) : type;
+                const clsOrItf = type.startsWith('Rc') ? 'classes' : type.startsWith('IRc') ? 'interfaces' : '';
+                return clsOrItf ? hyperlink(type, `../${clsOrItf}/${type}`) : type;
             };
 
             // 특수문자 '|'는 md 파일에서 테이블 구분자이다. 대체 문자 사용.

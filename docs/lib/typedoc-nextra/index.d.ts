@@ -34,7 +34,7 @@ declare function heading<T extends string>(src: T, type: 5): `##### ${T}`;
 declare function heading<T extends string>(src: T, type: 6): `###### ${T}`;
 declare function headingId<T extends string, U extends string>(src: T, id: U, type?: HeadingTypes): `<h${HeadingTypes} id="${U}">${T}</h${HeadingTypes}>`;
 declare function code<T extends string>(src: T): `\`${T}\``;
-declare function codeBlock<T extends string, U extends string>(src: T, lang?: U): `\`\`\`${U}\n${T}\n\`\`\`` | `\`\`\`\n${T}\n\`\`\``;
+declare function codeBlock<T extends string, U extends string>(src: T, lang?: U): `\`\`\`\n${T}\n\`\`\`` | `\`\`\`${U}\n${T}\n\`\`\``;
 declare function bold<T extends string>(src: T): `**${T}**`;
 declare function italic<T extends string>(src: T): `*${T}*`;
 declare function strikethrough<T extends string>(src: T): `~~${T}~~`;

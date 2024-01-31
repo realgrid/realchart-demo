@@ -23,7 +23,7 @@ point label 모델.
 시리즈에 설정된 데이터포인트들 중 표시 중인 것들의 개수.<br/>
 
 ## Methods
-### addPoint(source): IRcDataPoint[#addPoint]
+### addPoint(source): [IRcDataPoint](../interfaces/IRcDataPoint)[#addPoint]
 데이터포인트를 추가한다.
 
 
@@ -31,7 +31,7 @@ point label 모델.
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | source | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 데이터포인트 원본 정보. |
-### addPoints(source): [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) &#124; \< &#124; IRcDataPoint &#124; >[#addPoints]
+### addPoints(source): [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) &#124; \< &#124; [IRcDataPoint](../interfaces/IRcDataPoint) &#124; >[#addPoints]
 하나 이상의 데이터포인트들을 추가한다.
 
 
@@ -60,7 +60,7 @@ Utils.log(chart.axis.get('title.text'));
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | '**.**'으로 구분되는 속성 경로. |
-### getPointAt(xValue): IRcDataPoint[#getPointAt]
+### getPointAt(xValue): [IRcDataPoint](../interfaces/IRcDataPoint)[#getPointAt]
 지정한 x축 값에 위치한 첫번째 데이터포인트의 정보를 리턴한다.<br/>
 전달되는 데이터포인트 정보는 리턴 시점의 복사본이다.
 
@@ -76,7 +76,7 @@ xValue에 해당하는 첫번째 데이터포인터의 yValue를 리턴한다.
 
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
-| xValue | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) &#124; IRcDataPoint | x값 혹은 x,y값이 포함된 데이터포인트 정보. x축이 category 축이면 카테고리 이름을 지정할 수 있다. |
+| xValue | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) &#124; [IRcDataPoint](../interfaces/IRcDataPoint) | x값 혹은 x,y값이 포함된 데이터포인트 정보. x축이 category 축이면 카테고리 이름을 지정할 수 있다. |
 | prop=`'yValue'` | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 가져올 값. 지정하지 않으면 'yValue'. |
 ### removePoint(xValue): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)[#removePoint]
 데이터포인트를 제거한다.
@@ -85,7 +85,7 @@ xValue에 해당하는 첫번째 데이터포인터의 yValue를 리턴한다.
 
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
-| xValue | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) &#124; IRcDataPoint | 제거할 데이터포인트의 x값 혹은 카테고리 이름. 또는 getPointAt이나 findPoint로 가져온 데이터포인트 정보 객체. |
+| xValue | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) &#124; [IRcDataPoint](../interfaces/IRcDataPoint) | 제거할 데이터포인트의 x값 혹은 카테고리 이름. 또는 getPointAt이나 findPoint로 가져온 데이터포인트 정보 객체. |
 ### removePoints(xValues): [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)[#removePoints]
 하나 이상의 데이터포인트들을 제거한다.
 
@@ -93,7 +93,7 @@ xValue에 해당하는 첫번째 데이터포인터의 yValue를 리턴한다.
 
 | Parameter | Type |
 | ----------- | ----------- |
-| xValues | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) &#124; \< &#124; [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) &#124; IRcDataPoint &#124; > |
+| xValues | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) &#124; \< &#124; [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) &#124; [IRcDataPoint](../interfaces/IRcDataPoint) &#124; > |
 ### set(prop, value, redraw): [RcChartObject](../classes/RcChartObject)[#set]
 지정한 속성의 값(들)을 설정한다.<br/>
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다.<br/>
@@ -174,5 +174,5 @@ chart.series.updatePoint(x, v + 10);
 
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
-| xValue | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) &#124; IRcDataPoint | x값. x축이 category 축이면 카테고리 이름을 지정할 수 있다. |
+| xValue | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) &#124; [IRcDataPoint](../interfaces/IRcDataPoint) | x값. x축이 category 축이면 카테고리 이름을 지정할 수 있다. |
 | values | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 변경할 단일 값, 배열, 또는 json. |

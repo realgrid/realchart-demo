@@ -56,14 +56,14 @@ x축이 원호에, y축은 방사선에 위치하고, 아래의 제한 사항이
 ### destroy(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#destroy]
 차트 SVG를 부모 div에서 제거하고 관련 모델들도 제거한다.<br/>
 이 후로는 기존 컨트롤을 사용할 수 없다.
-### exportImage(type): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#exportImage]
+### export(type): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#export]
 차트를 이미지 파일로 다운로드한다.
 
 
 
 | Parameter | Type |
 | ----------- | ----------- |
-| type=`ImageType.PNG` | ImageType |
+| type=`ExportType.PNG` | ExportType |
 ### getAnnotation(name): [RcAnnotation](../classes/RcAnnotation)[#getAnnotation]
 Annotation 이름에 해당하는 Annotation 객체를 리턴한다.
 
@@ -106,7 +106,7 @@ name 매개변수가 문자열이면 지정한 이름의 y 축을,
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | name | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | 이름이나 index |
-### load(config, animate?, callback?): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#load]
+### load(config, animate?, callback?): [RcChartControl](../classes/RcChartControl)[#load]
 기존 설정 모델을 제거하고 새로운 설정으로 차트를 재구성한다.
 
 
@@ -121,14 +121,12 @@ name 매개변수가 문자열이면 지정한 이름의 y 축을,
 | ----------- | ----------- |
 | series | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [RcChartSeries](../classes/RcChartSeries) |
 | animate=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) |
-### render(now): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#render]
-차트를 다시 그린다.
-
-
-
-| Parameter | Type | Description |
-| ----------- | ----------- | ----------- |
-| now=`false` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 즉시 차트 SVG를 디시 구축한다. |
+### render(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#render]
+다음 rendering frame을 기다리지 않고, 차트를 즉시 다시 그린다.<br/>
+차트 rendering 작업은 자원 소모가 많고 소용 시간도 적지 않으므로,
+data나 여러 모델을 수정하는 경우 모든 작업이 완료된 후 한 번 호출해야 한다.
+가능하면 이 함수는 호출하지 않고 
+차트 기본 동작(다음 frame에 이전 변경 사항들을 모아서 한 번 rendering)으로 실행되게 해야 한다.
 ### setParam(param, value, redraw?): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#setParam]
 | Parameter | Type |
 | ----------- | ----------- |
