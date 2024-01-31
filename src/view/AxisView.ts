@@ -932,6 +932,7 @@ export class AxisView extends ChartElement<Axis> {
 
     private $_checkOverlappedHorz2(axis: Axis, views: ElementPool<AxisLabelView>, width: number, step: number, rows: number, rotation: number, checkOnly: boolean, init: boolean): boolean {
         const labels = axis.label;
+        const start = maxv(0, minv(step - 1, labels.startStep || 0));
         const ticks = axis._ticks;
         const nView = ticks.length;
         const inc = (step = maxv(1, step)) * (rows = maxv(1, rows));
@@ -943,7 +944,7 @@ export class AxisView extends ChartElement<Axis> {
         let v: AxisLabelView;
 
         for (let r = 0; r < rows; r++) {
-            let i = r * step;
+            let i = r * step + start; // #535
 
             for (; i < nView; i += inc) {
                 let w = 0;
@@ -999,7 +1000,7 @@ export class AxisView extends ChartElement<Axis> {
 
     private $_applyStep(axis: Axis, views: AxisLabelView[], step: number): AxisLabelView[] {
         const m = axis.label;
-        const start = maxv(0, m.startStep || 0);
+        const start = maxv(0, minv(step - 1, m.startStep || 0)); // 535
             
         views.forEach(v => v.index = -1);
         for (let i = start; i < views.length; i += step) {

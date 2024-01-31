@@ -735,7 +735,8 @@ export abstract class AxisLabel extends IconedText {
      */
     step = 0;
     /**
-     * step이 2 이상이 될 때, 표시가 시작되는 label 위치.
+     * step이 2 이상이 될 때, 표시가 시작되는 label 위치.<br/>
+     * 0 ~ {@link step} - 1 사이의 값으로 지정한다.
      * 
      * @config
      */
