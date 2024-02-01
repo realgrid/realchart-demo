@@ -289,7 +289,7 @@ export class RcChartControl {
         if (!model || !this.$_p._exporter) return;
 
         const dom = this.$_p.dom();
-        const options = model.exportOptions;
+        const options = model.export;
 
         switch (type) {
             case ExportType.PNG:

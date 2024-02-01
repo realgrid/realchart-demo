@@ -73,7 +73,7 @@ export interface IChart {
     _xPaneAxes: PaneXAxisMatrix;
     _yPaneAxes: PaneYAxisMatrix;
     options: ChartOptions;
-    exportOptions: IExportOptions;
+    export: IExport;
     first: IPlottingItem;
     firstSeries: Series;
     xAxis: IAxis;
@@ -431,7 +431,7 @@ export class ChartOptions extends ChartItem {
 }
 
 
-export interface IExportOptions {
+export interface IExport {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
@@ -439,6 +439,10 @@ export interface IExportOptions {
      * 표시 여부 지정
      */
     visible?: boolean
+    /**
+     * 내보내기를 라이브러리를 사용하여 진행할지 여부 지정
+     */
+    useLibrary?: boolean
     /**
      * 내보내기 메뉴에 포함할 export type
      */
@@ -456,7 +460,7 @@ export interface IExportOptions {
      */
     scale?: number;
     /**
-     * 내보내기 실패시 api요청을 보낼 url
+     * 이미지 형식으로 변환하는 서버 모듈의 URL입니다. 기본적으로 이는 Highchart의 무료 웹 서비스를 가리킵니다.
      */
     url?: string;
     /**
@@ -515,10 +519,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _body: Body;
     private _annotations: AnnotationCollection;
     private _navigator: SeriesNavigator;
-    private _exportOptions = {
+    private _export = {
         visible: true,
         useLibrary: false,
-        menus: [ExportType.PNG, ExportType.JPEG],
+        menus: [ExportType.PNG, ExportType.JPEG, ExportType.SVG],
         // menus: [ExportType.PNG, ExportType.JPEG, ExportType.SVG, ExportType.PDF, ExportType.PRINT],
         fileName: 'realchart',
         scale: 1,
@@ -695,8 +699,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._options;
     }
 
-    get exportOptions(): IExportOptions {
-        return this._exportOptions;
+    get export(): IExport {
+        return this._export;
     }
 
     get title(): Title {
@@ -964,7 +968,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._options.load(source.options);
 
         // options
-        Object.assign(this._exportOptions, source.exportOptions);
+        Object.assign(this._export, source.exportOptions);
 
         // titles
         this._title.load(source.title);

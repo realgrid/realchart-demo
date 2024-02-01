@@ -178,7 +178,7 @@ export class ChartControl extends RcControl implements IChartEventListener {
     }
 
     private _prepareModules(): void {
-        this._exporter && this._exporter.render(this.doc(), this.dom(), this.model.exportOptions);
+        this._exporter && this._exporter.render(this.doc(), this.dom(), this.model.export);
     }
 
     //-------------------------------------------------------------------------

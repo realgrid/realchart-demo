@@ -1,0 +1,49 @@
+# 내보내기
+
+현재 표시 중인  차트를 PNG, JPG 또는 SVG 벡터 이미지로 다운로드할 수 있습니다.  
+내보내기를 활성화하려면 모듈을 포함해야 합니다.
+
+<img src="/images/guide/export-01.png" class="border-img"/>
+
+## 설치
+
+realchart-export 모듈은 npm package로 설치한 후 import 하거나,
+
+```sh npm2yarn
+npm install realchart-export
+```
+
+```ts
+import 'realchart/dist/realchart-export.js';
+import 'realchart/dist/realchart-export.css';
+```
+
+우리테크 사이트에서 내려 받아 html에서 직접 include할 수 있다.
+
+```html
+<link href="./styles/realchart-export.css" rel="stylesheet">
+<script src = "./lib/realchart-export/index.js">
+```
+
+## 설정
+
+차트 설정의 최상위 [export](/config/config/export) 항목으로 설정한다.
+
+```js
+const config = {
+    export: {
+        useLibrary: true,
+        menus: ['png', 'jpeg', 'svg'],
+        hideScrollbar: true,
+        hideNavigator: true,
+        hideZoomButton: true,
+        ...
+    }
+};
+```
+
+## API
+
+### See Also
+
+- [API 개요](/docs)

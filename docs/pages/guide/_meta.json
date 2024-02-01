@@ -12,7 +12,7 @@
     "assets": "에셋(Assets)",
     "style": "스타일(Styles)",
     "split": "분할 모드(Split)",
-    "exporting": "내보내기(Exporting)",
+    "export": "내보내기(Export)",
     "---": {
         "type": "separator",
         "title": "More"
