@@ -48,6 +48,18 @@
                 "${file}"
             ],
             "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "dldoc:dev",
+            "args": [
+                "dldoc.js"
+            ],
+            "env": {
+                "NODE_ENV": "dev"
+            },
+            "internalConsoleOptions": "openOnSessionStart"
         }
     ]
 }
