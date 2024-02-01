@@ -20,16 +20,24 @@ const config: DocsThemeConfig = {
   primaryHue: 207,
   sidebar: {
     // defaultMenuCollapseLevel: 10000,
-    titleComponent({ title: _title, type,  route }) {
-      if (route.indexOf('/config/config') >= 0) {
+    titleComponent({ title, type,  route }) {
+
+      
+      if (route.startsWith('/config/config')) {
         const [opt] = route.split('/').slice(3);
-        const [title] = route.split('/').slice(-1);
-        let prefix = ['xAxis', 'yAxis', 'series', 'gauge', 'annotation', 'asset'].some(v => opt == title && opt == v ) ? '[]' : '';
-        return <>{title}{prefix}</>;
+        const [chartType] = route.split('/').slice(-1);
+        let prefix = ['xAxis', 'yAxis', 'series', 'gauge', 'annotation', 'asset'].some(v => opt == chartType && opt == v ) ? '[]' : '';
+        return <>{chartType}{prefix}</>;
+      } else if (route.startsWith('/guide/series/')) {
+        const icon = '📊';
+        return <>{icon} {title}</>
+      } else if (route.startsWith('/guide/gauges/')) {
+        const icon = '';
+        return <>{icon} {title}</>
       } else if (type == 'separator') {
-        return <>{_title}</>;
-       } else {
-        return <>{_title}</>;
+        return <>{title}</>;
+      } else {
+        return <>{title}</>;
       }
     }
   },
