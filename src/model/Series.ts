@@ -200,7 +200,7 @@ export interface IPlottingItem {
     getVisiblePoints(): DataPoint[];
     getLegendSources(list: ILegendSource[]): void;
     needAxes(): boolean;
-    isEmpty(visibleOnly): boolean;
+    isEmpty(visibleOnly: boolean): boolean;
     canCategorized(): boolean;
     defaultYAxisType(): string;
     isClusterable(): boolean;

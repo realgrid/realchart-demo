@@ -7,6 +7,9 @@ const config = {
         // animatable: false
     },
     title: "Bubble Series",
+    tooltip: {
+        followPointer: true
+    },
     xAxis: {
         title: 'xAxis'
     },
