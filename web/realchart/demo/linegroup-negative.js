@@ -1,98 +1,250 @@
 /**
  * @demo
- * 
+ *
  */
 const config = {
     type: 'line',
-    title: "Line Group - Negative",
-    options: {
-        // inverted: true,
-    },
+    title: 'Line Group - Negative',
     xAxis: {
-        title: "일일 Daily fat",
-        categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도']
+        categories: Array.from({ length: 30 }, (_, i) => i + 1 + '일')
     },
     yAxis: {
-        title: "Vertical 수직축 Axis",
-        // reversed: true,
-        // minValue: -20,
-        // baseValue: -20
+        title: 'Vertical 수직축 Axis'
     },
-    series: [{
-        // layout: 'stack',
-        children: [{
-            name: 'column1',
-            pointLabel: {
-                visible: true,
-                position: 'inside',
-                effect: 'outline'
-            },
-            belowStyle: {
-                stroke: 'red',
-                fill: 'red'
-            },
-                // pointWidth: '100%',
-            data: [11, 22, 15, 9, 13, 27]
-        }, {
-            name: 'column2',    
-            pointWidth: 2,
-            pointLabel: {
-                visible: true,
-                position: 'inside',
-                effect: 'outline'
-            },
-            belowStyle: {
-                stroke: 'red',
-                fill: 'red'
-            },
-            data: [15, -19, 19, -6, 21, 21]
-        }, {
-            name: 'column3',
-            color: 'blue',
-            pointLabel: {
-                visible: true,
-                position: 'inside',
-                effect: 'outline'
-            },
-            belowStyle: {
-                stroke: 'red',
-                fill: 'red'
-            },
-            data: [13, 17, 15, -11, 23, 17]
-        }]
-    }]
-}
+    series: [
+        {
+            children: [
+                {
+                    name: '2020년',
+                    type: 'line',
+                    marker: false,
+                    belowStyle: {
+                        stroke: 'red',
+                        fill: 'red'
+                    },
+                    data: [
+                        { x: '1일', y: '4.7' },
+                        { x: '2일', y: '2.0' },
+                        { x: '3일', y: '-1.6' },
+                        { x: '4일', y: '1.8' },
+                        { x: '5일', y: '-0.2' },
+                        { x: '6일', y: '-1.8' },
+                        { x: '7일', y: '12.2' },
+                        { x: '8일', y: '2.3' },
+                        { x: '9일', y: '4.1' },
+                        { x: '10일', y: '11.2' },
+                        { x: '11일', y: '9.3' },
+                        { x: '12일', y: '13.9' },
+                        { x: '13일', y: '3.3' },
+                        { x: '14일', y: '9.4' },
+                        { x: '15일', y: '9.7' },
+                        { x: '16일', y: '12.2' },
+                        { x: '17일', y: '3.6' },
+                        { x: '18일', y: '2.3' },
+                        { x: '19일', y: '6.6' },
+                        { x: '20일', y: '8.9' },
+                        { x: '21일', y: '0.2' },
+                        { x: '22일', y: '5.9' },
+                        { x: '23일', y: '3.9' },
+                        { x: '24일', y: '2.0' },
+                        { x: '25일', y: '0.0' },
+                        { x: '26일', y: '4.8' },
+                        { x: '27일', y: '11.0' },
+                        { x: '28일', y: '14.0' },
+                        { x: '29일', y: '7.8' },
+                        { x: '30일', y: '7.4' }
+                    ]
+                },
+                {
+                    name: '2021년',
+                    type: 'line',
+                    marker: false,
+                    belowStyle: {
+                        stroke: 'red',
+                        fill: 'red'
+                    },
+                    data: [
+                        { x: '1일', y: '0.2' },
+                        { x: '2일', y: '6.8' },
+                        { x: '3일', y: '14.8' },
+                        { x: '4일', y: '14.1' },
+                        { x: '5일', y: '-1.7' },
+                        { x: '6일', y: '4.0' },
+                        { x: '7일', y: '13.7' },
+                        { x: '8일', y: '13.7' },
+                        { x: '9일', y: '3.9' },
+                        { x: '10일', y: '11.5' },
+                        { x: '11일', y: '7.4' },
+                        { x: '12일', y: '8.4' },
+                        { x: '13일', y: '7.7' },
+                        { x: '14일', y: '14.6' },
+                        { x: '15일', y: '6.9' },
+                        { x: '16일', y: '-2.7' },
+                        { x: '17일', y: '1.5' },
+                        { x: '18일', y: '8.1' },
+                        { x: '19일', y: '-1.3' },
+                        { x: '20일', y: '1.0' },
+                        { x: '21일', y: '2.2' },
+                        { x: '22일', y: '4.9' },
+                        { x: '23일', y: '-2.4' },
+                        { x: '24일', y: '3.6' },
+                        { x: '25일', y: '11.5' },
+                        { x: '26일', y: '4.7' },
+                        { x: '27일', y: '6.6' },
+                        { x: '28일', y: '2.7' },
+                        { x: '29일', y: '10.0' },
+                        { x: '30일', y: '3.6' }
+                    ]
+                },
+                {
+                    name: '2022년',
+                    type: 'line',
+                    marker: false,
+                    belowStyle: {
+                        stroke: 'red',
+                        fill: 'red'
+                    },
+                    color: 'green',
+                    data: [
+                        { x: '1일', y: '-1.2' },
+                        { x: '2일', y: '6.7' },
+                        { x: '3일', y: '3.9' },
+                        { x: '4일', y: '6.4' },
+                        { x: '5일', y: '0.6' },
+                        { x: '6일', y: '-0.1' },
+                        { x: '7일', y: '10.6' },
+                        { x: '8일', y: '8.1' },
+                        { x: '9일', y: '1.3' },
+                        { x: '10일', y: '12.4' },
+                        { x: '11일', y: '11.7' },
+                        { x: '12일', y: '3.3' },
+                        { x: '13일', y: '13.3' },
+                        { x: '14일', y: '4.8' },
+                        { x: '15일', y: '10.5' },
+                        { x: '16일', y: '5.4' },
+                        { x: '17일', y: '13.0' },
+                        { x: '18일', y: '-2.2' },
+                        { x: '19일', y: '-1.9' },
+                        { x: '20일', y: '5.4' },
+                        { x: '21일', y: '10.0' },
+                        { x: '22일', y: '-2.0' },
+                        { x: '23일', y: '9.7' },
+                        { x: '24일', y: '5.2' },
+                        { x: '25일', y: '12.0' },
+                        { x: '26일', y: '14.9' },
+                        { x: '27일', y: '12.5' },
+                        { x: '28일', y: '11.2' },
+                        { x: '29일', y: '12.5' },
+                        { x: '30일', y: '8.1' }
+                    ]
+                },
+                {
+                    name: '2023년',
+                    type: 'line',
+                    marker: false,
+                    belowStyle: {
+                        stroke: 'red',
+                        fill: 'red'
+                    },
+                    data: [
+                        { x: '1일', y: '18.9도' },
+                        { x: '2일', y: '22.29도' },
+                        { x: '3일', y: '20.04도' },
+                        { x: '4일', y: '17.5도' },
+                        { x: '5일', y: '17.75도' },
+                        { x: '6일', y: '12.95도' },
+                        { x: '7일', y: '6.75도' },
+                        { x: '8일', y: '8.95도' },
+                        { x: '9일', y: '12.15도' },
+                        { x: '10일', y: '4.8도' },
+                        { x: '11일', y: '2.4도' },
+                        { x: '12일', y: '1.85도' },
+                        { x: '13일', y: '2.25도' },
+                        { x: '14일', y: '5도' },
+                        { x: '15일', y: '7.25도' },
+                        { x: '16일', y: '6.55도' },
+                        { x: '17일', y: '2도' },
+                        { x: '18일', y: '0.95도' },
+                        { x: '19일', y: '6.55도' },
+                        { x: '20일', y: '7.3도' },
+                        { x: '21일', y: '8.1도' },
+                        { x: '22일', y: '9도' },
+                        { x: '23일', y: '8.25도' },
+                        { x: '24일', y: '-1.1도' },
+                        { x: '25일', y: '-0.95도' },
+                        { x: '26일', y: '3.55도' },
+                        { x: '27일', y: '6.85도' },
+                        { x: '28일', y: '0.5도' },
+                        { x: '29일', y: '-1.6도' },
+                        { x: '30일', y: '-3.2도' }
+                    ]
+                }
+            ]
+        }
+    ]
+};
 
 let animate = false;
 let chart;
 
 function setActions(container) {
-    createCheckBox(container, 'Debug', function (e) {
-        RealChart.setDebugging(_getChecked(e));
-        chart.render();
-    }, false);
-    createCheckBox(container, 'Always Animate', function (e) {
-        animate = _getChecked(e);
-    }, false);
-    createButton(container, 'Test', function(e) {
+    createCheckBox(
+        container,
+        'Debug',
+        function (e) {
+            RealChart.setDebugging(_getChecked(e));
+            chart.render();
+        },
+        false
+    );
+    createCheckBox(
+        container,
+        'Always Animate',
+        function (e) {
+            animate = _getChecked(e);
+        },
+        false
+    );
+    createButton(container, 'Test', function (e) {
         alert('hello2');
     });
-    createListBox(container, "layout", ['default', 'stack', 'fill', 'overlap'], function (e) {
-        config.series[0].layout = _getValue(e);
-        chart.load(config, animate);
-    }, 'default');
-    createCheckBox(container, 'Inverted', function (e) {
-        config.inverted = _getChecked(e);
-        chart.load(config, animate);
-    }, false);
-    createCheckBox(container, 'X Reversed', function (e) {
-        config.xAxis.reversed = _getChecked(e);
-        chart.load(config, animate);
-    }, false);
-    createCheckBox(container, 'Y Reversed', function (e) {
-        config.yAxis.reversed = _getChecked(e);
-        chart.load(config, animate);
-    }, false);
+    createListBox(
+        container,
+        'layout',
+        ['default', 'stack', 'fill', 'overlap'],
+        function (e) {
+            config.series[0].layout = _getValue(e);
+            chart.load(config, animate);
+        },
+        'default'
+    );
+    createCheckBox(
+        container,
+        'Inverted',
+        function (e) {
+            config.inverted = _getChecked(e);
+            chart.load(config, animate);
+        },
+        false
+    );
+    createCheckBox(
+        container,
+        'X Reversed',
+        function (e) {
+            config.xAxis.reversed = _getChecked(e);
+            chart.load(config, animate);
+        },
+        false
+    );
+    createCheckBox(
+        container,
+        'Y Reversed',
+        function (e) {
+            config.yAxis.reversed = _getChecked(e);
+            chart.load(config, animate);
+        },
+        false
+    );
 }
 
 function init() {
@@ -101,5 +253,5 @@ function init() {
     RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
-    setActions('actions')
+    setActions('actions');
 }
