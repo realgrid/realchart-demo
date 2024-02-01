@@ -1,5 +1,26 @@
 {
     "series-bar": "Bar Series",
     "series-line": "Line Series",
-    "series-pie": "Pie Series"
+    "series-area": "Area Series",
+    "series-pie": "Pie Series",
+    "series-barrange": "Bar Range Series",
+    "series-arearange": "Area Range Series",
+    "series-bubble": "Bubble Series",
+    "series-scatter": "Scatter Series",
+    "series-candlestick": "Candlestick Series",
+    "series-ohlc": "Ohlc Series",
+    "series-dumbbell": "Dembbell Series",
+    "series-lollipop": "Lollipop Series",
+    "series-equalizer": "Equalizer Series",
+    "series-heatmap": "Heatmap Series",
+    "series-treemap": "Treemap Series",
+    "series-circlebar": "Circle Bar Series",
+    "series-boxplot": "Box Plot Series",
+    "series-waterfall": "Waterfall Series",
+    "series-vector": "Vecotr Series",
+    "series-pareto": "Pareto Series",
+    "series-errorbar": "Error Bar Series",
+    "series-histogram": "Histogram Series",
+    "series-bellcurve": "Bell Curve Series",
+    "series-funnel": "funnel Series"
 }
