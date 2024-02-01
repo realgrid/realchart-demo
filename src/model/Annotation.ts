@@ -144,6 +144,7 @@ export abstract class Annotation extends ChartItem {
     /**
      * body 어노테이션일 경우,
      * x 축을 기준으로 지정하는 수평(inverted일 때 수직) 위치.<br/>
+     * chart에 지정된 어노테이션에서는 무시된다.
      * 
      * @config
      */
@@ -151,6 +152,7 @@ export abstract class Annotation extends ChartItem {
     /**
      * body 어노테이션일 경우,
      * x 축을 기준으로 지정하는 수평(inverted일 때 수직) 위치.<br/>
+     * chart에 지정된 어노테이션에서는 무시된다.
      * 
      * @config
      */
@@ -158,6 +160,7 @@ export abstract class Annotation extends ChartItem {
     /**
      * body 어노테이션일 경우,
      * y 축을 기준으로 지정하는 수직(inverted일 때 수평) 위치.<br/>
+     * chart에 지정된 어노테이션에서는 무시된다.
      * 
      * @config
      */
@@ -165,6 +168,7 @@ export abstract class Annotation extends ChartItem {
     /**
      * body 어노테이션일 경우,
      * y 축을 기준으로 지정하는 수직(inverted일 때 수평) 위치.<br/>
+     * chart에 지정된 어노테이션에서는 무시된다.
      * 
      * @config
      */
