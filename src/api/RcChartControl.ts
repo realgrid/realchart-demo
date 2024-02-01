@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ChartControl } from "../ChartControl";
-import { ExportType } from "../common/Types";
+import { ExportType, IExportOptions } from "../common/Types";
 import { Annotation } from "../model/Annotation";
 import { Axis } from "../model/Axis";
 import { Body } from "../model/Body";
@@ -284,20 +284,20 @@ export class RcChartControl {
     /**
      * 차트를 이미지 파일로 다운로드한다.
      */
-    export(type = ExportType.PNG) {
+    export(options: IExportOptions) {
         const model = this.$_p.model;
         if (!model || !this.$_p._exporter) return;
 
         const dom = this.$_p.dom();
-        const options = model.export;
+        const config = model.export;
 
-        switch (type) {
+        switch (options.type) {
             case ExportType.PNG:
             case ExportType.JPEG:
-                this.$_p._exporter.exportToImage(dom, options, type);
+                this.$_p._exporter.exportToImage(dom, options, config);
                 break;
             case ExportType.SVG:
-                this.$_p._exporter.exportToImage(dom, options, type);
+                this.$_p._exporter.exportToImage(dom, options, config);
                 break;
             case ExportType.PRINT:
                 this.$_p._exporter.exportToPrint(dom, options);
