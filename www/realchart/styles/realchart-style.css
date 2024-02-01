@@ -219,7 +219,7 @@
     --rct-navigator-thumb-fill:#0098ff;
 }
 .rct-root[data-theme='dark'] {
-    --rct-focus-stroke: yellow;
+    --rct-focus-stroke: #ccc;
     --rct-text-fill: #fff;
 
     --rct-title-fill: #fff;
@@ -644,12 +644,13 @@
     transition-duration: 0.7s;
 }
 .rct-series[data-unfocus] {
-    opacity: 0.2;
+    opacity: 0.2 !important;
 }
-.rct-series .rct-point[data-focus] {
+.rct-series .rct-point[data-focus], .rct-point[data-unfocus] {
     stroke: var(--rct-focus-stroke) !important;
-    stroke-width: var(--rct-focus-stroke-width);
-    filter: brightness(115%);
+    stroke-width: var(--rct-focus-stroke-width) !important;
+    filter: brightness(115%) !important;
+    opacity: 1 !important;
 }
 .rct-point-labels {
     opacity: inherit;
@@ -657,7 +658,7 @@
     transition-duration: 0.7s;
 }
 .rct-point-labels[data-unfocus] {
-    opacity: 0.3;
+    opacity: 0.3 !important;
 }
 
 /** rct-point 대신 여기에 지정해야 outline에 반영된다. */
@@ -698,14 +699,6 @@
 .rct-line-series .rct-point {
     stroke-dasharray: none;
 }
-.rct-line-series .rct-point[data-focus] {
-    stroke: #0088ff20 !important; 
-    stroke-width: 9px !important;
-    opacity: inherit !important;
-    /** TODO: 아래가 적용되지 않고 있다 */
-    transition-property: opacity;
-    transition-duration: 0.7s;
-}
 .rct-line-series-flag {
     font-weight: bold;
     font-size: 0.9em;
@@ -742,6 +735,9 @@
 /** scatter series */
 .rct-scatter-series {
     fill-opacity: 0.7;
+}
+.rct-scatter-series .rct-point[data-focus] {
+    fill-opacity: 0.9;
 }
 
 /** boxplot series */
