@@ -794,7 +794,7 @@ class CrosshairView extends PathElement {
                 }
             }
             if (axis instanceof CategoryAxis) {
-                console.log(x, xVal, floor(xVal));
+                // console.log(x, xVal, floor(xVal));
                 xVal = floor(xVal);
             }
 
