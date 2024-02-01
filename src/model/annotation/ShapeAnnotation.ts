@@ -37,8 +37,8 @@ export class ShapeAnnotation extends Annotation {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart, inBody: boolean) {
-        super(chart, inBody);
+    constructor(chart: IChart, name: string, inBody: boolean) {
+        super(chart, name, inBody);
 
         this.width = this.height = 64;
     }

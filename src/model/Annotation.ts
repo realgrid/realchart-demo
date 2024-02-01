@@ -36,7 +36,8 @@ export enum AnnotationScope {
 };
 
 /**
- * Annotation 모델.
+ * Annotation 모델.<br/>
+ * 
  * @config chart.annotation[base]
  */
 export abstract class Annotation extends ChartItem {
@@ -60,8 +61,10 @@ export abstract class Annotation extends ChartItem {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart, public inBody: boolean) {
+    constructor(chart: IChart, name: string, public inBody: boolean) {
         super(chart, true);
+
+        this.name = name;
     }
 
     //-------------------------------------------------------------------------
@@ -200,48 +203,52 @@ export abstract class Annotation extends ChartItem {
     //-------------------------------------------------------------------------
     getSize(wDomain: number, hDomain: number): ISize {
         const inverted = this.chart.isInverted();
-        const x1 = +this.x1;
-        const x2 = +this.x2;
-        const y1 = +this.y1;
-        const y2 = +this.y2;
         let width: number;
         let height: number;
 
-        this._x = this._y = this._w = this._h = NaN;
+        if (this.inBody) {
+            const x1 = +this.x1;
+            const x2 = +this.x2;
+            const y1 = +this.y1;
+            const y2 = +this.y2;
 
-        if (!isNaN(x1)){
-            const axis = this.chart.xAxis;
+            this._x = this._y = this._w = this._h = NaN;
 
-            if (inverted) {
-                this._y = hDomain - axis.getPos(hDomain, x1);
-            } else {
-                this._x = axis.getPos(wDomain, x1);
-            }
-            if (!isNaN(x2)) {
+            if (!isNaN(x1)){
+                const axis = this.chart.xAxis;
+
                 if (inverted) {
-                    height = this._h = hDomain - axis.getPos(hDomain, x2) - this._y;
+                    this._y = hDomain - axis.getPos(hDomain, x1);
                 } else {
-                    width = this._w = axis.getPos(wDomain, x2) - this._x;
+                    this._x = axis.getPos(wDomain, x1);
+                }
+                if (!isNaN(x2)) {
+                    if (inverted) {
+                        height = this._h = hDomain - axis.getPos(hDomain, x2) - this._y;
+                    } else {
+                        width = this._w = axis.getPos(wDomain, x2) - this._x;
+                    }
+                }
+            }
+
+            if (!isNaN(y1)){
+                const axis = this.chart.yAxis;
+
+                if (inverted) {
+                    this._x = axis.getPos(wDomain, y1);
+                } else {
+                    this._y = hDomain - axis.getPos(hDomain, y1);
+                }
+                if (!isNaN(y2)) {
+                    if (inverted) {
+                        width = this._w = axis.getPos(wDomain, y2) - this._x;
+                    } else {
+                        height = this._h = hDomain - axis.getPos(hDomain, y2) - this._y;
+                    }
                 }
             }
         }
 
-        if (!isNaN(y1)){
-            const axis = this.chart.yAxis;
-
-            if (inverted) {
-                this._x = axis.getPos(wDomain, y1);
-            } else {
-                this._y = hDomain - axis.getPos(hDomain, y1);
-            }
-            if (!isNaN(y2)) {
-                if (inverted) {
-                    width = this._w = axis.getPos(wDomain, y2) - this._x;
-                } else {
-                    height = this._h = hDomain - axis.getPos(hDomain, y2) - this._y;
-                }
-            }
-        }
         if (isNaN(width)) {
             width = calcPercent(this._widthDim, wDomain);
         } else if (width < 0) {
