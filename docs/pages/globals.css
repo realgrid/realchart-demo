@@ -78,6 +78,12 @@ img {
     margin: 16px 10px;
 }
 
+img.sidebar {
+  margin: 0px;
+  padding: 4px;
+  width: 24px;
+}
+
 .border-img {
     border: 1px solid #0088ff20;
 }
