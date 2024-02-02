@@ -24,9 +24,9 @@
     "pdeploy": "npm run pbundle && node compress.js",
     "test": "npm run test:model && npm run test:pw",
     "test:chrome": "yarn dbundle && npm run test:model && npx playwright test --project=chromium",
-    "test:chrome2": "yarn dbundle && npm run test:model && npx playwright test --project=chromium --workers=100%",
-    "test:chrome3": "yarn dbundle && npm run test:model && npx playwright test --project=chromium --workers=200%",
-    "test:chrome4": "yarn dbundle && npm run test:model && npx playwright test --project=chromium --workers=300%",
+    "test:chrome1": "yarn dbundle && npm run test:model && npx playwright test --project=chromium --workers=100%",
+    "test:chrome2": "yarn dbundle && npm run test:model && npx playwright test --project=chromium --workers=200%",
+    "test:chrome3": "yarn dbundle && npm run test:model && npx playwright test --project=chromium --workers=300%",
     "test:model": "mocha --exit --timeout 10000 -r ts-node/register -r test/unit/dom-mock.js 'test/{,!(e2e)/**/}/*.spec.ts' 'test/unit/**/*Test*.ts'",
     "test:pw": "yarn dbundle && npx playwright test --trace on",
     "test:s2": "yarn dbundle && npx playwright test --trace on --project=chromium ./test/e2e/snapshot-test/snapshotTest.spec.js",
@@ -89,7 +89,5 @@
     "typedoc": "^0.25.3",
     "typescript": "^4.9.5",
     "vite": "^4.1.4"
-  },
-  "dependencies": {
   }
 }

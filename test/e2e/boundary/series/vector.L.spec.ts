@@ -313,7 +313,7 @@ test.describe('series, vector test', () => {
             return window.eventCnt;
         });
 
-        expect(count).is.equal(3);
+        expect(count).is.equal(6);
     });
 
     test('pointColors', async ({ page }, testInfo) => {

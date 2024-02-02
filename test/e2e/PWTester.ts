@@ -2,8 +2,9 @@ import { Page, ElementHandle, TestInfo, expect } from '@playwright/test';
 import { IPoint } from '../../src/common/Point';
 import { IRect } from '../../src/common/Rectangle';
 import { Chart } from '../../src/model/Chart';
+import { Tester } from '../unit/Tester';
 import path from 'path';
-export class PWTester {
+export class PWTester extends Tester {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------

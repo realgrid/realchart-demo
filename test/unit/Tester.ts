@@ -49,6 +49,15 @@ export class Tester {
         return control;
     }
 
+    /**
+     * 
+     * @param n 
+     * @returns [0...n-1]
+     */
+    static range(n: number): number[] {
+        return Array(n).fill(0).map((_, i) => i);
+    }
+
     static irandom(min: number, max?: number): number {
         if (max !== undefined) {
             const v1 = min >> 0;
