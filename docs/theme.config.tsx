@@ -21,7 +21,6 @@ const config: DocsThemeConfig = {
   sidebar: {
     // defaultMenuCollapseLevel: 10000,
     titleComponent({ title, type,  route }) {
-
       
       if (route.startsWith('/config/config')) {
         const [opt] = route.split('/').slice(3);
@@ -29,11 +28,18 @@ const config: DocsThemeConfig = {
         let prefix = ['xAxis', 'yAxis', 'series', 'gauge', 'annotation', 'asset'].some(v => opt == chartType && opt == v ) ? '[]' : '';
         return <>{chartType}{prefix}</>;
       } else if (route.startsWith('/guide/series/')) {
-        const icon = '📊';
-        return <>{icon} {title}</>
+        const [_, type] = route.split('-');
+        if (['bar', 'line', 'pie', 'scatter', 'area', 'treemap'].includes(type)) {
+          const src = `/icons/${type}.png`;
+          return <><img src={src} className="sidebar"/>{title}</>
+        } else {
+          const src = '/icons/series.png';
+          return <><img src={src} className="sidebar"/>{title}</>
+        }
+        // const icon = '📊';
       } else if (route.startsWith('/guide/gauges/')) {
-        const icon = '';
-        return <>{icon} {title}</>
+        const src = '/icons/gauge.png';
+        return <><img src={src} className="sidebar"/> {title}</>
       } else if (type == 'separator') {
         return <>{title}</>;
       } else {
