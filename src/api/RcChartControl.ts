@@ -282,7 +282,7 @@ export class RcChartControl {
     }
 
     /**
-     * 현재 표시 중인 차트를 PNG, JPG 또는 SVG 벡터 이미지로 다운로드 합니다.
+     * 현재 표시 중인 차트를 PNG, JPG 또는 SVG 벡터 이미지로 다운로드한다.
      * 
      * ```js
      * chart.export({

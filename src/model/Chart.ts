@@ -441,9 +441,9 @@ export interface IExport {
      */
     visible?: boolean
     /**
-     * 내보내기 버튼을 사용해 내보낸 차트에 사용할 확장자 없는 파일 이름입니다.
-     * export 함수를 호출할 때 fileName을 지정하지 않을 경우 이 속성이 적용되니다.
-     * fileName을 지정하지 않을 경우 realchart.type으로 다운로드 됩니다.
+     * 내보내기 버튼을 사용해 내보낸 차트에 사용할 확장자 없는 파일 이름.
+     * export 함수를 호출할 때 fileName을 지정하지 않을 경우 이 속성이 적용된다.
+     * fileName을 지정하지 않을 경우 realchart.type으로 다운로드 된다.
      * @config
      */
     fileName?: string;
@@ -456,7 +456,7 @@ export interface IExport {
      */
     menus?: ExportType[];
     /**
-     * 너비, 지정한 너비에 맞춰 높이가 결정됩니다.
+     * 너비, 지정한 너비에 맞춰 높이가 결정된다.
      */
     width?: number;
     /**
@@ -464,7 +464,8 @@ export interface IExport {
      */
     scale?: number;
     /**
-     * 이미지 형식으로 변환하는 서버 모듈의 URL입니다. 기본적으로 이는 Highchart의 무료 웹 서비스를 가리킵니다.
+     * 내보내기 도중 에러가 발생했을 때 처리할 서버 URL.
+     * 지정하지 않을경우 realchart 서버에서 처리합니다.
      */
     url?: string;
     /**

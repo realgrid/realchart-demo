@@ -574,14 +574,14 @@ export enum ExportType {
 
 export interface IExportOptions {
     /**
-     * 내보낸 차트에 사용할 확장자 입니다.
-     * type을 지정하지 않을 경우 png로 내보내기 됩니다.
+     * 내보낸 차트에 사용할 확장자.
+     * type을 지정하지 않을 경우 png로 내보내기 된다.
      * @config
      */
     type?: ExportType,
     /**
-     * 내보낸 차트에 사용할 확장자 없는 파일 이름입니다.
-     * fileName을 지정하지 않을 경우 realchart.type으로 다운로드 됩니다.
+     * 내보낸 차트에 사용할 확장자 없는 파일명.
+     * fileName을 지정하지 않을 경우 realchart.type으로 다운로드 된다.
      * @config
      */
     fileName?: string;

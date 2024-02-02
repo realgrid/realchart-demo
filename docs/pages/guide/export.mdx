@@ -1,7 +1,7 @@
 # 내보내기
 
-현재 표시 중인 차트를 PNG, JPG 또는 SVG 벡터 이미지로 다운로드할 수 있습니다.
-내보내기를 활성화하려면 export 모듈을 포함해야 합니다. 모듈이 활성화되면 아래 이미지처럼 우측 상단에 내보내기 메뉴 버튼이 표시됩니다.
+현재 표시 중인 차트를 PNG, JPG 또는 SVG 벡터 이미지로 다운로드할 수 있다.
+내보내기를 활성화하려면 export 모듈을 포함해야 한다. 모듈이 활성화되면 아래 이미지처럼 우측 상단에 내보내기 메뉴 버튼이 표시된다.
 
 <img src="/images/guide/export-01.png" class="border-img"/>
 
@@ -43,6 +43,13 @@ const config = {
 ```
 
 ## API
+
+```js
+chart.export({
+     type: 'png',
+     fileName: 'realchart'
+});
+```
 
 ### See Also
 
