@@ -13,6 +13,20 @@ Bar, Line 시리즈 등과 달리 축 설정이 필요 없는 시리즈이다.<b
 
 ## 설정
 
+```js
+const config = {
+    series: {
+        type: 'funnel',
+        data: [
+            { name: '웹사이트 방문', y: 13293 },   // [x(name), y]
+            { name: '장바구니 담기', y: 4729 }, 
+            { name: '결제제페이지', y: 2742}, 
+            { name: '구매 완료', y: 1391},
+        ]
+    }
+};
+```
+
 ### See Also
 
 - [시리즈 개요](/guide/series)

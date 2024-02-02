@@ -297,7 +297,6 @@ const config = {
     },
     series: [
         {
-            layout: 'fill',
             children: [
                 {
                     template: 'series',
@@ -348,7 +347,7 @@ function setActions(container) {
         'layout',
         ['default', 'stack', 'fill', 'overlap'],
         function (e) {
-            config.series.layout = _getValue(e);
+            config.series[0].layout = _getValue(e);
             chart.load(config, animate);
         },
         'default'
@@ -358,7 +357,7 @@ function setActions(container) {
         'Line Type',
         ['default', 'spline', 'step'],
         function (e) {
-            config.series.lineType = _getValue(e);
+            config.series[0].lineType = _getValue(e);
             chart.load(config, animate);
         },
         'default'
@@ -367,7 +366,7 @@ function setActions(container) {
         container,
         'Point Marker',
         function (e) {
-            config.series.children.forEach((s) => (s.marker.visible = _getChecked(e)));
+            config.series[0].children.forEach((s) => (s.marker.visible = _getChecked(e)));
             chart.load(config, animate);
         },
         true

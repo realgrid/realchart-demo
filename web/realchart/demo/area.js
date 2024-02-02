@@ -303,6 +303,8 @@ const config = {
         {
             template: 'series',
             name: '재학생',
+            marker: {},
+            pointLabel: {},
             data: data.map((d) => d.students)
         }
     ]
@@ -322,25 +324,6 @@ function setActions(container) {
     createButton(container, 'Test', function (e) {
         alert('hello');
     });
-    createListBox(
-        container,
-        'Line Type',
-        ['default', 'spline', 'step'],
-        function (e) {
-            config.series.lineType = _getValue(e);
-            chart.load(config);
-        },
-        'default'
-    );
-    createCheckBox(
-        container,
-        'Point Marker',
-        function (e) {
-            config.series.marker.visible = _getChecked(e);
-            chart.load(config);
-        },
-        true
-    );
     createCheckBox(
         container,
         'Inverted',
@@ -364,6 +347,34 @@ function setActions(container) {
         'Y Reversed',
         function (e) {
             config.yAxis.reversed = _getChecked(e);
+            chart.load(config);
+        },
+        false
+    );
+    createListBox(
+        container,
+        'Line Type',
+        ['default', 'spline', 'step'],
+        function (e) {
+            config.series[0].lineType = _getValue(e);
+            chart.load(config);
+        },
+        'default'
+    );
+    createCheckBox(
+        container,
+        'Point Marker',
+        function (e) {
+            config.series[0].marker.visible = _getChecked(e);
+            chart.load(config);
+        },
+        false
+    );
+    createCheckBox(
+        container,
+        'Point Label',
+        function (e) {
+            config.series[0].pointLabel.visible = _getChecked(e);
             chart.load(config);
         },
         false

@@ -26,7 +26,7 @@ const config = {
     },
     series: [
         {
-            type: 'area',
+            type: 'arearange',
             name: '11월 최고,최저 기온',
             belowStyle: {
                 stroke: 'red',

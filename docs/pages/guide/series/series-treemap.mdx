@@ -10,6 +10,37 @@
 
 ## 설정
 
+```js
+const config = {
+    series: {
+        type: 'treemap',
+        data: [{
+            "id": "A",
+            "name": "Nord-Norge",
+            "color": "#50FFB1"
+        }, {
+            "id": "B",
+            "name": "Trøndelag",
+            "color": "#F5FBEF"
+        }, {
+            "name": "Troms og Finnmark",
+            "group": "A",
+            "value": 70923
+        }, {
+            "name": "Nordland",
+            "group": "A",
+            "value": 35759
+        }, {
+            "name": "Trøndelag",
+            "group": "B",
+            "value": 39494
+        },
+        ...
+        ]
+    }
+};
+```
+
 ### See Also
 
 - [시리즈 개요](/guide/series)
