@@ -1,63 +1,58 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>RealChart</title>
-    <style>
-      html {
-        margin: 0px;
-      }
-      body {
-        margin: 0px;
-      }
-      #realchart {
-        width: 850px;
-        height: 550px;
-        border: none;
-        /* margin-bottom: 20px; */
-      }
-    </style>
-    <link href="../styles/realchart-style.css" rel="stylesheet" />
-    <script type="text/javascript" src="../lib/jquery-1.11.3.min.js"></script>
-    <script type="text/javascript" src="../lib/domutils.js"></script>
-    <script type="text/javascript" src="../lib/realchart.js"></script>
-    <script type="text/javascript" src="../lib/debug.js"></script>
-    <script type="text/javascript">
-      let chart, config;
-      window.addEventListener("DOMContentLoaded", function () {
-        config = {
-          title: "Boundary",
-          xAxis: {},
-          yAxis: {
-            tick: true,
-            strictMin: -20
-          },
-          series: [{
-            data: [12,12,13]
-          }],
-        };
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>RealChart</title>
+        <style>
+            html {
+                margin: 0px;
+            }
+            body {
+                margin: 0px;
+            }
+            #realchart {
+                width: 850px;
+                height: 550px;
+                border: none;
+                /* margin-bottom: 20px; */
+            }
+        </style>
+        <link href="../styles/realchart-style.css" rel="stylesheet" />
+        <script type="text/javascript" src="../lib/jquery-1.11.3.min.js"></script>
+        <script type="text/javascript" src="../lib/domutils.js"></script>
+        <script type="text/javascript" src="../lib/realchart.js"></script>
+        <script type="text/javascript" src="../lib/debug.js"></script>
+        <script type="text/javascript">
+            let chart, config;
+            window.addEventListener('DOMContentLoaded', function () {
+                config = {
+                    title: 'Boundary',
+                    xAxis: {},
+                    yAxis: {},
+                    series: []
+                };
 
-        try {
-          chart = RealChart.createChart(document, "realchart", config);
-        } catch (err) {
-          alert(err);
-          console.error(err);
-        }
-      });
+                try {
+                    chart = RealChart.createChart(document, 'realchart', config);
+                } catch (err) {
+                    alert(err);
+                    console.error(err);
+                }
+            });
 
-      var loadChart = (newConfig) => {
-        return new Promise((resolve) => {
-          chart.load(newConfig, false, () => {
-              resolve()
-          });
-        });
-      }
-    </script>
-  </head>
-  <body>
-    <div id="realchart"></div>
-    <div id="actions"></div>
-  </body>
+            var loadChart = (newConfig) => {
+                return new Promise((resolve) => {
+                    chart.load(newConfig, false, () => {
+                        resolve();
+                    });
+                });
+            };
+        </script>
+    </head>
+    <body>
+        <div id="realchart"></div>
+        <div id="actions"></div>
+    </body>
 </html>

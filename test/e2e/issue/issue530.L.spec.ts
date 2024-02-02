@@ -76,6 +76,5 @@ test.describe("issue530 test", () => {
     await page.mouse.move(132, 145);
 
     await PWTester.testChartBySnapshot(page, testInfo);
-    debugger;
   });
 });

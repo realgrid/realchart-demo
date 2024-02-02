@@ -1,7 +1,7 @@
 export const config = {
   options: {},
   title: 'Log Axis',
-  xAxis: { type: 'log' },
+  xAxis: { type: 'log', tick: { stepInterval: 0.1 }, label: {} },
   yAxis: { type: 'log' },
   series: {
     type: 'line',

@@ -19,7 +19,7 @@ const config = {
         title: '대기질 지수<br><t style="fill:gray;font-size:0.9em;">(Air Quality Index, AQI)</t>',
         tick: true,
         // reversed: true,
-        baseValue: 10,
+        // baseValue: 10,
         // strictMin: 11,
         // strictMax: 161
     },
