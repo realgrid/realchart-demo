@@ -1,12 +1,7 @@
 export const config = {
   options: {},
   title: 'Time Axis',
-  xAxis: {
-    type: 'time',
-    title: 'Time',
-    crosshair: true,
-    padding: 0
-  },
+  xAxis: { type: 'time', title: 'Time', crosshair: true, padding: 0 },
   yAxis: { title: 'Hestavollane' },
   series: {
     type: 'line',

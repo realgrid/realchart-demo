@@ -3,7 +3,7 @@ export const config = {
   options: {},
   xAxis: {
     title: '일일 Daily fat',
-    categories: [ '쓰리엠', '아디다스', 'Youtube', '디즈니', '이마트', '메리어트', '시세이도' ],
+    categories: [ '성남시', '용인시', '수원시', '일산시', '화성시', '평택시' ],
     grid: true
   },
   yAxis: { title: 'Vertical 수직축 Axis' },
@@ -12,10 +12,7 @@ export const config = {
       name: 'bar1',
       pointLabel: true,
       visibleInLegend: false,
-      data: [
-        11, 13, 10, 15,
-        19, 22, 27
-      ]
+      data: [ 11, 13, 10, 15, 19, 22 ]
     },
     {
       type: 'pie',
@@ -25,13 +22,12 @@ export const config = {
       pointLabel: true,
       legendByPoint: true,
       data: [
-        [ '쓰리엠', 11 ],
-        [ '아디다스', 13 ],
-        [ 'Youtube', 10 ],
-        [ '디즈니', 15 ],
-        [ '이마트', 19 ],
-        [ '메리어트', 22 ],
-        [ '시세이도', 27 ]
+        [ '성남시', 11 ],
+        [ '용인시', 13 ],
+        [ '수원시', 10 ],
+        [ '일산시', 15 ],
+        [ '화성시', 19 ],
+        [ '평택시', 22 ]
       ]
     }
   ]

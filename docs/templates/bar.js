@@ -7,7 +7,9 @@ export const config = {
     grid: { visible: true }
   },
   yAxis: {
-    title: '대기질 지수<br><t style="fill:gray;font-size:0.9em;">(Air Quality Index, AQI)</t>'
+    title: '대기질 지수<br><t style="fill:gray;font-size:0.9em;">(Air Quality Index, AQI)</t>',
+    tick: true,
+    baseValue: 10
   },
   series: [
     {

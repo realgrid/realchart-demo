@@ -9,20 +9,25 @@ export const config = {
       opacity: [ 1, 0 ]
     }
   ],
-  xAxis: { type: 'category' },
+  xAxis: {
+    type: 'category',
+    categories: [
+      '성남시', '용인시',
+      '수원시', '일산시',
+      '화성시', '평택시',
+      '안양시', '부천시',
+      '고양시', ' 안산시'
+    ]
+  },
   yAxis: {},
   series: {
     type: 'area',
     lineType: 'spline',
     marker: {},
     data: [
-      [ 'home', 7 ],
-      [ 'sky', 11 ],
-      [ 'def', 9 ],
-      [ '지리산', 15.3 ],
-      [ 'zzz', 13 ],
-      [ '낙동강', 12.5 ],
-      [ 'Youdube', 10.5 ]
+         7,  11, 9, 7.5,
+      15.3,  13, 7,   9,
+        11, 2.5
     ],
     style: { fill: 'url(#gradient-1)', fillOpacity: 1, strokeWidth: '2px' }
   }

@@ -2,11 +2,15 @@ export const config = {
   title: 'Point Style Callback',
   options: {},
   xAxis: {
-    categories: [ '쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도' ],
-    title: { text: '일일 Daily fat' },
-    tick: {},
-    label: {},
-    line: true
+    title: '서울시',
+    categories: [
+      '2014', '2015',
+      '2016', '2017',
+      '2018', '2019',
+      '2020', '2021',
+      '2022', '2023'
+    ],
+    grid: true
   },
   yAxis: { title: 'Vertical 수직축 Axis' },
   series: [
@@ -15,8 +19,9 @@ export const config = {
       pointLabel: { visible: true, position: 'inside', effect: 'outline' },
       pointStyleCallback: args => { if (args.index == 0) { return { fill: 'lightgray' } } else if(args.yValue === args.yMax) { return { fill: 'green' } } },
       data: [
-        11, 22, 15,  9,
-        19, 13, 27, 15
+        155, 138, 122, 133,
+        114, 113, 123, 119,
+        125, 131
       ]
     },
     {
@@ -25,8 +30,8 @@ export const config = {
       pointLabel: true,
       color: 'blue',
       data: [
-         9, 17, 19, 11,
-        25, 10, 21, 11
+        58, 80, 77, 79,  68,
+        84, 96, 82, 77, 120
       ],
       style: { strokeDasharray: '5' },
       marker: { style: { stroke: 'white', strokeDasharray: 'none' } },

@@ -1,6 +1,7 @@
 export const config = {
   options: {},
   title: 'Bubble Series',
+  tooltip: { followPointer: true },
   xAxis: { title: 'xAxis' },
   yAxis: { title: 'yAxis' },
   series: {
