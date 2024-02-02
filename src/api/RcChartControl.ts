@@ -282,7 +282,15 @@ export class RcChartControl {
     }
 
     /**
-     * 차트를 이미지 파일로 다운로드한다.
+     * 현재 표시 중인 차트를 PNG, JPG 또는 SVG 벡터 이미지로 다운로드 합니다.
+     * 
+     * ```js
+     * chart.export({
+     *      type: 'png',
+     *      fileName: 'realchart'
+     * })
+     * ```
+     * 
      */
     export(options: IExportOptions) {
         const model = this.$_p.model;
@@ -294,14 +302,12 @@ export class RcChartControl {
         switch (options.type) {
             case ExportType.PNG:
             case ExportType.JPEG:
-                this.$_p._exporter.exportToImage(dom, options, config);
-                break;
             case ExportType.SVG:
                 this.$_p._exporter.exportToImage(dom, options, config);
                 break;
-            case ExportType.PRINT:
-                this.$_p._exporter.exportToPrint(dom, options);
-                break;
+            // case ExportType.PRINT:
+            //     this.$_p._exporter.exportToPrint(dom, options);
+            //     break;
         }
     }
 }
