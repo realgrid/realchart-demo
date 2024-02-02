@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for line-step.html
  */
 test.describe('line-step.html test', () => {
-	const url = 'demo/line-step.html?debug';
+	const url = 'e2e-demo/line-step.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

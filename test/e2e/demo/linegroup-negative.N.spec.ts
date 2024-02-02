@@ -17,7 +17,7 @@ import { PWTester } from '../PWTester';
  * Puppeteer Tests for linegroup-negative.html
  */
 test.describe('linegroup-negative.html test', async function () {
-	const url = 'demo/linegroup-negative.html?debug';
+	const url = 'e2e-demo/linegroup-negative.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

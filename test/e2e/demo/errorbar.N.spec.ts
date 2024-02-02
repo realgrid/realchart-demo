@@ -15,7 +15,7 @@ import { PWTester } from '../PWTester';
  * Puppeteer Tests for errorbar.html
  */
 test.describe('errorbar.html test', async function () {
-	const url = 'demo/errorbar.html?debug';
+	const url = 'e2e-demo/errorbar.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

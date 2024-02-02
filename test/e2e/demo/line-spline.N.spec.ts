@@ -18,7 +18,7 @@ import { PWTester } from '../PWTester';
  */
 
 test.describe('line-spline.html test', async function () {
-	const url = 'demo/line-spline.html?debug';
+	const url = 'e2e-demo/line-spline.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

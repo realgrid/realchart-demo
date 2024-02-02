@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for bargroup-negative.html
  */
 test.describe('bargroup-negative.html test', () => {
-    const url = 'demo/bargroup-negative.html?debug';
+    const url = 'e2e-demo/bargroup-negative.html?debug';
 
     test.beforeEach(async ({ page }) => {
         await PWTester.goto(page, url);

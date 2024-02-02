@@ -17,7 +17,7 @@ import { PWTester } from '../PWTester';
  * Puppeteer Tests for bar-multi.html
  */
 test.describe('bar-multi.html test', async function () {
-	const url = 'demo/bar-multi.html?debug';
+	const url = 'e2e-demo/bar-multi.html?debug';
 	let browser: Browser;
 
 	test.beforeEach(async ({ page }) => {

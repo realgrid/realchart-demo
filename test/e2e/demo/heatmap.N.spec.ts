@@ -18,7 +18,7 @@ import { PWTester } from '../PWTester';
  * Puppeteer Tests for heatmap.html
  */
 test.describe('heatmap.html test', async function () {
-	const url = 'demo/heatmap.html?debug';
+	const url = 'e2e-demo/heatmap.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

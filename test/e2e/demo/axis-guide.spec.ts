@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for axis-guide.html
  */
 test.describe('axis-guide.html test', () => {
-    const url = 'demo/axis-guide.html?debug';
+    const url = 'e2e-demo/axis-guide.html?debug';
 
     test.beforeEach(async ({ page }) => {
         await PWTester.goto(page, url);

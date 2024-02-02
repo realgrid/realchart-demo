@@ -16,7 +16,7 @@ import { PWTester } from '../PWTester';
  */
 
 test.describe('crosshair.html test', async function () {
-	const url = 'demo/crosshair.html?debug';
+	const url = 'e2e-demo/crosshair.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

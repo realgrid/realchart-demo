@@ -21,7 +21,7 @@ import { PWTester } from '../PWTester';
  */
 
 test.describe('histogram.html test', async function () {
-	const url = 'demo/histogram.html?debug';
+	const url = 'e2e-demo/histogram.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

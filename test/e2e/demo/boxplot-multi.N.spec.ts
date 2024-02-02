@@ -17,7 +17,7 @@ import { PWTester } from '../PWTester';
  */
 
 test.describe('boxplot-multi.html test', async function () {
-	const url = 'demo/boxplot-multi.html?debug';
+	const url = 'e2e-demo/boxplot-multi.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

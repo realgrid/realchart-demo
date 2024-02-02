@@ -17,7 +17,7 @@ import { PWTester } from '../PWTester';
  */
 
 test.describe('pareto.html test', async function () {
-	const url = 'demo/pareto.html?debug';
+	const url = 'e2e-demo/pareto.html?debug';
 	let browser: Browser;
 	let page: Page;
 	test.beforeEach(async ({ page }) => {

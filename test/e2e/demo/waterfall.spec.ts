@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for waterfall.html
  */
 test.describe('waterfall.html test', () => {
-	const url = 'demo/waterfall.html?debug';
+	const url = 'e2e-demo/waterfall.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

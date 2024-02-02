@@ -16,7 +16,7 @@ import { PWTester } from '../PWTester';
  * Puppeteer Tests for arearange.html
  */
 test.describe('area.html test', async function () {
-	const url = 'demo/arearange.html?debug';
+	const url = 'e2e-demo/arearange.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

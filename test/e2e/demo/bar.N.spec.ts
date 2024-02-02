@@ -19,7 +19,7 @@ import { PWTester } from '../PWTester';
 test.describe('bar.html test', async function () {
 	let chart: any = null, config: any = null;
 	let nodeConfig: any = null
-	const url = 'demo/bar.html?debug';
+	const url = 'e2e-demo/bar.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

@@ -18,7 +18,7 @@ import { PWTester } from '../PWTester';
  */
 
 test.describe('linearaxis.html test', async function () {
-	const url = 'demo/linearaxis.html?debug';
+	const url = 'e2e-demo/linearaxis.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

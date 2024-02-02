@@ -15,7 +15,7 @@ import test from '@playwright/test';
  * Puppeteer Tests for vector.html
  */
 test.describe('vector.html test', async function () {
-	const url = 'demo/vector.html?debug';
+	const url = 'e2e-demo/vector.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

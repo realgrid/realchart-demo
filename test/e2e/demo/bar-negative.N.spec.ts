@@ -16,7 +16,7 @@ import { PWTester } from '../PWTester';
  * Puppeteer Tests for bar-negative.html
  */
 test.describe('bar-negative.html test', async function () {
-	const url = 'demo/bar-negative.html?debug';
+	const url = 'e2e-demo/bar-negative.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

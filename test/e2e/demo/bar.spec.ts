@@ -16,7 +16,7 @@ import { TitleView } from '../../../src/view/TitleView';
  * PlayWright Tests for bar.html
  */
 test.describe('bar.html test', () => {
-	const url = 'demo/bar.html?debug';
+	const url = 'e2e-demo/bar.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

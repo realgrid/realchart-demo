@@ -18,7 +18,7 @@ import { PWTester } from '../PWTester';
  */
 
 test.describe('bararrange-multi.html test', async function () {
-	const url = 'demo/barrange-multi.html?debug';
+	const url = 'e2e-demo/barrange-multi.html?debug';
 	let browser: Browser;
 
 	test.beforeEach(async ({ page }) => {

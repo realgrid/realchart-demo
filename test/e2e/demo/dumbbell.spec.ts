@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for dumbbell.html
  */
 test.describe('dumbbell.html test', () => {
-	const url = 'demo/dumbbell.html?debug';
+	const url = 'e2e-demo/dumbbell.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);
