@@ -4,8 +4,18 @@
   src: url('/fonts/NotoSansKR-VariableFont_wght.ttf')
 }
 
+@font-face {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  src: url('/fonts/RobotoMono-VariableFont_wght.ttf')
+}
+
 :root {
   --shiki-color-text: #0071bc !important;
+}
+
+code {
+  font-family: 'Roboto Mono', monospace  !important;
 }
 
 article table {

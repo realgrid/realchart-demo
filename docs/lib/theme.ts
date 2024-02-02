@@ -6,7 +6,7 @@ export const theme: MantineThemeOverride = {
   // fontSizes: {
   //   sm: rem(14),
   // },
-  fontFamilyMonospace: 'Monaco, Courier, monosace',
+  fontFamilyMonospace: 'Monaco, Courier, monospace',
   headings: { fontFamily: 'Noto Sans KR, sans-serif' },
   primaryColor: 'brand',
   primaryShade: 8,

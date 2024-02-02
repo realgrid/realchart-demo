@@ -13,7 +13,7 @@ RealChart에서는 구분 없이 Bar 시리즈라고 한다.
 Bar 시리즈로 생성된다.<br/>
 [Line 시리즈](/guide/series/series-line), [Pie 시리즈](/guide/series/series-pie)와 더불어 가장 많이 사용되는 기초적인 차트 시리즈이다.
 
-<img src="/images/guide/series/bar-01.png" width="70%" class="border-img"/>
+<img src="/images/guide/series/bar-01.png" width="70%" className="border-img"/>
 
 ## 설정
 
@@ -37,21 +37,21 @@ const config = {
 여러 개의 연관된 **bar** 시리즈들을 몇 가지 [layout](/config/config/series/bargroup#layout)으로 묶어서 배치할 수 있다. 
 기본 배치는 같은 x값을 갖는 데이터포인트들을 값 위치를 중심으로 벌려서 순서대로 나열시킨다.<br/>
 
-<img src="/images/guide/series/bargroup-01.png" width="70%" class="border-img"/>
+<img src="/images/guide/series/bargroup-01.png" width="70%" className="border-img"/>
 
 layout을 '**overlap**'으로 지정하면 데이터포인트들을 겹치는 상태로 표시한다.
 이 때, 시리즈의 [pointPadding](/config/config/series/bar#pointPadding)을 각각 다르게 지정하면 겹치더라도 구분되게 할 수 있다.
 
-<img src="/images/guide/series/bargroup-overlap.png" width="70%" class="border-img"/>
+<img src="/images/guide/series/bargroup-overlap.png" width="70%" className="border-img"/>
 
 '**stack**' layout은 데이터포인트 bar들을 아래에서 위로 쌓아서 표시한다.
 
-<img src="/images/guide/series/bargroup-stack.png" width="70%" class="border-img"/>
+<img src="/images/guide/series/bargroup-stack.png" width="70%" className="border-img"/>
 
 '**fill**' layout은 데이터포인트 bar들이 y축을 모두 채우도록 아래에서 위로 쌓아서 표시한다.
 하나의 값에 위치한 데이터포인트들의 x값 합이 100이 되도록 상대적 비율로 조정해서 bar들의 크기를 표시한다.
 
-<img src="/images/guide/series/bargroup-fill.png" width="70%" class="border-img"/>
+<img src="/images/guide/series/bargroup-fill.png" width="70%" className="border-img"/>
 
 ## 설정
 
