@@ -18,7 +18,7 @@ import { PWTester } from '../PWTester';
  */
 
 test.describe('pie-donut.html test', async function () {
-	const url = 'demo/pie-donut.html?debug';
+	const url = 'e2e-demo/pie-donut.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

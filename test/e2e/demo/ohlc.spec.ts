@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for ohlc.html
  */
 test.describe('ohlc.html test', () => {
-	const url = 'demo/ohlc.html?debug';
+	const url = 'e2e-demo/ohlc.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>RealChart - Line Curved</title>
+<style>
+html {
+	margin: 0px;
+}
+body {
+	margin: 20px 30px;
+}
+#realchart {
+	width: 850px;
+	height: 550px;
+    border: 1px solid lightgray;
+    margin-bottom: 20px;
+}
+</style>
+<link href="../styles/realchart-style.css" rel="stylesheet">
+<link href="./demo.css" rel="stylesheet">
+<style>
+.green-layout {
+    background-color: #00880020;
+}
+.red-button {
+    color: red;
+}
+</style>
+<script type="text/javascript" src="../lib/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../lib/domutils.js"></script>
+<script type="text/javascript" src="../lib/realchart-lic.js"></script>
+<script type="text/javascript" src="../lib/realchart.js"></script>
+<script type="text/javascript" src="../lib/debug.js"></script>
+<script type="text/javascript" src="./line-spline.js"></script>
+<script type="text/javascript">
+	window.addEventListener('DOMContentLoaded', function () {
+		try {
+			init();
+		} catch (err) {
+			alert(err);
+			console.error(err);
+		}
+	});	
+</script>
+</head>
+<body>
+	<div id="realchart"></div>
+	<div id="actions"></div>
+</body>
+</html>		

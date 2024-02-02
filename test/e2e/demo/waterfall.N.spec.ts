@@ -17,7 +17,7 @@ import { PWTester } from '../PWTester';
  */
 
 test.describe('waterfall.html test', async function () {
-	const url = 'demo/waterfall.html?debug';
+	const url = 'e2e-demo/waterfall.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

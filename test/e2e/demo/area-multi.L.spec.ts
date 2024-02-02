@@ -26,7 +26,7 @@ test.describe("area-multi.html test", () => {
   let chart: any = null,
     config: any = null;
 
-  const url = "demo/area-multi.html?debug";
+  const url = "e2e-demo/area-multi.html?debug";
 
   const sleep = async (time = 500) => {
     await new Promise((resolve) => setTimeout(resolve, time));

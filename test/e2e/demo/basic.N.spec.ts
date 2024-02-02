@@ -19,7 +19,7 @@ import { PWTester } from '../PWTester';
  */
 
 test.describe('basic.html test', async function () {
-	const url = 'demo/basic.html?debug';
+	const url = 'e2e-demo/basic.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

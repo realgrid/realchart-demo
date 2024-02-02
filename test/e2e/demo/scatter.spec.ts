@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for scatter.html
  */
 test.describe('scatter.html test', () => {
-	const url = 'demo/scatter.html?debug';
+	const url = 'e2e-demo/scatter.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for linearaxis.html
  */
 test.describe('linearaxis.html test', () => {
-	const url = 'demo/linearaxis.html?debug';
+	const url = 'e2e-demo/linearaxis.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

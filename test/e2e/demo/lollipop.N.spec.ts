@@ -18,7 +18,7 @@ import { PWTester } from '../PWTester';
  */
 
 test.describe('lollipop.html test', async function () {
-	const url = 'demo/lollipop.html?debug';
+	const url = 'e2e-demo/lollipop.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

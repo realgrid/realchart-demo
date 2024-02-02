@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for lollipop.html
  */
 test.describe('lollipop.html test', () => {
-	const url = 'demo/lollipop.html?debug';
+	const url = 'e2e-demo/lollipop.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

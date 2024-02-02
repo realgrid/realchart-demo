@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for equalizer-multi.html
  */
 test.describe('equalizer-multi.html test', () => {
-	const url = 'demo/equalizer-multi.html?debug';
+	const url = 'e2e-demo/equalizer-multi.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

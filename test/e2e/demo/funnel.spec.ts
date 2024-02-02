@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for funnel.html
  */
 test.describe('funnel.html test', () => {
-	const url = 'demo/funnel.html?debug';
+	const url = 'e2e-demo/funnel.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

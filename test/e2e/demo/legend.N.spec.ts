@@ -18,7 +18,7 @@ import { PWTester } from '../PWTester';
  * Puppeteer Tests for legend.html
  */
 test.describe('legend.html test', async function () {
-	const url = 'demo/legend.html?debug';
+	const url = 'e2e-demo/legend.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

@@ -17,7 +17,7 @@ import { PWTester } from '../PWTester';
  */
 
 test.describe('areagroup-negative.html test', async function () {
-	const url = 'demo/areagroup-negative.html?debug';
+	const url = 'e2e-demo/areagroup-negative.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

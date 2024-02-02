@@ -16,7 +16,7 @@ import { PWTester } from '../PWTester';
  */
 
 test.describe('funnel.html test', async function () {
-	const url = 'demo/funnel.html?debug';
+	const url = 'e2e-demo/funnel.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

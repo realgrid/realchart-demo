@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for line-multi.html
  */
 test.describe('line-multi.html test', () => {
-	const url = 'demo/line-multi.html?debug';
+	const url = 'e2e-demo/line-multi.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

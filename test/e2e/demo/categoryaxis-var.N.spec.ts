@@ -17,7 +17,7 @@ import { PWTester } from '../PWTester';
  * Puppeteer Tests for categoryaxis-var.html
  */
 test.describe('categoryaxis-var.html test', async function () {
-	const url = 'demo/categoryaxis-var.html?debug';
+	const url = 'e2e-demo/categoryaxis-var.html?debug';
 	let browser: Browser;
 
 	test.beforeEach(async ({ page }) => {

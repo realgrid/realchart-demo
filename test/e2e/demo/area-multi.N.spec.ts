@@ -18,7 +18,7 @@ import { PWTester } from '../PWTester';
  */
 test.describe("area-multi.html test", () => {
 
-    const url = "demo/area-multi.html?debug";
+    const url = "e2e-demo/area-multi.html?debug";
 
     test.beforeEach(async ({ page }) => {
         await PWTester.goto(page, url);

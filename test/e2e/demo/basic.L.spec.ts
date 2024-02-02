@@ -22,7 +22,7 @@ import { RcChartControl } from "../../../src/main";
  */
 test.describe("basic.html test", () => {
   let chart: RcChartControl = null;
-  const url = "demo/basic.html?debug";
+  const url = "e2e-demo/basic.html?debug";
   const sleep = async (time = 500) => {
     await new Promise((resolve) => setTimeout(resolve, time));
   };

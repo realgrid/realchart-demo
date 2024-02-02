@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for trendline.html
  */
 test.describe('trendline.html test', () => {
-	const url = 'demo/trendline.html?debug';
+	const url = 'e2e-demo/trendline.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

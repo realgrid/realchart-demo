@@ -17,7 +17,7 @@ import { PWTester } from '../PWTester';
  */
 
 test.describe('candlestick.html test', async function () {
-	const url = 'demo/candlestick.html?debug';
+	const url = 'e2e-demo/candlestick.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for treemap.html
  */
 test.describe('treemap.html test', () => {
-	const url = 'demo/treemap.html?debug';
+	const url = 'e2e-demo/treemap.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

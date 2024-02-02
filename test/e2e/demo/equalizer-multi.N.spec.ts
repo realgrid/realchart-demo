@@ -16,7 +16,7 @@ import { PWTester } from '../PWTester';
  * Puppeteer Tests for equalizer-multi.html
  */
 test.describe('equalizer-multi.html test', async function () {
-	const url = 'demo/equalizer-multi.html?debug';
+	const url = 'e2e-demo/equalizer-multi.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

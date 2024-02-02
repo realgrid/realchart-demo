@@ -16,7 +16,7 @@ import { PWTester } from '../PWTester';
  * Puppeteer Tests for axis-guide.html
  */
 test.describe('area.html test', async function () {
-	const url = 'demo/axis-guide.html?debug';
+	const url = 'e2e-demo/axis-guide.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);
