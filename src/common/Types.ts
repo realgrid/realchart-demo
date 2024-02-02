@@ -572,9 +572,23 @@ export enum ExportType {
     PRINT = 'print',
 }
 
+export interface IExportOptions {
+    /**
+     * 내보낸 차트에 사용할 확장자 입니다.
+     * type을 지정하지 않을 경우 png로 내보내기 됩니다.
+     * @config
+     */
+    type?: ExportType,
+    /**
+     * 내보낸 차트에 사용할 확장자 없는 파일 이름입니다.
+     * fileName을 지정하지 않을 경우 realchart.type으로 다운로드 됩니다.
+     * @config
+     */
+    fileName?: string;
+}
+
 export interface RealChartExporter {
     exportToImage: (dom: HTMLElement, options: any, type: any) => void;
-    exportToSvg: (dom: HTMLElement, options: any) => void;
     exportToPrint: (dom: HTMLElement, options: any) => void;
     // exportToPDF: (dom: HTMLElement, options: any) => void;
     render: (doc: Document, dom: HTMLElement, options: any) => void;

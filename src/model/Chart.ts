@@ -430,15 +430,23 @@ export class ChartOptions extends ChartItem {
     }
 }
 
+/**
+ * 차트 내보내기 설정 모델
+ * @config chart.export
+ */
 
 export interface IExport {
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
     /**
-     * 표시 여부 지정
+     * 내보내기 버튼 표시 여부 지정
      */
     visible?: boolean
+    /**
+     * 내보내기 버튼을 사용해 내보낸 차트에 사용할 확장자 없는 파일 이름입니다.
+     * export 함수를 호출할 때 fileName을 지정하지 않을 경우 이 속성이 적용되니다.
+     * fileName을 지정하지 않을 경우 realchart.type으로 다운로드 됩니다.
+     * @config
+     */
+    fileName?: string;
     /**
      * 내보내기를 라이브러리를 사용하여 진행할지 여부 지정
      */
@@ -447,10 +455,6 @@ export interface IExport {
      * 내보내기 메뉴에 포함할 export type
      */
     menus?: ExportType[];
-    /**
-     * 내보내기시 저장되는 파일명
-     */
-    fileName?: string;
     /**
      * 너비, 지정한 너비에 맞춰 높이가 결정됩니다.
      */
@@ -475,10 +479,6 @@ export interface IExport {
      * true로 지정하면 내보내기 결과에 {@link ZoomButton}가 포함되지 않는다.
      */
     hideZoomButton?: boolean
-
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
 }
 
 export interface IChartEventListener {

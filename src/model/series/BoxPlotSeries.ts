@@ -235,6 +235,10 @@ export class BoxPlotSeries extends LowRangedSeries {
         return 2;
     }
 
+    canCategorized(): boolean {
+        return true;
+    }
+
     protected _createFielders(): void {
         super._createFielders();
 

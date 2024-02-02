@@ -82,25 +82,20 @@ Locales['en'] = {
     alreadyTableExists: 'A table model is already exists: %1',
 };
 
+// let _currLang = (window.navigator && window.navigator.language) ? window.navigator.language.substring(0, 2) : 'ko';
 let _currLang = 'ko';
-export let locale = Locales[_currLang];
+export let locale = Locales[_currLang] ||  Locales[_currLang = 'ko'];
 
 export const $_setLocale = (lang: string): IRcLocale => {
-    locale = Locales[_currLang = lang];
-    if (!locale) locale = Locales[_currLang = 'ko'];
-    return locale;
+    if (lang) {
+        locale = Locales[_currLang = lang.substring(0, 2)];
+    }
+    return locale || (locale = Locales[_currLang = 'ko']);
 }
 
 export const $_registerLocale = (lang: string, data: IRcLocale) => {
     if (lang && isObject(data)) {
-        locale = Locales[lang] = data;        
-        // 빈 항목은 'en'으로 대체 시킨다.
-        if (lang !== 'en') {
-            const en = Locales['en'];
-            for (const p in en) {
-                locale[p] = locale[p] || en[p];
-            }
-        }
+        locale = Locales[lang.substring(0, 2)] = Object.assign(Locales['ko'], Locales['en'], data);        
     }
 }
 
