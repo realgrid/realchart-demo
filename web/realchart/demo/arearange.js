@@ -14,6 +14,9 @@ const config = {
     },
     options: {
         // animatable: false=
+        pointHovering: {
+            // hintDistance: 0
+        }
     },
     xAxis: {
         type: 'time',

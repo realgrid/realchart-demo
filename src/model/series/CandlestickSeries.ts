@@ -122,7 +122,7 @@ export class CandlestickSeriesPoint extends DataPoint {
  * 주식을 비롯한 유가증권과 파생상품, 환율 등의 가격 움직임을 보여주는 시리즈.<br/><br/>
  * 
  * {@link data}는 아래 형식들로 전달할 수 있다.<br/>
- * [주의] 데이터포인트 구성에 필요한 모든 값을 제공하지 않으면 null이 된다.
+ * [주의] 데이터포인트 구성에 필요한 모든 값을 제공하지 않으면 null이 된다.<br/>
  * [주의] high와 y값은 동일한 값이다.
  * 
  * ###### 단일 값 및 값 배열

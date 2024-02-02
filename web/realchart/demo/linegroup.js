@@ -5,7 +5,12 @@
 const config = {
     type: "line",
     options: {
-        animatable: false
+        animatable: false,
+        pointHovering: {
+        }
+    },
+    tooltip: {
+        followPointer: true
     },
     title: "Line Group",
     xAxis: {

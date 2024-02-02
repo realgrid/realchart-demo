@@ -18,7 +18,7 @@ import { LowRangedSeries, Series } from "../Series";
  * 이 시리즈를 기준으로 생성되는 x축은 [category](/config/config/xAxis/category)이다.<br/><br/>
  * 
  * {@link data}는 아래 형식들로 전달할 수 있다.<br/>
- * [주의] 데이터포인트 구성에 필요한 모든 값을 제공해야 한다.
+ * [주의] 데이터포인트 구성에 필요한 모든 값을 제공해야 한다.<br/>
  * 
  * ###### 단일 값 및 값 배열
  * |형식|설명|

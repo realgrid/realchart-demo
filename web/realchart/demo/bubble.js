@@ -5,6 +5,9 @@
 const config = {
     options: {
         // animatable: false
+        pointHovering: {
+            hintDistance: 1000
+        }
     },
     title: "Bubble Series",
     tooltip: {

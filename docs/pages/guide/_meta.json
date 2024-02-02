@@ -9,9 +9,10 @@
     "annotations": "어노테이션(Annotations)",
     "title": "제목(Title)",
     "legend": "범례(Legend)",
-    "assets": "에셋(Assets)",
-    "style": "스타일(Styles)",
     "split": "분할 모드(Split)",
+    "data": "Data",
+    "style": "스타일(Styles)",
+    "assets": "에셋(Assets)",
     "export": "내보내기(Export)",
     "---": {
         "type": "separator",
