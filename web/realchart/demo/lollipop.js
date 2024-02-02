@@ -4,43 +4,26 @@
  */
 const config = {
     options: {},
-    title: "Lollipop Series",
+    title: "연도별 서울시 평균 대기질 지수",
     xAxis: {
-        type: 'category',
-        grid: true
+        title: '서울시',
+        categories: ['`14', '`15', '`16', '`17', '`18', '`19'],
+        grid: {
+            visible: true,
+        },
     },
     yAxis: {
-        title: 'Y Axis',
+        title: '대기질 지수<br><t style="fill:gray;font-size:0.9em;">(Air Quality Index, AQI)</t>',
     },
     series: {
         type: 'lollipop',
         pointLabel: {
             visible: true,
-            // offset: 10,
-            // text: '<b style="fill:red">${x}</b>',
-            // effect: 'outline',// 'background',
             style: {
                 fill: 'black'
             },
         },
-        data: [
-            ['home', 7], 
-            ['sky', 11], 
-            ['def', 9], 
-            ['소홍', 10], 
-            ['지리산', 14.3], 
-            ['zzz', 13],
-            ['낙동강', 12.5]
-        ],
-        style: {
-            // fill: 'yellow'
-        },
-        marker: {
-            style: {
-                // fill: 'red',
-                // stroke: 'red',
-            }
-        }
+        data: [155, 138, 122, 133, 114, 113],
     }
 }
 

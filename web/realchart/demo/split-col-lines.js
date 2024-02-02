@@ -13,19 +13,16 @@ const config = {
         cols: 3
     },
     xAxis: [{
-        categories: [
-            'home', 'sky', '태풍', 'def', '지리산', 'zzz', 'ttt', 'taaatt', '백두산', '낙동강'
-        ]
+        categories: ['성남시', '용인시', '수원시', '일산시', '화성시', '평택시', '안양시', '부천시', '고양시',' 안산시']
     }, {
         col: 1,
-        categories: [
-            'home', 'sky', '태풍', 'def', '지리산', 'zzz', 'ttt', 'taaatt', '백두산', '낙동강'
-        ]
+        type: 'linear',
+        tick: {
+            step: 1
+        }
     }, {
         col: 2,
-        categories: [
-            'home', 'sky', '태풍', 'def', '지리산', 'zzz', 'ttt', 'taaatt', '백두산', '낙동강'
-        ]
+        categories: ['성남시', '용인시', '수원시', '일산시', '화성시', '평택시', '안양시', '부천시', '고양시',' 안산시']
     }],
     yAxis: {
         guides: [{

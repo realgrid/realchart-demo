@@ -8,7 +8,7 @@ const config = {
         // animatable: false
     },
     xAxis: {
-        categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도'],
+        categories: ['성남시', '용인시', '수원시', '일산시', '화성시', '평택시'],
         title: {
             text: "일일 Daily fat"
         },

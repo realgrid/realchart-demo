@@ -1,12 +1,18 @@
 export const config = {
-  options: {},
+  options: { pointHovering: { scope: 'axis' } },
   title: 'AreaRange & Line',
-  xAxis: { type: 'time' },
+  xAxis: {
+    type: 'time',
+    tick: { stepInterval: '1d' },
+    label: { timeFormat: 'MM월 dd일' }
+  },
   yAxis: {},
   series: [
     {
       type: 'arearange',
-      marker: false,
+      marker: { visible: false },
+      xStart: '2020-01',
+      xStep: '1d',
       pointLabel: {},
       data: [
         [ 13.7, 25.6 ], [ 13.3, 21.8 ], [ 11.2, 19.9 ],
@@ -25,6 +31,8 @@ export const config = {
     {
       type: 'line',
       color: 'blue',
+      xStart: '2020-01',
+      xStep: '1d',
       data: [
         [ 18.1 ], [ 17.1 ], [ 15.2 ],
         [ 12.7 ], [ 13.3 ], [ 10.6 ],

@@ -2,7 +2,12 @@ export const config = {
   options: { animatable: false },
   title: 'Axis Guides',
   legend: true,
-  xAxis: { tick: true, title: 'X Axis', grid: true },
+  xAxis: {
+    tick: true,
+    categories: [ '성남시', '용인시', '수원시', '일산시', '화성시', '평택시' ],
+    title: 'X Axis',
+    grid: true
+  },
   yAxis: {
     tick: true,
     title: 'Y Axis',
@@ -31,14 +36,7 @@ export const config = {
   },
   series: {
     pointLabel: { visible: true, position: 'head', effect: 'outline', style: {} },
-    data: [
-      [ 'home', 7 ],
-      [ 'sky', 11 ],
-      [ 'def', 9 ],
-      [ '지리산', 14.3 ],
-      [ 'zzz', 13 ],
-      [ '낙동강', 12.5 ]
-    ],
+    data: [ 11, 22, 15, 9, 13, 27 ],
     style: {}
   }
 }

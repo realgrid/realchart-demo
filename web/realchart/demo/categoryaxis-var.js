@@ -10,12 +10,12 @@ const config = {
     xAxis: {
         title: "일일 Daily fat",
         categories: [
-            { name: '쓰리엠' }, 
-            { name: '아디다스', weight: 1.5 }, 
-            { name: '디즈니' }, 
-            { name: '이마트', weight: 2 }, 
-            { name: '메리어트' }, 
-            { name: '시세이도' }
+            { name: '성남시' }, 
+            { name: '용인시', weight: 1.5 }, 
+            { name: '수원시' }, 
+            { name: '일산시', weight: 2 }, 
+            { name: '화성시' }, 
+            { name: '평택시' }
         ],
         grid: true,
     },

@@ -2,23 +2,17 @@
  * @demo
  * 
  */
+207015,27016,25575
 const config = {
     title: "Point Style Callback",
     options: {
         // animatable: false
     },
     xAxis: {
-        categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도'],
-        title: {
-            text: "일일 Daily fat",
-        },
-        tick: {
-        },
-        label: {
-        },
-        // grid: true,
-        line: true,
-    },
+		title: '서울시',
+		categories: ['2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023'],
+		grid: true
+	},
     yAxis: {
         title: "Vertical 수직축 Axis",
         // reversed: true,
@@ -40,13 +34,13 @@ const config = {
                 return { fill: 'green' }
             }
         },
-        data: [11, 22, 15, 9, 19, 13, 27, 15]
+        data: [155, 138, 122, 133, 114, 113, 123, 119, 125, 131],
     }, {
         name: 'line1',
         type: 'line',
         pointLabel: true,
         color: 'blue',
-        data: [9, 17, 19, 11, 25, 10, 21, 11],
+        data: [58, 80, 77, 79, 68, 84, 96, 82, 77, 120],
         style: {
             strokeDasharray: '5'
         },

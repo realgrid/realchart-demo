@@ -21,7 +21,6 @@ const config = {
         text: "Sub Title",
         text: "2023.01 World Bank.",
         style: {
-            fill: 'red',
             fill: 'gray',
             fontStyle: 'italic'
         },
@@ -31,12 +30,14 @@ const config = {
         // }
     },
     xAxis: {
-        // type: 'category',
-        // position: 'apposite'
-        // position: 'base',
-        // baseAxis: 1,
         title: 'X Axis',
-        grid: true
+        grid: true,
+        categories: [
+            'Jan', 'Feb', 'Mar',
+            'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep',
+            'Oct', 'Nov', 'Dec'
+          ]
     },
     yAxis: {
         title: 'Y Axis',
@@ -52,13 +53,13 @@ const config = {
             },
         },
         data: [
-            ['home', 7], 
-            ['sky', 11], 
-            ['def', 9], 
-            ['지리산', 14.3], 
-            ['zzz', 13],
-            ['낙동강', 12.5]
-        ],
+            [ -130 ], [ -100 ],
+            [ -50 ],  [ 60 ],
+            [ 70 ],   [ 115 ],
+            [ 90 ],   [ 100 ],
+            [ 120 ],  [ 130 ],
+            [ 140 ],  [ 160 ]
+          ],
         style: {
             // fill: 'yellow'
         }

@@ -8,17 +8,26 @@ export const config = {
     text: '2023.01 World Bank.',
     style: { fill: 'gray', fontStyle: 'italic' }
   },
-  xAxis: { title: 'X Axis', grid: true },
+  xAxis: {
+    title: 'X Axis',
+    grid: true,
+    categories: [
+      'Jan', 'Feb', 'Mar',
+      'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep',
+      'Oct', 'Nov', 'Dec'
+    ]
+  },
   yAxis: { title: 'Y Axis' },
   series: {
     pointLabel: { visible: true, position: 'head', effect: 'outline', style: {} },
     data: [
-      [ 'home', 7 ],
-      [ 'sky', 11 ],
-      [ 'def', 9 ],
-      [ '지리산', 14.3 ],
-      [ 'zzz', 13 ],
-      [ '낙동강', 12.5 ]
+      [ -130 ], [ -100 ],
+      [ -50 ],  [ 60 ],
+      [ 70 ],   [ 115 ],
+      [ 90 ],   [ 100 ],
+      [ 120 ],  [ 130 ],
+      [ 140 ],  [ 160 ]
     ],
     style: {}
   }

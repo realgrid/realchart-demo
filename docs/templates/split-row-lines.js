@@ -5,11 +5,11 @@ export const config = {
   split: { visible: true, rows: 3 },
   xAxis: {
     categories: [
-      'home',   'sky',
-      '태풍',   'def',
-      '지리산', 'zzz',
-      'ttt',    'taaatt',
-      '백두산', '낙동강'
+      '성남시', '용인시',
+      '수원시', '일산시',
+      '화성시', '평택시',
+      '안양시', '부천시',
+      '고양시', ' 안산시'
     ]
   },
   yAxis: [ {}, { row: 1, position: 'opposite' }, { row: 2 } ],

@@ -1,60 +1,64 @@
 /**
  * @demo
- * 
+ *
  */
 const config = {
-    type: 'equalizer',
-    title: "Multiple Equalizer",
+    title: '울산광역시 농산물 수출 현황 (2014-2021)',
+    options: {
+        // animatable: false
+    },
     xAxis: {
-        // type: 'category',
-        // position: 'apposite'
-        // position: 'base',
-        // baseAxis: 1,
-        title: 'X Axis',
-        categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도']
+        title: '년도',
+        categories: ['2017년', '2018년', '2019년', '2020년', '2021년'],
+        grid: true,
+
+        label: {
+            // startStep: 0,
+            step: 1
+        }
     },
     yAxis: {
-        title: 'Y Axis',
+        title: '수출량(단위 만)'
     },
-    series: [{
-        pointLabel: {
-            visible: true,
-            // position: 'head',
-            // offset: 10,
-            // text: '<b style="fill:red">${x}</b>',
-            effect: 'outline',// 'background',
-            style: {
+    series: [
+        {
+            type: 'equalizer',
+            pointLabel: {
+                visible: true,
+                position: 'inside',
+                effect: 'outline'
             },
+            name: '배',
+            data: [485, 550, 554, 233, 181]
         },
-        data: [11, 22, 15, 9, 13, 27],
-        style: {
-            // fill: 'yellow'
-        }
-    }, {
-        // color: '#00880080',
-        pointLabel: {
-            visible: true,
-            // position: 'head',
-            // offset: 10,
-            // text: '<b style="fill:red">${x}</b>',
-            effect: 'outline',// 'background',
-            style: {
+        {
+            type: 'equalizer',
+            pointLabel: {
+                visible: true,
+                position: 'inside',
+                effect: 'outline'
             },
-        },
-        data: [15, 19, 19, 6, 21, 21],
-        style: {
-            // fill: 'yellow'
+            name: '배즙',
+            // baseValue: null,
+            // pointWidth: '100%',
+            // colorByPoint: true,
+            data: [230, 250, 250, 330, 260]
         }
-    }]
-}
+    ]
+};
 let chart;
 
 function setActions(container) {
-    createCheckBox(container, 'Debug', function (e) {
-        RealChart.setDebugging(_getChecked(e));
-        chart.render();
-    }, false);
-    createButton(container, 'Test', function(e) {
+    createCheckBox(
+        container,
+        'Debug',
+        function (e) {
+            RealChart.setDebugging(_getChecked(e));
+            chart.render();
+        },
+        false
+    );
+    createButton(container, 'Test', function (e) {
         alert('hello');
     });
 }
@@ -65,5 +69,5 @@ function init() {
     RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
-    setActions('actions')
+    setActions('actions');
 }

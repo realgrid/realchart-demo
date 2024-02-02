@@ -1,21 +1,25 @@
 export const config = {
-  type: 'equalizer',
-  title: 'Multiple Equalizer',
+  title: '울산광역시 농산물 수출 현황 (2014-2021)',
+  options: {},
   xAxis: {
-    title: 'X Axis',
-    categories: [ '쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도' ]
+    title: '년도',
+    categories: [ '2017년', '2018년', '2019년', '2020년', '2021년' ],
+    grid: true,
+    label: { step: 1 }
   },
-  yAxis: { title: 'Y Axis' },
+  yAxis: { title: '수출량(단위 만)' },
   series: [
     {
-      pointLabel: { visible: true, effect: 'outline', style: {} },
-      data: [ 11, 22, 15, 9, 13, 27 ],
-      style: {}
+      type: 'equalizer',
+      pointLabel: { visible: true, position: 'inside', effect: 'outline' },
+      name: '배',
+      data: [ 485, 550, 554, 233, 181 ]
     },
     {
-      pointLabel: { visible: true, effect: 'outline', style: {} },
-      data: [ 15, 19, 19, 6, 21, 21 ],
-      style: {}
+      type: 'equalizer',
+      pointLabel: { visible: true, position: 'inside', effect: 'outline' },
+      name: '배즙',
+      data: [ 230, 250, 250, 330, 260 ]
     }
   ]
 }

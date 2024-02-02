@@ -13,6 +13,7 @@ const config = {
     xAxis: {
         // type: 'category',
         tick: true,
+        categories: ['성남시', '용인시', '수원시', '일산시', '화성시', '평택시'],
         // position: 'apposite'
         // position: 'base',
         // baseAxis: 1,
@@ -70,14 +71,7 @@ const config = {
             style: {
             },
         },
-        data: [
-            ['home', 7], 
-            ['sky', 11], 
-            ['def', 9], 
-            ['지리산', 14.3], 
-            ['zzz', 13],
-            ['낙동강', 12.5]
-        ],
+        data: [11, 22, 15, 9, 13, 27],
         style: {
             // fill: 'yellow'
         }

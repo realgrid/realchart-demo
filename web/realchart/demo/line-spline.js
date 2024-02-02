@@ -2,32 +2,34 @@
  * @demo
  * 
  */
+
 const config = {
-    options: {},
-    title: "Line Series - Spline",
+    type: 'line',
+    title: '마스크 비말차단용 수출 현황',
     xAxis: {
-        type: 'category',
+      title: '날짜',
+      type: 'time',
+      // tick: true
     },
     yAxis: {
+      title: '수출량',
     },
-    series: {
-        type: 'line',
+    templates: {
+      line: {
         lineType: 'spline',
-        pointLabel: true,
-        data: [
-            ['home', 7], 
-            ['sky', 11], 
-            ['태풍', 9], 
-            ['def', 7.5], 
-            ['지리산', 15.3], 
-            ['zzz', 13],
-            ['ttt', 7],
-            ['taaatt', 9],
-            ['백두산', 11],
-            ['낙동강', 2.5]
-        ]
-    }
-}
+        marker: true,
+        data: data,
+        xField: 'date',
+      },
+    },
+    series: [
+      {
+        template: 'line',
+        name: '비말차단용',
+        yField: '비말차단용',
+      },
+    ],
+  };
 
 let chart;
 
