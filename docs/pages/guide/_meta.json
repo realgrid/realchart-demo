@@ -9,6 +9,7 @@
     "annotations": "어노테이션(Annotations)",
     "title": "제목(Title)",
     "legend": "범례(Legend)",
+    "tooltip": "툴팁(Tooltip)과 Hovering",
     "split": "분할 모드(Split)",
     "data": "Data",
     "style": "스타일(Styles)",

@@ -623,7 +623,7 @@ export class TimeAxis extends ContinuousAxis {
     }
 
     value2Tooltip(value: number): any {
-        return isNaN(value) ? NaN : new Date(value);
+        return isNaN(value) ? this.chart.tooltip.nanText : new Date(value);
     }
 
     getXValue(value: number) {

@@ -320,20 +320,32 @@ export class PointHovering extends ChartItem {
      * 0이하면 표시되는 크기로 계산된다.
      * 상당히 큰 크기로 지정하면 마우스가 어느 위치에 있든 마우스에 가장 가까운 marker가 찾아진다.<br/>
      * 물론 마우스가 실제 표시되는 marker 위에 있다면 그 것으로 결정된다.
-     * 찾아진 데이터포인트가 마우스 아래 있는 것으로 여겨져서 hover 효과가 표시되거나 관련 이벤트가 발생한다.
+     * 찾아진 데이터포인트가 마우스 아래 있는 것으로 여겨져서 hover 효과가 표시되거나 관련 이벤트가 발생한다.<br/>
+     * 기본값은 차트에 tooltip이 표시되고 tooltip.{@link config.tooltip.followPointer}가 true이면 차트 크기보다 큰 값이 되고,
+     * 아니면 **30** 픽셀이다.
      * 
      * @config
      */
-    hintDistance = 30;
+    hintDistance: number;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getHintDistance(): number {
+        if (!isNaN(this.hintDistance)) {
+            return this.hintDistance;
+        }
+        if (this.chart.tooltip.visible && this.chart.tooltip.followPointer) {
+            return Number.MAX_SAFE_INTEGER;
+        }
+        return 30;
+    }
+
     getScope(series: ISeries, p: DataPoint): PointHoverScope {
         if (this.scope === PointHoverScope.POINT || this.scope === PointHoverScope.GROUP || this.scope === PointHoverScope.AXIS) {
             return this.scope;
         } else {
-            if ((series as Series)._xAxisObj.crosshair.visible) {
+            if ((series as Series)._xAxisObj.crosshair.visible && !this.chart.options.seriesHovering) {
                 return PointHoverScope.AXIS;
             }
 

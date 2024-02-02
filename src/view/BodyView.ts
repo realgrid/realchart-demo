@@ -989,7 +989,7 @@ export class BodyView extends ChartElement<Body> {
         if (pv) {
             this.$_setFocused(sv, pv, p);
         } else {
-            const hint = this.chart().options.pointHovering.hintDistance || 0;
+            const hint = this.chart().options.pointHovering.getHintDistance();
             let hint2: number;
             let sv: SeriesView<Series>;
             let pv: {pv: IPointView, dist: number};
@@ -1040,7 +1040,14 @@ export class BodyView extends ChartElement<Body> {
                 case PointHoverScope.AXIS:
                     sers = (sv.model._xAxisObj as Axis).getSeries() as any;
                 case PointHoverScope.GROUP:
-                    if (!sers) sers = sv.model.group.getVisibleSeries() as any;
+                    if (!sers) {
+                        // if (sv.model.isMarker()) {
+                        //     sers = sv.model.group.getVisibleSeries() as any;
+                        // } else {
+                            sers = [sv.model];
+                        // }
+                    }
+
                     const pts = sers.map(ser => ser.getPoints().pointAt(pv.point.xValue));
                     
                     svs = sers.map(s => this._owner.getSeriesView(s));

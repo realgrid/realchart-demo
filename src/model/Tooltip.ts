@@ -22,6 +22,7 @@ import { ISeries } from "./Series";
  * @config
  */
 export enum TooltipScope {
+    AUTO = 'auto',
     HOVER = 'hover',
     POINT = 'point',
     GROUP = 'group',
@@ -82,7 +83,7 @@ export class Tooltip extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    scope = TooltipScope.HOVER;
+    scope = TooltipScope.AUTO;
     html: string;
     /**
      * 툴팁에 표시할 텍스트 형식.<br/>
@@ -128,6 +129,12 @@ export class Tooltip extends ChartItem {
      */
     followPointer: boolean;
     /**
+     * 툴팁 텍스트 속 숫자 값이 NaN일 때 대신 표시되는 텍스트.
+     * 
+     * @config
+     */
+    nanText = '';
+    /**
      * 툴팁에 표시될 숫자값의 기본 형식.\
      * {@link text}예 표시 문자열을 지정할 때 `${yValue;;#,###.0}`와 같은 식으로 숫자 형식을 지정할 수 있다.
      * 
@@ -162,7 +169,13 @@ export class Tooltip extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     setTarget(series: ISeries, point: DataPoint, siblings: DataPoint[]): ITooltipContext {
-        return this._ctx = this.visible && this.owner.getTooltipContext(this.scope, this._series = series, this._point = point);
+        let scope = this.scope;
+
+        if (scope === TooltipScope.AUTO) {
+            if (series.group) scope = TooltipScope.GROUP;
+            else scope = TooltipScope.HOVER;
+        }
+        return this._ctx = this.visible && this.owner.getTooltipContext(scope, this._series = series, this._point = point);
     }
 
     getTextDomain(): IRichTextDomain {

@@ -1369,7 +1369,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[];
 
     value2Tooltip(value: number): any {
-        return value;
+        return isNaN(value) ? this.chart.tooltip.nanText : value;
     }
 
     isBased(): boolean {
