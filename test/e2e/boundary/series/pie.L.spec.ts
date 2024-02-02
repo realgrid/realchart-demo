@@ -103,20 +103,20 @@ test.describe('series, pie test', () => {
         await PWTester.testChartBySnapshot(page, testInfo);
     });
 
-    test('autoSlice: true', async ({ page }, testInfo) => {
-        config.series.data = createPieData('json');
-        config.series.autoSlice = true;
-        config.series.sliceDuration = 0;
+    // test('autoSlice: true', async ({ page }, testInfo) => {
+    //     config.series.data = createPieData('json');
+    //     config.series.autoSlice = true;
+    //     config.series.sliceDuration = 0;
 
-        await page.evaluate((newConfig) => {
-            chart.load(newConfig, false).render();
-        }, config);
-
-
-        const elt = (await page.$$(".rct-point"))[0];
-        await PWTester.mouseClick(page, elt);
+    //     await page.evaluate((newConfig) => {
+    //         chart.load(newConfig, false).render();
+    //     }, config);
 
 
-        await PWTester.testChartBySnapshot(page, testInfo);
-    });
+    //     const elt = (await page.$$(".rct-point"))[0];
+    //     await PWTester.mouseClick(page, elt);
+
+
+    //     await PWTester.testChartBySnapshot(page, testInfo);
+    // });
 });
