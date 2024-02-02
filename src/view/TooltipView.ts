@@ -42,6 +42,7 @@ export class TooltipView extends RcElement {
     private _back: PathElement;
     private _textView: TextElement;
     private _richText: SvgRichText;
+    private _tailVisible = true;
 
     private _model: Tooltip;
     private _hideTimer: any;
@@ -115,6 +116,7 @@ export class TooltipView extends RcElement {
         if (inverted) {
             translate = (y - h / 2) - maxv(0, minv(y - h / 2, ch - h));
             // data point 범위를 벗어났을 경우 반대로 그려준다. issue #456
+            this._tailVisible = Math.abs(h / 2 - this._radius - this._tailSize / 2) > Math.abs(translate);
             let overed = reversed ? w + gap > fb.x - cb.x + fb.width : fb.x - cb.x - gap > cw - w;
             if (overed) reversed = !reversed;
             const position = reversed ? TooltipPosition.LEFT : TooltipPosition.RIGHT;
@@ -125,6 +127,7 @@ export class TooltipView extends RcElement {
         } else {
             translate = (x - w / 2) - maxv(0, minv(x - w / 2, cw - w));
             // data point 범위를 벗어났을 경우 반대로 그려준다. issue #456
+            this._tailVisible = Math.abs(w / 2 - this._radius - this._tailSize / 2) > Math.abs(translate);
             let overed = reversed ? ch - (fb.y - cb.y - control._padding.top) < h + gap : cb.bottom - fb.bottom + gap > ch - h;
             if (overed) reversed = !reversed;
             const position = reversed ? TooltipPosition.BOTTOM : TooltipPosition.TOP;
@@ -193,35 +196,37 @@ export class TooltipView extends RcElement {
             'Q', x, y, x + rd, y
         ];
 
-        switch (position) {
-            case TooltipPosition.TOP:
-                backPath = backPath.concat([
-                    'M', x + (w / 2) - (tail / 2) + translate, y + h,
-                    'L', x + (w / 2) + translate, y + h + tail,
-                    'L', x + (w / 2) + (tail / 2) + translate, y + h
-                ]);
-                break;
-            case TooltipPosition.BOTTOM:
-                backPath = backPath.concat([
-                    'M', x + (w / 2) - (tail / 2) + translate, y,
-                    'L', x + (w / 2) + translate, y - tail,
-                    'L', x + (w / 2) + (tail / 2) + translate, y
-                ]);
-                break;
-            case TooltipPosition.LEFT:
-                backPath = backPath.concat([
-                    'M', x + w, y + (h / 2) - (tail / 2) + translate,
-                    'L', x + w + tail, y + (h / 2) + translate,
-                    'L', x + w, y + (h / 2) + (tail / 2) + translate
-                ]);
-                break;
-            case TooltipPosition.RIGHT:
-                backPath = backPath.concat([
-                    'M', x, y + (h / 2) - (tail / 2) + translate,
-                    'L', x - tail, y + (h / 2) + translate,
-                    'L', x, y + (h / 2) + (tail / 2) + translate
-                ]);
-                break;
+        if (this._tailVisible) {
+            switch (position) {
+                case TooltipPosition.TOP:
+                    backPath = backPath.concat([
+                        'M', x + (w / 2) - (tail / 2) + translate, y + h,
+                        'L', x + (w / 2) + translate, y + h + tail,
+                        'L', x + (w / 2) + (tail / 2) + translate, y + h
+                    ]);
+                    break;
+                case TooltipPosition.BOTTOM:
+                    backPath = backPath.concat([
+                        'M', x + (w / 2) - (tail / 2) + translate, y,
+                        'L', x + (w / 2) + translate, y - tail,
+                        'L', x + (w / 2) + (tail / 2) + translate, y
+                    ]);
+                    break;
+                case TooltipPosition.LEFT:
+                    backPath = backPath.concat([
+                        'M', x + w, y + (h / 2) - (tail / 2) + translate,
+                        'L', x + w + tail, y + (h / 2) + translate,
+                        'L', x + w, y + (h / 2) + (tail / 2) + translate
+                    ]);
+                    break;
+                case TooltipPosition.RIGHT:
+                    backPath = backPath.concat([
+                        'M', x, y + (h / 2) - (tail / 2) + translate,
+                        'L', x - tail, y + (h / 2) + translate,
+                        'L', x, y + (h / 2) + (tail / 2) + translate
+                    ]);
+                    break;
+            }
         }
         
         const isBottom = position === TooltipPosition.BOTTOM;
