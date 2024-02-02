@@ -2,7 +2,7 @@ export const config = {
   type: 'bar',
   title: 'Title',
   subtitle: { visible: true, text: 'Subtitle' },
-  exportOptions: { visible: true },
+  export: { visible: true },
   options: { style: { backgroundImage: 'url(../assets/images/mountain.jpeg)' } },
   legend: { visible: true, location: 'bottom' },
   xAxis: {

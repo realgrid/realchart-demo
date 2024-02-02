@@ -297,6 +297,7 @@ const config = {
     },
     series: [
         {
+            layout: 'fill',
             children: [
                 {
                     template: 'series',

@@ -6,7 +6,6 @@ export const config = {
   yAxis: { title: 'Vertical 수직축 Axis' },
   series: [
     {
-      layout: 'fill',
       children: [
         {
           template: 'series',

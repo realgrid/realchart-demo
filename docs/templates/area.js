@@ -9,6 +9,8 @@ export const config = {
     {
       template: 'series',
       name: '재학생',
+      marker: {},
+      pointLabel: {},
       data: [
         521806, 496617, 477960, 526833,
         545023, 613376, 623130, 631745,
