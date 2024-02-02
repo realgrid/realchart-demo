@@ -19,28 +19,22 @@ const config = {
     },
     yAxis: {
     },
-    series: {
+    series: [{
         type: 'funnel',
-        // reversed: true,
-        // neckWidth: 0,
-        // neckHeight: 0,
         tooltipText: 'height: ${height}',
         pointLabel: {
             visible: true,
             text: "${name} (${y})",
-            // effect: 'outline'
+            position: "outside"
         },
         legendByPoint: true,
         data: [ 
-            { name: 'moon', y: 53, sliced: true }, 
-            { name: 'yeon', y: 97 }, 
-            { name: 'lim', y: 17}, 
-            { name: 'moon', y: 9}, 
-            { name: 'hong', y: 13 }, 
-            { name: 'america', y: 23}, 
-            { name: 'asia', y: 29}
+            { name: '웹사이트 방문', y: 13293 }, 
+            { name: '장바구니 담기', y: 4729 }, 
+            { name: '결제제페이지', y: 2742}, 
+            { name: '구매 완료', y: 1391},
         ],
-    }
+    }]
 }
 
 let animate = false;

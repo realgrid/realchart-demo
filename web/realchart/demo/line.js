@@ -3,7 +3,6 @@
  *
  */
 
-
 const config = {
     options: {
         // animatable: false

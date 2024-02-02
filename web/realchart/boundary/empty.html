@@ -30,7 +30,13 @@
         config = {
           title: "Boundary",
           xAxis: {},
-          series: [],
+          yAxis: {
+            tick: true,
+            strictMin: -20
+          },
+          series: [{
+            data: [12,12,13]
+          }],
         };
 
         try {

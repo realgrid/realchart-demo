@@ -6,7 +6,7 @@
 const config = {
     templates: {
         series: {
-            data: [11, 13, 10, 15, 19, 22, 27]
+            data: [11, 13, 10, 15, 19, 22]
         }
     },
     title: "Line & Lollipop Series",
@@ -15,7 +15,7 @@ const config = {
     },
     xAxis: {
         title: "일일 Daily fat",
-        categories: ['쓰리엠', '아디다스', 'Youtube', '디즈니', '이마트', '메리어트', '시세이도'],
+        categories: ['`14', '`15', '`16', '`17', '`18', '`19'],
     },
     yAxis: {
         title: "Vertical 수직축 Axis",
@@ -27,17 +27,13 @@ const config = {
         template: 'series',
         type: 'line',
         pointLabel: true,
-        // marker: false,
-        // data: [11, 13, 10, 15, 19, 22, 27]
     }, {
         template: 'series',
         type: 'lollipop',
-        // data: [11, 13, 10, 15, 19, 22, 27],
         visibleInLegend: false,
         style: {
             fill: 'none',
             strokeWidth: '1px',
-            strokeDasharray: '4'
         }
     }]
 }

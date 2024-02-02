@@ -3,55 +3,62 @@
  * 
  */
 const config = {
-    title: "Donut Series",
     options: {
+        // animatable: false
     },
-    legend: {
-        position: 'inside',
+    title: {
+        text: '2017년 3/4분기',
+        gap: 10,
+        backgroundStyle: {
+            fill: 'black',
+            padding: '2px 5px',
+            rx: '3px'
+        },
         style: {
-            marginRight: '20px'
+            fill: '#fff',
+            fontSize: '16px',
         }
     },
-    xAxis: {
+    subtitle: {
+        text: '모바일 트래픽 분석',
+        style: {
+            fill: 'black',
+            fontSize: '32px',
+            fontWeight: 'bold',
+            marginBottom: '10px'
+        }
     },
-    yAxis: {
-    },
-    series: {
+    series: [{
         type: 'pie',
+        radius: '40%',
         innerRadius: '50%',
-        //innerText: 'Inner Title',
-        innerText: '내부 타이틀<br><t style="fill:blue;font-weight:bold;">Inner</t><t style="fill:red;">Title입니다.</t>',
+        innerText: '<t style="fill:#000;font-weight:bold;font-size:24px">OS</t>',
         legendByPoint: true,
         pointLabel: {
+            text: '${x}<br>${y}%',
             visible: true,
-            effect: 'outline',
+            numberFormat: '#.00',
             style: {
-                // fill: '#eee'
+                fill: '#fff',
+                stroke: '#d3d3d3',
+                strokeWidth: '0.2px',
+                fontSize: '14px'
             }
         },
         data: [ 
-            { name: 'moon', y: 53 }, 
-            { name: 'yeon', y: 97, color: '#0088ff' }, 
-            { name: 'lim', y: 17}, 
-            { name: 'moon', y: 9}, 
-            { name: 'hong', y: 13 }, 
-            { name: 'america', y: 23}, 
-            { name: 'asia', y: 29}, 
-            // 23,
-            // 7,
-            // 17,
-            // 13
+            { x: 'Android', y: 53.51, sliced: true }, 
+            { x: 'iOS', y: 29.14 }, 
+            { x: 'Windows', y: 10.72}, 
+            { x: '기타', y: 6.63}, 
         ],
-        onPointHover: args => {
-            if (args) {
-                chart.series.set('innerText', `${args.x} - <b>${args.yValue}</b>`);
-            } else {
-                chart.series.set('innerText', config.series.innerText);
-            }
-        },
-    }
+        onPointClick: (arg) => {
+            config.series[0].data.forEach(value => {
+                value.sliced = value.x === arg.x ? true : false;
+            });
+            chart.load(config, false);
+        }
+    }]
 }
-
 let animate = false;
 let chart;
 
