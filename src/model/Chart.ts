@@ -967,8 +967,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         // options
         this._options.load(source.options);
 
-        // options
-        Object.assign(this._export, source.exportOptions);
+        // export
+        Object.assign(this._export, source.export);
 
         // titles
         this._title.load(source.title);

@@ -49,7 +49,7 @@ const config = {
             imageUrl: '../assets/images/annotation.png'
         }],
     },
-    exportOptions: {},
+    export: {},
     title: "Line Big Data",
     xAxis: {
         tick: {
@@ -77,64 +77,155 @@ const config = {
 
 let animate = false;
 let chart;
+let type = 'png';
+let fileName = 'realchart';
 
 function setActions(container) {
-    createCheckBox(container, 'Debug', function (e) {
-        RealChart.setDebugging(_getChecked(e));
-        chart.render();
-    }, false);
-    createCheckBox(container, 'Always Animate', function (e) {
-        animate = _getChecked(e);
-    }, false);
-    createButton(container, 'Test', function(e) {
-        alert('hello');
-    });
-	createCheckBox(container, 'Inverted', function (e) {
-            chart.inverted = _getChecked(e);
-		}, false);
-	createCheckBox(container, 'X Reversed', function (e) {
-			config.xAxis.reversed = _getChecked(e);
-			chart.load(config, animate);
-		}, false);
-	createCheckBox(container, 'Y Reversed', function (e) {
-			config.yAxis.reversed = _getChecked(e);
-			chart.load(config, animate);
-		}, false);
-	line(container);
-	createCheckBox(container, 'exportOptions.visible', function (e) {
-			config.exportOptions.visible = _getChecked(e);
-			chart.load(config, animate);
-		}, true);
-    createCheckBox(
-        container,
-        'exportOptions.useLibrary',
-        function (e) {
-            config.exportOptions.useLibrary = _getChecked(e);
-            chart.load(config, animate);
-        },
-        false
-        );
-	createCheckBox(container, 'exportOptions.hideNavigator', function (e) {
-			config.exportOptions.hideNavigator = _getChecked(e);
-			chart.load(config, animate);
-		}, false);
-	createCheckBox(container, 'exportOptions.hideScrollbar', function (e) {
-			config.exportOptions.hideScrollbar = _getChecked(e);
-			chart.load(config, animate);
-		}, false);
-	createCheckBox(container, 'exportOptions.hideZoomButton', function (e) {
-			config.exportOptions.hideZoomButton = _getChecked(e);
-			chart.load(config, animate);
-		}, false);
-	line(container);
-	createListBox(container, "exportOptions.width", ['425', '850', '1275'], function (e) {
-        config.exportOptions.width = Number(_getValue(e));
-        chart.load(config);
-    }, '850');
-	createListBox(container, "exportOptions.scale", ['0.5', '1', '1.5'], function (e) {
-        config.exportOptions.scale = Number(_getValue(e));
-        chart.load(config);
-    }, '1');
+  createCheckBox(
+    container,
+    'Debug',
+    function (e) {
+      RealChart.setDebugging(_getChecked(e));
+      chart.refresh();
+    },
+    false
+  );
+  createCheckBox(
+    container,
+    'Always Animate',
+    function (e) {
+      animate = _getChecked(e);
+    },
+    false
+  );
+  createButton(container, 'Test', function (e) {
+    alert('hello');
+  });
+  createCheckBox(
+    container,
+    'Inverted',
+    function (e) {
+      chart.inverted = _getChecked(e);
+    },
+    false
+  );
+  createCheckBox(
+    container,
+    'X Reversed',
+    function (e) {
+      config.xAxis.reversed = _getChecked(e);
+      chart.load(config, animate);
+    },
+    false
+  );
+  createCheckBox(
+    container,
+    'Y Reversed',
+    function (e) {
+      config.yAxis.reversed = _getChecked(e);
+      chart.load(config, animate);
+    },
+    false
+  );
+  line(container);
+  createCheckBox(
+    container,
+    'export.visible',
+    function (e) {
+      config.export.visible = _getChecked(e);
+      chart.load(config, animate);
+    },
+    true
+  );
+  createCheckBox(
+    container,
+    'export.useLibrary',
+    function (e) {
+      config.export.useLibrary = _getChecked(e);
+      chart.load(config, animate);
+    },
+    false
+  );
+  createCheckBox(
+    container,
+    'export.hideNavigator',
+    function (e) {
+      config.export.hideNavigator = _getChecked(e);
+      chart.load(config, animate);
+    },
+    false
+  );
+  createCheckBox(
+    container,
+    'export.hideScrollbar',
+    function (e) {
+      config.export.hideScrollbar = _getChecked(e);
+      chart.load(config, animate);
+    },
+    false
+  );
+  createCheckBox(
+    container,
+    'export.hideZoomButton',
+    function (e) {
+      config.export.hideZoomButton = _getChecked(e);
+      chart.load(config, animate);
+    },
+    false
+  );
+  line(container);
+  createListBox(
+    container,
+    'export.width',
+    ['425', '850', '1275'],
+    function (e) {
+      config.export.width = Number(_getValue(e));
+      chart.load(config);
+    },
+    '850'
+  );
+  createListBox(
+    container,
+    'export.scale',
+    ['0.5', '1', '1.5'],
+    function (e) {
+      config.export.scale = Number(_getValue(e));
+      chart.load(config);
+    },
+    '1'
+  );
+  createListBox(
+    container,
+    'export.fileName',
+    ['realchart', 'wooritech', 'realchart-export'],
+    function (e) {
+      config.export.fileName = _getValue(e);
+      chart.load(config);
+    },
+    'realchart'
+  );
+  line(container);
+  createListBox(
+    container,
+    'type',
+    ['png', 'jpeg', 'svg'],
+    function (e) {
+      type = _getValue(e);
+    },
+    'realchart'
+  );
+  createListBox(
+    container,
+    'fileName',
+    ['realchart', 'wooritech', 'realchart-export'],
+    function (e) {
+      fileName = _getValue(e);
+    },
+    'realchart'
+  );
+  createButton(container, 'Export', function (e) {
+    chart.export({type, fileName});
+  });
 }
 
 function init() {

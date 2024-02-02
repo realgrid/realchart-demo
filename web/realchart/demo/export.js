@@ -10,7 +10,7 @@ const config = {
     visible: true,
     text: 'Subtitle',
   },
-  exportOptions: { visible: true },
+  export: { visible: true },
   options: {
     style: {
       backgroundImage: 'url(../assets/images/mountain.jpeg)',
@@ -158,6 +158,8 @@ const config = {
 
 let animate = false;
 let chart;
+let type = 'png';
+let fileName = 'realchart';
 
 function setActions(container) {
   createCheckBox(
@@ -209,45 +211,45 @@ function setActions(container) {
   line(container);
   createCheckBox(
     container,
-    'exportOptions.visible',
+    'export.visible',
     function (e) {
-      config.exportOptions.visible = _getChecked(e);
+      config.export.visible = _getChecked(e);
       chart.load(config, animate);
     },
     true
   );
   createCheckBox(
     container,
-    'exportOptions.useLibrary',
+    'export.useLibrary',
     function (e) {
-      config.exportOptions.useLibrary = _getChecked(e);
+      config.export.useLibrary = _getChecked(e);
       chart.load(config, animate);
     },
     false
   );
   createCheckBox(
     container,
-    'exportOptions.hideNavigator',
+    'export.hideNavigator',
     function (e) {
-      config.exportOptions.hideNavigator = _getChecked(e);
+      config.export.hideNavigator = _getChecked(e);
       chart.load(config, animate);
     },
     false
   );
   createCheckBox(
     container,
-    'exportOptions.hideScrollbar',
+    'export.hideScrollbar',
     function (e) {
-      config.exportOptions.hideScrollbar = _getChecked(e);
+      config.export.hideScrollbar = _getChecked(e);
       chart.load(config, animate);
     },
     false
   );
   createCheckBox(
     container,
-    'exportOptions.hideZoomButton',
+    'export.hideZoomButton',
     function (e) {
-      config.exportOptions.hideZoomButton = _getChecked(e);
+      config.export.hideZoomButton = _getChecked(e);
       chart.load(config, animate);
     },
     false
@@ -255,24 +257,56 @@ function setActions(container) {
   line(container);
   createListBox(
     container,
-    'exportOptions.width',
+    'export.width',
     ['425', '850', '1275'],
     function (e) {
-      config.exportOptions.width = Number(_getValue(e));
+      config.export.width = Number(_getValue(e));
       chart.load(config);
     },
     '850'
   );
   createListBox(
     container,
-    'exportOptions.scale',
+    'export.scale',
     ['0.5', '1', '1.5'],
     function (e) {
-      config.exportOptions.scale = Number(_getValue(e));
+      config.export.scale = Number(_getValue(e));
       chart.load(config);
     },
     '1'
   );
+  createListBox(
+    container,
+    'export.fileName',
+    ['realchart', 'wooritech', 'realchart-export'],
+    function (e) {
+      config.export.fileName = _getValue(e);
+      chart.load(config);
+    },
+    'realchart'
+  );
+  line(container);
+  createListBox(
+    container,
+    'type',
+    ['png', 'jpeg', 'svg'],
+    function (e) {
+      type = _getValue(e);
+    },
+    'realchart'
+  );
+  createListBox(
+    container,
+    'fileName',
+    ['realchart', 'wooritech', 'realchart-export'],
+    function (e) {
+      fileName = _getValue(e);
+    },
+    'realchart'
+  );
+  createButton(container, 'Export', function (e) {
+    chart.export({type, fileName});
+  });
 }
 
 function init() {
