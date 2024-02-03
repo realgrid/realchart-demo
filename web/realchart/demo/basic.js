@@ -47,7 +47,7 @@ const config = {
             text: '수정구',
         },
         // grid: true,
-        crosshair: true,
+        // crosshair: true,
     },
     yAxis: {
         title: {
@@ -200,6 +200,15 @@ function setActions(container) {
             chart.load(config, animate);
         },
         false
+    );
+    createCheckBox(
+        container,
+        'Point Label',
+        function (e) {
+            config.series.pointLabel = _getChecked(e);
+            chart.load(config, animate);
+        },
+        true
     );
 
     // createButton(container, 'Destroy', function (e) {

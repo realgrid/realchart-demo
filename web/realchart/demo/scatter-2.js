@@ -7,6 +7,9 @@ const config = {
 	options: {
 		// palette: 'gray'
 	},
+    tooltip: {
+        followPointer: true
+    },
 	title: 'Scatter Series',
 	xAxis: {
 		title: '나이',

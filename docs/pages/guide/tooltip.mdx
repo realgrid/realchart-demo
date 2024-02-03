@@ -41,11 +41,15 @@ const config = {
 };
 ```
 
+[line](/config/config/series/line) 시리즈나 [scatter](/config/config/series/scatter) 시리즈의 경우
+[hoverScale](/config/config/series/hoverScale) 속성에 hover될 때 커지는 비율을 지정할 수 있다.
+
 <img src="/images/guide/hovering-style-02.png" width="70%"/>
 
 ```js
 const config = {
     series: {
+        hoverScale: 1.8,
         hoverStyle: {
             stroke: 'blue',
             strokeWidth: '3px',
@@ -55,17 +59,81 @@ const config = {
 }
 ```
 
-## Series Hovering  
+### Series Hovering  
 
 여러 시리즈가 표시 중일 때, hover 상태인 데이터포인트가 포함된 시리즈를 강조하는 방법이다.
-chart.options.[seriesHovering](/config/config/options#seriesHovering)을 true로 지정하면
+chart.options.[seriesHovering](/config/config/options#seriesHovering)을 **true**로 지정하면
 hover된 시리즈를 제외한 나머지 시리즈들은 희미하게 표시된다.
 
 <img src="/images/guide/hovering-series-01.png" width="70%"/>
 
+위와 같이 시리즈를 강조하는 방법이 하나 더 있는 데,
+시리즈 범례 항목에 마우스를 hover 시키는 것이다.
+차트 legend.[seriesHovering](/config/config/legend#seriesHovering) 속성을 **true**(기본값)로 지정하면 된다.
+
+### Hovering Distance
+
+[line](/config/config/series/line) 시리즈 계열이나, [scatter](/config/config/series/scatter),
+[bubble](/config/config/series/bubble) 시리즈의 경우, 데이터포인트 view로 표현되는 marker의 크기가 작아서
+마우스로 데이터포인트 지점을 지정하기가 번거로울 수 있다. 
+이를 위해 힌트 반경(hint distance)을 지정해서 marker의 실제 크기 밖에 가상의 추가 영역이 존재하는 것처럼 계산해서
+marker의 위치가 찾아지도록 할 수 있다.<br/>
+시리즈별로 [hintDistance](/config/config/series/line#hintDistance) 속성을 지정하거나,
+차트 옵션의 pointHovering.[hintDistance](/config/config/options/pointHovering#hintDistance) 속성에 가상의 추가 반경을 지정한다.
+pointHovering.hintDistance 기본값은 **30** 픽셀이다.
+0이하면 marker 본래 크기로 계산된다. 상당히 큰 크기로 지정하면 (body 영역 내에서)마우스가 어느 위치에 있든 마우스에 가장 가까운 marker가 찾아질 것이다.<br/>
+
+```js
+const config = {
+    options: {
+        pointHovering: {
+            hintDistance: 100
+        }
+    }
+}
+```
+
+또, 두 속성값을 명시적으로 지정하지 않고 툴팁이 표시되는 상태일 때,
+tooltip.[followPointer](/config/config/tooltip#followPointer)가 true로 지정되면 가장 큰 정수값으로 자동 설정된다. 즉, 툴팁 위치 이동 시 항상 하나의 marker가 hover 된다.
+
+<img src="/images/guide/hovering-point-follow.png" width="70%"/>
+
+### Point Hovering Scope
+
+데이터포인트 하나가 hover될 때 관련된 다른 데이터포인트 view들을 동시에 hover 시킬 수 있다.
+어떤 데이터포인트들을 연관시킬 것인 지는 pointHovering.[scope](/config/config/options/pointHovering#scope) 속성에 지정할 수 있다.
+'**point**', '**group**', '**axis**' 또는 '**autov' 값으로 지정할 수 있는 데,
+'**group**'이면 같은 시리즈 그룹에 포함된 **x** 값이 동일한 데이터포인트들,
+'**axis**'이면 **x** 값이 동일한 모든 데이터포인트들을 동시에 hover 시킨다.<br/>
+기본값인 '**autov'인 경우, x축의 [crosshair](/config/config/axis/crosshair)가 활성된 경우 'axis', line 시리즈 계열이면서 그룹에 포함된 경우 'group'으로 설정된다.
+다만 options.[seriesHovering](/config/config/options#seriesHovering)이 true이면 'point'가 된다.
+
+<img src="/images/guide/hovering-point-scope.png" width="70%"/>
+
 ## Tooltip
 
+툴팁은 hover된 데이터포인트(들)의 값이나 추가 정보를 보여주는 view이다.
+툴팁뷰에 표시될 데이터포인트들은 기본적으로 위의 hovering 범위에서 결정된 것들과 동일한 데,
+tooltip.[scope](/config/config/tooltip#scope) 속성으로 다르게 지정할 수도 있다.
+
 <img src="/images/guide/tooltip-01.png" width="80%"/>
+
+[Tooltip 모델](/config/config/tooltip)에는 툴팁 표시와 관련된 여러 속성들이 있다.
+또, Series.[tooltipText](/config/config/base/series#tooltipText)에 시리즈의 데이터포인터 툴팁으로 표시될
+텍스트 형식을 지정할 수 있다.
+
+```js
+const config = {
+    tooltip: {
+        offset: 20
+    },
+    series: {
+        tooltipText: '<b>${name}</b><br>${series}:<b> ${yValue}</b>'
+    }
+}
+```
+
+<img src="/images/guide/tooltip-02.png" width="80%"/>
 
 ## 설정
 

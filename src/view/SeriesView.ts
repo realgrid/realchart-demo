@@ -10,7 +10,7 @@ import { pickNum, assign, isObject, isString, absv, maxv, minv } from "../common
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { IPoint, Point } from "../common/Point";
-import { RcAnimation, createAnimation } from "../common/RcAnimation";
+import { RcAnimation, RcAnimationEndHandler, createAnimation } from "../common/RcAnimation";
 import { ClipRectElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
 import { FILL, IValueRange, SVGStyleOrClass, _undef } from "../common/Types";
@@ -24,8 +24,61 @@ import { LegendItem } from "../model/Legend";
 import { ClusterableSeries, DataPointLabel, HoverEffect, MarkerSeries, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
 import { ContentView } from "./ChartElement";
 import { LegendItemView } from "./LegendView";
-import { HoverAnimation } from "./animation/HoverAnimation";
 import { PrevAnimation, SeriesAnimation } from "./animation/SeriesAnimation";
+
+class HoverAnimation extends RcAnimation {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _series: SeriesView<Series>;
+    _focused: boolean;
+    _marker: MarkerSeriesPointView;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(series: SeriesView<Series>, marker: MarkerSeriesPointView, focused: boolean, endHandler: RcAnimationEndHandler) {
+        super();
+
+        this.duration = focused ? 200 : 100;
+
+        this._series = series;
+        this._focused = focused;
+        this._marker = marker;
+
+        if (!focused) {
+            this._marker.setBoolData(SeriesView.DATA_UNHOVER, true);
+            // 사라지는 중에 hover style이 유지되도록 한다.
+            this._marker.saveStyles();
+            series.setHoverStyle(this._marker);
+        }
+
+        this.start(endHandler);
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doStart(): void {
+        this._marker.beginHover(this._series, this._focused);
+    }
+
+    protected _doUpdate(rate: number): boolean {
+        if (this._marker.parent) {
+            this._marker.setHoverRate(this._series, this._focused, rate);
+            return true;
+        }
+        return false;
+    }
+
+    protected _doStop(): void {
+        this._marker.setBoolData(SeriesView.DATA_UNHOVER, false);
+        !this._focused && this._marker.restoreStyles();
+        this._marker.setHoverRate(this._series, this._focused, NaN);
+        this._marker = null;
+    }
+}
 
 export interface IPointView {
     point: DataPoint;
