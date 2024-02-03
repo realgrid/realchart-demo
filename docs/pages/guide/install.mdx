@@ -13,14 +13,19 @@ npm i realchart
 ```
 
 우리테크 사이트에서 내려 받아 html에서 직접 include할 수 있다.
+이 때, 리얼차트의 요소들의 기본 스타일들이 설정된 **css 파일**도 반드시 포함해야 한다.
 
 ```html
 <script type="text/javascript" src="../lib/realchart.1.0.0.min.js"></script>
 <link href="../styles/realchart-style.css" rel="stylesheet" />
 ```
 
+리얼차트는 상용 라이선스로 배포되고 있다.
 모든 경우에 우리테크에서 제공한 라이선스 파일을 별도로 추가해야 한다.
 
 ```html
 <script type="text/javascript" src="../lib/realchart-lic.js"></script>
 ```
+
+또, 차트를 이미지 등으로 내보내기(download) 위해서는 별도의 모듈 설치가 필요하다.
+[내보내기 페이지](/guide/export)를 참조한다.

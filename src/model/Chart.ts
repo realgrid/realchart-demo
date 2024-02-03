@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, mergeObj, pickProp3, assign } from "../common/Common";
+import { isArray, isObject, isString, mergeObj, pickProp3, assign, checkEnum } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, ExportType, SectionDir, VerticalAlign, _undef } from "../common/Types";
 import { AssetCollection } from "./Asset";
@@ -269,6 +269,7 @@ export class Credits extends ChartItem {
 export enum PointHoverScope {
     /**
      * hover된 데이터포인터의 상태에 따라 자동으로 결정한다.<br/>
+     * {@link ChartOptions.seriesHovering}이 true이면 'point',
      * 데이터포인트의 x축에 'crosshair'가 동작 중이면 'axis',
      * 데이터포인트가 series group에 포함된 경우이면 'group',
      * 아니면 'point'가 된다.
@@ -342,17 +343,14 @@ export class PointHovering extends ChartItem {
     }
 
     getScope(series: ISeries, p: DataPoint): PointHoverScope {
-        if (this.scope === PointHoverScope.POINT || this.scope === PointHoverScope.GROUP || this.scope === PointHoverScope.AXIS) {
+        if (checkEnum(PointHoverScope, this.scope, PointHoverScope.AUTO) !== PointHoverScope.AUTO) {
             return this.scope;
+        } else if (this.chart.options.seriesHovering) {
+            return PointHoverScope.POINT;
         } else {
-            if ((series as Series)._xAxisObj.crosshair.visible && !this.chart.options.seriesHovering) {
+            if ((series as Series)._xAxisObj.crosshair.visible) {
                 return PointHoverScope.AXIS;
             }
-
-            // const g = series.group;
-            // if (g && (g.layout === SeriesGroupLayout.OVERLAP || g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
-            //     return PointHoverScope.GROUP;
-            // } 
             if (series.isMarker() && series.group) {
                 return PointHoverScope.GROUP;
             }

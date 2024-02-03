@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { absv, cos, minv, sin } from '../Common';
+import { absv, cos, enumValues, minv, sin } from '../Common';
 import { PathElement } from '../RcControl';
 import { IRect } from '../Rectangle';
 import { PathValue, fixAngle } from '../Types';
@@ -46,7 +46,7 @@ export enum Shape {
     RECTANGLE = 'rectangle'
 }
 
-export const Shapes = Utils.getEnumValues(Shape);
+export const Shapes = enumValues(Shape);
 
 const SECTOR_ERROR = 0.001;
 const PI = Math.PI;

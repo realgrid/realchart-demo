@@ -297,7 +297,6 @@ export class Pattern extends AssetItem<IPattern> {
         let noFill = false;
         let s: string;
         let stockStyle: any;
-        let style: any;
         let w: number;
         let h: number;
 
@@ -316,7 +315,6 @@ export class Pattern extends AssetItem<IPattern> {
             
         } else if (isString(src.pattern)) {
             s = src.pattern;
-            style = src.style;
             w = src.width || src.height || 20;
             h = src.height || src.width || 20;
         }
@@ -324,14 +322,14 @@ export class Pattern extends AssetItem<IPattern> {
         elt.setAttribute('width', String(w));
         elt.setAttribute('height', String(h));
         path.setAttribute('d', s);
-        style && assign(path.style, style);
         stockStyle && assign(path.style, stockStyle);
+        src.style && assign(path.style, src.style);
         if (noFill) {
             path.style.fill = 'none';
         }
 
         // 배경
-        style = src.backgroundStyle;
+        let style = src.backgroundStyle;
         if (isString(style) || isObject(style)) {
             const rect = doc.createElementNS(SVGNS, 'rect');
 

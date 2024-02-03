@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { checkEnum } from "../common/Common";
 import { RcElement } from "../common/RcControl";
 import { Align, AlignBase, IPercentSize, RtPercentSize, SVGStyleOrClass, VerticalAlign, _undef, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
@@ -352,7 +353,7 @@ export class Legend extends Widget {
     protected _doPrepareRender(chart: IChart): void {
         super._doPrepareRender(chart);
 
-        this._location = Utils.checkEnumValue(LegendLocation, this.location, LegendLocation.BOTTOM);
+        this._location = checkEnum(LegendLocation, this.location, LegendLocation.BOTTOM);
         this._items = this.$_collectItems();
         if (this.reversed) this._items = this._items.reverse();
     }

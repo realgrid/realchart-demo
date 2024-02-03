@@ -266,19 +266,6 @@ export class Utils {
         return (isNaN(value) || value === null || value === '') ? def : +value;
     }
 
-    static getEnumValues(type: any): any[] {
-        return Object.keys(type).map(key => type[key]);
-    }
-
-    static checkEnumValue(type: any, value: any, def: any): any {
-        const keys = Object.keys(type);
-
-        for (let i = keys.length - 1; i >= 0; i--) {
-            if (type[keys[i]] === value) return value;
-        }
-        return def;
-    }
-
     static compareText(s1: string, s2: string, ignoreCase = false): number {
         s1 = s1 || '';
         s2 = s2 || '';

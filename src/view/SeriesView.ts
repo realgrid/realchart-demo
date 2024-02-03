@@ -277,7 +277,8 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     // consts
     //-------------------------------------------------------------------------
     static readonly POINT_CLASS = 'rct-point';
-    static readonly DATA_FOUCS = 'focus';
+    static readonly DATA_HOVER = 'hover';
+    static readonly DATA_UNHOVER = 'unhover';
     static readonly LEGEND_MARKER = 'rct-legend-item-marker';
 
     //-------------------------------------------------------------------------
@@ -526,7 +527,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
                     // const ani = oldAnis.find(ani => ani._marker === pv && ani._focused);
                     ani && ani.stop();
 
-                    pv.setBoolData(SeriesView.DATA_FOUCS, false);
+                    pv.setBoolData(SeriesView.DATA_HOVER, false);
                     pv.restoreStyles();
 
                     if (pv instanceof MarkerSeriesPointView) {
@@ -544,7 +545,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
                     ani && ani.stop();
     
                     if (pv instanceof RcElement) {
-                        pv.setBoolData(SeriesView.DATA_FOUCS, true);
+                        pv.setBoolData(SeriesView.DATA_HOVER, true);
                         pts.push(pv);
     
                         pv.restoreStyles(); // TODO: 이것이 필요한 상황은?

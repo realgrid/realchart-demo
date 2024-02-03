@@ -68,6 +68,17 @@ export const mergeObj = (v1: any, v2: any): any => {
 export const incv = (prev: number, next: number, rate: number): number => {
     return prev + (next - prev) * rate;
 }
+export const enumValues = (type: any): any[] => {
+    return Object.keys(type).map(key => type[key]);
+}
+export const checkEnum = (type: any, value: any, def: any): any => {
+    const keys = Object.keys(type);
+
+    for (let i = keys.length - 1; i >= 0; i--) {
+        if (type[keys[i]] === value) return value;
+    }
+    return def;
+}
 export class RcDebug {
     static _debugging = false;
     static debug(): void { if (this._debugging) { debugger; } }

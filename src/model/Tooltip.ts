@@ -6,11 +6,12 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isString } from "../common/Common";
+import { checkEnum, isString } from "../common/Common";
 import { DatetimeFormatter } from "../common/DatetimeFormatter";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { IRichTextDomain } from "../common/RichText";
 import { _undef } from "../common/Types";
+import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
@@ -22,7 +23,6 @@ import { ISeries } from "./Series";
  * @config
  */
 export enum TooltipScope {
-    AUTO = 'auto',
     HOVER = 'hover',
     POINT = 'point',
     GROUP = 'group',
@@ -83,7 +83,7 @@ export class Tooltip extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    scope = TooltipScope.AUTO;
+    scope = TooltipScope.HOVER;
     html: string;
     /**
      * 툴팁에 표시할 텍스트 형식.<br/>
@@ -169,12 +169,7 @@ export class Tooltip extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     setTarget(series: ISeries, point: DataPoint, siblings: DataPoint[]): ITooltipContext {
-        let scope = this.scope;
-
-        if (scope === TooltipScope.AUTO) {
-            if (series.group) scope = TooltipScope.GROUP;
-            else scope = TooltipScope.HOVER;
-        }
+        let scope = checkEnum(TooltipScope, this.scope, TooltipScope.HOVER);
         return this._ctx = this.visible && this.owner.getTooltipContext(scope, this._series = series, this._point = point);
     }
 

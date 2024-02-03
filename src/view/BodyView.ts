@@ -1041,11 +1041,7 @@ export class BodyView extends ChartElement<Body> {
                     sers = (sv.model._xAxisObj as Axis).getSeries() as any;
                 case PointHoverScope.GROUP:
                     if (!sers) {
-                        // if (sv.model.isMarker()) {
-                        //     sers = sv.model.group.getVisibleSeries() as any;
-                        // } else {
-                            sers = [sv.model];
-                        // }
+                        sers = sv.model.group.getVisibleSeries() as any;
                     }
 
                     const pts = sers.map(ser => ser.getPoints().pointAt(pv.point.xValue));
@@ -1122,8 +1118,8 @@ export class BodyView extends ChartElement<Body> {
 
     private $_hoverSeries(sv: SeriesView<Series>): void {
         this._seriesViews.forEach(sv2 => {
-            sv2.setBoolData('unfocus', sv && sv2 !== sv);
-            sv2._labelContainer.setBoolData('unfocus', sv && sv2 !== sv);
+            sv2.setBoolData(SeriesView.DATA_UNHOVER, sv && sv2 !== sv);
+            sv2._labelContainer.setBoolData(SeriesView.DATA_UNHOVER, sv && sv2 !== sv);
         })
     }
 
