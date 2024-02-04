@@ -1203,6 +1203,7 @@ export class BodyView extends ChartElement<Body> {
 
     protected _doMeasure(doc: Document, model: Body, hintWidth: number, hintHeight: number, phase: number): ISize {
         const chart = model.chart as Chart;
+        const base = model.base();
 
         this._polar = chart.isPolar();
         this._zoomRequested = false;
@@ -1215,7 +1216,10 @@ export class BodyView extends ChartElement<Body> {
         }
 
         // background
-        this._background.setStyleOrClass(model.style);
+        this._background.setStyleOrClass(base.style);
+        if (base !== model) {
+            this._background.internalSetStyleOrClass(model.style);
+        }
         this._background.setBoolData('polar', this._polar || chart.isWidget());
 
         // series

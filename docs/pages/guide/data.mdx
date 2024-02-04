@@ -141,7 +141,51 @@ const data = RealChart.createData('main', [...], {
 
 ## 데이터포인트 변경
 
+데이터포인트 값은 api을 통해 직접 변경할 수 있고, 값 변경은 바로 차트에 반영된다.
+
+```js
+const x = 'google';
+const v = chart.series.getValueAt(x);
+chart.series.updatePoint(x, v + 100);
+```
+
+RcChartSeries.[getValueAt](/docs/api/classes/RcChartSeries#getvalueat)은 
+지정한 **x**값을 갖는 첫번째 데이터포인트의 **y**값을 리턴한다. 
+이 후 RcChartSeries.[updatePoint](/docs/api/classes/RcChartSeries#updatepoint) 호출로
+값을 변경할 수 있다.
+
 ## 데이터포인트 추가/삭제
+
+api를 통해 데이터포인트(들)를 추가하거나 기존 데이터포인트(들)를 제거할 수도 있다.
+데이터포인트 하나를 추가하려면 RcChartSeries.[addPoint](/docs/api/classes/RcChartSeries#addpoint)를 호출한다.
+
+```js
+const x = getName();
+const y = getValue();
+chart.series.addPoint([x, y]);
+```
+
+데이터포인트 정보를 배열로 지정하고 
+RcChartSeries.[addPoints](/docs/api/classes/RcChartSeries#addpoints)를 사용해서 복수개의 데이터포인트를 동시에 추가할 수도 있다.
+
+```js
+const pts = getPoints();
+chart.series.addPoints(pts);
+```
+
+RcChartSeries.[removePoint](/docs/api/classes/RcChartSeries#removepoint) 호출로 x값에 해당하는 첫번째 데이터포인트를 삭제할 수 있다.
+
+```js
+const x = getName();
+chart.series.removePoint(x);
+```
+
+삭제할 x값들을 배열로 지정해서 여러 데이터포인틀 한꺼번에 제거할 수 있다.
+
+```js
+const names = getNames();
+chart.series.removePoints(names);
+```
 
 ### See Also
 
