@@ -13,7 +13,7 @@ import { PWTester } from "../PWTester";
  * PlayWright Tests for area.html
  */
 
-test.describe("xAxis, category test", () => {
+test.describe("empty", () => {
   const url = "boundary/empty.html?debug";
 
   let chart;
