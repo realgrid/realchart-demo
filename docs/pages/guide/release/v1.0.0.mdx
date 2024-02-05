@@ -1,0 +1,22 @@
+# release 1.0.0
+
+## 개선 기능
+
+- logAxis일 때, default xStart가 1로 지정되도록 수정
+- pie 시리즈에서 dataPoint hover시 innerText를 변경할 수 있도록 onPointHover이벤트 추가
+- multi series focusing 추가
+- areaRange의 legend view 개선
+- spline타입 시리즈 추가
+
+
+## 버그 수정
+
+- Zoom 사용시 간헐적으로 툴팁 꼬리표가 이상하게 표시되던 현상 수정
+- Zoom 사용시 crosshair가 위치를 제대로 계산하지 못하던 현상 수정
+- logAxis에서 첫번째 라벨이 중복되어 표시되는 현상 수정
+- label.startStep이 동작하지 않던 현상 수정
+- marker를 변경하면서 hover시 marker가 계속 커지던 현상 수정
+- xAxis의 crosshair와 scrollBar 동시 사용시, yAxis영역까지 포함되던 현상 수정
+- scrollBar gap을 음수로 설정하는 경우 높이가 늘어나던 현상 수정
+- 빈 차트 생성시 차트가 정상적으로 그려지지 않던 현상 수정
+

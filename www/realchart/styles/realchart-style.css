@@ -643,10 +643,10 @@
     transition-property: opacity;
     transition-duration: 0.7s;
 }
-.rct-series[data-unfocus] {
+.rct-series[data-unhover] {
     opacity: 0.2 !important;
 }
-.rct-series .rct-point[data-focus], .rct-point[data-unfocus] {
+.rct-series .rct-point[data-hover], .rct-point[data-unhover] {
     stroke: var(--rct-focus-stroke) !important;
     stroke-width: var(--rct-focus-stroke-width) !important;
     filter: brightness(115%) !important;
@@ -657,7 +657,7 @@
     transition-property: opacity;
     transition-duration: 0.7s;
 }
-.rct-point-labels[data-unfocus] {
+.rct-point-labels[data-unhover] {
     opacity: 0.3 !important;
 }
 
@@ -736,7 +736,7 @@
 .rct-scatter-series {
     fill-opacity: 0.7;
 }
-.rct-scatter-series .rct-point[data-focus] {
+.rct-scatter-series .rct-point[data-hover] {
     fill-opacity: 0.9;
 }
 
@@ -760,7 +760,7 @@
     stroke: #333;
     stroke-dasharray: 2;
 }
-.rct-boxplot-series .rct-point[data-focus] .rct-boxplot-point-stem {
+.rct-boxplot-series .rct-point[data-hover] .rct-boxplot-point-stem {
     stroke: black;
     stroke-dasharray: none;
     stroke-width: 2px;
@@ -771,7 +771,7 @@
     stroke-width: 1;
     fill-opacity: 0.85;
 }
-.rct-candlestick-series .rct-point[data-focus] {
+.rct-candlestick-series .rct-point[data-hover] {
     fill-opacity: 0.5;
 }
 .rct-candlestick-series .rct-point[data-decline] {
@@ -792,7 +792,7 @@
 .rct-ohlc-series .rct-point[data-decline] {
     stroke: #00f;
 }
-.rct-ohlc-series .rct-point[data-focus] .rct-ohlc-point-back {
+.rct-ohlc-series .rct-point[data-hover] .rct-ohlc-point-back {
     fill: #0088ff20 !important;
 }
 .rct-ohlc-point-back {
@@ -822,7 +822,7 @@
     stroke: #008;
     stroke-width: 2px;
 }
-.rct-errorbar-series .rct-point[data-focus] .rct-errorbar-point-back {
+.rct-errorbar-series .rct-point[data-hover] .rct-errorbar-point-back {
     fill: #0088ff20 !important;
 }
 
@@ -833,11 +833,11 @@
 .rct-lollipop-point-marker {
     stroke: none;
 }
-.rct-lollipop-series .rct-point[data-focus] {
+.rct-lollipop-series .rct-point[data-hover] {
     stroke: var(--rct-focus-stroke);
     stroke-width: inherit;
 }
-.rct-lollipop-series .rct-point[data-focus] .rct-lollipop-point-marker {
+.rct-lollipop-series .rct-point[data-hover] .rct-lollipop-point-marker {
     stroke: var(--rct-focus-stroke);
     stroke-width: var(--rct-focus-stroke-width);
 }
@@ -849,11 +849,11 @@
 .rct-dumbbell-point-marker {
     stroke: none;
 }
-.rct-dumbbell-series .rct-point[data-focus] {
+.rct-dumbbell-series .rct-point[data-hover] {
     stroke: var(--rct-focus-stroke);
     stroke-width: inherit;
 }
-.rct-dumbbell-series .rct-point[data-focus] .rct-dumbbell-point-marker {
+.rct-dumbbell-series .rct-point[data-hover] .rct-dumbbell-point-marker {
     stroke: var(--rct-focus-stroke);
     stroke-width: var(--rct-focus-stroke-width);
 }
@@ -862,7 +862,7 @@
 .rct-equalizer-series {
     fill-opacity: 0.9;
 }
-.rct-equalizer-series .rct-point[data-focus] {
+.rct-equalizer-series .rct-point[data-hover] {
     filter: brightness(120%);
 }
 
@@ -875,7 +875,7 @@
 .rct-vector-series {
     stroke-width: 2px;
 }
-.rct-vector-series .rct-point[data-focus] {
+.rct-vector-series .rct-point[data-hover] {
     stroke-width: 5px;
 }
 
@@ -902,7 +902,7 @@
 .rct-funnel-series .rct-point {
     stroke: white;
 }
-.rct-funnel-series .rct-point[data-focus] {
+.rct-funnel-series .rct-point[data-hover] {
     stroke: black;
     stroke-width: 2px;
 }
