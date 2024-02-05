@@ -448,12 +448,14 @@ export class ChartOptions extends ChartItem {
 export interface IExport {
     /**
      * 내보내기 버튼 표시 여부 지정
+     * @config
      */
     visible?: boolean
     /**
-     * 내보내기 버튼을 사용해 내보낸 차트에 사용할 확장자 없는 파일 이름.
-     * export 함수를 호출할 때 fileName을 지정하지 않을 경우 이 속성이 적용된다.
+     * 내보내기 버튼을 사용해 내보낸 차트에 사용할 확장자 없는 파일 이름.\
+     * 'export' 함수를 호출할 때 fileName을 지정하지 않을 경우 이 속성이 적용된다.
      * fileName을 지정하지 않을 경우 realchart.type으로 다운로드 된다.
+     * 
      * @config
      */
     fileName?: string;
@@ -474,8 +476,8 @@ export interface IExport {
      */
     scale?: number;
     /**
-     * 내보내기 도중 에러가 발생했을 때 처리할 서버 URL.
-     * 지정하지 않을경우 realchart 서버에서 처리합니다.
+     * 내보내기 도중 에러가 발생했을 때 처리할 서버 URL.\
+     * 지정하지 않을경우 realchart 서버에서 처리한다.
      */
     url?: string;
     /**

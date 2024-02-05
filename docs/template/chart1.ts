@@ -2,6 +2,7 @@ export const config = {
     options: {
         animatable: false
     },
+    inveted: false,
     title: "Basic Real-Chart",
     legend: true,
     xAxis: {
@@ -41,3 +42,4 @@ export const config = {
     }
   }
   
+  const tool = {};

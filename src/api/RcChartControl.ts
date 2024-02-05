@@ -318,9 +318,11 @@ export class RcChartControl {
  */
 export interface IRcExportOptions {
     /**
-     * 내보낸 차트에 사용할 확장자.
-     * type을 지정하지 않을 경우 png로 내보내기 된다.
+     * 내보낸 차트에 사용할 확장자.\
+     * type을 지정하지 않을 경우 png로 내보내기 된다.\
+     * - `ExportType`: `'png'`, `'jpeg'`, `'svg'`, `'pdf'`, `'print'`
      * @config
+     * // @TODO https://github.com/realgrid/realreport-chart/issues/549
      */
     type?: ExportType,
     /**

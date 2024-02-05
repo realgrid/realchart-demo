@@ -121,6 +121,7 @@ export function RealChartReact({
   const [code, setCode] = useState(config);
   const { classes } = useStyles();
   const [version, setVersion] = useState("");
+  tool = tool ?? {};
 
   const { inverted, polar, xReversed, yReversed } =
     parseOptionsByConfig(config);
@@ -215,8 +216,8 @@ export function RealChartReact({
     applyChart({ polar: checked });
   };
 
-  const _height = tool && tool["height"];
-  const _width = tool && tool["width"];
+  const _height = tool["height"];
+  const _width = tool["width"];
 
   const height = _height
     ? typeof _height === "number"
