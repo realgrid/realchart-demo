@@ -23,7 +23,7 @@ export const Logo = ({
   if (!brand) return null;
 
   const Brand = () => (
-    <Group spacing={'xs'}>
+    <Group spacing={'md'}>
       {brand.iconFile ? (
         <Image
           alt={brand.shortDesc + ''}
@@ -32,7 +32,7 @@ export const Logo = ({
           height={iconSize}
         />
       ) : null}
-      <Group spacing={0}>
+      <Group spacing={'0'}>
         <Text size={textSize} fw={400} lts={-1}>
           {showBrandName ? brand.nameLight : null}
         </Text>

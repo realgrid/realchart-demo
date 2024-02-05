@@ -22,7 +22,8 @@ export {
     RcChartData 
 } from "./api/RcChartData";
 export { 
-    RcChartControl 
+    RcChartControl,
+    IRcExportOptions
 } from "./api/RcChartControl";
 export { 
     RcChartObject,

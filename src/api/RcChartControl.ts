@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ChartControl } from "../ChartControl";
-import { ExportType, IExportOptions } from "../common/Types";
+import { ExportType } from "../common/Types";
 import { Annotation } from "../model/Annotation";
 import { Axis } from "../model/Axis";
 import { Body } from "../model/Body";
@@ -292,7 +292,7 @@ export class RcChartControl {
      * ```
      * 
      */
-    export(options: IExportOptions) {
+    export(options: IRcExportOptions) {
         const model = this.$_p.model;
         if (!model || !this.$_p._exporter) return;
 
@@ -310,4 +310,23 @@ export class RcChartControl {
             //     break;
         }
     }
+}
+
+/**
+ * 내보내기 옵션.
+ * @config
+ */
+export interface IRcExportOptions {
+    /**
+     * 내보낸 차트에 사용할 확장자.
+     * type을 지정하지 않을 경우 png로 내보내기 된다.
+     * @config
+     */
+    type?: ExportType,
+    /**
+     * 내보낸 차트에 사용할 확장자 없는 파일명.
+     * fileName을 지정하지 않을 경우 realchart.type으로 다운로드 된다.
+     * @config
+     */
+    fileName?: string;
 }
