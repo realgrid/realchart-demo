@@ -1,7 +1,7 @@
 export const config = {
   title: '2023년 11월 서울 최고,최저 기온',
   subtitle: { align: 'left', text: '출처: 웨더아이', style: { fill: '#AAA' } },
-  options: {},
+  options: { pointHovering: {} },
   xAxis: { type: 'time', title: 'Time', grid: true },
   yAxis: { title: 'Temparature', tick: true },
   series: [

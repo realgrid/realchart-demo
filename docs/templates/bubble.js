@@ -1,5 +1,5 @@
 export const config = {
-  options: {},
+  options: { pointHovering: { hintDistance: 1000 } },
   title: 'Bubble Series',
   tooltip: { followPointer: true },
   xAxis: { title: 'xAxis' },

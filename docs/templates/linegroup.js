@@ -1,6 +1,7 @@
 export const config = {
   type: 'line',
-  options: { animatable: false },
+  options: { animatable: false, pointHovering: {} },
+  tooltip: { followPointer: true },
   title: 'Line Group',
   xAxis: { title: '일일 Daily fat' },
   yAxis: { title: 'Vertical 수직축 Axis' },
