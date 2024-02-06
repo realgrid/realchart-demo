@@ -29,7 +29,8 @@ const config: DocsThemeConfig = {
         return <>{chartType}{prefix}</>;
       } else if (route.startsWith('/guide/series/')) {
         const [_, type] = route.split('-');
-        if (['bar', 'line', 'pie', 'scatter', 'area', 'treemap'].includes(type)) {
+        const icons = ['bar', 'line', 'pie', 'scatter', 'area', 'treemap', 'candlestick', 'heatmap', 'equalizer', 'bubble', 'boxplot', 'ohlc', 'lollipop', 'dumbbell'];
+        if (icons.includes(type)) {
           const src = `/icons/${type}.png`;
           return <><img src={src} className="sidebar"/>{title}</>
         } else {
