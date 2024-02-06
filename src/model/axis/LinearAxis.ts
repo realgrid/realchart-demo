@@ -721,7 +721,7 @@ export abstract class ContinuousAxis extends Axis {
         }
 
         this._setMinMax(min, max);
-
+        
         const ticks: IAxisTick[] = [];
 
         // if (min !== max) {
@@ -759,7 +759,7 @@ export abstract class ContinuousAxis extends Axis {
                     this._unitLen = unit.len;
                     
                     // 선형 축에 너비가 필요한 시리즈가 있는 경우, 양 끝이 넘치지 않도록 조종한다. #485, #472
-                    if (!this._isPolar) {
+                    if (!this._isPolar && !this._zoom) {
                         this._min -= unit.min / 2;
                         this._max += unit.min / 2;
                     }
