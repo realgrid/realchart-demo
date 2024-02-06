@@ -868,7 +868,7 @@ export class AxisView extends ChartElement<Axis> {
     private $_prepareLabels(m: Axis, width: number): number {
         const labels = m.label;
 
-        if (this._labelContainer.setVis(labels.visible)) {
+        if (this._labelContainer.setVis(labels.visible && !m.isEmpty())) {
             const ticks = m._ticks;
             let n = ticks.length;
 

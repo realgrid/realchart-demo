@@ -1309,7 +1309,14 @@ export abstract class Axis extends ChartItem implements IAxis {
     //minSize: number;
 
     isEmpty(): boolean {
-        return this._series.length < 1;
+        if (this._series.length > 0) {
+            for (const s of this._series) {
+                if (!s.isEmpty(true)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     getBaseValue(): number {

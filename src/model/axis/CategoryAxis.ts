@@ -352,7 +352,7 @@ export class CategoryAxis extends Axis {
         len = this._len = this._minPad + this._maxPad + weights.reduce((a, c) => a + c, 0);
         len += this._catLen - cats.length;
 
-        weights.length = cats.length = this._catLen;
+        weights.length = cats.length = this._catLen || 0;
 
         const pts = this._pts = [];
 
