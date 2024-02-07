@@ -47,12 +47,12 @@ export class ElementPool<T extends RcElement> extends RcObject {
         this.removeDelay = removeDelay;
     }
 
-    protected _doDestory(): void {
+    protected _doDestroy(): void {
         this.freeAll();
         this._owner = null;
         this._creator = null;
 
-        super._doDestory();
+        super._doDestroy();
     }
 
 	//-------------------------------------------------------------------------

@@ -98,22 +98,22 @@ export class ScatterSeries extends MarkerSeries {
         return 'scatter';
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new ScatterSeriesPoint(source);
     }
 
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
+    protected override _createLegendMarker(doc: Document, size: number): RcElement {
         return new ShapeLegendMarkerView(doc, size);
     }
 
-    _colorByPoint(): boolean {
+    override _colorByPoint(): boolean {
         return this.colorByPoint;
     }
 
     /**
      * rendering 시점에 chart가 series별로 기본 shape를 지정한다.
      */
-    setShape(shape: Shape): void {
+    override setShape(shape: Shape): void {
         this._defShape = shape;
     }
 
@@ -121,11 +121,11 @@ export class ScatterSeries extends MarkerSeries {
         return this.shape || this._defShape;
     }
 
-    hasMarker(): boolean {
+    override hasMarker(): boolean {
         return true;
     }
 
-    legendMarker(doc: Document, size: number): RcElement {
+    override legendMarker(doc: Document, size: number): RcElement {
         const m = super.legendMarker(doc, size);
 
         (m as ShapeLegendMarkerView).setShape(this.getShape(null), minv(+size || LegendItem.MARKER_SIZE, this.radius * 2));

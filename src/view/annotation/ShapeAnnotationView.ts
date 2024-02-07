@@ -18,7 +18,7 @@ export class ShapeAnnotationView extends AnnotationView<ShapeAnnotation> {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly CLASS_NAME: string = 'rct-shape-annotation';
+    static override readonly CLASS_NAME: string = 'rct-shape-annotation';
 
     //-------------------------------------------------------------------------
     // fields
@@ -37,7 +37,7 @@ export class ShapeAnnotationView extends AnnotationView<ShapeAnnotation> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: ShapeAnnotation, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: ShapeAnnotation, hintWidth: number, hintHeight: number, phase: number): ISize {
         const sz = model.getSize(hintWidth, hintHeight);
 
         this._deflatePaddings(sz);
@@ -45,13 +45,13 @@ export class ShapeAnnotationView extends AnnotationView<ShapeAnnotation> {
         return sz;
     }
 
-    protected _doLayout(p: IPoint): void {
+    protected override _doLayout(p: IPoint): void {
         this._shapeView.trans(this._paddings.left + p.x, this._paddings.top + p.y);
 
         super._doLayout(p);
     }
 
-    protected _setRotation(originX: number, originY: number, rotation: number): void {
+    protected override _setRotation(originX: number, originY: number, rotation: number): void {
         this._shapeView.setRotation(originX, originY, rotation);
     }
 }

@@ -91,7 +91,7 @@ export abstract class RcControl extends RcObject {//} RcWrappableObject {
         this.invalidate(true);
     }
 
-    protected _doDestory(): void {
+    protected override _doDestroy(): void {
         this._unresigterEventHandlers(this._dom);
         Dom.remove(this._dom);
         this._dom = null;
@@ -685,7 +685,7 @@ export class RcElement extends RcObject {
         (this._styleName = styleName || '') && this.setAttr('class', this._styleName);
     }
 
-    protected _doDestory(): void {
+    protected _doDestroy(): void {
         this.remove();
     }
 

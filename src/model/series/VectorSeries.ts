@@ -36,7 +36,7 @@ export class VectorSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _assignTo(proxy: any): any {
+    protected override _assignTo(proxy: any): any {
         return assign(super._assignTo(proxy), {
             length: this.length,
             angle: this.angle,
@@ -45,11 +45,11 @@ export class VectorSeriesPoint extends DataPoint {
         });
     }
 
-    protected _valuesChangd(): boolean {
+    protected override _valuesChangd(): boolean {
         return this.length !== this._prev.length || this.angle !== this._prev.angle || super._valuesChangd();
     }
 
-    protected _readArray(series: VectorSeries, v: any[]): void {
+    protected override _readArray(series: VectorSeries, v: any[]): void {
         if (v.length <= 2) {
             this.isNull = true;
         } else {
@@ -64,7 +64,7 @@ export class VectorSeriesPoint extends DataPoint {
         }
     }
 
-    protected _readObject(series: VectorSeries, v: any): void {
+    protected override _readObject(series: VectorSeries, v: any): void {
         super._readObject(series, v);
 
         this.length = pickProp(v[series.lengthField], v.length);
@@ -72,29 +72,29 @@ export class VectorSeriesPoint extends DataPoint {
         this.y = pickProp3(series._yFielder(v), v.y, v.value);
     }
 
-    protected _readSingle(v: any): void {
+    protected override _readSingle(v: any): void {
         super._readSingle(v);
 
         this.length = this.angle = this.y;
     }
 
-    parse(series: VectorSeries): void {
+    override parse(series: VectorSeries): void {
         super.parse(series);
 
         this.isNull ||= isNaN(this.lengthValue) || isNaN(this.angleValue);
     }
 
-    initValues(): void {
+    override initValues(): void {
         this.lengthValue = parseFloat(this.length);
         this.angleValue = parseFloat(this.angle);
     }
 
-    initPrev(axis: IAxis, prev: any): void {
+    override initPrev(axis: IAxis, prev: any): void {
         prev.yValue = this.yValue;
         prev.lengthValue = 0.001;
     }
 
-    applyValueRate(prev: any, vr: number): void {
+    override applyValueRate(prev: any, vr: number): void {
         // yValue는 series.collectValues()에서 한다.
         this.lengthValue = incv(prev.lengthValue, this.lengthValue, vr);
     }
@@ -229,15 +229,11 @@ export class VectorSeries extends Series {
         return 'vector';
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new VectorSeriesPoint(source);
     }
 
-    protected _doLoad(src: any): void {
-        super._doLoad(src);
-    }
-
-    protected _doPrepareRender(): void {
+    protected override _doPrepareRender(): void {
         super._doPrepareRender();
 
         const pts = this._runPoints as VectorSeriesPoint[];
@@ -267,7 +263,7 @@ export class VectorSeries extends Series {
         }
     }
 
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
+    protected override _createLegendMarker(doc: Document, size: number): RcElement {
         const w = 2 / 10;
         const h = 3 / 10;
         const body = 0.6;//1 / 2;

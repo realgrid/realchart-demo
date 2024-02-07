@@ -55,12 +55,12 @@ export abstract class RcObject {
         if (!this.$_destroyed && !this.$_destroying) {
             this.$_destroyed = true;
             this.$_destroying = true;
-            this._doDestory();
+            this._doDestroy();
         }
         return null;
     }
     
-    protected _doDestory(): void {}
+    protected _doDestroy(): void {}
 
     //-------------------------------------------------------------------------
     // properties

@@ -44,11 +44,11 @@ export class ChartControl extends RcControl implements IChartEventListener {
         this.setPointerHandler(new ChartPointerHandler(this));
     }
 
-    protected _doDestory(): void {
+    protected override _doDestroy(): void {
         this.setPointerHandler(null);
         this._model = null;
         
-        super._doDestory();
+        super._doDestroy();
     }
 
     //-------------------------------------------------------------------------
@@ -152,7 +152,7 @@ export class ChartControl extends RcControl implements IChartEventListener {
         }
     }
 
-    protected _doRenderBackground(elt: HTMLDivElement, root: RcElement, width: number, height: number): void {
+    protected override _doRenderBackground(elt: HTMLDivElement, root: RcElement, width: number, height: number): void {
         if (this._model) {
             const style: any = this._model.options.style;
 
