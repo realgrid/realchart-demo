@@ -61,7 +61,7 @@ const config = {
             },
         },
         {
-            imageUrl: 'https://realchart.co.kr/demo/assets/images/seoul.png',
+            imageUrl: '../assets/images/seoul.png',
             front: true,
             width: 260,
             align: 'center',
