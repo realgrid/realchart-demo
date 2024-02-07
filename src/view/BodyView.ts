@@ -58,7 +58,7 @@ import { Annotation } from "../model/Annotation";
 import { AnnotationView } from "./AnnotationView";
 import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
-import { LabelElement } from "../common/impl/LabelElement";
+import { LabelElement } from "./LabelElement";
 import { CircleBarSeriesView } from "./series/CircleBarSeriesView";
 import { cos, floor, maxv, minv, pickNum, sin } from "../common/Common";
 import { ArcPolyElement } from "../common/impl/CircleElement";

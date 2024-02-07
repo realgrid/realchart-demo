@@ -12,7 +12,7 @@ import { PathBuilder } from "../../common/PathBuilder";
 import { RcElement } from "../../common/RcControl";
 import { Align, fixnum } from "../../common/Types";
 import { CircleElement } from "../../common/impl/CircleElement";
-import { LabelElement } from "../../common/impl/LabelElement";
+import { LabelElement } from "../LabelElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
 import { TextAnchor } from "../../common/impl/TextElement";
 import { PointItemPosition } from "../../model/Series";

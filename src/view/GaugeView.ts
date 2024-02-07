@@ -16,7 +16,7 @@ import { LayerElement, RcElement } from "../common/RcControl";
 import { IRect, createRect, rectToSize } from "../common/Rectangle";
 import { ISize } from "../common/Size";
 import { Align } from "../common/Types";
-import { LabelElement } from "../common/impl/LabelElement";
+import { LabelElement } from "./LabelElement";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";

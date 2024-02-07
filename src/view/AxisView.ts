@@ -14,7 +14,7 @@ import { rectToSize } from "../common/Rectangle";
 import { SvgRichText } from "../common/RichText";
 import { ISize } from "../common/Size";
 import { Align, DEG_RAD } from "../common/Types";
-import { LabelElement } from "../common/impl/LabelElement";
+import { LabelElement } from "./LabelElement";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextElement } from "../common/impl/TextElement";

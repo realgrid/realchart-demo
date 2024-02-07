@@ -15,7 +15,7 @@ import { ClipRectElement, LayerElement, PathElement, RcElement } from "../common
 import { ISize } from "../common/Size";
 import { FILL, IValueRange, SVGStyleOrClass, _undef } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
-import { LabelElement } from "../common/impl/LabelElement";
+import { LabelElement } from "./LabelElement";
 import { RectElement } from "../common/impl/RectElement";
 import { SvgShapes } from "../common/impl/SvgShape";
 import { Axis } from "../model/Axis";

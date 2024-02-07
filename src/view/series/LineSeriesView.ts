@@ -13,7 +13,7 @@ import { PathBuilder } from "../../common/PathBuilder";
 import { IPoint } from "../../common/Point";
 import { ClipRectElement, PathElement, RcElement } from "../../common/RcControl";
 import { Align, FILL, IValueRange, PI_2, SVGStyleOrClass, _undef } from "../../common/Types";
-import { LabelElement } from "../../common/impl/LabelElement";
+import { LabelElement } from "../LabelElement";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
