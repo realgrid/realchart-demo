@@ -724,7 +724,7 @@ export class AxisGuideContainer extends LayerElement {
         }
     }
 
-    addAll(doc: Document, guides: AxisGuide[], polar: boolean): void {
+    setAll(doc: Document, guides: AxisGuide[], polar: boolean): void {
         guides.forEach(g => {
             let v: AxisGuideView<AxisGuide>;
 

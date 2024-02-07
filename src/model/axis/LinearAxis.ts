@@ -127,7 +127,7 @@ export class ContinuousAxisTick extends AxisTick {
             if (pts.length > 0 && isNaN(pts[0])) pts[0] = min;
             if (pts.length > 1 && isNaN(pts[pts.length - 1])) pts[pts.length - 1] = max;
             this._strictTicks = this._strictEnds = true;
-        } else if (this._baseAxis instanceof ContinuousAxis) {
+        } else if (this._baseAxis instanceof ContinuousAxis && this._baseAxis._ticks.length > 0) {
             pts = this._getStepsByCount(this._baseAxis._ticks.length, base, min, max, true);
         } else if (this.stepCount > 0) {
             pts = this._getStepsByCount(this.stepCount, base, min, max, false);
@@ -653,7 +653,7 @@ export abstract class ContinuousAxis extends Axis {
         }
 
         const tick = this.tick as ContinuousAxisTick;
-        const based = tick._baseAxis instanceof ContinuousAxis;
+        const based = tick._baseAxis instanceof ContinuousAxis && tick._baseAxis._ticks.length > 0;
         let { min, max } = this._adjustMinMax(length, this._calcedMin = calcedMin, this._calcedMax = calcedMax);
         let baseVal = this._baseVal;
 

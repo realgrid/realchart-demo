@@ -393,7 +393,7 @@ class AxisSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    prepare(doc: Document, axes: Axis[], guideContainer: AxisGuideContainer, frontGuideContainer: AxisGuideContainer): void {
+    prepare(doc: Document, chart: Chart, axes: Axis[], guideContainer: AxisGuideContainer, frontGuideContainer: AxisGuideContainer): void {
         const views = this.views;
         let i = views.length;
         let v: AxisView;
@@ -412,7 +412,7 @@ class AxisSectionView extends SectionView {
 
         // 추측 계산을 위해 모델을 미리 설정할 필요가 있다.
         views.forEach((v, i) => {
-            v.model = axes[i];
+            v.prepare(axes[i]);
             v.prepareGuides(doc, NaN, NaN, guideContainer, frontGuideContainer);
         });
 
@@ -1418,7 +1418,7 @@ export class ChartView extends LayerElement {
             const v = map[dir];
 
             if (need) {
-                v.prepare(doc, m.getAxes(dir as any, false), guideContainer, frontContainer);
+                v.prepare(doc, m, m.getAxes(dir as any, false), guideContainer, frontContainer);
             } else {
                 v.visible = false;
             }

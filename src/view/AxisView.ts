@@ -393,6 +393,8 @@ export class AxisView extends ChartElement<Axis> {
     _prevMin: number;
     _prevMax: number;
 
+    private _chartEmpty: boolean;
+    private _empty: boolean;
     private _edgeStart = 0;
     private _marginStart = 0;
     private _marginEnd = 0;
@@ -483,11 +485,12 @@ export class AxisView extends ChartElement<Axis> {
     }
 
     prepareGuides(doc: Document, row: number, col: number, container: AxisGuideContainer, frontContainer: AxisGuideContainer): void {
-        let guides = this.model.guides.filter(g => !g.front && g.canConstainedTo(row, col));
-        container.addAll(doc, guides, false);
-
-        guides = this.model.guides.filter(g => g.front && g.canConstainedTo(row, col));
-        frontContainer.addAll(doc, guides, false);
+        [container, frontContainer].forEach((c, i) => {
+            if (c.setVis(!this._empty)) {
+                const guides = this.model.guides.filter(g => g.front == (i === 1) && g.canConstainedTo(row, col));
+                c.setAll(doc, guides, false);
+            }
+        });
     }
 
     showCrosshair(pos: number, text: string): void {
@@ -527,6 +530,12 @@ export class AxisView extends ChartElement<Axis> {
     }
 
     scroll(pos: number): void {
+    }
+
+    prepare(m: Axis): void {
+        this.model = m;
+        this._chartEmpty = m.chart.isEmpty(true);
+        this._empty = this._chartEmpty || m.isEmpty();
     }
 
     checkExtents(loaded: boolean): void {
@@ -866,13 +875,11 @@ export class AxisView extends ChartElement<Axis> {
     }
 
     private $_prepareLabels(m: Axis, width: number): number {
-        const labels = m.label;
-
-        if (this._labelContainer.setVis(labels.visible && !m.isEmpty())) {
+        if (this._labelContainer.setVis(!this._chartEmpty && m.labelsVisible())) {
             const ticks = m._ticks;
             let n = ticks.length;
 
-            this._labelContainer.setStyleOrClass(labels.style);
+            this._labelContainer.setStyleOrClass(m.label.style);
 
             // return this._labelViews.prepare(n, (v, i, count) => {
             //     v.setVis(true);

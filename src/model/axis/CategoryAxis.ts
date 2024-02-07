@@ -10,8 +10,6 @@ import { isArray, isNumber, isObject, maxv, minv, pickNum, pickNum3, pickProp } 
 import { DEG_RAD, PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { Axis, AxisGrid, AxisTick, AxisLabel, IAxisTick } from "../Axis";
-import { IChart } from "../Chart";
-import { LabelIconPostion } from "../ChartItem";
 import { IPlottingItem } from "../Series";
 
 export enum CategoryTickPosition {
@@ -292,11 +290,12 @@ export class CategoryAxis extends Axis {
         // [주의] collectValues()에서 category에 해당하는 값을 가져올 수 있다면 순서를 바꿔야 한다.
         this.$_collectCategories(this._series);
 
-        if (this._series.length > 0) {
-            super.collectValues();
-        } else {
+        if (this._isEmpty === undefined) debugger;
+        if (this._isEmpty) {
             // 시리즈가 연결되지 않은 category 축을 categories 설정만으로 표시할 수 있다.
             this._values = Utils.makeIntArray(0, this._categories.length);
+        } else {
+            super.collectValues();
         }
     }
 
