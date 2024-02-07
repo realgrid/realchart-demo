@@ -310,6 +310,12 @@ export class RcChartControl {
             //     break;
         }
     }
+
+    private use(_module: any) {
+        if (_module) {
+            this.$_p.use(_module);
+        }
+    }
 }
 
 /**
