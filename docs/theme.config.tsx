@@ -33,18 +33,21 @@ const config: DocsThemeConfig = {
           'treemap', 'candlestick', 'heatmap', 'equalizer', 'bubble', 
           'boxplot', 'ohlc', 'lollipop', 'dumbbell', 'bellcurve',
           'circlebar', 'funnel', 'histogram', 'pareto', 'waterfall',
-          'arearange'];
+          'arearange', 'errorbar', 'vector'];
         if (icons.includes(type)) {
-          const src = `/icons/${type}.png`;
+          const src = `/icons/series/${type}.png`;
           return <><img src={src} className="sidebar"/>{title}</>
         } else {
-          const src = '/icons/series.png';
+          const src = '/icons/series/series.png';
           return <><img src={src} className="sidebar"/>{title}</>
         }
         // const icon = '📊';
       } else if (route.startsWith('/guide/gauges/')) {
-        const src = '/icons/gauge.png';
-        return <><img src={src} className="sidebar"/> {title}</>
+        const [_, type] = route.split('-');
+        return <><img src={`/icons/gauges/${type}.png`} className="sidebar"/> {title}</>
+      } else if (route.startsWith('/guide/annotations/')) {
+        const [_, type] = route.split('-');
+        return <><img src={`/icons/annotations/${type}.png`} className="sidebar"/> {title}</>
       } else if (type == 'separator') {
         return <>{title}</>;
       } else {
