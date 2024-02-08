@@ -8,7 +8,7 @@
 
 import { isArray, isObject, minv } from "../common/Common";
 import { IPercentSize, RtPercentSize, _undef, calcPercent, parsePercentSize } from "../common/Types";
-import { Annotation, AnnotationCollection } from "./Annotation";
+import { Annotation, AnnotationCollection, IAnnotationOwner } from "./Annotation";
 import { Axis } from "./Axis";
 import { IChart } from "./Chart";
 import { BackgroundImage, ChartItem } from "./ChartItem";
@@ -87,7 +87,7 @@ export interface IPolar {
  * 
  * @config chart.body
  */
-export class Body extends ChartItem {
+export class Body extends ChartItem implements IAnnotationOwner {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -120,6 +120,13 @@ export class Body extends ChartItem {
         this.radius = '45%';
         this.centerX = '50%';
         this.centerY = '50%';
+    }
+
+    //-------------------------------------------------------------------------
+    // IAnnotationOwner
+    //-------------------------------------------------------------------------
+    anchorByName(name: string): ChartItem {
+        return;
     }
 
     //-------------------------------------------------------------------------

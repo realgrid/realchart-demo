@@ -52,7 +52,7 @@ import { SeriesNavigator } from "./SeriesNavigator";
 import { Split } from "./Split";
 import { TextAnnotation } from "./annotation/TextAnnotation";
 import { ImageAnnotation } from "./annotation/ImageAnnotation";
-import { Annotation, AnnotationCollection } from "./Annotation";
+import { Annotation, AnnotationCollection, IAnnotationOwner } from "./Annotation";
 import { ShapeAnnotation } from "./annotation/ShapeAnnotation";
 import { CircleBarSeries, CircleBarSeriesGroup } from "./series/CircleBarSeries";
 import { Utils } from "../common/Utils";
@@ -505,7 +505,7 @@ export interface IChartEventListener {
  * 
  * @config chart
  */
-export class Chart extends RcEventProvider<IChartEventListener> implements IChart, ITooltipOwner {
+export class Chart extends RcEventProvider<IChartEventListener> implements IChart, ITooltipOwner, IAnnotationOwner {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -634,6 +634,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     // IAnnotationOwner
     //-------------------------------------------------------------------------
     get chart(): IChart { return this }
+
+    anchorByName(name: string): ChartItem {
+        return;
+    }
 
     //-------------------------------------------------------------------------
     // properties

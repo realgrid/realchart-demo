@@ -57,6 +57,7 @@ export abstract class Annotation extends ChartItem {
     _y: number;
     _w: number;
     _h: number;
+    _anchorObj: ChartItem;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -78,38 +79,48 @@ export abstract class Annotation extends ChartItem {
      */
     front = false;
     /**
-     * 어노테이션 이름.\
+     * 어노테이션 이름.<br/>
      * 동적으로 어노테이션을 다루기 위해서는 반드시 지정해야 한다. 
      * 
      * @config
      */
     name: string;
     /**
-     * 수평 배치.
+     * 어노테이션 배치 기준이 되는 차트 구성 요소.<br/>
+     * 현재, 같은 영역(body 혹은 chart)에 포함된 {@link config.base.gauge 게이지}나 다른 어노테이션의 {@link name 이름}을 지정할 수 있다.
      * 
      * @config
      */
-    align = Align.LEFT
+    anchor: string;
     /**
-     * 수직 배치.
+     * 수평 배치.<br/>
+     * 
+     * @config
+     * @default {@link anchor}가 지정되면 'center', 아니면 'left'
+     */
+    private align: Align;
+    /**
+     * 수직 배치.<br/>
      * 
      * @config
      */
-    verticalAlign = VerticalAlign.TOP;
+    private verticalAlign = VerticalAlign.TOP;
     /**
-     * {@link align}과 {@link verticalAlign}으로 지정된 위치에서 실제 표시될 위치의 수평 간격.
+     * {@link align}과 {@link verticalAlign}으로 지정된 위치에서 실제 표시될 위치의 수평 간격.<br/>
+     * 값이 양수일 때, {@link anchor}가 지정된 경우 anchor 아이템으 밖으로 멀어지고, 아니면 영역 경계 안쪽으로 멀어진다.
      * 
      * @config
      */
     offsetX = 0;
     /**
-     * {@link align}과 {@link verticalAlign}으로 지정된 위치에서 실제 표시될 위치의 수직 간격.
+     * {@link align}과 {@link verticalAlign}으로 지정된 위치에서 실제 표시될 위치의 수직 간격.<br/>
+     * 값이 양수일 때, {@link anchor}가 지정된 경우 anchor 아이템으 밖으로 멀어지고, 아니면 영역 경계 안쪽으로 멀어진다.
      * 
      * @config
      */
     offsetY = 0;
     /**
-     * 회전 각도.\
+     * 회전 각도.<br/>
      * 0 ~ 360 사이의 값으로 지정한다.
      * 
      * @config
@@ -127,7 +138,7 @@ export abstract class Annotation extends ChartItem {
      */
     loadAnimation: IAnnotationAnimation;
     /**
-     * 배경 스타일.\
+     * 배경 스타일.<br/>
      * 경계 및 배경 색, padding 스타일을 지정할 수 있다.
      * 
      * @config
@@ -174,7 +185,7 @@ export abstract class Annotation extends ChartItem {
      */
     y2: number | Date;
     /**
-     * Annotation 너비.
+     * Annotation 너비.<br/>
      * 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
      * 
      * @config
@@ -188,7 +199,7 @@ export abstract class Annotation extends ChartItem {
         }
     }
     /**
-     * Annotation 높이.
+     * Annotation 높이.<br/>
      * 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
      * 
      * @config
@@ -285,7 +296,13 @@ export abstract class Annotation extends ChartItem {
                     break;
     
                 default:
-                    x += this.offsetX;
+                    if (this._anchorObj) {
+                        // center
+                        x += (wDomain - width) / 2 + this.offsetX;
+                    } else {
+                        // left
+                        x += this.offsetX;
+                    }
                     break;
             }
         }
@@ -324,6 +341,7 @@ export abstract class Annotation extends ChartItem {
 
 export interface IAnnotationOwner {
     chart: IChart;
+    anchorByName(name: string): ChartItem;
 }
 
 /**
