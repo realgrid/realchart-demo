@@ -75,8 +75,8 @@ class AxisImpl extends Axis {
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] { return [];}
     getPos(length: number, value: number): number { return 0; }
     getUnitLen(length: number): number { return 0; }
-    axisMin(): number { return; }
-    axisMax(): number { return; }
+    override axisMin(): number { return; }
+    override axisMax(): number { return; }
     continuous(): boolean { return false }
     valueAt(length: number, pos: number): number { return; }
     xValueAt(pos: number): number { return }

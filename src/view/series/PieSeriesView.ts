@@ -84,11 +84,11 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         return this._sectors;
     }
 
-    protected _setPointColor(v: RcElement, color: string): void {
+    protected override _setPointColor(v: RcElement, color: string): void {
         v.setFill(color);
     }
 
-    protected _prepareSeries(doc: Document, model: PieSeries): void {
+    protected override _prepareSeries(doc: Document, model: PieSeries): void {
         super._prepareSeries(doc, model);
         
         this.$_prepareSectors(doc, model, this._visPoints as PieSeriesPoint[]);
@@ -128,7 +128,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         this._rdInner = (szInner + m._groupPos * len) / this._rd;
     }
 
-    protected _runShowEffect(firstTime: boolean): void {
+    protected override _runShowEffect(firstTime: boolean): void {
         if (firstTime) {
             SeriesAnimation.grow(this, ani => {
                 const v = this._sectors.find(s => s.point.sliced);
@@ -141,7 +141,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         }
     }
 
-    protected _doPointClicked(view: IPointView): void {
+    protected override _doPointClicked(view: IPointView): void {
         if (view instanceof SectorView) {
             const v = this._sectors.find(s => s.point.sliced);
 
@@ -155,7 +155,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         }
     }
 
-    protected _doViewRateChanged(rate: number): void {
+    protected override _doViewRateChanged(rate: number): void {
         this.$_layoutSectors(this._visPoints as PieSeriesPoint[], this.width, this.height)
     }
 
@@ -166,7 +166,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    getClipContainer(): RcElement {
+    override getClipContainer(): RcElement {
         return null;
     }
 

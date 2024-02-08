@@ -409,7 +409,7 @@ export class ColorList extends AssetItem<IColorList> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    hasDef(): boolean {
+    override hasDef(): boolean {
         return false;
     }
 
@@ -474,7 +474,7 @@ export class ImageList extends AssetItem<IImageList> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    hasDef(): boolean {
+    override hasDef(): boolean {
         return false;
     }
 

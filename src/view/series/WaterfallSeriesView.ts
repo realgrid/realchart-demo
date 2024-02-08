@@ -45,7 +45,7 @@ export class WaterfallSeriesView extends RangedSeriesView<WaterfallSeries> {
         return p.low;
     }
 
-    protected _prepareSeries(doc: Document, model: WaterfallSeries): void {
+    protected override _prepareSeries(doc: Document, model: WaterfallSeries): void {
         super._prepareSeries(doc, model);
 
         this._rd = +model.cornerRadius || 0;
@@ -74,7 +74,7 @@ export class WaterfallSeriesView extends RangedSeriesView<WaterfallSeries> {
         this._wPrev = wPoint;
     }
 
-    protected _layoutPoints(width: number, height: number): void {
+    protected override _layoutPoints(width: number, height: number): void {
         if (this._inverted) {
             this._lineContainer.dom.style.transform = `translate(0px, ${height}px) rotate(90deg) scale(-1, 1)`;
         } else {

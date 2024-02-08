@@ -48,7 +48,7 @@ export class ZoomTracker extends ChartDragTracker {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
+    protected override _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
         const cr = this.chart.getBounds();
         const br = this._body.getBounds();
 
@@ -58,7 +58,7 @@ export class ZoomTracker extends ChartDragTracker {
         return true;
     }
 
-    protected _doEnded(x: number, y: number): void {
+    protected override _doEnded(x: number, y: number): void {
         const cr = this.chart.getBounds();
         const br = this._body.getBounds();
 
@@ -108,7 +108,7 @@ export class ScrollTracker extends ChartDragTracker {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
+    protected override _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
         const v = this._view;
         const zoom = v.model.axis._zoom;
 
@@ -167,7 +167,7 @@ export class NavigatorHandleTracker extends ChartDragTracker {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
+    protected override _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
         const v = this._handleView;
         const p = v.elementToSvg(0, 0);
 
@@ -176,7 +176,7 @@ export class NavigatorHandleTracker extends ChartDragTracker {
         return true;
     }
 
-    protected _doEnded(x: number, y: number): void {
+    protected override _doEnded(x: number, y: number): void {
         this._handleView.setBoolData('select', false);
     }
 
@@ -239,7 +239,7 @@ export class NavigatorMaskTracker extends ChartDragTracker {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
+    protected override _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
         const axis = this._view.model.axis();
         const v = this._maskView;
 
@@ -252,7 +252,7 @@ export class NavigatorMaskTracker extends ChartDragTracker {
         return true;
     }
 
-    protected _doEnded(x: number, y: number): void {
+    protected override _doEnded(x: number, y: number): void {
     }
 
     protected _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {

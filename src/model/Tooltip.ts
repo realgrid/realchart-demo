@@ -180,7 +180,7 @@ export class Tooltip extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoadSimple(source: any): boolean {
+    protected override _doLoadSimple(source: any): boolean {
         if (isString(source)) {
             this.text = source;
             return true;

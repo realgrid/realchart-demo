@@ -115,7 +115,7 @@ export class EqualizerSeriesView extends BoxedSeriesView<EqualizerSeries> {
         this.$_parepareBars(model, points);
     }        
 
-    protected _layoutPoints(width: number, height: number): void {
+    protected override _layoutPoints(width: number, height: number): void {
         const len = (this.model._yAxisObj as Axis).prev(this._inverted ? width : height) * this._getGrowRate();
 
         this.$_buildSegments(this.model, len);

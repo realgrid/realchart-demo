@@ -96,16 +96,16 @@ export abstract class GaugeView<T extends GaugeBase> extends ContentView<T> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _prepareStyleOrClass(model: T): void {
+    protected override _prepareStyleOrClass(model: T): void {
         // super._prepareStyleOrClass(model);
         this._paneElement.setStyleOrClass(model.backgroundStyle);
     }
 
-    protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         return model.getSize(hintWidth, hintHeight);
     }
 
-    protected _doLayout(): void {
+    protected override _doLayout(): void {
         let w = this.width;
         let h = this.height;
 
@@ -158,7 +158,7 @@ export abstract class ValueGaugeView<T extends ValueGauge> extends GaugeView<T> 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    valueOf = (target: any, param: string, format: string): any => {
+    override valueOf = (target: any, param: string, format: string): any => {
         const v = target.getParam(param);
 
         if (isNumber(v)) {
@@ -174,13 +174,13 @@ export abstract class ValueGaugeView<T extends ValueGauge> extends GaugeView<T> 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _prepareStyleOrClass(model: T): void {
+    protected override _prepareStyleOrClass(model: T): void {
         super._prepareStyleOrClass(model);
 
         this._backgroundView().setStyleOrClass(model.style);
     }
 
-    protected _doLayout(): void {
+    protected override _doLayout(): void {
         if (this._ani) {
             this._ani.stop();
             this._ani = null;
@@ -264,7 +264,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
         return new LineElement(doc, styleName);
     }    
 
-    protected _doMeasure(doc: Document, model: LinearGaugeScale, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: LinearGaugeScale, hintWidth: number, hintHeight: number, phase: number): ISize {
         const reversed = model._reversed;
         const vertical = model._vertical;
         const labels = model.label;
@@ -315,7 +315,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
         return { width, height };
     }
 
-    protected _doLayout(): void {
+    protected override _doLayout(): void {
         const m = this.model;
         m._vertical ? this.$_layoutVert(m, this.width, this.height) : this.$_layoutHorz(m, this.width, this.height);
     }
@@ -654,14 +654,14 @@ export abstract class GaugeGroupView<G extends ValueGauge, T extends GaugeGroup<
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _defaultCalss(): string { return GaugeGroupView.GAUGE_GROUP_CLASS; }
+    protected override _defaultCalss(): string { return GaugeGroupView.GAUGE_GROUP_CLASS; }
 
     protected _doInitContents(doc: Document, container: LayerElement): void {
         container.add(this._gaugeContainer = new LayerElement(doc, 'rct-gauge-group-container'));
         this._gaugeViews = this._createPool(this._gaugeContainer);
     }
 
-    _setChartOptions(inverted: boolean, animatable: boolean, loadAnimatable: boolean): void {
+    override _setChartOptions(inverted: boolean, animatable: boolean, loadAnimatable: boolean): void {
         super._setChartOptions(inverted, animatable, loadAnimatable);
         this._gaugeViews.forEach(v => v._setChartOptions(inverted, animatable, loadAnimatable));
     }

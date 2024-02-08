@@ -47,7 +47,7 @@ export class ElementPool<T extends RcElement> extends RcObject {
         this.removeDelay = removeDelay;
     }
 
-    protected _doDestroy(): void {
+    protected override _doDestroy(): void {
         this.freeAll();
         this._owner = null;
         this._creator = null;

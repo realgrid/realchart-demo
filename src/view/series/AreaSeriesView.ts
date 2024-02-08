@@ -42,7 +42,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    decoreateLegend(legendView: LegendItemView): void {
+    override decoreateLegend(legendView: LegendItemView): void {
         super.decoreateLegend(legendView);
 
         const cs = getComputedStyle(this._area.dom);
@@ -54,11 +54,11 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    getClipContainer2(): RcElement {
+    override getClipContainer2(): RcElement {
         return this._areaContainer;
     }
 
-    protected _prepareBelow(series: AreaSeries): boolean {
+    protected override _prepareBelow(series: AreaSeries): boolean {
         let lowArea = this._lowArea;
 
         if (super._prepareBelow(series)) {
@@ -74,7 +74,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         }
     }
 
-    protected _prepareRanges(model: AreaSeries, ranges: IValueRange[]): void {
+    protected override _prepareRanges(model: AreaSeries, ranges: IValueRange[]): void {
         super._prepareRanges(model, ranges);
 
         let areas = this._rangeAreas;
@@ -105,14 +105,14 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         }
     }
 
-    protected _renderSeries(width: number, height: number): void {
+    protected override _renderSeries(width: number, height: number): void {
         super._renderSeries(width, height);
 
         this.model.prepareAreas();
         this._areaContainer.invert(this._inverted, height);
     }
 
-    protected _layoutMarkers(pts: AreaSeriesPoint[], width: number, height: number): void {
+    protected override _layoutMarkers(pts: AreaSeriesPoint[], width: number, height: number): void {
         super._layoutMarkers(pts, width, height);
 
         const inverted = this._inverted;
@@ -127,7 +127,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         }
     }
 
-    protected _doAfterLayout(): void {
+    protected override _doAfterLayout(): void {
         (this.model.group as AreaSeriesGroup)?.prepareLines(this.model);
 
         super._doAfterLayout();

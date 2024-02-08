@@ -65,7 +65,7 @@ class CategoryAxisLabel extends AxisLabel {
         }
     }
 
-    getIcon(tick: IAxisTick): string {
+    override getIcon(tick: IAxisTick): string {
         return (this.axis as CategoryAxis)._categories[tick.index]?.i;
         // return super.getIcon(tick);
     }
@@ -268,7 +268,7 @@ export class CategoryAxis extends Axis {
         return 'category';
     }
 
-    unitPad(): number {
+    override unitPad(): number {
         return this._catPad;
     }
 
@@ -288,7 +288,7 @@ export class CategoryAxis extends Axis {
         return new CategoryAxisLabel(this);
     }
 
-    collectValues(): void {
+    override collectValues(): void {
         // [주의] collectValues()에서 category에 해당하는 값을 가져올 수 있다면 순서를 바꿔야 한다.
         this.$_collectCategories(this._series);
 
@@ -300,7 +300,7 @@ export class CategoryAxis extends Axis {
         }
     }
 
-    getStartAngle(): number {
+    override getStartAngle(): number {
         let start = super.getStartAngle();
         let a = +this.startOffset;
 
@@ -385,7 +385,7 @@ export class CategoryAxis extends Axis {
         return ticks;
     }
 
-    calcPoints(length: number, phase: number): void {
+    override calcPoints(length: number, phase: number): void {
         super.calcPoints(length, phase);
 
         const pts = this._pts;
@@ -448,7 +448,7 @@ export class CategoryAxis extends Axis {
         return this._pts[v + 2] - this._pts[v + 2 - 1];
     }
 
-    getLabelLength(length: number, value: number): number {
+    override getLabelLength(length: number, value: number): number {
         const v = Math.floor(value - this._catMin + 0.5);
 
         if (v > this._tstep) {
@@ -458,7 +458,7 @@ export class CategoryAxis extends Axis {
         }
     }
 
-    getValue(value: any): number {
+    override getValue(value: any): number {
         if (isNumber(value)) {
             return value;
         } else {
@@ -466,7 +466,7 @@ export class CategoryAxis extends Axis {
         }
     }
 
-    getXValue(value: number): any {
+    override getXValue(value: number): any {
         return this._cats[value - this._catMin] || value;
     }
 

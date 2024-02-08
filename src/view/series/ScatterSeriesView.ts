@@ -85,7 +85,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries, ScatterSe
         this.$_layoutMarkers(width, height);
     }
 
-    protected _runShowEffect(firstTime: boolean): void {
+    protected override _runShowEffect(firstTime: boolean): void {
         if (firstTime) {
             if (this._polar) {
                 SeriesAnimation.grow(this);
@@ -112,7 +112,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries, ScatterSe
         return PointItemPosition.OUTSIDE;
     }
 
-    protected _doViewRateChanged(rate: number): void {
+    protected override _doViewRateChanged(rate: number): void {
         this.$_layoutMarkers(this.width, this.height);
     }
 

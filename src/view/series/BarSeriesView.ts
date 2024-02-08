@@ -47,7 +47,7 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
     //-------------------------------------------------------------------------
     private _bars: ElementPool<PointElement>;
     private _sectors: ElementPool<BarSectorView>;
-    protected _labelInfo: LabelLayoutInfo = {} as any;
+    protected override _labelInfo: LabelLayoutInfo = {} as any;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -64,7 +64,7 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
         }
     }
 
-    protected _setPointStyle(v: RcElement, model: T, p: DataPoint): void {
+    protected override _setPointStyle(v: RcElement, model: T, p: DataPoint): void {
         super._setPointStyle(v, model, p);
 
         if (p.yValue < model.baseValue && model.belowStyle) {
@@ -72,7 +72,7 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
         }
     }
 
-    protected _layoutPoints(width: number, height: number): void {
+    protected override _layoutPoints(width: number, height: number): void {
         if (this.model.chart.isPolar()) {
             this.$_layoutSectors();
         } else {
@@ -201,7 +201,7 @@ export class BarSeriesView extends BarSeriesViewBase<BarSeries> {
     //     return this.model.group?._stacked || this.model.group?.layout == SeriesGroupLayout.OVERLAP;
     // }
 
-    protected _prepareSeries(doc: Document, model: BarSeries): void {
+    protected override _prepareSeries(doc: Document, model: BarSeries): void {
         super._prepareSeries(doc, model);
 
         this._rdTop = +model.topRadius || 0;

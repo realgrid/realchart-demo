@@ -317,7 +317,7 @@ export abstract class Annotation extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doPrepareRender(chart: IChart): void {
+    protected override _doPrepareRender(chart: IChart): void {
         // this._seriesObj = chart.seriesByName(this.series);
     }
 }

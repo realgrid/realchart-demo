@@ -81,7 +81,7 @@ export class LineMarkerView extends MarkerSeriesPointView implements IPointView 
         return { x: this.point.xPos, y: this.point.yPos };
     }
 
-    distance(rd: number, x: number, y: number): number {
+    override distance(rd: number, x: number, y: number): number {
         const px = this.index === 0 ? this.point.xPos : (this.point as any).px2;
         const py = this.index === 0 ? this.point.yPos : (this.point as any).py2;
         return this.point.isNull ? Number.MAX_VALUE : Math.sqrt((px - x) ** 2 + (py - y) ** 2) - rd;
@@ -121,7 +121,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    getClipContainer(): RcElement {
+    override getClipContainer(): RcElement {
         return this._lineContainer;
     }
 
@@ -129,11 +129,11 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         return this._markers;
     }
 
-    needDecoreateLegend(): boolean {
+    override needDecoreateLegend(): boolean {
         return true;
     }
 
-    decoreateLegend(legendView: LegendItemView): void {
+    override decoreateLegend(legendView: LegendItemView): void {
         const cs = getComputedStyle(this._line.dom);
         const marker = legendView._marker as LineLegendMarkerView;
 
@@ -152,7 +152,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         !this._simpleMode && this.$_prepareMarkers(model, this._visPoints as LineSeriesPoint[]);
     }
 
-    protected _prepareViewRanges(model: T): void {
+    protected override _prepareViewRanges(model: T): void {
         super._prepareViewRanges(model);
         this._prepareRanges(model, model._runRanges);
     }
@@ -163,11 +163,11 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         this.model.prepareLines(this._visPoints as LineSeriesPoint[]);
     }
 
-    protected _doAfterLayout(): void {
+    protected override _doAfterLayout(): void {
         this._layoutLines();
     }
 
-    protected _runShowEffect(firstTime: boolean): void {
+    protected override _runShowEffect(firstTime: boolean): void {
 
         function getFrom(self: LineSeriesBaseView<any>): 'left' | 'right' | 'top' | 'bottom' {
             const reversed = self.model._xAxisObj.reversed;
@@ -186,12 +186,12 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         }
     }
 
-    protected _doViewRateChanged(rate: number): void {
+    protected override _doViewRateChanged(rate: number): void {
         this._layoutMarkers(this._visPoints as LineSeriesPoint[], this.width, this.height);
         this._layoutLines();
     }
 
-    getPointsAt(axis: Axis, pos: number): IPointView[] {
+    override getPointsAt(axis: Axis, pos: number): IPointView[] {
         return [];
     }
 
@@ -616,7 +616,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         return sb.end(true);
     }
 
-    setHoverStyle(pv: RcElement): void {
+    override setHoverStyle(pv: RcElement): void {
         super.setHoverStyle(pv);
         pv.internalImportantStylesOrClass(this.model.marker.hoverStyle);
     }
@@ -647,11 +647,11 @@ export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _legendColorProp(): string {
+    protected override _legendColorProp(): string {
         return 'stroke';
     }
 
-    protected _doLayout(): void {
+    protected override _doLayout(): void {
         super._doLayout();
 
         const m = this.model;

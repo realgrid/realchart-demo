@@ -134,11 +134,11 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: AxisGrid, width: number, height: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: AxisGrid, width: number, height: number, phase: number): ISize {
         return {width, height};
     }
 
-    protected _doLayout(): void {
+    protected override _doLayout(): void {
         const m = this.model;
         const axis = m.axis;
         const reversed = axis.reversed;
@@ -401,7 +401,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepare(doc: Document, model: AxisLineGuide): void {
+    override prepare(doc: Document, model: AxisLineGuide): void {
         super.prepare(doc, model);
 
         this._line.setStyles(model.style);
@@ -525,7 +525,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepare(doc: Document, model: AxisRangeGuide): void {
+    override prepare(doc: Document, model: AxisRangeGuide): void {
         super.prepare(doc, model);
 
         this._box.setStyleOrClass(model.style);
@@ -741,7 +741,7 @@ export class AxisGuideContainer extends LayerElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    add(child: AxisGuideView<AxisGuide>): RcElement {
+    override add(child: AxisGuideView<AxisGuide>): RcElement {
         this._views.push(child);
         return super.add(child);
     }
@@ -1197,11 +1197,11 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    getBounds(): DOMRect {
+    override getBounds(): DOMRect {
         return this._hitTester.getBounds();
     }
 
-    protected _doMeasure(doc: Document, model: Body, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: Body, hintWidth: number, hintHeight: number, phase: number): ISize {
         const chart = model.chart as Chart;
         const base = model.base();
 
@@ -1266,7 +1266,7 @@ export class BodyView extends ChartElement<Body> {
         // view2 && view2.setClip(this._seriesClip);
     }
 
-    protected _doLayout(): void {
+    protected override _doLayout(): void {
         const w = this.width;
         const h = this.height;
         const img = this._image;

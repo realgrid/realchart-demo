@@ -59,11 +59,11 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
         back.setStyleOrClass(this.model.backgroundStyle);
     }
 
-    protected _getBackOffset(): number {
+    protected override _getBackOffset(): number {
         return -this.width / 2; // text anchor가 MIDDLE이라서...
     }
 
-    protected _doMeasure(doc: Document, model: AxisTitle, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: AxisTitle, hintWidth: number, hintHeight: number, phase: number): ISize {
         this._angle = model.getRotation(model.axis);
 
         // this._textView.text = model.text;
@@ -80,7 +80,7 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
         return sz;
     }
 
-    protected _doLayout(isHorz: boolean): void {
+    protected override _doLayout(isHorz: boolean): void {
         // text
         this._textView.transY(this._margins.top + this._paddings.top);
         // this._textView.translate(this._paddings.left, this._paddings.top);
@@ -93,7 +93,7 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
         }
     }
 
-    resizeByMeasured(): ChartElement<ChartItem> {
+    override resizeByMeasured(): ChartElement<ChartItem> {
         if (this._angle === 0) {
             this.resize(this.mw, this.mh);
         } else {
@@ -102,7 +102,7 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
         return this;
     }
 
-    layout(param?: any): ChartElement<ChartItem> {
+    override layout(param?: any): ChartElement<ChartItem> {
         super.layout(param);
 
         if (this._debugRect) {
@@ -131,7 +131,7 @@ class AxisTickMarkView extends ChartElement<AxisTick> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLayout(param: any): void {
+    protected override _doLayout(param: any): void {
         if (this.model.axis._isHorz) {
             this._lineView.setVLine(0, 0, this.height);
             // this._lineView.setVLineC(0, 0, this.height);
@@ -302,7 +302,7 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: AxisScrollBar, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: AxisScrollBar, hintWidth: number, hintHeight: number, phase: number): ISize {
         this.setStyleOrClass(model.style);
 
         return (this._vertical = !model.axis._isHorz) ? {
@@ -312,7 +312,7 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
         };
     }
 
-    protected _doLayout(param: any): void {
+    protected override _doLayout(param: any): void {
         const model = this.model;
         const zoom = model.axis._zoom;
         const szThumb = this._szThumb = pickNum(model.minThumbSize, 32);
@@ -560,7 +560,7 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: Axis, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: Axis, hintWidth: number, hintHeight: number, phase: number): ISize {
         const horz = model._isHorz;
         const between = model._isBetween;
         const titleView = this._titleView;
@@ -621,7 +621,7 @@ export class AxisView extends ChartElement<Axis> {
         return { width: horz ? hintWidth : sz, height: horz ? sz : hintHeight };
     }
     
-    protected _doLayout(): void {
+    protected override _doLayout(): void {
         const m = this.model;
         const horz = m._isHorz;
         const opp = m._isOpposite;

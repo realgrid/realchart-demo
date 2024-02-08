@@ -27,7 +27,7 @@ export class HistogramSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    parse(series: ISeries): void {
+    override parse(series: ISeries): void {
         super.parse(series);
 
         const v = this.source;
@@ -36,7 +36,7 @@ export class HistogramSeriesPoint extends DataPoint {
         this.max = v.max;
     }
     
-    protected _assignTo(proxy: any): any {
+    protected override _assignTo(proxy: any): any {
         return assign(super._assignTo(proxy), {
             min: this.min,
             max: this.max
@@ -129,11 +129,11 @@ export class HistogramSeries extends Series {
         return 'histogram';
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new HistogramSeriesPoint(source);
     }
 
-    protected _doLoadPoints(src: any[]): void {
+    protected override _doLoadPoints(src: any[]): void {
 
         function getValue(v: any): number {
             let y: any;
@@ -203,7 +203,7 @@ export class HistogramSeries extends Series {
         super._doLoadPoints(pts);
     }
 
-    collectValues(axis: IAxis, vals: number[]): void {
+    override collectValues(axis: IAxis, vals: number[]): void {
         super.collectValues(axis, vals);
 
         if (vals) {
@@ -216,21 +216,21 @@ export class HistogramSeries extends Series {
         }
     }
 
-    protected _doPrepareRender(): void {
+    protected override _doPrepareRender(): void {
         super._doPrepareRender();
 
         this._base = pickNum(this.baseValue, this._yAxisObj.getBaseValue());
     }
 
-    getBaseValue(axis: IAxis): number {
+    override getBaseValue(axis: IAxis): number {
         return axis === this._yAxisObj ? this._base : NaN;
     }
 
-    isBased(axis: IAxis): boolean {
+    override isBased(axis: IAxis): boolean {
         return axis === this._yAxisObj;
     }
 
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
+    protected override _createLegendMarker(doc: Document, size: number): RcElement {
         return RectElement.create(doc, Series.LEGEND_MARKER, 0, 0, size, size, 2);
     }
 }

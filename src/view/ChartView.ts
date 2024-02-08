@@ -55,7 +55,7 @@ class TitleSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doInitChildren(doc: Document): void {
+    protected override _doInitChildren(doc: Document): void {
         this.add(this.titleView = new TitleView(doc, false));
         this.add(this.subtitleView = new TitleView(doc, true));
     }
@@ -318,7 +318,7 @@ class LegendSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doInitChildren(doc: Document): void {
+    protected override _doInitChildren(doc: Document): void {
         this.add(this._legendView = new LegendView(doc));
     }
 
@@ -607,7 +607,7 @@ export class CreditView extends ChartElement<Credits> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: Credits, intWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: Credits, intWidth: number, hintHeight: number, phase: number): ISize {
         this._textView.text = model.text;
 
         this.setCursor(model.url ? 'pointer' : '');
@@ -1377,7 +1377,7 @@ export class ChartView extends LayerElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doAttached(parent: RcElement): void {
+    protected override _doAttached(parent: RcElement): void {
         // this._seriesClip = this.control.clipBounds();
         // this._seriesClip2 = this.control.clipBounds();
         // this._lineSeriesClip = this.control.clipBounds();

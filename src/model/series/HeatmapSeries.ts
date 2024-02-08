@@ -74,30 +74,30 @@ export class HeatmapSeries extends Series {
         return 'heatmap';
     }
 
-    tooltipText = 'x: <b>${x}</b><br>y: <b>${y}</b><br>heat: <b>${z}</b>';
+    override tooltipText = 'x: <b>${x}</b><br>y: <b>${y}</b><br>heat: <b>${z}</b>';
 
-    canMixWith(other: IPlottingItem): boolean {
+    override canMixWith(other: IPlottingItem): boolean {
         // 차트나 split pane에 하나의 heatmap만 존재할 수 있다.
         return false;
     }
 
-    canCategorized(): boolean {
+    override canCategorized(): boolean {
         return true;
     }
 
-    hasZ(): boolean {
+    override hasZ(): boolean {
         return true;
     }
 
-    defaultYAxisType(): string {
+    override defaultYAxisType(): string {
         return 'category';
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new HeatmapSeriesPoint(source);
     }
 
-    protected _doPrepareRender(): void {
+    protected override _doPrepareRender(): void {
         super._doPrepareRender();
 
         this._heatMin = Number.MAX_VALUE;

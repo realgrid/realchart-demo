@@ -60,7 +60,7 @@ class HoverAnimation extends RcAnimation {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doStart(): void {
+    protected override _doStart(): void {
         this._marker.beginHover(this._series, this._focused);
     }
 
@@ -72,7 +72,7 @@ class HoverAnimation extends RcAnimation {
         return false;
     }
 
-    protected _doStop(): void {
+    protected override _doStop(): void {
         this._marker.setBoolData(SeriesView.DATA_UNHOVER, false);
         !this._focused && this._marker.restoreStyles();
         this._marker.setHoverRate(this._series, this._focused, NaN);
@@ -648,14 +648,14 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doAttached(parent: RcElement): void {
+    protected override _doAttached(parent: RcElement): void {
         // 로딩 후에 새로 추가된 경우 효과.
         if (this.control.loaded) {
             createAnimation(this.dom, 'opacity', 0, 1, 500, null);
         }
     }
 
-    protected _prepareStyleOrClass(model: T): void {
+    protected override _prepareStyleOrClass(model: T): void {
         // legend marker 색상이 필요하므로 prepareSeries()에서 먼저 처리한다.
     }
 
@@ -663,7 +663,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         // model.prepareViewRanges();
     }
 
-    protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         // 혹시 남아있는 animation용 clip을 제거한다. (pointer들의 clip은 pointContainer에서 지정한다.) #365
         if (!this._animating()) {
             this.setClip();
@@ -688,7 +688,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         return { width: hintWidth, height: hintHeight };
     }
 
-    protected _doLayout(): void {
+    protected override _doLayout(): void {
         this._labelViews();
         this._renderSeries(this.width, this.height);
         if (this._trendLineView && this._trendLineView.visible) {
@@ -1059,7 +1059,7 @@ export abstract class BoxPointElement extends PointElement {
     //-------------------------------------------------------------------------
     public abstract layout(x: number, y: number, rTop: number, rBottom: number): void;
 
-    savePrevs(): void {
+    override savePrevs(): void {
         super.savePrevs();
 
         this.wSave = this.wPoint;
@@ -1123,19 +1123,19 @@ export abstract class ClusterableSeriesView<T extends Series> extends SeriesView
         this._layoutPoints(width, height);
     }
 
-    protected _runShowEffect(firstTime: boolean): void {
+    protected override _runShowEffect(firstTime: boolean): void {
         firstTime && SeriesAnimation.grow(this);
     }
 
-    protected _doViewRateChanged(rate: number): void {
+    protected override _doViewRateChanged(rate: number): void {
         this._layoutPoints(this.width, this.height);
     }
 
-    protected _savePrevs(): void {
+    protected override _savePrevs(): void {
         this._getPointPool().forEach(v => v['savePrevs']());
     }
 
-    getPointsAt(axis: Axis, pos: number): IPointView[] {
+    override getPointsAt(axis: Axis, pos: number): IPointView[] {
         return [];
     }
 
@@ -1152,7 +1152,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doPrevRateChanged(rate: number): void {
+    protected override _doPrevRateChanged(rate: number): void {
         if (rate == 0) {
             this._layoutPoints(this.width, this.height);
         }
@@ -1251,7 +1251,7 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
     //-------------------------------------------------------------------------
     protected abstract _getLowValue(p: DataPoint): number;
 
-    protected _doPrevRateChanged(rate: number): void {
+    protected override _doPrevRateChanged(rate: number): void {
         if (rate == 0) {
             this._layoutPoints(this.width, this.height);
         }
@@ -1401,11 +1401,11 @@ export abstract class MarkerSeriesView<T extends MarkerSeries, P extends DataPoi
         return this._markers;
     }
 
-    clipInvertable(): boolean {
+    override clipInvertable(): boolean {
         return false; // TODO: true로 개선할 것!, bubble, scatter view 참조.
     }
 
-    getPointsAt(axis: Axis, pos: number): IPointView[] {
+    override getPointsAt(axis: Axis, pos: number): IPointView[] {
         return [];
     }
 
@@ -1452,7 +1452,7 @@ class ZombiAnimation extends RcAnimation {
         return false;
     }
 
-    protected _doStop(): void {
+    protected override _doStop(): void {
         if (this.series) {
             this.series._zombie = null;
             this.series._zombieAni = null;
@@ -1486,11 +1486,11 @@ export abstract class WidgetSeriesView<T extends WidgetSeries> extends SeriesVie
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    isPointVisible(p: DataPoint): boolean {
+    override isPointVisible(p: DataPoint): boolean {
         return p === this._zombie || super.isPointVisible(p);
     }
 
-    protected _collectVisPoints(model: T): DataPoint[] {
+    protected override _collectVisPoints(model: T): DataPoint[] {
         let pts = super._collectVisPoints(model);
 
         if (this._willZombie && !this._willZombie.visible) {

@@ -50,11 +50,11 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _marginable(): boolean {
+    protected override _marginable(): boolean {
         return false;
     }
 
-    protected _resetBackBounds(): boolean {
+    protected override _resetBackBounds(): boolean {
         return false;
     }
 
@@ -62,7 +62,7 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
         back.setStyleOrClass(this.model.backgroundStyle);
     }
 
-    protected _doLayout(p: IPoint): void {
+    protected override _doLayout(p: IPoint): void {
         const rot = this.model.rotation;
 
         this._background.setBounds(p.x, p.y, this.width, this.height);
@@ -74,7 +74,7 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
         }
     }
 
-    setRotation(originX: number, originY: number, rotation: number): RcElement {
+    override setRotation(originX: number, originY: number, rotation: number): RcElement {
         this._background.setRotation(originX, originY, rotation);
         this._setRotation(originX, originY, rotation);
         return this;

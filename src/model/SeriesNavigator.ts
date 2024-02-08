@@ -193,7 +193,7 @@ export class SeriesNavigator extends ChartItem {
     private _config: any;
     private _axisType: string;
 
-    protected _doLoad(src: any): void {
+    protected override _doLoad(src: any): void {
         super._doLoad(src);
 
         const config: any = {
@@ -228,7 +228,7 @@ export class SeriesNavigator extends ChartItem {
         // this._naviChart = this.chart._createChart(config);
     }
 
-    protected _doPrepareRender(chart: IChart): void {
+    protected override _doPrepareRender(chart: IChart): void {
         const source = chart._getSeries().getSeries(this.source) || chart.firstSeries;
 
         // TODO: 데이터 변경

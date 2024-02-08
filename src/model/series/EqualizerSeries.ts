@@ -77,21 +77,21 @@ export class EqualizerSeries extends BasedSeries {
         return 'equalizer';
     }
 
-    canCategorized(): boolean {
+    override canCategorized(): boolean {
         return true;
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new EqualizerSeriesPoint(source);
     }
 
-    protected _doLoad(src: any): void {
+    protected override _doLoad(src: any): void {
         super._doLoad(src);
 
         this._segmentDim = parsePercentSize(this.segmentSize, false);
     }
 
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
+    protected override _createLegendMarker(doc: Document, size: number): RcElement {
         const pb = new PathBuilder();
         pb.rect(0, 0, size, size * 0.4);
         pb.rect(0, size * 0.6, size, size * 0.4);

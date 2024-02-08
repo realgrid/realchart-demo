@@ -423,7 +423,7 @@ export class PolarBodyView extends BodyView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: Body, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: Body, hintWidth: number, hintHeight: number, phase: number): ISize {
         const chart = model.chart;
         const sz = super._doMeasure(doc, model, hintWidth, hintHeight, phase);
 
@@ -432,7 +432,7 @@ export class PolarBodyView extends BodyView {
         return sz;
     }
 
-    protected _doLayout(): void {
+    protected override _doLayout(): void {
         const m = this.model.setPolar(this.width, this.height);
         const {cx, cy, rd} = m.getPolar(null);
 

@@ -39,7 +39,7 @@ export class CandlestickSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _assignTo(proxy: any): any {
+    protected override _assignTo(proxy: any): any {
         return assign(super._assignTo(proxy), {
             low: this.low,
             close: this.close,
@@ -52,7 +52,7 @@ export class CandlestickSeriesPoint extends DataPoint {
         });
     }
 
-    protected _valuesChangd(): boolean {
+    protected override _valuesChangd(): boolean {
         if (!super._valuesChangd()) {
             const prev = this._prev;
             return this.low !== prev.low ||
@@ -62,7 +62,7 @@ export class CandlestickSeriesPoint extends DataPoint {
         return true;
     }
 
-    protected _readArray(series: CandlestickSeries, v: any[]): void {
+    protected override _readArray(series: CandlestickSeries, v: any[]): void {
         if (v.length <= 3) {
             this.isNull = true;
         } else {
@@ -78,7 +78,7 @@ export class CandlestickSeriesPoint extends DataPoint {
         }
     }
 
-    protected _readObject(series: CandlestickSeries, v: any): void {
+    protected override _readObject(series: CandlestickSeries, v: any): void {
         super._readObject(series, v);
 
         this.low = pickProp(v[series.lowField], v.low);
@@ -87,29 +87,29 @@ export class CandlestickSeriesPoint extends DataPoint {
         this.y = pickProp3(v[series.highField], v.high, this.y);
     }
 
-    protected _readSingle(v: any): void {
+    protected override _readSingle(v: any): void {
         super._readSingle(v);
 
         this.low = this.close = this.open = this.y;
     }
 
-    parse(series: CandlestickSeries): void {
+    override parse(series: CandlestickSeries): void {
         super.parse(series);
 
         this.isNull ||= isNaN(this.lowValue) || isNaN(this.openValue) || isNaN(this.closeValue);
     }
 
-    initValues(): void {
+    override initValues(): void {
         this.lowValue = parseFloat(this.low);
         this.openValue = parseFloat(this.open);
         this.closeValue = parseFloat(this.close);
     }
 
-    initPrev(axis: IAxis, prev: any): void {
+    override initPrev(axis: IAxis, prev: any): void {
         prev.yValue = prev.lowValue = prev.openValue = prev.closeValue = this.lowValue;
     }
 
-    applyValueRate(prev: any, vr: number): void {
+    override applyValueRate(prev: any, vr: number): void {
         // yValue는 series.collectValues()에서 한다.
         this.lowValue = incv(prev.lowValue, this.lowValue, vr);
         this.openValue = incv(prev.openValue, this.openValue, vr);
@@ -163,7 +163,7 @@ export class CandlestickSeries extends LowRangedSeries {
      * 
      * @config
      */
-    lowField: string;
+    override lowField: string;
     /**
      * json 객체나 배열로 전달되는 데이터포인트 정보에서 시작(open) 값을 지정하는 속성명이나 인덱스.<br/>
      * undefined이면, data point의 값이 array일 때는 항목 수가 5이상이면 2, 아니면 1, 객체이면 'open'.
@@ -184,7 +184,7 @@ export class CandlestickSeries extends LowRangedSeries {
      * 
      * @config
      */
-    highField: string;
+    override highField: string;
     /**
      * 값이 하락한 데이터포인트에 적용되는 스타일셋.
      * 
@@ -192,7 +192,7 @@ export class CandlestickSeries extends LowRangedSeries {
      */
     declineStyle: SVGStyleOrClass;
 
-    tooltipText = '<b>${name}</b><br>최저: <b>${lowValue}</b><br>시가: <b>${openValue}</b><br>종가: <b>${closeValue}</b><br>고가: <b>${highValue}</b>';
+    override tooltipText = '<b>${name}</b><br>최저: <b>${lowValue}</b><br>시가: <b>${openValue}</b><br>종가: <b>${closeValue}</b><br>고가: <b>${highValue}</b>';
 
     //-------------------------------------------------------------------------
     // methods
@@ -204,11 +204,11 @@ export class CandlestickSeries extends LowRangedSeries {
         return 'candlestick';
     }
 
-    canCategorized(): boolean {
+    override canCategorized(): boolean {
         return true;
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new CandlestickSeriesPoint(source);
     }
 
@@ -216,7 +216,7 @@ export class CandlestickSeries extends LowRangedSeries {
         return p.lowValue;
     }
 
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
+    protected override _createLegendMarker(doc: Document, size: number): RcElement {
         const pb = new PathBuilder();
         pb.rect(0, size * 0.2, size, size * 0.6);
         pb.vline(size / 2, 0, size);

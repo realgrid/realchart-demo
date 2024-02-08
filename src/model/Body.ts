@@ -251,7 +251,7 @@ export class Body extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoadProp(prop: string, value: any): boolean {
+    protected override _doLoadProp(prop: string, value: any): boolean {
         if (prop === 'annotations' || prop === 'annotation') {
             if (isArray(value)) this.$_loadAnnotations(value);
             else if (isObject(value)) this.$_loadAnnotations([value]);
@@ -259,7 +259,7 @@ export class Body extends ChartItem {
         }
     }
 
-    protected _doPrepareRender(chart: IChart): void {
+    protected override _doPrepareRender(chart: IChart): void {
         this._annotations.prepareRender();
     }
 

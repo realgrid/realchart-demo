@@ -82,7 +82,7 @@ export class Title extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoadSimple(source: any): boolean {
+    protected override _doLoadSimple(source: any): boolean {
         if (isString(source)) {
             this.text = source;
             return true;
@@ -133,7 +133,7 @@ export class Subtitle extends Title {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    verticalAlign = VerticalAlign.BOTTOM;
+    override verticalAlign = VerticalAlign.BOTTOM;
 
     //-------------------------------------------------------------------------
     // property fields
@@ -149,7 +149,7 @@ export class Subtitle extends Title {
      * 
      * @config
      */
-    text = '';
+    override text = '';
     /**
      * 주 제목과 사이의 간격.
      * 

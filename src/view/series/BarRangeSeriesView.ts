@@ -37,7 +37,7 @@ export class BarRangeSeriesView extends RangedSeriesView<BarRangeSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    protected _prepareSeries(doc: Document, model: BarRangeSeries): void {
+    protected override _prepareSeries(doc: Document, model: BarRangeSeries): void {
         super._prepareSeries(doc, model);
 
         this._rd = +model.cornerRadius || 0;

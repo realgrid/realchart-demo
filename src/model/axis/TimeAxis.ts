@@ -92,7 +92,7 @@ export class TimeAxisTick extends ContinuousAxisTick {
      */
     "@config stepInerval" = undefined;
 
-    getNextStep(curr: number, delta: number): number {
+    override getNextStep(curr: number, delta: number): number {
         const t = new Date(curr);
         
         delta *= this._step;
@@ -126,7 +126,7 @@ export class TimeAxisTick extends ContinuousAxisTick {
         return +t;
     }
 
-    protected _isValidInterval(v: any): boolean {
+    protected override _isValidInterval(v: any): boolean {
         if (!isNaN(v)) {
             return +v !== 0;
         } else if (isString(v) && time_periods.hasOwnProperty(v.charAt(v.length - 1))) {
@@ -135,7 +135,7 @@ export class TimeAxisTick extends ContinuousAxisTick {
         } 
     }
 
-    protected _getStepMultiples(step: number): number[] {
+    protected override _getStepMultiples(step: number): number[] {
         for (let i = TimeScale.MS; i < TimeScale.YEAR; i++) {
             if (step >= time_scales[i] / 2 && step < time_scales[i + 1] / 2) {
                 this.scale = i;
@@ -145,7 +145,7 @@ export class TimeAxisTick extends ContinuousAxisTick {
         this.scale = TimeScale.YEAR;
     }
 
-    protected _getStepsByPixels(length: number, pixels: number, base: number, min: number, max: number): number[] {
+    protected override _getStepsByPixels(length: number, pixels: number, base: number, min: number, max: number): number[] {
         const steps: number[] = [];
         const len = max - min;
 
@@ -265,7 +265,7 @@ export class TimeAxisTick extends ContinuousAxisTick {
         return steps;
     }
 
-    protected _getStepsByInterval(interval: any, base: number, min: number, max: number): number[] {
+    protected override _getStepsByInterval(interval: any, base: number, min: number, max: number): number[] {
         if (isString(interval)) {
             const axis = this.axis as TimeAxis;
             const calcedMin = new Date(axis._calcedMin);
@@ -404,7 +404,7 @@ export class TimeAxisLabel extends AxisLabel {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoad(source: any): void {
+    protected override _doLoad(source: any): void {
         super._doLoad(source);
 
         const f1 = isString(this.timeFormat) ? this.timeFormat : void 0;
@@ -523,7 +523,7 @@ export class TimeAxis extends ContinuousAxis {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    init(): Axis {
+    override init(): Axis {
         super.init();
 
         this.baseValue = NaN;
@@ -537,7 +537,7 @@ export class TimeAxis extends ContinuousAxis {
      * @override
      * @config
      */
-    readonly label: TimeAxisLabel;
+    override readonly label: TimeAxisLabel;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -546,15 +546,15 @@ export class TimeAxis extends ContinuousAxis {
         return 'time';
     }
 
-    protected _createTickModel(): AxisTick {
+    protected override _createTickModel(): AxisTick {
         return new TimeAxisTick(this);
     }
 
-    protected _createLabel(): AxisLabel {
+    protected override _createLabel(): AxisLabel {
         return new TimeAxisLabel(this);
     }
 
-    protected _doLoad(source: any): void {
+    protected override _doLoad(source: any): void {
         super._doLoad(source);
 
         if (!source || !source.label) {
@@ -562,12 +562,12 @@ export class TimeAxis extends ContinuousAxis {
         }
     }
 
-    collectValues(): void {
+    override collectValues(): void {
         this._offset = pickNum(this.chart.timeOffset, 0) * 60 * 1000;
         super.collectValues();
     }
 
-    getValue(value: any): number {
+    override getValue(value: any): number {
         if (isNumber(value)) {  
             return value;
         } else if (value instanceof Date) {
@@ -577,7 +577,7 @@ export class TimeAxis extends ContinuousAxis {
         }
     }
 
-    incStep(value: number, step: any): number {
+    override incStep(value: number, step: any): number {
         if (isString(step)) {
             const v = parseFloat(step);
 
@@ -618,15 +618,15 @@ export class TimeAxis extends ContinuousAxis {
         return new Date(value);
     }
 
-    axisValueAt(length: number, pos: number): any {
+    override axisValueAt(length: number, pos: number): any {
         return new Date(this.valueAt(length, pos));
     }
 
-    value2Tooltip(value: number): any {
+    override value2Tooltip(value: number): any {
         return isNaN(value) ? this.chart.tooltip.nanText : new Date(value);
     }
 
-    getXValue(value: number) {
+    override getXValue(value: number) {
         return isNaN(value) ? NaN : new Date(value);
     }
 
