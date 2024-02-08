@@ -26,8 +26,8 @@ export function HeroBullets() {
           <Title fw={700} size={60}>
             RealChart
           </Title>
-          <Title>Real chart component library</Title>
-          <Title>성공을 위한 업무 데이터 시각화 파트너</Title>
+          <Title order={2}>Javascript Web Component Library</Title>
+          <Title order={2}>성공을 위한 업무 데이터 시각화 파트너</Title>
         </Stack>
         <Image className={classes.main} width="40rem" src={"/images/main-01.png"} />
         <Image className={classes.main} width="40rem" src={"/images/main-02.png"} />

@@ -34,6 +34,7 @@ nav:empty.nx-hidden {
   padding-top: 0.1rem;
   padding-bottom: 0.1rem;
   font-size: 0.8rem;
+  align-items: center;
 }
 
 .nextra-sidebar-container li div.nx-pt-1 {
@@ -89,9 +90,9 @@ img {
 }
 
 img.sidebar {
-  margin: 0px;
-  padding: 4px;
-  width: 24px;
+  margin: 0px 2px 0px 0px;
+  padding: 2px;
+  width: 25px;
 }
 
 .border-img {

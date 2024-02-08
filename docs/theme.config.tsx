@@ -29,17 +29,13 @@ const config: DocsThemeConfig = {
         return <>{chartType}{prefix}</>;
       } else if (route.startsWith('/guide/series/')) {
         const [_, type] = route.split('-');
-        if (['bar', 'line', 'pie', 'scatter', 'area', 'treemap'].includes(type)) {
-          const src = `/icons/${type}.png`;
-          return <><img src={src} className="sidebar"/>{title}</>
-        } else {
-          const src = '/icons/series.png';
-          return <><img src={src} className="sidebar"/>{title}</>
-        }
-        // const icon = '📊';
+        return <><img src={`/icons/series/${type}.png`} className="sidebar"/>{title}</>
       } else if (route.startsWith('/guide/gauges/')) {
-        const src = '/icons/gauge.png';
-        return <><img src={src} className="sidebar"/> {title}</>
+        const [_, type] = route.split('-');
+        return <><img src={`/icons/gauges/${type}.png`} className="sidebar"/> {title}</>
+      } else if (route.startsWith('/guide/annotations/')) {
+        const [_, type] = route.split('-');
+        return <><img src={`/icons/annotations/${type}.png`} className="sidebar"/> {title}</>
       } else if (type == 'separator') {
         return <>{title}</>;
       } else {
