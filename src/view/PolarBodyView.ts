@@ -467,7 +467,7 @@ export class PolarBodyView extends BodyView {
         });
 
         // annotations
-        this._layoutAnnotations(false, this.width, this.height);
+        this._layoutAnnotations(false, this, this.width, this.height);
     }
 
     //-------------------------------------------------------------------------

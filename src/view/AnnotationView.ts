@@ -13,6 +13,10 @@ import { RectElement } from "../common/impl/RectElement";
 import { Annotation } from "../model/Annotation";
 import { BoundableElement } from "./ChartElement";
 
+export interface IAnnotationAnchorOwner {
+    getAnnotationAnchor(model: any): RcElement;
+}
+
 /**
  * [주의] clipping하기 위해 translate를 background와 내부 view에 설정한다.
  */
@@ -36,15 +40,22 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    update(hintWidth: number, hintHeight: number): void {
+    update(owner: IAnnotationAnchorOwner, hintWidth: number, hintHeight: number): void {
         this.measure(this.doc, this.model, hintWidth, hintHeight, 0);
-        this._layoutView(this.chart().isInverted(), 0, 0, hintWidth, hintHeight);
+        this._layoutView(this.chart().isInverted(), owner, 0, 0, hintWidth, hintHeight);
     }
 
-    _layoutView(invertd: boolean, x: number, y: number, w: number, h: number): void {
+    _layoutView(invertd: boolean, owner: IAnnotationAnchorOwner, x: number, y: number, w: number, h: number): void {
         this.resizeByMeasured();
-        const p = this.model.getPosition(this.chart().isInverted(), x, y, w, h, this.width, this.height);
-        this.layout(p);
+        this.layout(this.$_posByAnchor(owner) || this.model.getPosition(this.chart().isInverted(), x, y, w, h, this.width, this.height));
+    }
+
+    private $_posByAnchor(owner: IAnnotationAnchorOwner): IPoint {
+        const obj = this.model._anchorObj;
+
+        if (obj) {
+            return;
+        }
     }
 
     //-------------------------------------------------------------------------

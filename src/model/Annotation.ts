@@ -9,11 +9,9 @@
 import { isArray, isObject, isString } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { ISize } from "../common/Size";
-import { Align, IAnnotationAnimation, IPercentSize, RtPercentSize, SVGStyleOrClass, VerticalAlign, calcPercent, parsePercentSize } from "../common/Types";
-import { Axis } from "./Axis";
+import { Align, IAnnotationAnimation, IPercentSize, RtPercentSize, SVGStyleOrClass, VerticalAlign, _undef, calcPercent, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
-import { ISeries } from "./Series";
 
 /**
  * 어노테이션 배치 기준.<br/>
@@ -352,7 +350,6 @@ export class AnnotationCollection {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    readonly chart: IChart;
     private _map: {[name: string]: Annotation} = {};
     private _items: Annotation[] = [];
     private _visibles: Annotation[] = [];
@@ -360,8 +357,7 @@ export class AnnotationCollection {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(owner: IAnnotationOwner) {
-        this.chart = owner.chart;
+    constructor(public owner: IAnnotationOwner) {
     }
 
     //-------------------------------------------------------------------------
@@ -388,7 +384,7 @@ export class AnnotationCollection {
     }
 
     load(src: any, inBody: boolean): void {
-        const chart = this.chart;
+        const chart = this.owner.chart;
         const items: Annotation[] = this._items = [];
         const map = this._map = {};
 
@@ -409,7 +405,10 @@ export class AnnotationCollection {
 
     prepareRender(): void {
         this._visibles = this._items.filter(item => item.visible);
-        this._visibles.forEach(item => item.prepareRender());
+        this._visibles.forEach(item => {
+            item.prepareRender();
+            item._anchorObj = item.anchor ? this.owner.anchorByName(item.anchor) : _undef;
+        });
     }
 
     //-------------------------------------------------------------------------

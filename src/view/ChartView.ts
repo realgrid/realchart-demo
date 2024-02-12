@@ -23,7 +23,7 @@ import { LegendItem, LegendLocation } from "../model/Legend";
 import { ISeries, Series } from "../model/Series";
 import { Split } from "../model/Split";
 import { Subtitle, SubtitlePosition, Title } from "../model/Title";
-import { AnnotationView } from "./AnnotationView";
+import { AnnotationView, IAnnotationAnchorOwner } from "./AnnotationView";
 import { AxisScrollView, AxisView } from "./AxisView";
 import { AxisGridRowContainer, AxisGuideContainer, BodyView, createAnnotationView } from "./BodyView";
 import { ChartElement, SectionView } from "./ChartElement";
@@ -618,7 +618,7 @@ export class CreditView extends ChartElement<Credits> {
 /**
  * @internal
  */
-export class ChartView extends LayerElement {
+export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
 
     //-------------------------------------------------------------------------
     // fields
@@ -681,6 +681,14 @@ export class ChartView extends LayerElement {
         this.add(this._historyView = new HistoryView(doc));
         this.add(this._tooltipView = new TooltipView(doc));
     }
+
+    //-------------------------------------------------------------------------
+    // IAnnotationAnchorOwner
+    //-------------------------------------------------------------------------
+    getAnnotationAnchor(model: any): RcElement {
+        return;
+    }
+
 
     //-------------------------------------------------------------------------
     // properties
@@ -1357,14 +1365,14 @@ export class ChartView extends LayerElement {
         let v = this._annotationViews.find(v => v.model === anno);
         
         if (v) {
-            v.update(this.width, this.height);
+            v.update(this, this.width, this.height);
         } else {
             if (this._model.isSplitted()) {
                 // TODO:
             } else {
                 v = this._currBody._annotationViews.find(v => v.model === anno);
                 if (v) {
-                    v.update(this._currBody.width, this._currBody.height);
+                    v.update(this._currBody, this._currBody.width, this._currBody.height);
                 }
             }
         }
@@ -1623,7 +1631,7 @@ export class ChartView extends LayerElement {
                     break;
             }
 
-            v._layoutView(inverted, x, y, w, h);
+            v._layoutView(inverted, this, x, y, w, h);
         });
     }
 }

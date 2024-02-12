@@ -12,6 +12,8 @@ import { Annotation, AnnotationCollection, IAnnotationOwner } from "./Annotation
 import { Axis } from "./Axis";
 import { IChart } from "./Chart";
 import { BackgroundImage, ChartItem } from "./ChartItem";
+import { GaugeBase } from "./Gauge";
+import { Series } from "./Series";
 
 export enum ZoomType {
     NONE = 'none',
@@ -126,7 +128,9 @@ export class Body extends ChartItem implements IAnnotationOwner {
     // IAnnotationOwner
     //-------------------------------------------------------------------------
     anchorByName(name: string): ChartItem {
-        return;
+        const obj = this.chart._getGauges().get(name);
+        if (obj instanceof GaugeBase && this.contains(obj)) return obj;
+        return this._annotations.get(name);
     }
 
     //-------------------------------------------------------------------------
@@ -253,6 +257,10 @@ export class Body extends ChartItem implements IAnnotationOwner {
 
     getAnnotation(name: string): Annotation {
         return this._annotations.getAnnotation(name);
+    }
+
+    contains(obj: GaugeBase | Series): boolean {
+        return true;
     }
 
     //-------------------------------------------------------------------------

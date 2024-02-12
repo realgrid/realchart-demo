@@ -13,6 +13,8 @@ import { PaneAxisMatrix } from "./Axis";
 import { Body } from "./Body";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
+import { GaugeBase } from "./Gauge";
+import { Series } from "./Series";
 
 export class PaneBody extends Body {
 
@@ -35,6 +37,10 @@ export class PaneBody extends Body {
     //-------------------------------------------------------------------------
     override base(): Body {
         return this.chart.body;
+    }
+
+    override contains(obj: GaugeBase | Series): boolean {
+        return obj.col === this.pane.col || obj.row === this.pane.row;
     }
 }
 

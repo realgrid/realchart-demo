@@ -55,7 +55,7 @@ import { BulletGaugeGroupView, BulletGaugeView } from "./gauge/BulletGaugeView";
 import { ButtonElement } from "../common/ButtonElement";
 import { TextAnnotationView } from "./annotation/TextAnnotationView";
 import { Annotation } from "../model/Annotation";
-import { AnnotationView } from "./AnnotationView";
+import { AnnotationView, IAnnotationAnchorOwner } from "./AnnotationView";
 import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
 import { LabelElement } from "./LabelElement";
@@ -843,7 +843,7 @@ export interface IPlottingOwner {
     getSeriesView(series: ISeries): SeriesView<Series>;
 }
 
-export class BodyView extends ChartElement<Body> {
+export class BodyView extends ChartElement<Body> implements IAnnotationAnchorOwner {
 
     //-------------------------------------------------------------------------
     // consts
@@ -936,6 +936,13 @@ export class BodyView extends ChartElement<Body> {
         //     this._seriesViews.forEach(sv => sv.hoverPoints(null));
         //     this._owner.hideTooltip(); 
         // }
+    }
+
+    //-------------------------------------------------------------------------
+    // IAnnotationAnchorOwner
+    //-------------------------------------------------------------------------
+    getAnnotationAnchor(model: any): RcElement {
+        return;
     }
 
     //-------------------------------------------------------------------------
@@ -1366,7 +1373,7 @@ export class BodyView extends ChartElement<Body> {
         });
 
         // annotations
-        this._layoutAnnotations(this._inverted, w, h);
+        this._layoutAnnotations(this._inverted, this, w, h);
 
         // zoom button
         if (this._zoomButton.visible) {
@@ -1549,10 +1556,10 @@ export class BodyView extends ChartElement<Body> {
         });
     }
 
-    protected _layoutAnnotations(inverted: boolean, w: number, h: number): void {
+    protected _layoutAnnotations(inverted: boolean, owner: IAnnotationAnchorOwner, w: number, h: number): void {
         if (this._annotationViews.length > 0) {
             this._annotationViews.forEach(v => {
-                v._layoutView(inverted, 0, 0, w, h);
+                v._layoutView(inverted, owner, 0, 0, w, h);
                 v.setClip(this._polar || v.model.noClip ? _undef : this._bodyClip);
             });
         }
