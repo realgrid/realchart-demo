@@ -686,9 +686,8 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
     // IAnnotationAnchorOwner
     //-------------------------------------------------------------------------
     getAnnotationAnchor(model: any): RcElement {
-        return;
+        return this._annotationMap.get(model);
     }
-
 
     //-------------------------------------------------------------------------
     // properties

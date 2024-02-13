@@ -162,6 +162,22 @@ const config = {
                 stroke: 'black',
                 padding: '2px 4px'
             }
+        }, {
+            front: true,
+            anchor: 'gauge2',
+            text: '회계솔류션2',
+            width: '20%',
+            style: {
+                fontSize: '14px',
+                fontWeight: 'bold',
+                fill: 'white',
+                textAlign: 'center',
+            },
+            backgroundStyle: {
+                fill: '#008',
+                stroke: 'black',
+                padding: '2px 4px'
+            }
         }]
     }
 }

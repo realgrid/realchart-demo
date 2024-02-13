@@ -54,7 +54,12 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
         const obj = this.model._anchorObj;
 
         if (obj) {
-            return;
+            const elt = owner.getAnnotationAnchor(obj);
+            if (elt) {
+                // const r = elt.getBounds();
+                // return {x: r.x, y: r.y};
+                return {x: elt.tx, y: elt.ty}
+            }
         }
     }
 

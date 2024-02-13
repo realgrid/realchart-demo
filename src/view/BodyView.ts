@@ -834,7 +834,7 @@ export class ZoomButton extends ButtonElement {
     }
 }
 
-export interface IPlottingOwner {
+export interface IPlottingOwner extends IAnnotationAnchorOwner {
 
     // clipSeries(view: RcElement, view2: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void;
     showTooltip(series: Series, pv: IPointView, siblings: IPointView[], body: RcElement, p: IPoint): void;
@@ -942,7 +942,7 @@ export class BodyView extends ChartElement<Body> implements IAnnotationAnchorOwn
     // IAnnotationAnchorOwner
     //-------------------------------------------------------------------------
     getAnnotationAnchor(model: any): RcElement {
-        return;
+        return this._gaugeMap.get(model) || this._annotationMap.get(model);
     }
 
     //-------------------------------------------------------------------------
