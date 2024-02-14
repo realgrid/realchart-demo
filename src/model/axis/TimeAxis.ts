@@ -9,7 +9,6 @@
 import { isArray, isNumber, isObject, isString, pickNum, assign, maxv, isStringL } from "../../common/Common";
 import { DatetimeFormatter } from "../../common/DatetimeFormatter";
 import { Axis, AxisLabel, AxisTick } from "../Axis";
-import { IChart } from "../Chart";
 import { ContinuousAxis, ContinuousAxisTick } from "./LinearAxis";
 
 const enum TimeScale {
@@ -609,6 +608,7 @@ export class TimeAxis extends ContinuousAxis {
                 }
                 return +d;
             }
+            return value;
         } else {
             return value + step;
         }
@@ -628,6 +628,10 @@ export class TimeAxis extends ContinuousAxis {
 
     getXValue(value: number) {
         return isNaN(value) ? NaN : new Date(value);
+    }
+
+    override getPos(length: number, value: number): number {
+        return super.getPos(length, value);
     }
 
     //-------------------------------------------------------------------------

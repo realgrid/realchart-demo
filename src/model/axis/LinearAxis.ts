@@ -661,6 +661,12 @@ export abstract class ContinuousAxis extends Axis {
         if (isNaN(baseVal) && min < 0 && max > 0) {
             baseVal = 0;
         } 
+        if (!isNaN(baseVal)) {
+            min = Math.min(min, baseVal);
+            max = Math.max(max, baseVal);
+        } else if (min < 0 && max > 0) {
+            baseVal = 0;
+        }
 
         if (based && tick.baseRange) {
             min = tick._baseAxis.axisMin();
@@ -729,9 +735,13 @@ export abstract class ContinuousAxis extends Axis {
                 steps = this.$_getBrokenSteps(this._runBreaks, length, min, max);
             }
     
+            let prev = NaN;
             for (let i = 0; i < steps.length; i++) {
                 const tick = this._createTick(length, i, steps[i]);
-                ticks.push(tick);
+                if (tick.value !== prev) {
+                    ticks.push(tick);
+                    prev = tick.value;
+                }
             }
         // }
         return ticks;
