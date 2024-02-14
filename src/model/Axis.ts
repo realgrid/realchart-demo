@@ -394,6 +394,12 @@ export class AxisGuideLabel extends IconedText {
     // properties
     //-------------------------------------------------------------------------
     /**
+     * lable을 body영역 안에 표시할 지 여부.
+     * 
+     * @config
+     */
+    displayInside = true;
+    /**
      * 수평 정렬.
      * 
      * @config

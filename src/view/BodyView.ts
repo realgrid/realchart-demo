@@ -440,15 +440,13 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
         
                     switch (label.verticalAlign) {
                         case VerticalAlign.BOTTOM:
-                            y = height - rLabel.height - yOff;
+                            y = label.displayInside ? height - rLabel.height - yOff : height + yOff;
                             break;
-        
                         case VerticalAlign.MIDDLE:
                             y = (height - rLabel.height) / 2 - yOff;
                             break;
-        
                         default:
-                            y = yOff;
+                            y = label.displayInside ? yOff : (rLabel.height + yOff) * -1;
                             break;
                     }
                 }
@@ -466,10 +464,10 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
                             x = (width - rLabel.width) / 2 - xOff;
                             break;
                         case Align.RIGHT:
-                            x = width - rLabel.width - xOff;
+                            x = label.displayInside ? width - rLabel.width - xOff : width + xOff;
                             break;
                         default:
-                            x = xOff;
+                            x = label.displayInside ? xOff : (rLabel.width + xOff) * -1;
                             break;
                     }
         
@@ -1344,10 +1342,12 @@ export class BodyView extends ChartElement<Body> {
             });
 
             // axis guides
+            const control = this.control;
             if (!this._guideClip) {
-                this._guideClip = this.control.clipBounds(0, 0, w, h);
+                const padding = control._padding;
+                this._guideClip = control.clipBounds((padding.left + this.tx) * -1, (padding.top + this.ty) * -1, control.width(), control.height());
             } else {
-                this._guideClip.resize(w, h);
+                this._guideClip.resize(control.width(), control.height());
             }
             [this._guideContainer, this._frontGuideContainer].forEach(c => {
                 c._views.forEach(v => v.layout(w, h));

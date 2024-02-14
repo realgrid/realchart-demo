@@ -1037,7 +1037,8 @@ export class ChartView extends LayerElement {
             y = org.y - this._plotHeight;
 
             this._currBody.resize(wPlot, hPlot);
-            this._currBody.layout().trans(x, y);
+            this._currBody.trans(x, y);
+            this._currBody.layout();
             rPlot = this._currBody.getRect();
             this._currBody._seriesViews.forEach(v => {
                 if (v.needDecoreateLegend()) {
