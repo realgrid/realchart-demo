@@ -1037,16 +1037,18 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
             }
 
             // body
+            const body = this._currBody;
+
             hPlot = this._plotHeight - hMiddle;
             wPlot = this._plotWidth - wCenter;
 
             x = org.x;
             y = org.y - this._plotHeight;
 
-            this._currBody.resize(wPlot, hPlot);
-            this._currBody.layout().trans(x, y);
-            rPlot = this._currBody.getRect();
-            this._currBody._seriesViews.forEach(v => {
+            body.resize(wPlot, hPlot);
+            body.layout().trans(x, y);
+            rPlot = body.getRect();
+            body._seriesViews.forEach(v => {
                 if (v.needDecoreateLegend()) {
                     const lv = this._legendSectionView._legendView.legendOfSeries(v.model);
                     if (lv) {

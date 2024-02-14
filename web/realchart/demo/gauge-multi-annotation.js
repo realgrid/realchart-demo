@@ -5,9 +5,10 @@
 const config = {
     templates: {
         gauge: {
-            width: '27%',
+            width: '20%',
             height: '40%',
             innerRadius: '93%',
+            centerY: '42%',
             valueRim: {
                 ranges: [{
                     toValue: 25,
@@ -150,7 +151,7 @@ const config = {
             front: true,
             anchor: 'gauge1',
             text: '회계솔류션',
-            width: '20%',
+            width: '15%',
             style: {
                 fontSize: '14px',
                 fontWeight: 'bold',
@@ -166,7 +167,26 @@ const config = {
             front: true,
             anchor: 'gauge2',
             text: '회계솔류션2',
-            width: '20%',
+            width: '15%',
+            offsetY: '-0.5h',
+            style: {
+                fontSize: '14px',
+                fontWeight: 'bold',
+                fill: 'white',
+                textAlign: 'center',
+            },
+            backgroundStyle: {
+                fill: '#008',
+                stroke: 'black',
+                padding: '2px 4px'
+            }
+        }, {
+            front: true,
+            anchor: 'gauge3',
+            text: '회계솔류션2',
+            width: '15%',
+            offsetY: '-0.5h',
+            verticalAlign: 'bottom',
             style: {
                 fontSize: '14px',
                 fontWeight: 'bold',

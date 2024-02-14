@@ -8,13 +8,15 @@
 
 import { IPoint } from "../common/Point";
 import { RcElement } from "../common/RcControl";
-import { _undef } from "../common/Types";
+import { Align, VerticalAlign, _undef } from "../common/Types";
 import { RectElement } from "../common/impl/RectElement";
 import { Annotation } from "../model/Annotation";
 import { BoundableElement } from "./ChartElement";
 
 export interface IAnnotationAnchorOwner {
     getAnnotationAnchor(model: any): RcElement;
+    tx: number;
+    ty: number;
 }
 
 /**
@@ -51,14 +53,44 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
     }
 
     private $_posByAnchor(owner: IAnnotationAnchorOwner): IPoint {
-        const obj = this.model._anchorObj;
+        const m = this.model;
+        const obj = m._anchorObj;
 
         if (obj) {
             const elt = owner.getAnnotationAnchor(obj);
+
             if (elt) {
-                // const r = elt.getBounds();
-                // return {x: r.x, y: r.y};
-                return {x: elt.tx, y: elt.ty}
+                const w = elt.width;
+                const h = elt.height;
+                const off = m.getOffset(this.width, this.height);
+                let x = elt.tx;
+                let y = elt.ty;
+
+                switch (m.align) {
+                    case Align.LEFT:
+                        x -= this.width - off.x
+                        break;
+                    case Align.RIGHT:
+                        x += w + off.x;
+                        break;
+                    default:
+                        x += (w - this.width) / 2 + off.x;
+                        break;
+                }
+
+                switch (m.verticalAlign) {
+                    case VerticalAlign.MIDDLE:
+                        y += (h - this.height) / 2 + off.y;
+                        break;
+                    case VerticalAlign.BOTTOM:
+                        y += h + off.y;
+                        break;
+                    default:
+                        y -= this.height + off.y;
+                        break;
+                }
+
+                return { x, y };
             }
         }
     }

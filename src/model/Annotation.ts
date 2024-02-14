@@ -45,12 +45,16 @@ export abstract class Annotation extends ChartItem {
     //-------------------------------------------------------------------------
     private _width: RtPercentSize;
     private _height: RtPercentSize;
+    private _offsetX: number | string = 0;
+    private _offsetY: number | string = 0;
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _widthDim: IPercentSize;
     private _heightDim: IPercentSize;
+    private _offsetXDim: {size: number, suffix: string};
+    private _offsetYDim: {size: number, suffix: string};
     _x: number;
     _y: number;
     _w: number;
@@ -96,27 +100,59 @@ export abstract class Annotation extends ChartItem {
      * @config
      * @default {@link anchor}가 지정되면 'center', 아니면 'left'
      */
-    private align: Align;
+    align: Align;
     /**
      * 수직 배치.<br/>
      * 
      * @config
      */
-    private verticalAlign = VerticalAlign.TOP;
+    verticalAlign = VerticalAlign.TOP;
     /**
      * {@link align}과 {@link verticalAlign}으로 지정된 위치에서 실제 표시될 위치의 수평 간격.<br/>
      * 값이 양수일 때, {@link anchor}가 지정된 경우 anchor 아이템으 밖으로 멀어지고, 아니면 영역 경계 안쪽으로 멀어진다.
+     * 또, {@link anchor}가 지정된 경우 **'0.5w'** 등으로 이 어노테이션의 너비를 기준으로 한 크기로 지정할 수 있다.
      * 
      * @config
      */
-    offsetX = 0;
+    get offsetX(): number | string {
+        return this._offsetX;
+    }
+    set offsetX(value: number | string) {
+        if (value != this._offsetX) {
+            this._offsetX = value;
+            this._offsetXDim = this.$_parsOffset(value);
+        }
+    }
+    private $_parsOffset(value: number | string): {size: number, suffix: string} {
+        if (isString(value)) {
+            const s = value[value.length - 1];
+            if (s === 'h' || s === 'w') {
+                const sz = parseFloat(value);
+                if (sz === parseFloat(value.substring(0, value.length - 1))) {
+                    return {
+                        size: sz,
+                        suffix: s
+                    }
+                }
+            }
+        }
+    }
     /**
      * {@link align}과 {@link verticalAlign}으로 지정된 위치에서 실제 표시될 위치의 수직 간격.<br/>
      * 값이 양수일 때, {@link anchor}가 지정된 경우 anchor 아이템으 밖으로 멀어지고, 아니면 영역 경계 안쪽으로 멀어진다.
+     * 또, {@link anchor}가 지정된 경우 **'0.5h'**처럼 이 어노테이션의 너비를 기준으로 한 크기로 지정할 수 있다.
      * 
      * @config
      */
-    offsetY = 0;
+    get offsetY(): number | string {
+        return this._offsetY;
+    }
+    set offsetY(value: number | string) {
+        if (value != this._offsetY) {
+            this._offsetY = value;
+            this._offsetYDim = this.$_parsOffset(value);
+        }
+    }
     /**
      * 회전 각도.<br/>
      * 0 ~ 360 사이의 값으로 지정한다.
@@ -214,6 +250,17 @@ export abstract class Annotation extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    private $_calcOffet(w: number, h: number, dim: {size: number, suffix: string}): number {
+        return dim.size * (dim.suffix === 'h' ? h : w);
+    }
+
+    getOffset(w: number, h: number): IPoint {
+        return {
+            x: this._offsetXDim ? this.$_calcOffet(w, h, this._offsetXDim) : +this._offsetX,
+            y: this._offsetYDim ? this.$_calcOffet(w, h, this._offsetYDim) : +this._offsetY
+        };
+    }
+
     getSize(wDomain: number, hDomain: number): ISize {
         const inverted = this.chart.isInverted();
         let width: number;
@@ -278,47 +325,50 @@ export abstract class Annotation extends ChartItem {
     }
 
     getPosition(inverted: boolean, left: number, top: number, wDomain: number, hDomain: number, width: number, height: number): IPoint {
+        let offset: IPoint;
         let x: number;
         let y: number;
 
         if (isNaN(x = this._x)) {
+            offset = this.getOffset(width, height);
             x = left;
 
             switch (this.align) {
                 case Align.CENTER:
-                    x += (wDomain - width) / 2 + this.offsetX;
+                    x += (wDomain - width) / 2 + offset.x;
                     break;
     
                 case Align.RIGHT:
-                    x += wDomain - this.offsetX - width;
+                    x += wDomain - offset.x - width;
                     break;
     
                 default:
                     if (this._anchorObj) {
                         // center
-                        x += (wDomain - width) / 2 + this.offsetX;
+                        x += (wDomain - width) / 2 + offset.x;
                     } else {
                         // left
-                        x += this.offsetX;
+                        x += offset.x;
                     }
                     break;
             }
         }
 
         if (isNaN(y = this._y)) {
+            offset = offset || this.getOffset(width, height);
             y = top;
 
             switch (this.verticalAlign) {
                 case VerticalAlign.MIDDLE:
-                    y += (hDomain - height) / 2 - this.offsetY;
+                    y += (hDomain - height) / 2 - offset.y;
                     break;
     
                 case VerticalAlign.BOTTOM:
-                    y += hDomain - this.offsetY - height;
+                    y += hDomain - offset.y - height;
                     break;
     
                 default:
-                    y += this.offsetY;
+                    y += offset.y;
                     break;
             }
         }
