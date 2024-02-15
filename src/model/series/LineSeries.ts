@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, assign, minv, pickProp3, incv } from "../../common/Common";
+import { pickNum, pickProp, assign, minv, pickProp3, incv, pickNum3 } from "../../common/Common";
 import { RcElement } from "../../common/RcControl";
 import { Align, IValueRange, SVGStyleOrClass } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
@@ -388,7 +388,7 @@ export class LineSeries extends LineSeriesBase {
      * 
      * @config
      */
-    baseValue = 0;
+    baseValue: number;
     /**
      * true로 지정하면 y값이 지정되지 않은 null 포인터를 무시하고 다음 포인트에 연결한다.
      * false면 null 포인트에서 연결이 끊어진다.
@@ -439,8 +439,12 @@ export class LineSeries extends LineSeriesBase {
     protected _doPrepareRender(): void {
         super._doPrepareRender();
 
-        this._base = pickNum(this.baseValue, this._yAxisObj.getBaseValue());
+        this._base = pickNum3(this.group ? this.group.getBaseValue(this._yAxisObj) : this.baseValue, this._yAxisObj.getBaseValue(), 0);
     }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
 }
 
 /**
@@ -822,7 +826,7 @@ export class LineSeriesGroup extends SeriesGroup<LineSeries> {
      * @config
      */
     lineType = LineType.DEFAULT;
-    baseValue = 0;
+    baseValue: number;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -839,8 +843,8 @@ export class LineSeriesGroup extends SeriesGroup<LineSeries> {
         return ser instanceof LineSeries;
     }
 
-    getBaseValue(axis: IAxis): number {
-        return axis === this._yAxisObj ? pickNum(this.baseValue, axis.getBaseValue()) : NaN;
+    override getBaseValue(axis: IAxis): number {
+        return axis === this._yAxisObj ? pickNum3(this.baseValue, axis.getBaseValue(), 0) : NaN;
     }
 }
 
@@ -858,7 +862,7 @@ export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
      * @config
      */
     lineType = LineType.DEFAULT;
-    baseValue = 0;
+    baseValue: number;
 
     //-------------------------------------------------------------------------
     // methods
@@ -899,7 +903,7 @@ export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
         return ser instanceof AreaSeries;
     }
 
-    getBaseValue(axis: IAxis): number {
-        return axis === this._yAxisObj ? pickNum(this.baseValue, axis.getBaseValue()) : NaN;
+    override getBaseValue(axis: IAxis): number {
+        return axis === this._yAxisObj ? pickNum3(this.baseValue, axis.getBaseValue(), 0) : NaN;
     }
 }

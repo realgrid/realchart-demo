@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../../common/Common";
+import { pickNum, pickNum3 } from "../../common/Common";
 import { RcElement } from "../../common/RcControl";
 import { RectElement } from "../../common/impl/RectElement";
 import { IAxis } from "../Axis";
@@ -135,7 +135,7 @@ export abstract class BarSeriesGroupBase<T extends BarSeriesBase> extends Cluste
     /**
      * @config
      */
-    baseValue = 0;
+    baseValue: number;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -144,8 +144,8 @@ export abstract class BarSeriesGroupBase<T extends BarSeriesBase> extends Cluste
         return true;
     }
 
-    getBaseValue(axis: IAxis): number {
-        return axis._isX ? NaN : pickNum(this.baseValue, axis.getBaseValue());
+    override getBaseValue(axis: IAxis): number {
+        return axis._isX ? NaN : pickNum3(this.baseValue, axis.getBaseValue(), 0);
     }
 
     protected _doPrepareSeries(series: T[]): void {
