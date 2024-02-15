@@ -1,6 +1,6 @@
 {
   "name": "@realgrid/realchart",
-  "version": "1.0.",
+  "version": "1.0.1",
   "description": "Wooritech charting library",
   "main": "./dist/index",
   "author": {
