@@ -55,7 +55,7 @@ export class BarRangeSeries extends LowRangedSeries {
      * 
      * @config
      */
-    lowField: string;
+    override lowField: string;
 
     /**
      * 지정한 반지름 크기로 데이터포인트 bar의 모서리를 둥글게 표시한다.\
@@ -72,23 +72,23 @@ export class BarRangeSeries extends LowRangedSeries {
         return 'barrange';
     }
 
-    pointLabelCount(): number {
+    override pointLabelCount(): number {
         return 2;
     }
 
-    tooltipText = '<b>${name}</b><br>${series}: <b>${lowValue}</b> ~ <b>${highValue}</b>';
+    override tooltipText = '<b>${name}</b><br>${series}: <b>${lowValue}</b> ~ <b>${highValue}</b>';
 
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
+    protected override _createLegendMarker(doc: Document, size: number): RcElement {
         return RectElement.create(doc, Series.LEGEND_MARKER, 0, 0, size, size, 2);
     }
 
-    protected _createFielders(): void {
+    protected override _createFielders(): void {
         super._createFielders();
 
         this._lowFielder = this._createFielder(this.lowField);
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new RangedPoint(source);
     }
 

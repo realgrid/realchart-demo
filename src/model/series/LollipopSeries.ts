@@ -15,8 +15,8 @@ export class LollipopSeriesMarker extends SeriesMarker {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    radius = 4;
-    shape = Shape.CIRCLE;
+    override radius = 4;
+    override shape = Shape.CIRCLE;
 }
 
 export class LollipopSeriesPoint extends DataPoint {
@@ -70,19 +70,19 @@ export class LollipopSeries extends BasedSeries {
         return 'lollipop';
     }
 
-    canCategorized(): boolean {
+    override canCategorized(): boolean {
         return true;
     }
 
-    getLabelOff(off: number): number {
+    override getLabelOff(off: number): number {
         return super.getLabelOff(off) + this.marker.radius;
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new LollipopSeriesPoint(source);
     }
 
-    protected _doPrepareRender(): void {
+    protected override _doPrepareRender(): void {
         super._doPrepareRender();
 
         const radius = this.marker.radius;

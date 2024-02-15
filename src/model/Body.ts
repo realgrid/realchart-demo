@@ -8,10 +8,12 @@
 
 import { isArray, isObject, minv } from "../common/Common";
 import { IPercentSize, RtPercentSize, _undef, calcPercent, parsePercentSize } from "../common/Types";
-import { Annotation, AnnotationCollection } from "./Annotation";
+import { Annotation, AnnotationCollection, IAnnotationOwner } from "./Annotation";
 import { Axis } from "./Axis";
 import { IChart } from "./Chart";
 import { BackgroundImage, ChartItem } from "./ChartItem";
+import { GaugeBase } from "./Gauge";
+import { Series } from "./Series";
 
 export enum ZoomType {
     NONE = 'none',
@@ -87,7 +89,7 @@ export interface IPolar {
  * 
  * @config chart.body
  */
-export class Body extends ChartItem {
+export class Body extends ChartItem implements IAnnotationOwner {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -120,6 +122,15 @@ export class Body extends ChartItem {
         this.radius = '45%';
         this.centerX = '50%';
         this.centerY = '50%';
+    }
+
+    //-------------------------------------------------------------------------
+    // IAnnotationOwner
+    //-------------------------------------------------------------------------
+    anchorByName(name: string): ChartItem {
+        const obj = this.chart._getGauges().get(name);
+        if (obj instanceof GaugeBase && this.contains(obj)) return obj;
+        return this._annotations.get(name);
     }
 
     //-------------------------------------------------------------------------
@@ -248,10 +259,14 @@ export class Body extends ChartItem {
         return this._annotations.getAnnotation(name);
     }
 
+    contains(obj: GaugeBase | Series): boolean {
+        return true;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoadProp(prop: string, value: any): boolean {
+    protected override _doLoadProp(prop: string, value: any): boolean {
         if (prop === 'annotations' || prop === 'annotation') {
             if (isArray(value)) this.$_loadAnnotations(value);
             else if (isObject(value)) this.$_loadAnnotations([value]);
@@ -259,7 +274,7 @@ export class Body extends ChartItem {
         }
     }
 
-    protected _doPrepareRender(chart: IChart): void {
+    protected override _doPrepareRender(chart: IChart): void {
         this._annotations.prepareRender();
     }
 

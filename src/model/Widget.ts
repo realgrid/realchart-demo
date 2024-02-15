@@ -29,10 +29,10 @@ export abstract class Widget extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoad(source: any): void {
+    protected override _doLoad(source: any): void {
         super._doLoad(source);
     }
 
-    protected _doPrepareRender(chart: IChart): void {
+    protected override _doPrepareRender(chart: IChart): void {
     }
 }

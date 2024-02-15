@@ -63,7 +63,7 @@ export class LegendItemView extends ChartElement<LegendItem> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: LegendItem, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: LegendItem, hintWidth: number, hintHeight: number, phase: number): ISize {
         this._label.setBoolData('hidden', !model.source.visible);
         this._marker.setBoolData('hidden', !model.source.visible);
 
@@ -76,7 +76,7 @@ export class LegendItemView extends ChartElement<LegendItem> {
         return {width: rMarker.width + this._gap + sz.width, height: maxv(rMarker.height, sz.height) };
     }
 
-    protected _doLayout(wMarker: number): void {
+    protected override _doLayout(wMarker: number): void {
         const rMarker = this._rMarker;// this._marker.visible ? this._marker.getBBox() : RECT_Z;
         const w = pickNum(wMarker, rMarker.width);
 
@@ -130,7 +130,7 @@ export class LegendView extends BoundableElement<Legend> {
         back.setStyleOrClass(this.model.backgroundStyle);
     }
 
-    protected _doMeasure(doc: Document, model: Legend, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: Legend, hintWidth: number, hintHeight: number, phase: number): ISize {
         const items = model.items();
         const vertical = this._vertical = model.getLayout() === LegendLayout.VERTICAL;
         
@@ -148,7 +148,7 @@ export class LegendView extends BoundableElement<Legend> {
         return this.$_measure(doc, model, vertical, this._ipr, hintWidth, hintHeight);
     }
     
-    protected _doLayout(): void {
+    protected override _doLayout(): void {
         const model = this.model;
         const rowViews = this._rowViews;
         const textColor = model.useTextColor;

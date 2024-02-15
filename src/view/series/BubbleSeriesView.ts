@@ -74,11 +74,11 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries, BubbleSerie
         this.$_layoutMarkers(width, height);
     }
 
-    protected _runShowEffect(firstTime: boolean): void {
+    protected override _runShowEffect(firstTime: boolean): void {
         firstTime && SeriesAnimation.grow(this);
     }
 
-    protected _doViewRateChanged(rate: number): void {
+    protected override _doViewRateChanged(rate: number): void {
         this.$_layoutMarkers(this.width, this.height);
     }
 

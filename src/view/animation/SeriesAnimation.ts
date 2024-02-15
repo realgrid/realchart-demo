@@ -207,11 +207,11 @@ export abstract class PointAnimation extends RcAnimation {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _canUpdate(): boolean {
+    protected override _canUpdate(): boolean {
         return this._series.parent instanceof RcElement;
     }
 
-    protected _stop(): void {
+    protected override _stop(): void {
         super._stop();
         this._series = null;
     }
@@ -230,7 +230,7 @@ export class GrowAnimation extends PointAnimation {
         return true;
     }
 
-    protected _doStop(): void {
+    protected override _doStop(): void {
         this._series.setGrowRate(NaN);
     }
 }
@@ -248,7 +248,7 @@ export class SpreadAnimation extends PointAnimation {
         return true;
     }
 
-    protected _doStop(): void {
+    protected override _doStop(): void {
         this._series.setPosRate(NaN);
     }
 }
@@ -258,14 +258,14 @@ export class PrevAnimation extends PointAnimation {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    duration = 500;
+    override duration = 500;
 
     protected _doUpdate(rate: number): boolean {
         this._series.setPrevRate(rate);
         return true;
     }
 
-    protected _doStop(): void {
+    protected override _doStop(): void {
         this._series.setPrevRate(NaN);
     }
 }

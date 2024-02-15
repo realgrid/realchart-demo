@@ -382,9 +382,9 @@ export class CircleGaugeScale extends GaugeScale {
     /**
      * @config
      */
-    stepPixels = 72;
+    override stepPixels = 72;
 
-    protected _getStepMultiples(step: number): number[] {
+    protected override _getStepMultiples(step: number): number[] {
         return [1, 2, 2.5, 5, 10];
         // return [1, 4, 6, 10, 12];
     }
@@ -458,7 +458,7 @@ export class CircleGauge extends CircularGauge {
         return 'circle';
     }
 
-    getExtents(gaugeSize: number): ICircularGaugeExtents {
+    override getExtents(gaugeSize: number): ICircularGaugeExtents {
         const exts = super.getExtents(gaugeSize);
         const scale = this.scale;
         const band = this.band;

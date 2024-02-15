@@ -19,7 +19,7 @@ class BarElement extends RangeElement implements IPointView {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    point: RangedPoint;
+    override point: RangedPoint;
 
     private _back: RectElement;
     private _whiskerUp: LineElement;
@@ -36,7 +36,7 @@ class BarElement extends RangeElement implements IPointView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doInitChildren(doc: Document): void {
+    protected override _doInitChildren(doc: Document): void {
         this.add(this._stem = new LineElement(doc));
         this.add(this._whiskerUp = new LineElement(doc));
         this.add(this._whiskerDown = new LineElement(doc));

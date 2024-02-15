@@ -81,15 +81,15 @@ export class OhlcSeries extends CandlestickSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    _type(): string {
+    override _type(): string {
         return 'ohlc';
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new OhlcSeriesPoint(source);
     }
 
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
+    protected override _createLegendMarker(doc: Document, size: number): RcElement {
         const pb = new PathBuilder();
         pb.vline(size / 2, 0, size);
         pb.hline(size * 0.4, size / 2, size);

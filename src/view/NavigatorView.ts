@@ -158,11 +158,11 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    svgToElement(x: number, y: number): IPoint {
+    override svgToElement(x: number, y: number): IPoint {
         return this.control.svgToElement(this._back, x, y);
     }
 
-    protected _doMeasure(doc: Document, model: SeriesNavigator, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: SeriesNavigator, hintWidth: number, hintHeight: number, phase: number): ISize {
         const chart = model._naviChart as Chart;
         const series = chart.firstSeries;
         let width = hintWidth;
@@ -186,7 +186,7 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
         return { width, height };
     }
 
-    protected _doLayout(param: any): void {
+    protected override _doLayout(param: any): void {
         const model = this.model;
         const zoom = model.axis()._zoom;
         const w = this.width;

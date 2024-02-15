@@ -8,10 +8,16 @@
 
 import { IPoint } from "../common/Point";
 import { RcElement } from "../common/RcControl";
-import { _undef } from "../common/Types";
+import { Align, VerticalAlign, _undef } from "../common/Types";
 import { RectElement } from "../common/impl/RectElement";
 import { Annotation } from "../model/Annotation";
 import { BoundableElement } from "./ChartElement";
+
+export interface IAnnotationAnchorOwner {
+    getAnnotationAnchor(model: any): RcElement;
+    tx: number;
+    ty: number;
+}
 
 /**
  * [주의] clipping하기 위해 translate를 background와 내부 view에 설정한다.
@@ -36,25 +42,67 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    update(hintWidth: number, hintHeight: number): void {
+    update(owner: IAnnotationAnchorOwner, hintWidth: number, hintHeight: number): void {
         this.measure(this.doc, this.model, hintWidth, hintHeight, 0);
-        this._layoutView(this.chart().isInverted(), 0, 0, hintWidth, hintHeight);
+        this._layoutView(this.chart().isInverted(), owner, 0, 0, hintWidth, hintHeight);
     }
 
-    _layoutView(invertd: boolean, x: number, y: number, w: number, h: number): void {
+    _layoutView(invertd: boolean, owner: IAnnotationAnchorOwner, x: number, y: number, w: number, h: number): void {
         this.resizeByMeasured();
-        const p = this.model.getPosition(this.chart().isInverted(), x, y, w, h, this.width, this.height);
-        this.layout(p);
+        this.layout(this.$_posByAnchor(owner) || this.model.getPosition(this.chart().isInverted(), x, y, w, h, this.width, this.height));
+    }
+
+    private $_posByAnchor(owner: IAnnotationAnchorOwner): IPoint {
+        const m = this.model;
+        const obj = m._anchorObj;
+
+        if (obj) {
+            const elt = owner.getAnnotationAnchor(obj);
+
+            if (elt) {
+                const w = elt.width;
+                const h = elt.height;
+                const off = m.getOffset(this.width, this.height);
+                let x = elt.tx;
+                let y = elt.ty;
+
+                switch (m.align) {
+                    case Align.LEFT:
+                        x -= this.width + off.x
+                        break;
+                    case Align.RIGHT:
+                        x += w + off.x;
+                        break;
+                    default:
+                        x += (w - this.width) / 2 + off.x;
+                        break;
+                }
+
+                switch (m.verticalAlign) {
+                    case VerticalAlign.MIDDLE:
+                        y += (h - this.height) / 2 + off.y;
+                        break;
+                    case VerticalAlign.BOTTOM:
+                        y += h + off.y;
+                        break;
+                    default:
+                        y -= this.height + off.y;
+                        break;
+                }
+
+                return { x, y };
+            }
+        }
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _marginable(): boolean {
+    protected override _marginable(): boolean {
         return false;
     }
 
-    protected _resetBackBounds(): boolean {
+    protected override _resetBackBounds(): boolean {
         return false;
     }
 
@@ -62,7 +110,7 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
         back.setStyleOrClass(this.model.backgroundStyle);
     }
 
-    protected _doLayout(p: IPoint): void {
+    protected override _doLayout(p: IPoint): void {
         const rot = this.model.rotation;
 
         this._background.setBounds(p.x, p.y, this.width, this.height);
@@ -74,7 +122,7 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
         }
     }
 
-    setRotation(originX: number, originY: number, rotation: number): RcElement {
+    override setRotation(originX: number, originY: number, rotation: number): RcElement {
         this._background.setRotation(originX, originY, rotation);
         this._setRotation(originX, originY, rotation);
         return this;

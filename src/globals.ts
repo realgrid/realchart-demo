@@ -27,7 +27,7 @@ export class Globals {
      * RealChart 라이브러리 버전 정보를 리턴한다.
      * 
      * ```js
-     * Utils.log(RealChart.getVersion()); // '1.1.2'
+     * console.log(RealChart.getVersion()); // '1.1.2'
      * ```
      * 
      * @returns 버전 문자열

@@ -52,15 +52,15 @@ export class BoxPlotSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    labelCount(): number {
+    override labelCount(): number {
         return 2;
     }
 
-    getLabelValue(index: number) {
+    override getLabelValue(index: number) {
         return index === 0 ? this.yValue : this.minValue;
     }
 
-    protected _assignTo(proxy: any): any {
+    protected override _assignTo(proxy: any): any {
         return assign(super._assignTo(proxy), {
             min: this.min,
             low: this.low,
@@ -75,7 +75,7 @@ export class BoxPlotSeriesPoint extends DataPoint {
         });
     }
 
-    protected _valuesChangd(): boolean {
+    protected override _valuesChangd(): boolean {
         if (!super._valuesChangd()) {
             const prev = this._prev;
             return this.min !== prev.min ||
@@ -86,7 +86,7 @@ export class BoxPlotSeriesPoint extends DataPoint {
         return true;
     }
 
-    protected _readArray(series: BoxPlotSeries, v: any[]): void {
+    protected override _readArray(series: BoxPlotSeries, v: any[]): void {
         if (v.length <= 4) {
             this.isNull = true;
         } else {
@@ -103,7 +103,7 @@ export class BoxPlotSeriesPoint extends DataPoint {
         }
     }
 
-    protected _readObject(series: BoxPlotSeries, v: any): void {
+    protected override _readObject(series: BoxPlotSeries, v: any): void {
         super._readObject(series, v);
 
         this.min = pickProp(v[series.minField], v.min);
@@ -112,30 +112,30 @@ export class BoxPlotSeriesPoint extends DataPoint {
         this.y = pickProp3(v[series.highField], v.high, this.y);
     }
 
-    protected _readSingle(v: any): void {
+    protected override _readSingle(v: any): void {
         super._readSingle(v);
 
         this.min = this.low = this.mid = this.high = this.y;
     }
 
-    parse(series: BoxPlotSeries): void {
+    override parse(series: BoxPlotSeries): void {
         super.parse(series);
 
         this.isNull ||= isNaN(this.minValue) || isNaN(this.lowValue) || isNaN(this.midValue);
     }
 
-    initValues(): void {
+    override initValues(): void {
         this.minValue = parseFloat(this.min);
         this.lowValue = parseFloat(this.low);
         this.midValue = parseFloat(this.mid);
         this.highValue = parseFloat(this.high);
     }
 
-    initPrev(axis: IAxis, prev: any): void {
+    override initPrev(axis: IAxis, prev: any): void {
         prev.yValue = prev.highValue = prev.midValue = prev.lowValue = prev.minValue = this.minValue;
     }
 
-    applyValueRate(prev: any, vr: number): void {
+    override applyValueRate(prev: any, vr: number): void {
         // yValue는 series.collectValues()에서 한다.
         this.minValue = incv(prev.minValue, this.minValue, vr);
         this.lowValue = incv(prev.lowValue, this.lowValue, vr);
@@ -191,7 +191,7 @@ export class BoxPlotSeries extends LowRangedSeries {
      * 
      * @config
      */
-    lowField: string;
+    override lowField: string;
     /**
      * json 객체나 배열로 전달되는 데이터포인트 정보에서 mid값을 지정하는 속성명이나 인덱스.<br/>
      * undefined이면, data point의 값이 array일 때는 항목 수가 6이상이면 3 아니면  2, 객체이면 'mid'.
@@ -205,7 +205,7 @@ export class BoxPlotSeries extends LowRangedSeries {
      * 
      * @config
      */
-    highField: string;
+    override highField: string;
     /**
      * json 객체나 배열로 전달되는 데이터포인트 정보에서 max값을 지정하는 속성명이나 인덱스.<br/>
      * undefined이면, {@link yField} 값으로 대체되거나 data point의 값이 array일 때는 항목 수가 6이상이면 5 아니면 4, 객체이면 'max'.
@@ -229,17 +229,17 @@ export class BoxPlotSeries extends LowRangedSeries {
         return 'boxplot';
     }
 
-    tooltipText = '<b>${name}</b><br>min: <b>${minValue}</b><br>low: <b>${lowValue}</b><br>mid: <b>${midValue}</b><br>high: <b>${highValue}</b><br>max: <b>${maxValue}</b>';
+    override tooltipText = '<b>${name}</b><br>min: <b>${minValue}</b><br>low: <b>${lowValue}</b><br>mid: <b>${midValue}</b><br>high: <b>${highValue}</b><br>max: <b>${maxValue}</b>';
 
-    pointLabelCount(): number {
+    override pointLabelCount(): number {
         return 2;
     }
 
-    canCategorized(): boolean {
+    override canCategorized(): boolean {
         return true;
     }
 
-    protected _createFielders(): void {
+    protected override _createFielders(): void {
         super._createFielders();
 
         this._minFielder = this._createFielder(this.minField);
@@ -248,7 +248,7 @@ export class BoxPlotSeries extends LowRangedSeries {
         this._highFielder = this._createFielder(this.highField);
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new BoxPlotSeriesPoint(source);
     }
 
@@ -256,7 +256,7 @@ export class BoxPlotSeries extends LowRangedSeries {
         return p.minValue;
     }
 
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
+    protected override _createLegendMarker(doc: Document, size: number): RcElement {
         return RectElement.create(doc, Series.LEGEND_MARKER, 0, 0, size, size, 2);
     }
 }

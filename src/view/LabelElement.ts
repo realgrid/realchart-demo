@@ -6,14 +6,14 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { ChartTextEffect, IconedText, LabelIconPostion } from "../../model/ChartItem";
-import { Color } from "../Color";
-import { pickNum } from "../Common";
-import { Align, _undef } from "../Types";
-import { GroupElement } from "./GroupElement";
-import { ImageElement } from "./ImageElement";
-import { RectElement } from "./RectElement";
-import { TextAnchor, TextElement } from "./TextElement";
+import { ChartTextEffect, IconedText, LabelIconPostion } from "../model/ChartItem";
+import { Color } from "../common/Color";
+import { pickNum } from "../common/Common";
+import { Align, _undef } from "../common/Types";
+import { GroupElement } from "../common/impl/GroupElement";
+import { ImageElement } from "../common/impl/ImageElement";
+import { RectElement } from "../common/impl/RectElement";
+import { TextAnchor, TextElement } from "../common/impl/TextElement";
 
 /**
  * ChartText를 표시하는 텍스트 view.

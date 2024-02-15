@@ -71,7 +71,7 @@ export class LineSeriesMarker extends SeriesMarker {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    radius = 4;
+    override radius = 4;
     /**
      * 첫번째 point의 marker 표시 여부.<br/>
      * true로 지정하면 모델 visible과 상관없이 표시하고,
@@ -141,7 +141,7 @@ export class LinePointLabel extends DataPointLabel {
     /**
      * @config
      */
-    position = PointItemPosition.HEAD;
+    override position = PointItemPosition.HEAD;
     /**
      * position 위치에서 수평 정렬 상태.
      * 
@@ -217,38 +217,38 @@ export abstract class LineSeriesBase extends Series {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _createLabel(chart: IChart): DataPointLabel {
+    protected override _createLabel(chart: IChart): DataPointLabel {
         return new LinePointLabel(chart);
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new LineSeriesPoint(source);
     }
 
-    isMarker(): boolean {
+    override isMarker(): boolean {
         return true;
     }
 
-    hasMarker(): boolean {
+    override hasMarker(): boolean {
         return true;
     }
 
     /**
      * rendering 시점에 chart가 series별로 기본 shape를 지정한다.
      */
-    setShape(shape: Shape): void {
+    override setShape(shape: Shape): void {
         this._shape = shape;
     }
 
-    _defViewRangeValue(): "x" | "y" | "z" {
+    override _defViewRangeValue(): "x" | "y" | "z" {
         return 'x';
     }
 
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
+    protected override _createLegendMarker(doc: Document, size: number): RcElement {
         return new LineLegendMarkerView(doc, size);
     }
 
-    legendMarker(doc: Document, size: number): RcElement {
+    override legendMarker(doc: Document, size: number): RcElement {
         const m = super.legendMarker(doc, size);
 
         (m as ShapeLegendMarkerView).setShape(this.getShape(null), minv(+size || LegendItem.MARKER_SIZE, this.marker.radius * 2));
@@ -432,11 +432,11 @@ export class LineSeries extends LineSeriesBase {
         return (this.group instanceof LineSeriesGroup || this.group instanceof AreaSeriesGroup) ? this.group.lineType : this.lineType;
     }
 
-    getBaseValue(axis: IAxis): number {
+    override getBaseValue(axis: IAxis): number {
         return axis._isX ? NaN : this._base;
     }
 
-    protected _doPrepareRender(): void {
+    protected override _doPrepareRender(): void {
         super._doPrepareRender();
 
         this._base = pickNum(this.baseValue, this._yAxisObj.getBaseValue());
@@ -450,7 +450,7 @@ export class LineSeries extends LineSeriesBase {
  */
 export class SplineSeries extends LineSeries {
 
-    getLineType(): LineType {
+    override getLineType(): LineType {
         return LineType.SPLINE;
     }
 
@@ -459,7 +459,7 @@ export class SplineSeries extends LineSeries {
      * 
      * @config
      */
-    lineType: LineType;
+    override lineType: LineType;
 }
 
 export class AreaSeriesPoint extends LineSeriesPoint {
@@ -575,23 +575,23 @@ export class AreaSeries extends LineSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    _type(): string {
+    override _type(): string {
         return 'area';
     }
 
-    isBased(axis: IAxis): boolean {
+    override isBased(axis: IAxis): boolean {
         return axis === this._yAxisObj;
     }
 
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
+    protected override _createLegendMarker(doc: Document, size: number): RcElement {
         return new AreaLegendMarkerView(doc, size);
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new AreaSeriesPoint(source);
     }
 
-    protected _doPrepareLines(pts: LineSeriesPoint[]): PointLine[] {
+    protected override _doPrepareLines(pts: LineSeriesPoint[]): PointLine[] {
         // null이 포함된 line 정보도 필요하다.
         if (this._containsNull && this.group && this.group._stacked) {
             const len = pts.length;
@@ -637,7 +637,7 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _assignTo(proxy: any): any {
+    protected override _assignTo(proxy: any): any {
         return assign(super._assignTo(proxy), {
             low: this.low,
             high: this.high,
@@ -646,11 +646,11 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
         });
     }
 
-    protected _valuesChangd(): boolean {
+    protected override _valuesChangd(): boolean {
         return this.low !== this._prev.low || super._valuesChangd();
     }
 
-    protected _readArray(series: AreaRangeSeries, v: any[]): void {
+    protected override _readArray(series: AreaRangeSeries, v: any[]): void {
         const d = v.length > 2 ? 1 : 0;
 
         this.low = v[pickNum(series.lowField, 0 + d)];
@@ -660,7 +660,7 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
         }
     }
 
-    protected _readObject(series: AreaRangeSeries, v: any): void {
+    protected override _readObject(series: AreaRangeSeries, v: any): void {
         super._readObject(series, v);
 
         if (!this.isNull) {
@@ -669,27 +669,27 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
         }
     }
 
-    protected _readSingle(v: any): void {
+    protected override _readSingle(v: any): void {
         super._readSingle(v);
 
         this.low = this.y;
     }
 
-    parse(series: AreaRangeSeries): void {
+    override parse(series: AreaRangeSeries): void {
         super.parse(series);
 
         this.isNull ||= isNaN(this.lowValue);
     }
 
-    initValues(): void {
+    override initValues(): void {
         this.lowValue = parseFloat(this.low);
     }
 
-    initPrev(axis: IAxis, prev: any): void {
+    override initPrev(axis: IAxis, prev: any): void {
         prev.yValue = prev.lowValue = this.lowValue;
     }
 
-    applyValueRate(prev: any, vr: number): void {
+    override applyValueRate(prev: any, vr: number): void {
         // yValue는 series.collectValues()에서 한다.
         this.lowValue = incv(prev.lowValue, this.lowValue, vr);
     }
@@ -766,13 +766,13 @@ export class AreaRangeSeries extends LineSeriesBase {
         return 'arearange';
     }
 
-    tooltipText = '<b>${name}</b><br>${series}: <b>${lowValue}</b> ~ <b>${highValue}</b>';
+    override tooltipText = '<b>${name}</b><br>${series}: <b>${lowValue}</b> ~ <b>${highValue}</b>';
 
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
+    protected override _createLegendMarker(doc: Document, size: number): RcElement {
         return new AreaRangeLegendMarkerView(doc, size);
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new AreaRangeSeriesPoint(source);
     }
 
@@ -780,7 +780,7 @@ export class AreaRangeSeries extends LineSeriesBase {
         return this.curved ? LineType.SPLINE : LineType.DEFAULT;
     }
 
-    collectValues(axis: IAxis, vals: number[]): void {
+    override collectValues(axis: IAxis, vals: number[]): void {
         super.collectValues(axis, vals);
 
         if (vals && axis === this._yAxisObj) {
@@ -788,7 +788,7 @@ export class AreaRangeSeries extends LineSeriesBase {
         }
     }
 
-    protected _doPrepareLines(pts: LineSeriesPoint[]): PointLine[] {
+    protected override _doPrepareLines(pts: LineSeriesPoint[]): PointLine[] {
         const lines = super._doPrepareLines(pts);
         const lines2: PointLine[] = [];
 
@@ -839,7 +839,7 @@ export class LineSeriesGroup extends SeriesGroup<LineSeries> {
         return ser instanceof LineSeries;
     }
 
-    getBaseValue(axis: IAxis): number {
+    override getBaseValue(axis: IAxis): number {
         return axis === this._yAxisObj ? pickNum(this.baseValue, axis.getBaseValue()) : NaN;
     }
 }
@@ -899,7 +899,7 @@ export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
         return ser instanceof AreaSeries;
     }
 
-    getBaseValue(axis: IAxis): number {
+    override getBaseValue(axis: IAxis): number {
         return axis === this._yAxisObj ? pickNum(this.baseValue, axis.getBaseValue()) : NaN;
     }
 }
