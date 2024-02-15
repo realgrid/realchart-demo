@@ -167,7 +167,7 @@ class AxisSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _setInverted(inverted: boolean): void {
+    protected override _setInverted(inverted: boolean): void {
         super._setInverted(inverted);
 
         this.isHorz = (inverted && !this.isX) || (!inverted && this.isX);
@@ -267,7 +267,7 @@ class AxisContainer extends SectionView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _setInverted(inverted: boolean): void {
+    protected override _setInverted(inverted: boolean): void {
         super._setInverted(inverted);
 
         this._isHorz = (inverted && !this.isX) || (!inverted && this.isX);
@@ -324,7 +324,7 @@ export class PaneBodyView extends BodyView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepareRender(doc: Document, chart: IChart): void {
+    override prepareRender(doc: Document, chart: IChart): void {
         const r = this.row;
         const c = this.col;
         const body = chart.split.getPane(r, c).body;
@@ -338,7 +338,7 @@ export class PaneBodyView extends BodyView {
         this._prepareAnnotations(doc, body.getAnnotations());
     }
 
-    getTooltipPos(): IPoint {
+    override getTooltipPos(): IPoint {
         return {x: this.parent.parent.tx + this.tx, y: this.parent.parent.ty + this.ty};
     }
 }

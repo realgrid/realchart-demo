@@ -343,14 +343,14 @@ export class Legend extends Widget {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoad(src: any): void {
+    protected override _doLoad(src: any): void {
         super._doLoad(src);
 
         this._maxWidthDim = parsePercentSize(this.maxWidth, true);
         this._maxHeightDim = parsePercentSize(this.maxHeight, true);
     }
 
-    protected _doPrepareRender(chart: IChart): void {
+    protected override _doPrepareRender(chart: IChart): void {
         super._doPrepareRender(chart);
 
         this._location = checkEnum(LegendLocation, this.location, LegendLocation.BOTTOM);

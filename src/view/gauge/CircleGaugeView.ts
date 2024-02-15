@@ -47,7 +47,7 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
         return new ArcElement(doc, styleName);
     }
 
-    protected _doMeasure(doc: Document, model: CircleGaugeScale, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: CircleGaugeScale, hintWidth: number, hintHeight: number, phase: number): ISize {
         const steps = model._steps;
         const nStep = steps.length - ((model.gauge as CircleGauge).sweepAngle === 360 ? 1 : 0);
 
@@ -70,7 +70,7 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
         return { width: hintWidth, height: hintHeight}
     }
 
-    protected _doLayout(param: any): void {
+    protected override _doLayout(param: any): void {
         const m = this.model;
         const steps = m._steps;
         const g = m.gauge as CircleGauge;
@@ -164,7 +164,7 @@ class BandView extends ChartElement<GaugeRangeBand> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLayout(param: any): void {
+    protected override _doLayout(param: any): void {
         const m = this.model;
         const g = m.gauge as CircleGauge;
         const scale = g.scale;

@@ -18,7 +18,7 @@ class BoxView extends RangeElement implements IPointView {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    point: BoxPlotSeriesPoint;
+    override point: BoxPlotSeriesPoint;
 
     private _stemUp: LineElement;
     private _stemDown: LineElement;
@@ -64,7 +64,7 @@ class BoxView extends RangeElement implements IPointView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doInitChildren(doc: Document): void {
+    protected override _doInitChildren(doc: Document): void {
         this.add(this._stemUp = new LineElement(doc, 'rct-boxplot-point-stem'));
         this.add(this._stemDown = new LineElement(doc, 'rct-boxplot-point-stem'));
         this.add(this._box = new RectElement(doc, 'rct-boxplot-point-box'));

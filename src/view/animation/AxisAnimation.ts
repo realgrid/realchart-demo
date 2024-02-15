@@ -49,7 +49,7 @@ export class AxisAnimation extends RcAnimation {
         return false;
     }
 
-    protected _doStop(): void {
+    protected override _doStop(): void {
         this._axis.model.setPrevRate(NaN);
         this._axis = null;
     }

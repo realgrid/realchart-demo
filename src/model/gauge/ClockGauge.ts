@@ -395,7 +395,7 @@ export class ClockGauge extends Gauge {
         return 'clock';
     }
 
-    protected _doLoad(src: any): void {
+    protected override _doLoad(src: any): void {
         super._doLoad(src);
 
         this._centerXDim = parsePercentSize(pickProp(this.centerX, CircularGauge.DEF_CENTER), true);

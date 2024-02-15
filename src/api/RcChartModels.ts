@@ -159,7 +159,7 @@ export abstract class RcAxisGuide extends RcChartObject {
 
     private _label: RcChartObject;
 
-    protected _doInit(proxy: ChartItem): void {
+    protected override _doInit(proxy: ChartItem): void {
         this._createObjects('label');
     }
 
@@ -187,7 +187,7 @@ export class RcChartAxis extends RcChartObject {
     /** 
      * @internal 
      */
-    protected _doInit(proxy: Axis): void {
+    protected override _doInit(proxy: Axis): void {
         this._createObjects('title', 'line', 'grid', 'tick', 'label', 'crosshair');
     }
 
@@ -303,7 +303,7 @@ export class RcChartSeries extends RcNamedObject {
     /** 
      * @internal 
      */
-    protected _doInit(proxy: ChartItem): void {
+    protected override _doInit(proxy: ChartItem): void {
         this._createObjects('pointLabel', 'trendline', 'tooltip');
     }
 

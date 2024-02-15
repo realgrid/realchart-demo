@@ -63,7 +63,7 @@ export class CircumElement extends CircleElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    resetStyles(styles: any): boolean {
+    override resetStyles(styles: any): boolean {
         const r = super.resetStyles(styles);
 
         this.setFill('none');

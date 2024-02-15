@@ -40,19 +40,19 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _markersPerPoint(): number {
+    protected override _markersPerPoint(): number {
         return 2;
     }
 
-    getSiblings(pv: IPointView): IPointView[] {
+    override getSiblings(pv: IPointView): IPointView[] {
         return [pv, this._markers.find(m => m !== pv && m.point === pv.point)];
     }
 
-    getSibling(pv: IPointView): IPointView {
+    override getSibling(pv: IPointView): IPointView {
         return pv && this._markers.find(m => m !== pv && m.point === pv.point);
     }
 
-    decoreateLegend(legendView: LegendItemView): void {
+    override decoreateLegend(legendView: LegendItemView): void {
         super.decoreateLegend(legendView);
 
         const cs = getComputedStyle(this._area.dom);
@@ -63,13 +63,13 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
     }
 
 
-    protected _renderSeries(width: number, height: number): void {
+    protected override _renderSeries(width: number, height: number): void {
         this._areaContainer.invert(this.model.chart.isInverted(), height);
 
         super._renderSeries(width, height);
     }
 
-    protected _layoutMarkers(pts: AreaRangeSeriesPoint[], width: number, height: number): void {
+    protected override _layoutMarkers(pts: AreaRangeSeriesPoint[], width: number, height: number): void {
         super._layoutMarkers(pts, width, height);
 
         const series = this.model;
@@ -115,7 +115,7 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
         // }
     }
 
-    protected _layoutLines(): void {
+    protected override _layoutLines(): void {
         super._layoutLines();
 
         // layout area

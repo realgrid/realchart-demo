@@ -142,11 +142,11 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _getDebugRect(): IRect {
+    protected override _getDebugRect(): IRect {
         return this._margins.shrink(super._getDebugRect());
     }
 
-    measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+    override measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         this._prepareStyleOrClass(model);
         this.setModel(model);
 
@@ -182,7 +182,7 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
         return sz;
     }
 
-    layout(param?: any): ChartElement<ChartItem> {
+    override layout(param?: any): ChartElement<ChartItem> {
         super.layout(param);
 
         // background

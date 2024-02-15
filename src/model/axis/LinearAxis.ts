@@ -149,7 +149,7 @@ export class ContinuousAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    canUseNumSymbols(): boolean {
+    override canUseNumSymbols(): boolean {
         // steps로 지정한 경우 nan이다.
         return isNaN(this._step) || this._step >= 500;
     }
@@ -395,7 +395,7 @@ export class AxisBreak extends AxisItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoad(source: any): void {
+    protected override _doLoad(source: any): void {
         super._doLoad(source);
 
         this.space = pickNum(this.space, 0);
@@ -460,7 +460,7 @@ export abstract class ContinuousAxis extends Axis {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    init(): Axis {
+    override init(): Axis {
         super.init();
 
         this.baseLine = new AxisBaseLine(this, false);
@@ -567,11 +567,11 @@ export abstract class ContinuousAxis extends Axis {
     /** y축으로 사용될 때만 적용한다. */
     readonly breaks: AxisBreak[] = [];
 
-    getBaseValue(): number {
+    override getBaseValue(): number {
         return this.baseValue;
     }
 
-    hasBreak(): boolean {
+    override hasBreak(): boolean {
         return this._runBreaks != null;
     }
 
@@ -580,7 +580,7 @@ export abstract class ContinuousAxis extends Axis {
         return this._runBreaks && this._runBreaks.slice(0, 1);
     }
 
-    isBreak(pos: number): boolean {
+    override isBreak(pos: number): boolean {
         if (this._runBreaks) {
             const br = this._runBreaks[0];
             return !br.gridVisible && (pos === br.from || pos === br.to);
@@ -599,12 +599,12 @@ export abstract class ContinuousAxis extends Axis {
      * @override
      * @config
      */
-    readonly tick: ContinuousAxisTick;
+    override readonly tick: ContinuousAxisTick;
     /**
      * @override
      * @config
      */
-    readonly grid: ContinuousAxisGrid;
+    override readonly grid: ContinuousAxisGrid;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -613,12 +613,12 @@ export abstract class ContinuousAxis extends Axis {
         return true;
     }
 
-    contains(value: number): boolean {
+    override contains(value: number): boolean {
         return !isNaN(value);
         // return (this.nullable && isNaN(value)) || super.contains(value);
     }
 
-    isBased(): boolean {
+    override isBased(): boolean {
         return !!(this.tick as ContinuousAxisTick)._baseAxis;
     }
 
@@ -634,7 +634,7 @@ export abstract class ContinuousAxis extends Axis {
         return new LinearAxisLabel(this);
     }
 
-    protected _doLoadProp(prop: string, value: any): boolean {
+    protected override _doLoadProp(prop: string, value: any): boolean {
         if (prop ==='break') {
             this.$_loadBreaks(value);
             return true;
@@ -756,7 +756,7 @@ export abstract class ContinuousAxis extends Axis {
         }
     }
 
-    calcPoints(length: number, phase: number): void {
+    override calcPoints(length: number, phase: number): void {
         // 최대한 데이터포인트들을 표시해야 한다.
         // [주의] measure 중 마지막에 한 번만 실행하도록 phase에 100 보다 큰 값을 넘겨야 한다.
         if (phase > 100 && this._isX) {
@@ -899,7 +899,7 @@ export abstract class ContinuousAxis extends Axis {
         return this._unitLen;
     }
 
-    getLabelLength(length: number, value: number): number {
+    override getLabelLength(length: number, value: number): number {
         return Math.floor(length / this._ticks.length);
     }
 
@@ -1115,7 +1115,7 @@ export class LinearAxis extends ContinuousAxis {
      * @override
      * @config
      */
-    readonly label: LinearAxisLabel;
+    override readonly label: LinearAxisLabel;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -1124,7 +1124,7 @@ export class LinearAxis extends ContinuousAxis {
         return 'linear';
     }
 
-    protected _adjustMinMax(length: number, min: number, max: number): { min: number; max: number; } {
+    protected override _adjustMinMax(length: number, min: number, max: number): { min: number; max: number; } {
         const v = super._adjustMinMax(length, min, max);
         const series = this._series;
 

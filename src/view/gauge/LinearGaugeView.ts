@@ -48,7 +48,7 @@ class BandView extends ChartElement<GaugeRangeBand> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: GaugeRangeBand, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: GaugeRangeBand, hintWidth: number, hintHeight: number, phase: number): ISize {
         const g = model.gauge as LinearGauge | LinearGaugeGroup;
         const vertical = this._vertical = g instanceof LinearGauge ? g.isVertical() : g.vertical;
         const pos = model.position;
@@ -82,7 +82,7 @@ class BandView extends ChartElement<GaugeRangeBand> {
         return { width, height };
     }
     
-    protected _doLayout(param: any): void {
+    protected override _doLayout(param: any): void {
         const m = this.model;
         const g = (m.gauge) as LinearGauge;
         const scale = g.scale;
@@ -211,7 +211,7 @@ export class LinearGaugeView extends LinearGaugeBaseView<LinearGauge> {
     protected _prepareGauge(doc: Document, model: LinearGauge): void {
     }
 
-    _renderScale(r: IRect): void {
+    override _renderScale(r: IRect): void {
         const m = this.model;
         const band = m.band;
         const bandView = this._bandView;
@@ -296,7 +296,7 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
         super(doc, styleName);
     }
 
-    protected _doInitContents(doc: Document, container: LayerElement): void {
+    protected override _doInitContents(doc: Document, container: LayerElement): void {
         super._doInitContents(doc, container);
 
         container.insertFirst(this._scaleView = new LinearScaleView(doc));
@@ -306,7 +306,7 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _prepareGauge(doc: Document, model: T): void {
+    protected override _prepareGauge(doc: Document, model: T): void {
         // label
         if (this._textView.setVis(model.label.visible)) {
             this._textView.setStyleOrClass(model.label.style);
@@ -477,7 +477,7 @@ export class LinearGaugeGroupView extends LinearGaugeGroupBaseView<LinearGauge, 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doInitContents(doc: Document, container: LayerElement): void {
+    protected override _doInitContents(doc: Document, container: LayerElement): void {
         super._doInitContents(doc, container);
 
         container.insertChild(this._bandView = new BandView(doc), this._scaleView);
@@ -487,7 +487,7 @@ export class LinearGaugeGroupView extends LinearGaugeGroupBaseView<LinearGauge, 
         return new ElementPool(container, LinearGaugeView);
     }
 
-    protected _renderScale(model: LinearGaugeGroup, rGauge: IRect, rBody: IRect): void {
+    protected override _renderScale(model: LinearGaugeGroup, rGauge: IRect, rBody: IRect): void {
         super._renderScale(model, rGauge, rBody);
 
         const bandView = this._bandView;

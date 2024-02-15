@@ -20,7 +20,7 @@ export class TextAnnotationView extends AnnotationView<TextAnnotation> {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly CLASS_NAME: string = 'rct-text-annotation';
+    static override readonly CLASS_NAME: string = 'rct-text-annotation';
 
     //-------------------------------------------------------------------------
     // fields
@@ -43,7 +43,7 @@ export class TextAnnotationView extends AnnotationView<TextAnnotation> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: TextAnnotation, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: TextAnnotation, hintWidth: number, hintHeight: number, phase: number): ISize {
         const sz = model.getSize(hintWidth, hintHeight);
         const tv = this._textView;
 
@@ -65,7 +65,7 @@ export class TextAnnotationView extends AnnotationView<TextAnnotation> {
     //     return rectToSize(this._textView.getBBox());
     // }
 
-    protected _doLayout(p: IPoint): void {
+    protected override _doLayout(p: IPoint): void {
         // this._paddings.left += p.x;
         // this._paddings.top += p.y;
         this._richText.layout(this._textView, this.textAlign(), this.width, this.height, this._paddings);
@@ -74,7 +74,7 @@ export class TextAnnotationView extends AnnotationView<TextAnnotation> {
         super._doLayout(p);
     }
 
-    protected _setRotation(originX: number, originY: number, rotation: number): void {
+    protected override _setRotation(originX: number, originY: number, rotation: number): void {
         this._textView.setRotation(originX, originY, rotation);
     }
 }

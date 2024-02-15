@@ -419,16 +419,16 @@ export class ZValuePoint extends DataPoint {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    zValue: number;
+    override zValue: number;
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    getLabelValue(index: number): any {
+    override getLabelValue(index: number): any {
         return this.zValue;
     }
 
-    getValue(): number {
+    override getValue(): number {
         return this.zValue;
     }
 
@@ -436,18 +436,18 @@ export class ZValuePoint extends DataPoint {
         return this.zValue;
     }
 
-    protected _assignTo(proxy: any): any {
+    protected override _assignTo(proxy: any): any {
         return assign(super._assignTo(proxy), {
             z: this.z,
             zValue: this.zValue
         });
     }
 
-    protected _valuesChangd(): boolean {
+    protected override _valuesChangd(): boolean {
         return this.z !== this._prev.z || super._valuesChangd();
     }
 
-    protected _readArray(series: Series, v: any[]): void {
+    protected override _readArray(series: Series, v: any[]): void {
         if (v.length <= 1) {
             this.isNull = true;
         } else {
@@ -461,7 +461,7 @@ export class ZValuePoint extends DataPoint {
         }
     }
 
-    protected _readObject(series: Series, v: any): void {
+    protected override _readObject(series: Series, v: any): void {
         super._readObject(series, v);
 
         if (!this.isNull) {
@@ -469,27 +469,27 @@ export class ZValuePoint extends DataPoint {
         }
     }
 
-    protected _readSingle(v: any): void {
+    protected override _readSingle(v: any): void {
         super._readSingle(v);
 
         this.z = this.y;
     }
 
-    parse(series: Series): void {
+    override parse(series: Series): void {
         super.parse(series);
         
         this.isNull ||= isNaN(this.zValue);
     }
 
-    initValues(): void {
+    override initValues(): void {
         this.zValue = parseFloat(this.z);
     }
 
-    initPrev(axis: IAxis, prev: any): void {
+    override initPrev(axis: IAxis, prev: any): void {
         prev.yValue = prev.zValue = this.yValue;
     }
 
-    applyValueRate(prev: any, vr: number): void {
+    override applyValueRate(prev: any, vr: number): void {
         // yValue는 series.collectValues()에서 한다.
         this.zValue = incv(prev.zValue, this.zValue, vr);
     }
@@ -519,15 +519,15 @@ export class RangedPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    labelCount(): number {
+    override labelCount(): number {
         return 2;
     }
 
-    getLabelValue(index: number) {
+    override getLabelValue(index: number) {
         return index === 1 ? this.lowValue : this.yValue;
     }
 
-    protected _assignTo(proxy: any): any {
+    protected override _assignTo(proxy: any): any {
         return assign(super._assignTo(proxy), {
             low: this.low,
             high: this.high,
@@ -536,11 +536,11 @@ export class RangedPoint extends DataPoint {
         });
     }
 
-    protected _valuesChangd(): boolean {
+    protected override _valuesChangd(): boolean {
         return this.low !== this._prev.low || super._valuesChangd();
     }
 
-    protected _readArray(series: LowRangedSeries, v: any[]): void {
+    protected override _readArray(series: LowRangedSeries, v: any[]): void {
         const d = v.length > 2 ? 1 : 0;
 
         this.low = v[pickNum(series.lowField, 0 + d)];
@@ -550,7 +550,7 @@ export class RangedPoint extends DataPoint {
         }
     }
 
-    protected _readObject(series: LowRangedSeries, v: any): void {
+    protected override _readObject(series: LowRangedSeries, v: any): void {
         super._readObject(series, v);
 
         if (!this.isNull) {
@@ -559,27 +559,27 @@ export class RangedPoint extends DataPoint {
         }
     }
 
-    protected _readSingle(v: any): void {
+    protected override _readSingle(v: any): void {
         super._readSingle(v);
 
         this.low = this.y;
     }
 
-    parse(series: LowRangedSeries): void {
+    override parse(series: LowRangedSeries): void {
         super.parse(series);
 
         this.isNull ||= isNaN(this.lowValue);
     }
 
-    initValues(): void {
+    override initValues(): void {
         this.lowValue = parseFloat(this.low);
     }
 
-    initPrev(axis: IAxis, prev: any): void {
+    override initPrev(axis: IAxis, prev: any): void {
         prev.yValue = prev.lowValue = this.lowValue; 
     }
 
-    applyValueRate(prev: any, vr: number): void {
+    override applyValueRate(prev: any, vr: number): void {
         // yValue는 series.collectValues()에서 한다.
         this.lowValue = incv(prev.lowValue, this.lowValue, vr);
     }

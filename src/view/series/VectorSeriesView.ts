@@ -18,7 +18,7 @@ class ArrowView extends PointElement implements IPointView {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    point: VectorSeriesPoint;
+    override point: VectorSeriesPoint;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -145,17 +145,17 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
         });
     }
 
-    protected _runShowEffect(firstTime: boolean): void {
+    protected override _runShowEffect(firstTime: boolean): void {
         // firstTime && SeriesAnimation.fadeIn(this);
         // TODO: 
         firstTime && SeriesAnimation.grow(this);
     }
 
-    protected _doViewRateChanged(rate: number): void {
+    protected override _doViewRateChanged(rate: number): void {
         this._renderSeries(this.width, this.height);
     }
 
-    getPointsAt(axis: Axis, pos: number): IPointView[] {
+    override getPointsAt(axis: Axis, pos: number): IPointView[] {
         return [];
     }
 

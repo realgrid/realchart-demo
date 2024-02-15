@@ -237,7 +237,7 @@ export class BulletGauge extends LinearGaugeBase {
         return 'bullet';
     }
 
-    protected _doLoad(src: any): void {
+    protected override _doLoad(src: any): void {
         super._doLoad(src);
     }
 }

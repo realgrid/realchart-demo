@@ -41,7 +41,7 @@ export class ImageAnnotation extends Annotation {
         return 'image';
     }
 
-    protected _doLoadSimple(source: any): boolean {
+    protected override _doLoadSimple(source: any): boolean {
         if (isString(source)) {
             this.imageUrl = source;
             return true;
