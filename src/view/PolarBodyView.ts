@@ -165,10 +165,10 @@ abstract class PolarAxisView extends RcElement {
 
     prepareGuides(doc: Document, container: AxisGuideContainer, frontContainer: AxisGuideContainer): void {
         let guides = this._model.guides.filter(g => !g.front);
-        container.addAll(doc, guides, true);
+        container.setAll(doc, guides, true);
 
         guides = this._model.guides.filter(g => g.front);
-        frontContainer.addAll(doc, guides, true);
+        frontContainer.setAll(doc, guides, true);
     }
 }
 

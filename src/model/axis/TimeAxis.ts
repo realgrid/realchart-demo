@@ -9,7 +9,6 @@
 import { isArray, isNumber, isObject, isString, pickNum, assign, maxv, isStringL } from "../../common/Common";
 import { DatetimeFormatter } from "../../common/DatetimeFormatter";
 import { Axis, AxisLabel, AxisTick } from "../Axis";
-import { IChart } from "../Chart";
 import { ContinuousAxis, ContinuousAxisTick } from "./LinearAxis";
 
 const enum TimeScale {
@@ -23,24 +22,24 @@ const enum TimeScale {
     YEAR
 };
 
-const equals = function (scale: TimeScale, t1: number, t2: number): boolean {
-    const d1 = new Date(t1);
-    const d2 = new Date(t2);
+// const equals = function (scale: TimeScale, t1: number, t2: number): boolean {
+//     const d1 = new Date(t1);
+//     const d2 = new Date(t2);
 
-    if (scale === TimeScale.WEEK) {
-        d1.setHours(0, 0, 0, 0);
-        d2.setHours(0, 0, 0, 0);
-        return d1.setDate(d1.getDate() - d1.getDay()) ===  d2.setDate(d2.getDate() - d2.getDay());
-    }
-    if (d1.getFullYear() !== d2.getFullYear()) return false;
-    if (scale < TimeScale.YEAR && d1.getMonth() !== d2.getMonth()) return false;
-    if (scale < TimeScale.MONTH && d1.getDate() !== d2.getDate()) return false;
-    if (scale < TimeScale.DAY && d1.getHours() !== d2.getHours()) return false;
-    if (scale < TimeScale.HOUR && d1.getMinutes() !== d2.getMinutes()) return false;
-    if (scale < TimeScale.MIN && d1.getSeconds() !== d2.getSeconds()) return false; 
-    if (scale < TimeScale.SEC && d1.getMilliseconds() !== d2.getMilliseconds()) return false; 
-    return true;
-}
+//     if (scale === TimeScale.WEEK) {
+//         d1.setHours(0, 0, 0, 0);
+//         d2.setHours(0, 0, 0, 0);
+//         return d1.setDate(d1.getDate() - d1.getDay()) ===  d2.setDate(d2.getDate() - d2.getDay());
+//     }
+//     if (d1.getFullYear() !== d2.getFullYear()) return false;
+//     if (scale < TimeScale.YEAR && d1.getMonth() !== d2.getMonth()) return false;
+//     if (scale < TimeScale.MONTH && d1.getDate() !== d2.getDate()) return false;
+//     if (scale < TimeScale.DAY && d1.getHours() !== d2.getHours()) return false;
+//     if (scale < TimeScale.HOUR && d1.getMinutes() !== d2.getMinutes()) return false;
+//     if (scale < TimeScale.MIN && d1.getSeconds() !== d2.getSeconds()) return false; 
+//     if (scale < TimeScale.SEC && d1.getMilliseconds() !== d2.getMilliseconds()) return false; 
+//     return true;
+// }
 
 // 밀리초 기준 시간 단위별 크기
 const time_scales = [
@@ -609,6 +608,7 @@ export class TimeAxis extends ContinuousAxis {
                 }
                 return +d;
             }
+            return value;
         } else {
             return value + step;
         }
@@ -628,6 +628,10 @@ export class TimeAxis extends ContinuousAxis {
 
     override getXValue(value: number) {
         return isNaN(value) ? NaN : new Date(value);
+    }
+
+    override getPos(length: number, value: number): number {
+        return super.getPos(length, value);
     }
 
     //-------------------------------------------------------------------------

@@ -2709,9 +2709,8 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
         return true;
     }
 
-    isEmpty(): boolean {
-        return this._series.length < 1;
-        // return this._visibles.length < 1;
+    isEmpty(visibleOnly: boolean): boolean {
+        return (visibleOnly ? this._visibles : this._series).length < 1;
     }
 
     canCategorized(): boolean {
