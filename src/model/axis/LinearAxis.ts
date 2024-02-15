@@ -661,6 +661,12 @@ export abstract class ContinuousAxis extends Axis {
         if (isNaN(baseVal) && min < 0 && max > 0) {
             baseVal = 0;
         } 
+        if (!isNaN(baseVal)) {
+            min = Math.min(min, baseVal);
+            max = Math.max(max, baseVal);
+        } else if (min < 0 && max > 0) {
+            baseVal = 0;
+        }
 
         if (based && tick.baseRange) {
             min = tick._baseAxis.axisMin();
@@ -721,7 +727,7 @@ export abstract class ContinuousAxis extends Axis {
         }
 
         this._setMinMax(min, max);
-
+        
         const ticks: IAxisTick[] = [];
 
         // if (min !== max) {
@@ -729,9 +735,13 @@ export abstract class ContinuousAxis extends Axis {
                 steps = this.$_getBrokenSteps(this._runBreaks, length, min, max);
             }
     
+            let prev = NaN;
             for (let i = 0; i < steps.length; i++) {
                 const tick = this._createTick(length, i, steps[i]);
-                ticks.push(tick);
+                if (tick.value !== prev) {
+                    ticks.push(tick);
+                    prev = tick.value;
+                }
             }
         // }
         return ticks;
@@ -759,7 +769,7 @@ export abstract class ContinuousAxis extends Axis {
                     this._unitLen = unit.len;
                     
                     // 선형 축에 너비가 필요한 시리즈가 있는 경우, 양 끝이 넘치지 않도록 조종한다. #485, #472
-                    if (!this._isPolar) {
+                    if (!this._isPolar && !this._zoom) {
                         this._min -= unit.min / 2;
                         this._max += unit.min / 2;
                     }
