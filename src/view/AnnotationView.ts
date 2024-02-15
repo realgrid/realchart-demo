@@ -68,7 +68,7 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
 
                 switch (m.align) {
                     case Align.LEFT:
-                        x -= this.width - off.x
+                        x -= this.width + off.x
                         break;
                     case Align.RIGHT:
                         x += w + off.x;
