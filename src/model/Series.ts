@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { absv, isArray, isFunc, isNumber, isObject, isString, maxv, minv, pickNum, pickNum3, pickProp, pickProp3 } from "../common/Common";
+import { absv, isArray, isFunc, isNumber, isObject, isString, maxv, minv, pickNum, pickProp, pickProp3 } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { RcAnimation } from "../common/RcAnimation";
 import { RcElement } from "../common/RcControl";
@@ -2457,7 +2457,7 @@ export abstract class BasedSeries extends ClusterableSeries {
      * 
      * @config
      */
-    baseValue: number;
+    baseValue = 0;
     /**
      * null인 y값을 {@link baseValue}로 간주한다.
      * 
@@ -2477,7 +2477,7 @@ export abstract class BasedSeries extends ClusterableSeries {
     protected override _doPrepareRender(): void {
         super._doPrepareRender();
 
-        this._base = pickNum3(this._getGroupBase(), this._yAxisObj.getBaseValue(), 0);
+        this._base = pickNum(this._getGroupBase(), this._yAxisObj.getBaseValue());
     }
 
     override getBaseValue(axis: IAxis): number {
