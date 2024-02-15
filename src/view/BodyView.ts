@@ -144,7 +144,7 @@ export class AxisGridView extends ChartElement<AxisGrid> {
         const reversed = axis.reversed;
         const w = this.width;
         const h = this.height;
-        const pts = m.getPoints(axis._isHorz ? w : h);
+        const pts = axis.isEmpty() ? [] : m.getPoints(axis._isHorz ? w : h);
         const lines = this._lines.prepare(pts.length, (line) => {
             line.internalClearStyleAndClass();
             line.internalSetStyleOrClass(axis.grid.style);
@@ -724,7 +724,7 @@ export class AxisGuideContainer extends LayerElement {
         }
     }
 
-    addAll(doc: Document, guides: AxisGuide[], polar: boolean): void {
+    setAll(doc: Document, guides: AxisGuide[], polar: boolean): void {
         guides.forEach(g => {
             let v: AxisGuideView<AxisGuide>;
 

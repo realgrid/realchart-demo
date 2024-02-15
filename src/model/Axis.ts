@@ -1107,6 +1107,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     _isBetween: boolean;
     _isPolar: boolean;
     protected _series: IPlottingItem[] = [];
+    protected _isEmpty: boolean;
     _range: { min: number, max: number };
     _ticks: IAxisTick[];
     _markPoints: number[];
@@ -1309,7 +1310,18 @@ export abstract class Axis extends ChartItem implements IAxis {
     //minSize: number;
 
     isEmpty(): boolean {
-        return this._series.length < 1;
+        return this._isEmpty;
+    }
+
+    private $_checkEmpty(): boolean {
+        if (this._series.length > 0) {
+            for (const s of this._series) {
+                if (!s.isEmpty(true)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     getBaseValue(): number {
@@ -1358,6 +1370,10 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     unitPad(): number {
         return 0;
+    }
+
+    labelsVisible(): boolean {
+        return this.label.visible && this._ticks.length > 0;
     }
 
     //-------------------------------------------------------------------------
@@ -1410,6 +1426,10 @@ export abstract class Axis extends ChartItem implements IAxis {
         this._series.forEach(item => {
             item.pointValuesPrepared(this);
         })
+    }
+
+    prepare(): void {
+        this._isEmpty = this.$_checkEmpty();
     }
 
     prepareRender(): void {
@@ -1729,6 +1749,10 @@ export class AxisCollection {
 
     disconnect(): void {
         this._items.forEach(axis => axis.disconnect());
+    }
+
+    prepare(): void {
+        this._items.forEach(axis => axis.prepare());
     }
 
     collectValues(): void {
