@@ -1175,32 +1175,61 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         const yOrg = inverted ? 0 : height;
         const min = yAxis.axisMin();
         const yMin = yAxis.getPos(yLen, min);
-        const base = series.getBaseValue(yAxis);
+        const base = series.getBaseValue(yAxis) || 0;
         const yBase = pickNum(yAxis.getPos(yLen, maxv(min, base)), yMin);
         const based = !isNaN(base);
+        const getYPos = (val) => yAxis.getPos(yLen, val);
+        const getXPos = (val) => xAxis.getPos(xLen, val);
         const info: LabelLayoutInfo = labelViews && assign(this._labelInfo, {
             inverted,
             reversed: reversed,
             labelPos: series.getLabelPosition(labels.position),
             labelOff: series.getLabelOff(labels.getOffset())
         });
-
         this._getPointPool().forEach((pv: BoxPointElement, i) => {
             const p = (pv as any as IPointView).point;
-
+            // console.log({ yValue: p.yValue, yGroup: p.yGroup });
             if (pv.setVis(!p.isNull)) {
+                // console.group(p.vindex, p.yValue);
                 const wUnit = xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad);
                 let wPoint = series.getPointWidth(wUnit);
+                let py:number = getYPos(p.yGroup);
+                let ph:number;
+                // base에서 시작하는 데이터포인트
+                if (p.yGroup == p.yValue) {
+                    // py = getYPos(p.yValue - base);
+                    ph = getYPos(base) - py;
+                } else {
+                    // const below = base > p.yValue ? -1 : 1;
+                    // const neg = p.yGroup < 0 ? -1 : 1;
+                    // ph = getYPos(p.yGroup + p.yValue * neg * below) - py
+
+                    const below = base > p.yValue;
+                    const neg = p.yGroup < 0 ? -1 : 1;
+                    if (below) {
+                        ph = getYPos(p.yGroup + p.yValue * neg) - py
+                    } else {
+                        ph = getYPos(p.yGroup - p.yValue * neg) - py
+                    }
+
+                    // ph = getYPos(p.yGroup + p.yValue) - py
+                    // py = getYPos(p.yGroup);
+
+                }
+                // console.log({ py, ph });
+
                 const yVal = yAxis.getPos(yLen, p.yValue) - yBase;
                 const yGroup = (yAxis.getPos(yLen, p.yGroup) - yBase - yVal) * gr;
+
                 const hPoint = yVal * gr;
+                // const hPoint = ph * gr;
                 let x = xAxis.getPos(xLen, p.xValue) - wUnit / 2;
                 if (isNaN(x)) {
-                    debugger;
                     const wUnit2 = xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad);
                     x = xAxis.getPos(xLen, p.xValue) - wUnit2 / 2;
                 }
-                let y = yOrg - yAxis.getPos(yLen, p.yGroup) * gr;
+                // let y = yOrg - yAxis.getPos(yLen, p.yGroup) * gr;
+                let y = yOrg - py * gr;
 
                 if (!isNaN(pr + pv.wSave)) {
                     wPoint = pv.wSave + (wPoint - pv.wSave) * pr;
@@ -1214,7 +1243,12 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 p.yPos = y;
 
                 // 아래에서 위로 올라가는 animation을 위해 기준 지점을 전달한다.
-                this._layoutPoint(pv, i, x, yOrg - yBase - yGroup, wPoint, hPoint);
+                // this._layoutPoint(pv, i, x, yOrg - yBase - yGroup, wPoint, hPoint);
+                this._layoutPoint(pv, i, x, y, wPoint, ph * gr);
+                
+                // console.log({ yValue: p.yValue, yGroup: p.yGroup, yPos: p.yPos });
+                // console.log('point', x, yOrg - yBase - yGroup, wPoint, hPoint);
+                // console.groupEnd();
 
                 // [주의] tooltip이 p.xPos, p.yPos를 사용한다. label이 미표시여도 계산한다.
                 if (inverted) {
