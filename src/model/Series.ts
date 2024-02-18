@@ -3001,11 +3001,19 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
                         if (nprev >= 0) {
                             // below에서는 누적 값의 부호를 유지해야 한다.
                             const neg = pts[nprev].yGroup < 0;
-                            if (neg) {
-                                pts[i].yGroup = -(Math.abs(pts[nprev].yGroup) + Math.abs(v));
-                            } else {
+                            // const neg = pts[nprev].yValue < 0;
+                            // positive
+                            // if (neg) {
+                            //     pts[i].yGroup = -(Math.abs(pts[nprev].yGroup) + Math.abs(v));
+                            // }
+                            // if (pts[nprev].yValue) {
+                            if (v >= 0) {
+                                pts[i].yGroup = pts[nprev].yGroup - v;
+                            } 
+                            else {
                                 pts[i].yGroup = pts[nprev].yGroup + v;
                             }
+                            console.log({ oldYGroup: pts[nprev].yGroup, v, yGroup: pts[i].yGroup})
                         }
                         nprev = i;
                     }

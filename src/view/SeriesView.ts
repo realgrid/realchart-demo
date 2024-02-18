@@ -1188,7 +1188,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         });
         this._getPointPool().forEach((pv: BoxPointElement, i) => {
             const p = (pv as any as IPointView).point;
-            // console.log({ yValue: p.yValue, yGroup: p.yGroup });
+            console.log({ yValue: p.yValue, yGroup: p.yGroup });
             if (pv.setVis(!p.isNull)) {
                 // console.group(p.vindex, p.yValue);
                 const wUnit = xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad);
@@ -1202,15 +1202,56 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 } else {
                     // const below = base > p.yValue ? -1 : 1;
                     // const neg = p.yGroup < 0 ? -1 : 1;
-                    // ph = getYPos(p.yGroup + p.yValue * neg * below) - py
+                    // ph = getYPos(p.yGroup + p.yValue * neg * below) - py;
 
+                    // const below = base > p.yValue;
+                    // const neg = p.yGroup < 0 ? -1 : 1;
+                    // if (below) {
+                    //     ph = getYPos(p.yGroup + p.yValue * neg) - py
+                    // } else {
+                    //     ph = getYPos(p.yGroup - p.yValue * neg) - py
+                    // }
+
+                    // const below = base > p.yValue;
+                    // const neg = p.yGroup < p.yValue;
+
+                    // if (below && neg) {
+                    //     ph = getYPos(p.yGroup + p.yValue) - py;
+                    // } else if (!below && neg) {
+                    //     ph = getYPos(p.yGroup - p.yValue) - py;
+                    // } else {
+                    //     ph = getYPos(p.yValue - p.yGroup) - py;
+                    // }
+
+                    // base, value가 같은 기호(-,-), (+,+)
+                    // const bv = p.yValue >= 0 ? 1 : -1 * base >= 0 ? 1 : -1;
                     const below = base > p.yValue;
-                    const neg = p.yGroup < 0 ? -1 : 1;
-                    if (below) {
-                        ph = getYPos(p.yGroup + p.yValue * neg) - py
+
+                    let fy;
+                    // 모두 양수
+                    if ((below && p.yGroup >0 && p.yValue >= 0) 
+                        || (p.yGroup < 0 && p.yValue >= 0)) {
+                        console.log('v + g');
+                        fy = p.yGroup + p.yValue;
                     } else {
-                        ph = getYPos(p.yGroup - p.yValue * neg) - py
+                        console.log('g - v');
+                        fy = p.yGroup - p.yValue;
                     }
+                    console.log({fy});
+                    ph = getYPos(fy) - py;
+                    // const neg = p.yGroup < 0;
+                    // if (neg) {
+                    //     ph = getYPos(-(Math.abs(p.yGroup) - Math.abs(p.yValue))) - py
+                    // } else {
+                    //     ph = getYPos(p.yGroup - p.yValue) - py;
+                    // }
+                    // if (!below) {
+                    //     ph = getYPos(p.yGroup - Math.abs(p.yValue)) - py;
+                    // } else if (p.yGroup < 0 && p.yValue > 0) {
+                    //     ph = getYPos(p.yValue + p.yGroup) - py;
+                    // } else {
+                    //     ph = getYPos(p.yValue - p.yGroup) - py;
+                    // }
 
                     // ph = getYPos(p.yGroup + p.yValue) - py
                     // py = getYPos(p.yGroup);
