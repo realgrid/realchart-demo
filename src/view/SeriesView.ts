@@ -1225,12 +1225,18 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
 
                     // base, value가 같은 기호(-,-), (+,+)
                     // const bv = p.yValue >= 0 ? 1 : -1 * base >= 0 ? 1 : -1;
-                    const below = base > p.yValue;
+                    // const below = base > p.yValue;
+                    const below = base > p.yGroup;
 
                     let fy;
                     // 모두 양수
-                    if ((below && p.yGroup >0 && p.yValue >= 0) 
-                        || (p.yGroup < 0 && p.yValue >= 0)) {
+                    // (below && p.yGroup >= 0 && p.yValue >= 0) 
+                    //     || 
+                    if ((below && p.yGroup < 0 && p.yValue >= 0)
+                        || (below && p.yGroup >= 0 && p.yValue >= 0)
+                        || (!below && p.yGroup >=0 && p.yValue < 0) 
+                        || (!below && p.yGroup < 0 && p.yValue < 0)
+                        ) {
                         console.log('v + g');
                         fy = p.yGroup + p.yValue;
                     } else {

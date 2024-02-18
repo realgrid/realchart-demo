@@ -2994,7 +2994,11 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
 
                     if (v >= base) {    
                         if (prev >= 0) {
-                            pts[i].yGroup = pts[prev].yGroup + v;
+                            if (v < 0) {
+                                pts[i].yGroup = pts[prev].yGroup - v;
+                            } else {
+                                pts[i].yGroup = pts[prev].yGroup + v;
+                            }
                         }
                         prev = i;
                     } else {
