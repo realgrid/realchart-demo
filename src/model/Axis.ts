@@ -373,6 +373,17 @@ export abstract class AxisGrid extends AxisItem {
     //-------------------------------------------------------------------------
 }
 
+export enum GuideLabelPosition {
+    /**
+     * body 영역 안에 label을 배치한다.
+     */
+    INSIDE = 'inside',
+    /**
+     * body 영역 밖에 label을 배치한다.
+     */
+    OUTSIDE = 'outside',
+}
+
 /**
  * 축 가이드 label 설정 모델.
  * 
@@ -394,11 +405,11 @@ export class AxisGuideLabel extends IconedText {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * lable을 body영역 안에 표시할 지 여부.
+     * label을 body 영역 안에 배치할지 여부.
      * 
      * @config
      */
-    displayInside = true;
+    position = GuideLabelPosition.INSIDE;
     /**
      * 수평 정렬.
      * 
