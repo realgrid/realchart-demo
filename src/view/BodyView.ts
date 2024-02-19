@@ -1103,9 +1103,13 @@ export class BodyView extends ChartElement<Body> implements IAnnotationAnchorOwn
                 }
             }
         }
-
+        
         if (this._focused && (this._focused !== old || !this._owner.tooltipVisible() ||  this.model.chart.tooltip.followPointer)) {
-            this._owner.showTooltip(sv.model, pv, [], this, p);
+            if (p.x > 0 && p.x < this.width && p.y > 0 && p.y < this.height) {
+                this._owner.showTooltip(sv.model, pv, [], this, p);
+            } else {
+                this._owner.hideTooltip();
+            }
         } else if (!this._focused && this._owner.tooltipVisible()) {
             this._owner.hideTooltip();
         }
