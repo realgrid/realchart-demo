@@ -1188,92 +1188,54 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         });
         this._getPointPool().forEach((pv: BoxPointElement, i) => {
             const p = (pv as any as IPointView).point;
-            console.log({ yValue: p.yValue, yGroup: p.yGroup });
             if (pv.setVis(!p.isNull)) {
-                // console.group(p.vindex, p.yValue);
                 const wUnit = xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad);
                 let wPoint = series.getPointWidth(wUnit);
                 let py:number = getYPos(p.yGroup);
                 let ph:number;
                 // base에서 시작하는 데이터포인트
                 if (p.yGroup == p.yValue) {
-                    // py = getYPos(p.yValue - base);
-                    ph = getYPos(base) - py;
+                    ph = yBase - py;
                 } else {
-                    // const below = base > p.yValue ? -1 : 1;
-                    // const neg = p.yGroup < 0 ? -1 : 1;
-                    // ph = getYPos(p.yGroup + p.yValue * neg * below) - py;
-
-                    // const below = base > p.yValue;
-                    // const neg = p.yGroup < 0 ? -1 : 1;
-                    // if (below) {
-                    //     ph = getYPos(p.yGroup + p.yValue * neg) - py
-                    // } else {
-                    //     ph = getYPos(p.yGroup - p.yValue * neg) - py
-                    // }
-
-                    // const below = base > p.yValue;
-                    // const neg = p.yGroup < p.yValue;
-
-                    // if (below && neg) {
-                    //     ph = getYPos(p.yGroup + p.yValue) - py;
-                    // } else if (!below && neg) {
-                    //     ph = getYPos(p.yGroup - p.yValue) - py;
-                    // } else {
-                    //     ph = getYPos(p.yValue - p.yGroup) - py;
-                    // }
-
-                    // base, value가 같은 기호(-,-), (+,+)
-                    // const bv = p.yValue >= 0 ? 1 : -1 * base >= 0 ? 1 : -1;
-                    // const below = base > p.yValue;
+                    // below or above
                     const below = base > p.yGroup;
-
-                    let fy;
-                    // 모두 양수
-                    // (below && p.yGroup >= 0 && p.yValue >= 0) 
-                    //     || 
-                    if ((below && p.yGroup < 0 && p.yValue >= 0)
-                        || (below && p.yGroup >= 0 && p.yValue >= 0)
-                        || (!below && p.yGroup >=0 && p.yValue < 0) 
-                        || (!below && p.yGroup < 0 && p.yValue < 0)
-                        ) {
-                        console.log('v + g');
-                        fy = p.yGroup + p.yValue;
-                    } else {
-                        console.log('g - v');
-                        fy = p.yGroup - p.yValue;
-                    }
-                    console.log({fy});
+                    // negative yGroup
+                    const ng = p.yGroup < 0;
+                    // nagative yValue
+                    const nv = p.yValue < 0;
+                    // below에서 둘다 양수이거나, 부호가 달라졌을 때
+                    // above에서 둘다 음수이거나, 부호가 달라졌을 때
+                    const exc = (below && ng && !nv) || (below && !ng && !nv)
+                    || (!below && ng && nv) || (!below && !ng && nv)
+                    // 위 상황에서는 g + v, 그밖에는 g - v
+                    // https://github.com/realgrid/realreport-chart/wiki/Core-Logics#bargroup-stack
+                    const fy = p.yGroup - p.yValue * (exc ? -1 : 1);
+                    // readable code
+                    // let fy;
+                    // if ((below && p.yGroup < 0 && p.yValue >= 0)
+                    //     || (below && p.yGroup >= 0 && p.yValue >= 0)
+                    //     || (!below && p.yGroup >=0 && p.yValue < 0) 
+                    //     || (!below && p.yGroup < 0 && p.yValue < 0)
+                    //     ) {
+                    //     console.log('g + v');
+                    //     fy = p.yGroup + p.yValue;
+                    // } else {
+                    //     console.log('g - v');
+                    //     fy = p.yGroup - p.yValue;
+                    // }
                     ph = getYPos(fy) - py;
-                    // const neg = p.yGroup < 0;
-                    // if (neg) {
-                    //     ph = getYPos(-(Math.abs(p.yGroup) - Math.abs(p.yValue))) - py
-                    // } else {
-                    //     ph = getYPos(p.yGroup - p.yValue) - py;
-                    // }
-                    // if (!below) {
-                    //     ph = getYPos(p.yGroup - Math.abs(p.yValue)) - py;
-                    // } else if (p.yGroup < 0 && p.yValue > 0) {
-                    //     ph = getYPos(p.yValue + p.yGroup) - py;
-                    // } else {
-                    //     ph = getYPos(p.yValue - p.yGroup) - py;
-                    // }
-
-                    // ph = getYPos(p.yGroup + p.yValue) - py
-                    // py = getYPos(p.yGroup);
 
                 }
-                // console.log({ py, ph });
 
-                const yVal = yAxis.getPos(yLen, p.yValue) - yBase;
-                const yGroup = (yAxis.getPos(yLen, p.yGroup) - yBase - yVal) * gr;
+                // const yVal = yAxis.getPos(yLen, p.yValue) - yBase;
+                // const yGroup = (yAxis.getPos(yLen, p.yGroup) - yBase - yVal) * gr;
+                // const hPoint = yVal * gr;
 
-                const hPoint = yVal * gr;
-                // const hPoint = ph * gr;
-                let x = xAxis.getPos(xLen, p.xValue) - wUnit / 2;
+                const hPoint = ph * gr;
+                let x = getXPos(p.xValue) - wUnit / 2;
                 if (isNaN(x)) {
                     const wUnit2 = xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad);
-                    x = xAxis.getPos(xLen, p.xValue) - wUnit2 / 2;
+                    x = getXPos(p.xValue) - wUnit2 / 2;
                 }
                 // let y = yOrg - yAxis.getPos(yLen, p.yGroup) * gr;
                 let y = yOrg - py * gr;
@@ -1291,23 +1253,19 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
 
                 // 아래에서 위로 올라가는 animation을 위해 기준 지점을 전달한다.
                 // this._layoutPoint(pv, i, x, yOrg - yBase - yGroup, wPoint, hPoint);
-                this._layoutPoint(pv, i, x, y, wPoint, ph * gr);
+                this._layoutPoint(pv, i, x, y, wPoint, hPoint);
                 
-                // console.log({ yValue: p.yValue, yGroup: p.yGroup, yPos: p.yPos });
-                // console.log('point', x, yOrg - yBase - yGroup, wPoint, hPoint);
-                // console.groupEnd();
-
                 // [주의] tooltip이 p.xPos, p.yPos를 사용한다. label이 미표시여도 계산한다.
                 if (inverted) {
                     // y = xLen - xAxis.getPosition(xLen, p.xValue) - wUnit / 2; // 위에서 아래로 내려갈 때
-                    y = xLen - xAxis.getPos(xLen, p.xValue) + wUnit / 2;
+                    y = xLen - getXPos(p.xValue) + wUnit / 2;
                     x = yOrg;
                     p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
                     // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
                     if (based) {
-                        p.xPos = x += yAxis.getPos(yLen, p.yGroup) * gr; // stack/fill일 때 org와 다르다.
+                        p.xPos = x += getYPos(p.yGroup) * gr; // stack/fill일 때 org와 다르다.
                     } else {
-                        p.xPos = x += yAxis.getPos(yLen, p.yGroup * gr);
+                        p.xPos = x += getYPos(p.yGroup * gr);
                     }
                 }
 
@@ -1317,7 +1275,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                     info.x = x;
                     info.y = y;
                     info.wPoint = wPoint;
-                    info.hPoint = hPoint;
+                    info.hPoint = -hPoint;
                     this._layoutLabel(info, width, height);
                 }
             }

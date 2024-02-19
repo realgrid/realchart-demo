@@ -135,7 +135,7 @@ export abstract class BarSeriesGroupBase<T extends BarSeriesBase> extends Cluste
     /**
      * @config
      */
-    baseValue: number;
+    baseValue: number = 0;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -145,7 +145,8 @@ export abstract class BarSeriesGroupBase<T extends BarSeriesBase> extends Cluste
     }
 
     override getBaseValue(axis: IAxis): number {
-        return axis._isX ? NaN : pickNum3(this.baseValue, axis.getBaseValue(), 0);
+        // return axis._isX ? NaN : pickNum3(this.baseValue, axis.getBaseValue(), 0);
+        return axis._isX ? NaN : pickNum(this.baseValue, axis.getBaseValue());
     }
 
     protected _doPrepareSeries(series: T[]): void {
