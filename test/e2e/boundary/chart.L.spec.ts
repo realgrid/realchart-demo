@@ -18,7 +18,7 @@ test.describe("empty", () => {
 
   let chart;
 
-  let  config: any = {
+  let config: any = {
     title: "Boundary",
     xAxis: {
 
@@ -31,6 +31,10 @@ test.describe("empty", () => {
 
   test.beforeEach(async ({ page }) => {
     await PWTester.goto(page, url);
+
+    await page.evaluate((newConfig) => {
+      chart.load(newConfig, false).render();
+    }, config);
   });
 
   test("empty config", async ({ page }, testInfo) => {
