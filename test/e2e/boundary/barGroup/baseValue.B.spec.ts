@@ -38,7 +38,13 @@ const testBaseValue = async ({ page, chart, config, marginErr = 0.0001 }: { page
         return e.getBoundingClientRect();
     });
 
-    const data:Array<number> = config.series.data
+    // const data = await page.evaluate(({ chart }) => {
+    //     return chart.series.get('data');
+    // }, { chart })
+
+    const data = config.series.children[0].data;
+
+    // const data:Array<number> = chart['series'].get('data');
 
     if (pointsRect && tickRect) {
         // value가 baseValue 보다 작으면, 해당 값을 표현하는 GraphicElement의 y값으로 비교
@@ -74,6 +80,7 @@ test.describe('barSeries.baseValue test', () => {
         marginErr = browserName == 'firefox' ? 0.05 : 0.001;
         await PWTester.goto(page, url);
         
+        const len = PWTester.irandom(5, 10);
         config = {
             templates: {
                 bar: {
@@ -100,7 +107,7 @@ test.describe('barSeries.baseValue test', () => {
                     return { 
                         template: 'bar',
                         name: `Series ${i}`,
-                        data: PWTester.iarandom(0, 100, 10) };
+                        data: PWTester.iarandom(0, 100, len) };
                 }),
             }
         };
@@ -180,9 +187,6 @@ test.describe('barSeries.baseValue test', () => {
             // const container = await page.$("#realchart");
             expect(chart).exist;
 
-            const rows = PWTester.irandom(5, 10);
-            config.series.data = PWTester.iarandom(80, 180, rows);
-
             const baseValue = Math.floor(Math.random() * 50);
             config.series.baseValue = baseValue;
             config.yAxis.tick.steps = [baseValue];
@@ -200,9 +204,6 @@ test.describe('barSeries.baseValue test', () => {
             config.series.baseValue = baseValue;
             config.yAxis.tick.steps = [baseValue, 0];
 
-            const rows = PWTester.irandom(5, 10);
-            const data = PWTester.iarandom(-180, 180, rows);
-            config.series.data = data;
             await testBaseValue({ page, chart, config, marginErr })
         });
     });
