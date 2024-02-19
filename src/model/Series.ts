@@ -2982,46 +2982,27 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
                 let prev = v >= base ? 0 : -1;
                 let nprev = v < base ? 0 : -1;
 
-                // console.group(pi, { len: pts.length})
                 pts[0].yGroup = pts[0].yValue || 0;
-                // console.log(pi++, { y: pts[0].y, yGroup: pts[0].yGroup });
                 for (let i = 1; i < pts.length; i++) {
                     v = pts[i].yValue || 0;
 
                     if (v >= base) {    
+                        // above
                         if (prev >= 0) {
-                            if (v < 0) {
-                                pts[i].yGroup = pts[prev].yGroup - v;
-                            } else {
-                                pts[i].yGroup = pts[prev].yGroup + v;
-                            }
+                            // v가 음수면 g - v, 양수면 g + v
+                            pts[i].yGroup = pts[prev].yGroup + v * (v < 0 ? -1 : 1);
                         }
                         prev = i;
                     } else {
+                        // below
                         if (nprev >= 0) {
-                            // below에서는 누적 값의 부호를 유지해야 한다.
-                            const neg = pts[nprev].yGroup < 0;
-                            // const neg = pts[nprev].yValue < 0;
-                            // positive
-                            // if (neg) {
-                            //     pts[i].yGroup = -(Math.abs(pts[nprev].yGroup) + Math.abs(v));
-                            // }
-                            // if (pts[nprev].yValue) {
-                            if (v >= 0) {
-                                pts[i].yGroup = pts[nprev].yGroup - v;
-                            } 
-                            else {
-                                pts[i].yGroup = pts[nprev].yGroup + v;
-                            }
-                            console.log({ oldYGroup: pts[nprev].yGroup, v, yGroup: pts[i].yGroup})
+                            // v가 양수면 g - v, 음수면 g + v
+                            pts[i].yGroup = pts[nprev].yGroup + v * (v >= 0 ? -1 : 1);
                         }
                         nprev = i;
                     }
 
-                    // console.log(pi++, { y: pts[i].y, yGroup: pts[i].yGroup });
                 }
-                // console.log(`%c ${prev < 0 && nprev < 0} ${prev} ${nprev}`, 'color: red;')
-                // console.groupEnd();
                 if (prev >= 0) {
                     vals.push(pts[prev].yGroup);
                 }
