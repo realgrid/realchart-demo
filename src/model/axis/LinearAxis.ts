@@ -127,7 +127,7 @@ export class ContinuousAxisTick extends AxisTick {
             if (pts.length > 0 && isNaN(pts[0])) pts[0] = min;
             if (pts.length > 1 && isNaN(pts[pts.length - 1])) pts[pts.length - 1] = max;
             this._strictTicks = this._strictEnds = true;
-        } else if (this._baseAxis instanceof ContinuousAxis) {
+        } else if (this._baseAxis instanceof ContinuousAxis && this._baseAxis._ticks.length > 0) {
             pts = this._getStepsByCount(this._baseAxis._ticks.length, base, min, max, true);
         } else if (this.stepCount > 0) {
             pts = this._getStepsByCount(this.stepCount, base, min, max, false);
@@ -149,7 +149,7 @@ export class ContinuousAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    canUseNumSymbols(): boolean {
+    override canUseNumSymbols(): boolean {
         // steps로 지정한 경우 nan이다.
         return isNaN(this._step) || this._step >= 500;
     }
@@ -395,7 +395,7 @@ export class AxisBreak extends AxisItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoad(source: any): void {
+    protected override _doLoad(source: any): void {
         super._doLoad(source);
 
         this.space = pickNum(this.space, 0);
@@ -460,7 +460,7 @@ export abstract class ContinuousAxis extends Axis {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    init(): Axis {
+    override init(): Axis {
         super.init();
 
         this.baseLine = new AxisBaseLine(this, false);
@@ -567,11 +567,11 @@ export abstract class ContinuousAxis extends Axis {
     /** y축으로 사용될 때만 적용한다. */
     readonly breaks: AxisBreak[] = [];
 
-    getBaseValue(): number {
+    override getBaseValue(): number {
         return this.baseValue;
     }
 
-    hasBreak(): boolean {
+    override hasBreak(): boolean {
         return this._runBreaks != null;
     }
 
@@ -580,7 +580,7 @@ export abstract class ContinuousAxis extends Axis {
         return this._runBreaks && this._runBreaks.slice(0, 1);
     }
 
-    isBreak(pos: number): boolean {
+    override isBreak(pos: number): boolean {
         if (this._runBreaks) {
             const br = this._runBreaks[0];
             return !br.gridVisible && (pos === br.from || pos === br.to);
@@ -599,12 +599,12 @@ export abstract class ContinuousAxis extends Axis {
      * @override
      * @config
      */
-    readonly tick: ContinuousAxisTick;
+    override readonly tick: ContinuousAxisTick;
     /**
      * @override
      * @config
      */
-    readonly grid: ContinuousAxisGrid;
+    override readonly grid: ContinuousAxisGrid;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -613,12 +613,12 @@ export abstract class ContinuousAxis extends Axis {
         return true;
     }
 
-    contains(value: number): boolean {
+    override contains(value: number): boolean {
         return !isNaN(value);
         // return (this.nullable && isNaN(value)) || super.contains(value);
     }
 
-    isBased(): boolean {
+    override isBased(): boolean {
         return !!(this.tick as ContinuousAxisTick)._baseAxis;
     }
 
@@ -634,7 +634,7 @@ export abstract class ContinuousAxis extends Axis {
         return new LinearAxisLabel(this);
     }
 
-    protected _doLoadProp(prop: string, value: any): boolean {
+    protected override _doLoadProp(prop: string, value: any): boolean {
         if (prop ==='break') {
             this.$_loadBreaks(value);
             return true;
@@ -653,7 +653,7 @@ export abstract class ContinuousAxis extends Axis {
         }
 
         const tick = this.tick as ContinuousAxisTick;
-        const based = tick._baseAxis instanceof ContinuousAxis;
+        const based = tick._baseAxis instanceof ContinuousAxis && tick._baseAxis._ticks.length > 0;
         let { min, max } = this._adjustMinMax(length, this._calcedMin = calcedMin, this._calcedMax = calcedMax);
         let baseVal = this._baseVal;
 
@@ -661,6 +661,12 @@ export abstract class ContinuousAxis extends Axis {
         if (isNaN(baseVal) && min < 0 && max > 0) {
             baseVal = 0;
         } 
+        if (!isNaN(baseVal)) {
+            min = Math.min(min, baseVal);
+            max = Math.max(max, baseVal);
+        } else if (min < 0 && max > 0) {
+            baseVal = 0;
+        }
 
         if (based && tick.baseRange) {
             min = tick._baseAxis.axisMin();
@@ -721,7 +727,7 @@ export abstract class ContinuousAxis extends Axis {
         }
 
         this._setMinMax(min, max);
-
+        
         const ticks: IAxisTick[] = [];
 
         // if (min !== max) {
@@ -729,9 +735,13 @@ export abstract class ContinuousAxis extends Axis {
                 steps = this.$_getBrokenSteps(this._runBreaks, length, min, max);
             }
     
+            let prev = NaN;
             for (let i = 0; i < steps.length; i++) {
                 const tick = this._createTick(length, i, steps[i]);
-                ticks.push(tick);
+                if (tick.value !== prev) {
+                    ticks.push(tick);
+                    prev = tick.value;
+                }
             }
         // }
         return ticks;
@@ -746,7 +756,7 @@ export abstract class ContinuousAxis extends Axis {
         }
     }
 
-    calcPoints(length: number, phase: number): void {
+    override calcPoints(length: number, phase: number): void {
         // 최대한 데이터포인트들을 표시해야 한다.
         // [주의] measure 중 마지막에 한 번만 실행하도록 phase에 100 보다 큰 값을 넘겨야 한다.
         if (phase > 100 && this._isX) {
@@ -759,7 +769,7 @@ export abstract class ContinuousAxis extends Axis {
                     this._unitLen = unit.len;
                     
                     // 선형 축에 너비가 필요한 시리즈가 있는 경우, 양 끝이 넘치지 않도록 조종한다. #485, #472
-                    if (!this._isPolar) {
+                    if (!this._isPolar && !this._zoom) {
                         this._min -= unit.min / 2;
                         this._max += unit.min / 2;
                     }
@@ -889,7 +899,7 @@ export abstract class ContinuousAxis extends Axis {
         return this._unitLen;
     }
 
-    getLabelLength(length: number, value: number): number {
+    override getLabelLength(length: number, value: number): number {
         return Math.floor(length / this._ticks.length);
     }
 
@@ -1105,7 +1115,7 @@ export class LinearAxis extends ContinuousAxis {
      * @override
      * @config
      */
-    readonly label: LinearAxisLabel;
+    override readonly label: LinearAxisLabel;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -1114,7 +1124,7 @@ export class LinearAxis extends ContinuousAxis {
         return 'linear';
     }
 
-    protected _adjustMinMax(length: number, min: number, max: number): { min: number; max: number; } {
+    protected override _adjustMinMax(length: number, min: number, max: number): { min: number; max: number; } {
         const v = super._adjustMinMax(length, min, max);
         const series = this._series;
 

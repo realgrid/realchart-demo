@@ -38,7 +38,7 @@ export class AreaRangeLegendMarkerView extends ShapeLegendMarkerView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _renderShape(size: number): void {
+    protected override _renderShape(size: number): void {
         super._renderShape(size);
 
         const line = [
@@ -70,7 +70,7 @@ export class AreaRangeLegendMarkerView extends ShapeLegendMarkerView {
         }
     }
 
-    protected _markerOffset(size: number): number {
+    protected override _markerOffset(size: number): number {
         return size / 2;
     }
 }

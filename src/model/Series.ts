@@ -164,10 +164,7 @@ export class DataPointLabel extends IconedText {
         return LabelIconPostion.TOP;
     }
 
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
-    protected _doLoadSimple(source: any): boolean {
+    protected override _doLoadSimple(source: any): boolean {
         if (isFunc(source)) {
             this.visibleCallback = source;
             return this.visible = true;
@@ -175,7 +172,7 @@ export class DataPointLabel extends IconedText {
         return super._doLoadSimple(source);
     }
 
-    protected _doPrepareRender(chart: IChart): void {
+    protected override _doPrepareRender(chart: IChart): void {
         super._doPrepareRender(chart);
         
         this._domain.numberFormatter = this._numberFormatter;
@@ -314,7 +311,7 @@ export class Trendline extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     // http://npmjs.com/package/regression
-    protected _doPrepareRender(chart: IChart): void {
+    protected override _doPrepareRender(chart: IChart): void {
         const series = this.series;
         const res = this._res = (series._runPoints.length - 1) * Math.max(1, +this.resolution || 5);
         const minX = series._minX > 0 ? 0 : (series._maxX - series._minX) / res - series._minX;
@@ -1243,7 +1240,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         return pickProp(this.xStep, this.chart.options.xStep) || 1;
     }
 
-    prepareRender(): void {
+    override prepareRender(): void {
         this._xAxisObj = this.group ? this.group._xAxisObj : this.chart._connectSeries(this, true);
         this._yAxisObj = this.group ? this.group._yAxisObj : this.chart._connectSeries(this, false);
         this._calcedColor = void 0;
@@ -1752,7 +1749,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         return SeriesLoadAnimation.REVEAL;
     }
 
-    protected _doLoad(src: any): void {
+    protected override _doLoad(src: any): void {
         super._doLoad(src);
 
         this._createFielders();
@@ -1789,7 +1786,7 @@ export abstract class Series extends ChartItem implements ISeries, IChartDataLis
         this._points.load(src);
     }
 
-    protected _doPrepareRender(): void {
+    protected override _doPrepareRender(): void {
         const color = this._runColor = isNumber(this.color) ? `var(--color-${(Math.floor(this.color) - 1) % 12 + 1})` : this.color;
         let colors: string[];
         let list: ColorList;
@@ -2197,7 +2194,7 @@ export abstract class WidgetSeries extends Series {
         };
     }
 
-    getLabelPosition(): PointItemPosition {
+    override getLabelPosition(): PointItemPosition {
         const p = this.pointLabel.position;
         return p === PointItemPosition.AUTO ? PointItemPosition.INSIDE : p;
     }
@@ -2205,15 +2202,15 @@ export abstract class WidgetSeries extends Series {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    needAxes(): boolean {
+    override needAxes(): boolean {
         return false;
     }
 
-    _colorByPoint(): boolean {
+    override _colorByPoint(): boolean {
         return true;
     }
 
-    getLegendSources(list: ILegendSource[]): void {
+    override getLegendSources(list: ILegendSource[]): void {
         if (this.legendByPoint) {
             this.visibleInLegend !== false && this._runPoints.forEach(p => {
                 list.push(p as WidgetSeriesPoint);
@@ -2226,15 +2223,15 @@ export abstract class WidgetSeries extends Series {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    canMinPadding(axis: IAxis, min: number): boolean {
+    override canMinPadding(axis: IAxis, min: number): boolean {
         return false;
     }
 
-    canMaxPadding(axis: IAxis, max: number): boolean {
+    override canMaxPadding(axis: IAxis, max: number): boolean {
         return false;
     }
 
-    protected _doLoad(src: any): void {
+    protected override _doLoad(src: any): void {
         super._doLoad(src);
 
         this._centerXDim = parsePercentSize(pickProp3(this.centerX, this.center, WidgetSeries.CENTER), true);
@@ -2305,7 +2302,7 @@ export abstract class RadialSeries extends WidgetSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoad(src: any): void {
+    protected override _doLoad(src: any): void {
         super._doLoad(src);
 
         this._radiusDim = parsePercentSize(pickProp(this.radius, RadialSeries.DEF_RADIUS), true);
@@ -2375,7 +2372,7 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getMinPointWidth(): number {
+    override getMinPointWidth(): number {
         return this._minPointWidth;
     }
 
@@ -2416,14 +2413,14 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
         return p;
     }
 
-    getLabelPosition(p: PointItemPosition): PointItemPosition {
+    override getLabelPosition(p: PointItemPosition): PointItemPosition {
         return p === PointItemPosition.AUTO ? PointItemPosition.OUTSIDE_FIRST : p;
     }
 
     //-------------------------------------------------------------------------
     // overriden mebers
     //-------------------------------------------------------------------------
-    isClusterable(): boolean {
+    override isClusterable(): boolean {
         return this.clusterable !== false;
     }
 
@@ -2432,7 +2429,7 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
         this._clusterPos = pos;
     }
 
-    protected _doPrepareRender(): void {
+    protected override _doPrepareRender(): void {
         super._doPrepareRender();
 
         this._pointPad = isNaN(this.pointPadding) ? (this._single ? 0.25 : this.group ? 0.1 : 0.2) : Math.max(0, Math.min(0.5, this.pointPadding));
@@ -2479,7 +2476,7 @@ export abstract class BasedSeries extends ClusterableSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doPrepareRender(): void {
+    protected override _doPrepareRender(): void {
         super._doPrepareRender();
         
         this._base = pickNum(this._getGroupBase(), this._yAxisObj.getBaseValue());
@@ -2490,7 +2487,7 @@ export abstract class BasedSeries extends ClusterableSeries {
         // this._base = pickNum3(this._getGroupBase(), this._yAxisObj.getBaseValue(), 0);
     }
 
-    getBaseValue(axis: IAxis): number {
+    override getBaseValue(axis: IAxis): number {
         return axis === this._yAxisObj ? this._base : NaN;
     }
 
@@ -2501,7 +2498,7 @@ export abstract class BasedSeries extends ClusterableSeries {
         return this.baseValue;
     }
 
-    isBased(axis: IAxis): boolean {
+    override isBased(axis: IAxis): boolean {
         return axis === this._yAxisObj;
     }
 }
@@ -2513,7 +2510,7 @@ export abstract class RangedSeries extends ClusterableSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    collectValues(axis: IAxis, vals: number[]): void {
+    override collectValues(axis: IAxis, vals: number[]): void {
         super.collectValues(axis, vals);
 
         if (axis === this._yAxisObj) {
@@ -2719,9 +2716,8 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
         return true;
     }
 
-    isEmpty(): boolean {
-        return this._series.length < 1;
-        // return this._visibles.length < 1;
+    isEmpty(visibleOnly: boolean): boolean {
+        return (visibleOnly ? this._visibles : this._series).length < 1;
     }
 
     canCategorized(): boolean {
@@ -2875,14 +2871,14 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
         return pts;
     }
 
-    protected _doLoadProp(prop: string, value: any): boolean {
+    protected override _doLoadProp(prop: string, value: any): boolean {
         if (prop === 'children') {
             this.$_loadSeries(this.chart, value);
             return true;
         }
     }
 
-    prepareRender(): void {
+    override prepareRender(): void {
         const prev = this._visibles;
 
         this._stacked = this.layout === SeriesGroupLayout.STACK || this.layout === SeriesGroupLayout.FILL;
@@ -2899,7 +2895,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
         super.prepareRender();
     }
 
-    protected _doPrepareRender(chart: IChart): void {
+    protected override _doPrepareRender(chart: IChart): void {
         this._xAxisObj = this.chart._connectSeries(this, true);
         this._yAxisObj = this.chart._connectSeries(this, false);
 
@@ -3101,7 +3097,7 @@ export abstract class ConstraintSeriesGroup<T extends Series> extends SeriesGrou
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    collectValues(axis: IAxis, vals: number[]): void {
+    override collectValues(axis: IAxis, vals: number[]): void {
         super.collectValues(axis, vals);
 
         if (axis === this._yAxisObj) {
@@ -3149,7 +3145,7 @@ export abstract class ClusterableSeriesGroup<T extends Series> extends SeriesGro
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    isClusterable(): boolean {
+    override isClusterable(): boolean {
         return this.clusterable !== false;
     }
 
@@ -3188,7 +3184,7 @@ export abstract class MarkerSeries extends Series {
      */
     hintDistance: number;
 
-    isMarker(): boolean {
+    override isMarker(): boolean {
         return true;
     }
 }

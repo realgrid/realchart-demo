@@ -81,19 +81,19 @@ export class BellCurveSeries extends AreaSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    _type(): string {
+    override _type(): string {
         return 'bellcurve';
     }
 
-    getLineType(): LineType {
+    override getLineType(): LineType {
         return this.curved ? LineType.SPLINE : LineType.DEFAULT;
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new BellCurveSeriesPoint(source);
     }
 
-    protected _doLoadData(src: any): any[] {
+    protected override _doLoadData(src: any): any[] {
         const data = super._doLoadData(src);
 
         if (isArray(data)) {
@@ -101,14 +101,14 @@ export class BellCurveSeries extends AreaSeries {
         }
     }
 
-    _referOtherSeries(series: Series): boolean {
+    override _referOtherSeries(series: Series): boolean {
         if (this._points.isEmpty() && (series.name === this.source || series.index === this.source)) {
             series.referBy(this);
             return true;
         }
     }
 
-    reference(other: Series, axis: IAxis): void {
+    override reference(other: Series, axis: IAxis): void {
         if (!axis._isX) {
             const vals = other._runPoints.map(p => p.yValue).filter(v => !isNaN(v));
             const pts = this.$_loadTable(vals);

@@ -26,11 +26,11 @@ export class LogAxisTick extends ContinuousAxisTick {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    canUseNumSymbols(): boolean {
+    override canUseNumSymbols(): boolean {
         return this.axis.axisMax() > log10(500);
     }
 
-    protected _getStepMultiples(scale: number): number[] {
+    protected override _getStepMultiples(scale: number): number[] {
         // console.log(scale);
         // return [1, 2, 3, 4, 5, 6, 7, 8, 9];
         // return [1, 2, 3, 4, 5, 10];
@@ -41,7 +41,7 @@ export class LogAxisTick extends ContinuousAxisTick {
     /**
      * 소수점을 갖는 step들을 역로그된 값이 최대한 정수가 되게 조정한다.
      */
-    _normalizeSteps(steps: number[], min: number, max: number): number[] {
+    override _normalizeSteps(steps: number[], min: number, max: number): number[] {
         if (!this.arrangeDecimals) return steps;
 
         const pts: number[] = [];
@@ -118,11 +118,11 @@ export class LogAxis extends ContinuousAxis {
         return 'log';
     }
 
-    protected _createTickModel(): AxisTick {
+    protected override _createTickModel(): AxisTick {
         return new LogAxisTick(this);
     }
     
-    collectValues(): void {
+    override collectValues(): void {
         super.collectValues();
         
         // 0보다 작은 값을 log할 수 없다.
@@ -132,12 +132,12 @@ export class LogAxis extends ContinuousAxis {
     /**
      * 내부에서는 log 값들을 사용하고...
      */
-    getPos(length: number, value: number): number {
+    override getPos(length: number, value: number): number {
         value = value > 0 ? log10(value) : -1;
         return super.getPos(length, value);
     }
 
-    protected _doCalculateRange(values: number[]): { min: number; max: number; } {
+    protected override _doCalculateRange(values: number[]): { min: number; max: number; } {
         const v = super._doCalculateRange(values);
 
         v.min = log10(v.min);
@@ -148,11 +148,11 @@ export class LogAxis extends ContinuousAxis {
     /**
      * 화면 표시는 역log 값들을 사용한다.
      */
-    protected _createTick(length: number, index: number, step: number): IAxisTick {
+    protected override _createTick(length: number, index: number, step: number): IAxisTick {
         return super._createTick(length, index, fixnum(pow10(step)));
     }
 
-    protected _calcUnitLen(vals: number[], length: number, axisMin: number, axisMax: number): { len: number; min: number; } {
+    protected override _calcUnitLen(vals: number[], length: number, axisMin: number, axisMax: number): { len: number; min: number; } {
         let min = log10(vals[1]) - log10(vals[0]);
     
         for (let i = 2; i < vals.length; i++) {

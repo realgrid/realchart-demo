@@ -55,10 +55,10 @@ import { BulletGaugeGroupView, BulletGaugeView } from "./gauge/BulletGaugeView";
 import { ButtonElement } from "../common/ButtonElement";
 import { TextAnnotationView } from "./annotation/TextAnnotationView";
 import { Annotation } from "../model/Annotation";
-import { AnnotationView } from "./AnnotationView";
+import { AnnotationView, IAnnotationAnchorOwner } from "./AnnotationView";
 import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
-import { LabelElement } from "../common/impl/LabelElement";
+import { LabelElement } from "./LabelElement";
 import { CircleBarSeriesView } from "./series/CircleBarSeriesView";
 import { cos, floor, maxv, minv, pickNum, sin } from "../common/Common";
 import { ArcPolyElement } from "../common/impl/CircleElement";
@@ -134,17 +134,17 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: AxisGrid, width: number, height: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: AxisGrid, width: number, height: number, phase: number): ISize {
         return {width, height};
     }
 
-    protected _doLayout(): void {
+    protected override _doLayout(): void {
         const m = this.model;
         const axis = m.axis;
         const reversed = axis.reversed;
         const w = this.width;
         const h = this.height;
-        const pts = m.getPoints(axis._isHorz ? w : h);
+        const pts = axis.isEmpty() ? [] : m.getPoints(axis._isHorz ? w : h);
         const lines = this._lines.prepare(pts.length, (line) => {
             line.internalClearStyleAndClass();
             line.internalSetStyleOrClass(axis.grid.style);
@@ -401,7 +401,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepare(doc: Document, model: AxisLineGuide): void {
+    override prepare(doc: Document, model: AxisLineGuide): void {
         super.prepare(doc, model);
 
         this._line.setStyles(model.style);
@@ -525,7 +525,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepare(doc: Document, model: AxisRangeGuide): void {
+    override prepare(doc: Document, model: AxisRangeGuide): void {
         super.prepare(doc, model);
 
         this._box.setStyleOrClass(model.style);
@@ -724,7 +724,7 @@ export class AxisGuideContainer extends LayerElement {
         }
     }
 
-    addAll(doc: Document, guides: AxisGuide[], polar: boolean): void {
+    setAll(doc: Document, guides: AxisGuide[], polar: boolean): void {
         guides.forEach(g => {
             let v: AxisGuideView<AxisGuide>;
 
@@ -741,7 +741,7 @@ export class AxisGuideContainer extends LayerElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    add(child: AxisGuideView<AxisGuide>): RcElement {
+    override add(child: AxisGuideView<AxisGuide>): RcElement {
         this._views.push(child);
         return super.add(child);
     }
@@ -834,7 +834,7 @@ export class ZoomButton extends ButtonElement {
     }
 }
 
-export interface IPlottingOwner {
+export interface IPlottingOwner extends IAnnotationAnchorOwner {
 
     // clipSeries(view: RcElement, view2: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void;
     showTooltip(series: Series, pv: IPointView, siblings: IPointView[], body: RcElement, p: IPoint): void;
@@ -843,7 +843,7 @@ export interface IPlottingOwner {
     getSeriesView(series: ISeries): SeriesView<Series>;
 }
 
-export class BodyView extends ChartElement<Body> {
+export class BodyView extends ChartElement<Body> implements IAnnotationAnchorOwner {
 
     //-------------------------------------------------------------------------
     // consts
@@ -936,6 +936,13 @@ export class BodyView extends ChartElement<Body> {
         //     this._seriesViews.forEach(sv => sv.hoverPoints(null));
         //     this._owner.hideTooltip(); 
         // }
+    }
+
+    //-------------------------------------------------------------------------
+    // IAnnotationAnchorOwner
+    //-------------------------------------------------------------------------
+    getAnnotationAnchor(model: any): RcElement {
+        return this._gaugeMap.get(model) || this._annotationMap.get(model);
     }
 
     //-------------------------------------------------------------------------
@@ -1197,11 +1204,11 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    getBounds(): DOMRect {
+    override getBounds(): DOMRect {
         return this._hitTester.getBounds();
     }
 
-    protected _doMeasure(doc: Document, model: Body, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: Body, hintWidth: number, hintHeight: number, phase: number): ISize {
         const chart = model.chart as Chart;
         const base = model.base();
 
@@ -1266,7 +1273,7 @@ export class BodyView extends ChartElement<Body> {
         // view2 && view2.setClip(this._seriesClip);
     }
 
-    protected _doLayout(): void {
+    protected override _doLayout(): void {
         const w = this.width;
         const h = this.height;
         const img = this._image;
@@ -1366,7 +1373,7 @@ export class BodyView extends ChartElement<Body> {
         });
 
         // annotations
-        this._layoutAnnotations(this._inverted, w, h);
+        this._layoutAnnotations(this._inverted, this, w, h);
 
         // zoom button
         if (this._zoomButton.visible) {
@@ -1549,10 +1556,10 @@ export class BodyView extends ChartElement<Body> {
         });
     }
 
-    protected _layoutAnnotations(inverted: boolean, w: number, h: number): void {
+    protected _layoutAnnotations(inverted: boolean, owner: IAnnotationAnchorOwner, w: number, h: number): void {
         if (this._annotationViews.length > 0) {
             this._annotationViews.forEach(v => {
-                v._layoutView(inverted, 0, 0, w, h);
+                v._layoutView(inverted, owner, 0, 0, w, h);
                 v.setClip(this._polar || v.model.noClip ? _undef : this._bodyClip);
             });
         }

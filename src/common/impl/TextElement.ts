@@ -212,12 +212,12 @@ export class TextElement extends RcElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    clearDom(): void {
+    override clearDom(): void {
         super.clearDom();
         this._dirty = true;
     }
             
-    setStyles(styles: any): boolean {
+    override setStyles(styles: any): boolean {
         //if (this._text === '미국') debugger;
         let changed = super.setStyles(styles);
         if (changed) {
@@ -226,7 +226,7 @@ export class TextElement extends RcElement {
         return changed;
     }
 
-    setStyle(prop: string, value: string): boolean {
+    override setStyle(prop: string, value: string): boolean {
         let changed = super.setStyle(prop, value);
         if (changed) {
             this.layoutText();
@@ -234,7 +234,7 @@ export class TextElement extends RcElement {
         return changed;
     }
 
-    getBBox(): IRect {
+    override getBBox(): IRect {
         if (this._dirty || this._styleDirty) {
             this._bounds = (this.dom as SVGGraphicsElement).getBBox();
             this._dirty = this._styleDirty = false;

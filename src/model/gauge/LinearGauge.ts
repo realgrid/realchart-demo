@@ -219,11 +219,11 @@ export abstract class LinearGaugeBase extends ValueGauge {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    calcedMinMax(): IMinMax {
+    override calcedMinMax(): IMinMax {
         return this.scale.range();
     }
 
-    protected _doPrepareRender(chart: IChart): void {
+    protected override _doPrepareRender(chart: IChart): void {
         super._doPrepareRender(chart);
 
         this.label.prepareRender();
@@ -427,7 +427,7 @@ export abstract class LinearGaugeGroupBase<T extends LinearGaugeBase> extends Ga
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    calcedMinMax(): IMinMax {
+    override calcedMinMax(): IMinMax {
         return this.scale.range();
     }
 }

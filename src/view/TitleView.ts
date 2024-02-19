@@ -41,7 +41,7 @@ export class TitleView extends BoundableElement<Title> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _marginable(): boolean {
+    protected override _marginable(): boolean {
         return false;
     }
 
@@ -49,14 +49,14 @@ export class TitleView extends BoundableElement<Title> {
         back.setStyleOrClass(this.model.backgroundStyle);
     }
 
-    protected _doMeasure(doc: Document, model: Title, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: Title, hintWidth: number, hintHeight: number, phase: number): ISize {
         this._richText.setFormat(model.text);
         this._richText.build(this._textView, hintWidth, hintHeight, null, null);
 
         return rectToSize(this._textView.getBBox());
     }
 
-    protected _doLayout(): void {
+    protected override _doLayout(): void {
         this._richText.layout(this._textView, this.textAlign(), this.width, this.height, this._paddings);
     }
 }

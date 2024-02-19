@@ -25,7 +25,7 @@ export class WaterfallSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    parse(series: WaterfallSeries): void {
+    override parse(series: WaterfallSeries): void {
         super.parse(series);
 
         this._isSum = this.source.isSum === true;
@@ -92,19 +92,19 @@ export class WaterfallSeries extends RangedSeries {
         return 'waterfall';
     }
 
-    canCategorized(): boolean {
+    override canCategorized(): boolean {
         return true;
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new WaterfallSeriesPoint(source);
     }
 
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
+    protected override _createLegendMarker(doc: Document, size: number): RcElement {
         return RectElement.create(doc, Series.LEGEND_MARKER, 0, 0, size, size, 2);
     }
 
-    protected _doPrepareRender(): void {
+    protected override _doPrepareRender(): void {
         super._doPrepareRender();
 
         const pts = this._runPoints as WaterfallSeriesPoint[];

@@ -22,7 +22,7 @@ class FunnelSegment extends PointElement implements IPointView {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    point: FunnelSeriesPoint
+    override point: FunnelSeriesPoint;
     ny: number;
     nx1: number;
     nx2: number;
@@ -57,7 +57,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
         return this._segments;
     }
 
-    protected _prepareSeries(doc: Document, model: FunnelSeries): void {
+    protected override _prepareSeries(doc: Document, model: FunnelSeries): void {
         super._prepareSeries(doc, model);
 
         this.$_prepareSegments(doc, model, this._visPoints as FunnelSeriesPoint[]);
@@ -69,7 +69,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
         this.$_layoutSegments(width, height);
     }
 
-    protected _runShowEffect(firstTime: boolean): void {
+    protected override _runShowEffect(firstTime: boolean): void {
         firstTime && SeriesAnimation.reveal(this, { from: this.model.reversed ? 'bottom' : 'top'});
     }
 
@@ -77,7 +77,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
         this._renderSeries(this.width, this.height);
     }
 
-    _animationStarted(ani: Animation): void {
+    override _animationStarted(ani: Animation): void {
         super._animationStarted(ani);
         this._lineContainer.setVis(this._labelContainer.visible);
     }

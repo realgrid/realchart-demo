@@ -43,9 +43,9 @@ export class ErrorBarSeries extends LowRangedSeries {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    lowField: string;
+    override lowField: string;
 
-    pointPadding = 0.3;
+    override pointPadding = 0.3;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -54,17 +54,17 @@ export class ErrorBarSeries extends LowRangedSeries {
         return 'errorbar';
     }
 
-    isClusterable(): boolean {
+    override isClusterable(): boolean {
         return false;
     }
 
-    pointLabelCount(): number {
+    override pointLabelCount(): number {
         return 2;
     }
 
-    tooltipText = '<b>${name}</b><br>${series}: <b>${lowValue}</b> ~ <b>${highValue}</b>';
+    override tooltipText = '<b>${name}</b><br>${series}: <b>${lowValue}</b> ~ <b>${highValue}</b>';
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new RangedPoint(source);
     }
 
@@ -72,12 +72,12 @@ export class ErrorBarSeries extends LowRangedSeries {
         return p.lowValue;
     }
 
-    getBaseValue(axis: IAxis): number {
+    override getBaseValue(axis: IAxis): number {
         // TODO: 연결된 시리즈(bar)의 설정을 따른다.
         return axis === this._yAxisObj ? 0 : NaN;
     }
 
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
+    protected override _createLegendMarker(doc: Document, size: number): RcElement {
         const pb = new PathBuilder();
         pb.vline(size / 2, 0.1, size * 0.8);
         pb.hline(0.1, 0, size);

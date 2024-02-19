@@ -19,7 +19,7 @@ class StickView extends RangeElement implements IPointView {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    point: CandlestickSeriesPoint;
+    override point: CandlestickSeriesPoint;
 
     // private _back: RectElement;
     private _wickUpper: LineElement;
@@ -60,7 +60,7 @@ class StickView extends RangeElement implements IPointView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doInitChildren(doc: Document): void {
+    protected override _doInitChildren(doc: Document): void {
         this.add(this._wickUpper = new LineElement(doc, 'rct-candlestick-point-wick'));
         this.add(this._wickLower = new LineElement(doc, 'rct-candlestick-point-wick'));
         this.add(this._body = new RectElement(doc));
@@ -104,11 +104,11 @@ export class CandlestickSeriesView extends RangedSeriesView<CandlestickSeries> {
         })
     }
 
-    protected _setPointColor(v: RcElement, color: string): void {
+    protected override _setPointColor(v: RcElement, color: string): void {
         (v as StickView)._body.setColor(color);
     }
 
-    protected _setPointStyle(v: RcElement, model: CandlestickSeries, p: CandlestickSeriesPoint, styles?: any[]): void {
+    protected override _setPointStyle(v: RcElement, model: CandlestickSeries, p: CandlestickSeriesPoint, styles?: any[]): void {
         super._setPointStyle(v, model, p, styles);
 
         if (p.closeValue < p.openValue && model.declineStyle) {

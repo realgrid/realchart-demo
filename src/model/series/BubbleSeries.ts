@@ -120,21 +120,21 @@ export class BubbleSeries extends MarkerSeries {
         return 'bubble';
     }
 
-    tooltipText = 'x: <b>${x}</b><br>y: <b>${y}</b><br>volume: <b>${z}</b>';
+    override tooltipText = 'x: <b>${x}</b><br>y: <b>${y}</b><br>volume: <b>${z}</b>';
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new BubbleSeriesPoint(source);
     }
 
-    hasZ(): boolean {
+    override hasZ(): boolean {
         return true;
     }
 
-    _colorByPoint(): boolean {
+    override _colorByPoint(): boolean {
         return this.colorByPoint;
     }
 
-    load(src: any): BubbleSeries {
+    override load(src: any): BubbleSeries {
         super.load(src);
 
         this._minDim = parsePercentSize(this.minSize, true);
@@ -142,7 +142,7 @@ export class BubbleSeries extends MarkerSeries {
         return this;
     }
 
-    protected _doPrepareRender(): void {
+    protected override _doPrepareRender(): void {
         super._doPrepareRender();
 
         this._zMin = Number.MAX_VALUE;
@@ -157,7 +157,7 @@ export class BubbleSeries extends MarkerSeries {
         this._noSize = this._zMin === this._zMax;
     }
 
-    protected _getRangeMinMax(axis: "x" | "y" | "z"): { min: number; max: number; } {
+    protected override _getRangeMinMax(axis: "x" | "y" | "z"): { min: number; max: number; } {
         if (axis === 'z') {
             return { min: this._zMin, max: this._zMax };
         }

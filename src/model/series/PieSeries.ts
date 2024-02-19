@@ -53,13 +53,13 @@ export class PieSeriesPoint extends WidgetSeriesPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    parse(series: ISeries): void {
+    override parse(series: ISeries): void {
         super.parse(series);
 
         this.sliced = this.source.sliced;
     }
 
-    protected _assignTo(proxy: any): any {
+    protected override _assignTo(proxy: any): any {
         return assign(super._assignTo(proxy), {
             sliced: this.sliced
         });
@@ -201,22 +201,22 @@ export class PieSeries extends RadialSeries {
         return 'pie';
     }
 
-    protected _createLabel(chart: IChart): DataPointLabel {
+    protected override _createLabel(chart: IChart): DataPointLabel {
         return new PieSeriesLabel(chart);
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new PieSeriesPoint(source);
     }
 
-    protected _doLoad(src: any): void {
+    protected override _doLoad(src: any): void {
         super._doLoad(src);
 
         this._innerDim = parsePercentSize(this.innerRadius, true);
         this._sliceDim = parsePercentSize(this.sliceOffset, true);
     }
 
-    protected _doPrepareRender(): void {
+    protected override _doPrepareRender(): void {
         super._doPrepareRender();
 
         let start = pickNum(this.startAngle % 360, 0);
@@ -292,7 +292,7 @@ export class PieSeriesGroup extends SeriesGroup<PieSeries> {
         return 'pie';
     }
 
-    needAxes(): boolean {
+    override needAxes(): boolean {
         return false;
     }
 
@@ -300,14 +300,14 @@ export class PieSeriesGroup extends SeriesGroup<PieSeries> {
         return ser instanceof PieSeries;
     }
 
-    protected _doLoad(source: any): void {
+    protected override _doLoad(source: any): void {
         super._doLoad(source);
 
         this._polarDim = parsePercentSize(this.polarSize, true) || { size: 80, fixed: false };
         this._innerDim = parsePercentSize(this.innerSize, true);
     }
 
-    protected _doPrepareSeries(series: PieSeries[]): void {
+    protected override _doPrepareSeries(series: PieSeries[]): void {
         // if (this.layout === SeriesGroupLayout.STACK || this.layout === SeriesGroupLayout.FILL) {
             const sum = series.map(ser => (ser as PieSeries).groupSize).reduce((a, c) => a + pickNum(c, 1), 0);
             let p = 0;

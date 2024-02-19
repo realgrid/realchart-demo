@@ -75,8 +75,8 @@ class AxisImpl extends Axis {
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] { return [];}
     getPos(length: number, value: number): number { return 0; }
     getUnitLen(length: number): number { return 0; }
-    axisMin(): number { return; }
-    axisMax(): number { return; }
+    override axisMin(): number { return; }
+    override axisMax(): number { return; }
     continuous(): boolean { return false }
     valueAt(length: number, pos: number): number { return; }
     xValueAt(pos: number): number { return }
@@ -137,6 +137,7 @@ class AxisImpl extends Axis {
         chart._getSeries().series().map((series) => {
             axis._connect(series);
         })
+        axis.prepare();
         expect(axis.isEmpty()).eq(json.series.length < 1);
     });
 
@@ -146,6 +147,7 @@ class AxisImpl extends Axis {
         chart._getSeries().series().map((series) => {
             axis._connect(series);
         })
+        axis.prepare();
         expect(axis['_series'].length > 0).true;
         expect(axis.disconnect());
         expect(axis['_series'].length === 0).true;
@@ -179,6 +181,7 @@ class AxisImpl extends Axis {
         chart._getSeries().series().map((series) => {
             axis._connect(series);
         });
+        axis.prepare();
         expect(axis['_series'].length).eq(json.series.length);
         expect(axis.isEmpty()).false;
     });

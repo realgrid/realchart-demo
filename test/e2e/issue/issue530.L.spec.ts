@@ -5,7 +5,9 @@
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
-
+declare global {
+  var loadChart: (newConfig: any) => Promise<void>;
+}
 import { test } from "@playwright/test";
 import { expect } from "chai";
 import { PWTester } from "../PWTester";
@@ -13,7 +15,7 @@ import { SeriesView } from "../../../src/view/SeriesView";
 import { Tooltip } from "../../../src/model/Tooltip";
 
 /**
- * PlayWright Tests for issue113
+ * PlayWright Tests for issue530
  */
 test.describe("issue530 test", () => {
   const url = "boundary/empty.html?debug";

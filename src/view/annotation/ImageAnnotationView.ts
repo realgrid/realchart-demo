@@ -18,7 +18,7 @@ export class ImageAnnotationView extends AnnotationView<ImageAnnotation> {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly CLASS_NAME: string = 'rct-image-annotation';
+    static override readonly CLASS_NAME: string = 'rct-image-annotation';
 
     //-------------------------------------------------------------------------
     // fields
@@ -37,7 +37,7 @@ export class ImageAnnotationView extends AnnotationView<ImageAnnotation> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: ImageAnnotation, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: ImageAnnotation, hintWidth: number, hintHeight: number, phase: number): ISize {
         const sz = model.getSize(hintWidth, hintHeight);
 
         this._deflatePaddings(sz);
@@ -47,14 +47,14 @@ export class ImageAnnotationView extends AnnotationView<ImageAnnotation> {
         return rectToSize(this._imageView.getBBox());
     }
 
-    protected _doLayout(p: IPoint): void {
+    protected override _doLayout(p: IPoint): void {
         //this._imageView.trans(this._paddings.left, this._paddings.top);
         this._imageView.trans(p.x + this._paddings.left, p.y + this._paddings.top);
 
         super._doLayout(p);
     }
 
-    protected _setRotation(originX: number, originY: number, rotation: number): void {
+    protected override _setRotation(originX: number, originY: number, rotation: number): void {
         this._imageView.setRotation(originX, originY, rotation);
     }
 }

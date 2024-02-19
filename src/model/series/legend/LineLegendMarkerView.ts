@@ -31,7 +31,7 @@ export class LineLegendMarkerView extends ShapeLegendMarkerView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _renderShape(size: number): void {
+    protected override _renderShape(size: number): void {
         super._renderShape(size);
 
         // [주의] marker의 크기를 유지해야 line이 중앙에 표시된다.
@@ -42,7 +42,7 @@ export class LineLegendMarkerView extends ShapeLegendMarkerView {
         }
     }
 
-    protected _markerOffset(size: number): number {
+    protected override _markerOffset(size: number): number {
         return size / 2;
     }
 }
