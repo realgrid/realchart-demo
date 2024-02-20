@@ -1,5 +1,8 @@
 name: release test
 
+on:
+  workflow_dispatch:
+
 jobs:
   release-publish:
     runs-on: ubuntu-latest
