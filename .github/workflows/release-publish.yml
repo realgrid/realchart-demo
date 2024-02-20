@@ -1,10 +1,15 @@
-name: release test
+name: release publish
 
 on:
   workflow_dispatch:
+  release:
+    types: [published]
+# on:
+#   push:
+#     branches: [deploy-actions]
 
 jobs:
-  release-test:
+  release-publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,6 +31,12 @@ jobs:
           registry: 'https://npm.pkg.github.com'
           package: dist/.githubnpm/package.json
           token: ${{ secrets.WOORITECH_NPM_ACCESS_TOKEN }}
+      - name: Deploy NPM
+        uses: JS-DevTools/npm-publish@v3
+        with:
+          # registry: https://registry.npmjs.org/
+          package: dist/.npm/package.json
+          token: ${{ secrets.REALCHART_ORG_NPM_ACCESS_TOKEN }}
       - name: AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -33,6 +44,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
           aws-region: ${{ secrets.AWS_MAIN_REGION }}
       - name: Copy latest to the AWS S3
-        run: aws s3 cp dist/deploy/realchart.latest.zip s3://com.realgrid.candidates/realchart/latest/
+        run: aws s3 cp dist/deploy/realchart.latest.zip s3://com.realgrid.releases/realchart/latest/
       - name: Copy current to the AWS S3
-        run: aws s3 cp dist/deploy/realchart.${{steps.package-version.outputs.current-version}}.zip s3://com.realgrid.candidates/realchart/${{steps.package-version.outputs.current-version}}/
+        run: aws s3 cp dist/deploy/realchart.${{steps.package-version.outputs.current-version}}.zip s3://com.realgrid.releases/realchart/${{steps.package-version.outputs.current-version}}/
