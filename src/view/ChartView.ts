@@ -1218,14 +1218,6 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
         const {x, y} = pv.getTooltipPos ? pv.getTooltipPos() : {x: pv.point.xPos, y: pv.point.yPos };
         const follow = this._model.chart.tooltip.followPointer;
 
-        // if (follow) {
-        //     if (!this._beforeTime || new Date().getTime() - this._beforeTime > 200){
-        //         this._beforeTime = new Date().getTime();
-        //     } else {
-        //         return;
-        //     }
-        // }
-
         const bp = body.getTooltipPos();
         const tx = follow ? p.x + bp.x : x + bp.x;
         const ty = follow ? p.y + bp.y : y + bp.y;

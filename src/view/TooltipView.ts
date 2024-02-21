@@ -112,12 +112,17 @@ export class TooltipView extends RcElement {
         const fb = focus.getBounds();
         const cb = control.getBounds();
         let translate: number;
+        let overed = false;
         
         if (inverted) {
             translate = (y - h / 2) - maxv(0, minv(y - h / 2, ch - h));
             // data point 범위를 벗어났을 경우 반대로 그려준다. issue #456
             this._tailVisible = Math.abs(h / 2 - this._radius - this._tailSize / 2) > Math.abs(translate);
-            let overed = reversed ? w + gap > fb.x - cb.x + fb.width : fb.x - cb.x - gap > cw - w;
+            if (model.followPointer) {
+                overed = reversed ? w + gap > x : x + w + gap > cw;
+            } else {
+                overed = reversed ? w + gap > fb.x - cb.x + fb.width : fb.x - cb.x - gap > cw - w;
+            }
             if (overed) reversed = !reversed;
             const position = reversed ? TooltipPosition.LEFT : TooltipPosition.RIGHT;
 
@@ -128,7 +133,11 @@ export class TooltipView extends RcElement {
             translate = (x - w / 2) - maxv(0, minv(x - w / 2, cw - w));
             // data point 범위를 벗어났을 경우 반대로 그려준다. issue #456
             this._tailVisible = Math.abs(w / 2 - this._radius - this._tailSize / 2) > Math.abs(translate);
-            let overed = reversed ? ch - (fb.y - cb.y - control._padding.top) < h + gap : cb.bottom - fb.bottom + gap > ch - h;
+            if (model.followPointer) {
+                overed = reversed ? y + h + gap > ch : y - (h + gap) < 0;
+            } else {
+                overed = reversed ? ch - (fb.y - cb.y - control._padding.top) < h + gap : cb.bottom - fb.bottom + gap > ch - h;
+            }
             if (overed) reversed = !reversed;
             const position = reversed ? TooltipPosition.BOTTOM : TooltipPosition.TOP;
 
