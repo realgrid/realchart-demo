@@ -405,7 +405,7 @@ export class AxisGuideLabel extends IconedText {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * label을 body 영역 안에 배치할지 여부.
+     * body 영역 기준, 표시 위치.
      * 
      * @config
      */
