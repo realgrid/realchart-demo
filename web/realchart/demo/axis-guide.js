@@ -113,6 +113,10 @@ function setActions(container) {
         config.yAxis.guides[0].front = _getChecked(e);
         chart.load(config);
     }, false);
+    createListBox(container, "guide[0].label.position", ['inside', 'outside'], function (e) {
+        config.yAxis.guides[0].label.position = _getValue(e);
+        chart.load(config);
+    }, 'inside');
     createListBox(container, "guide[0].label.align", ['left', 'center', 'right'], function (e) {
         config.yAxis.guides[0].label.align = _getValue(e);
         chart.load(config);
@@ -134,6 +138,10 @@ function setActions(container) {
         config.yAxis.guides[1].front = _getChecked(e);
         chart.load(config);
     }, true);
+    createListBox(container, "guide[1].label.position", ['inside', 'outside'], function (e) {
+        config.yAxis.guides[1].label.position = _getValue(e);
+        chart.load(config);
+    }, 'inside');
     createListBox(container, "guide[1].label.align", ['left', 'center', 'right'], function (e) {
         config.yAxis.guides[1].label.align = _getValue(e);
         chart.load(config);

@@ -15,7 +15,7 @@ import { Align, FILL, PI_2, VerticalAlign, _undef, assert } from "../common/Type
 import { ImageElement } from "../common/impl/ImageElement";
 import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
-import { Axis, AxisGrid, AxisGuide, AxisLineGuide, AxisRangeGuide, IAxisGridRow } from "../model/Axis";
+import { Axis, AxisGrid, AxisGuide, AxisLineGuide, AxisRangeGuide, GuideLabelPosition, IAxisGridRow } from "../model/Axis";
 import { Body, IPolar } from "../model/Body";
 import { Chart, IChart, PointHoverScope } from "../model/Chart";
 import { Crosshair } from "../model/Crosshair";
@@ -440,15 +440,13 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
         
                     switch (label.verticalAlign) {
                         case VerticalAlign.BOTTOM:
-                            y = height - rLabel.height - yOff;
+                            y = label.position === GuideLabelPosition.INSIDE ? height - rLabel.height - yOff : height + yOff;
                             break;
-        
                         case VerticalAlign.MIDDLE:
                             y = (height - rLabel.height) / 2 - yOff;
                             break;
-        
                         default:
-                            y = yOff;
+                            y = label.position === GuideLabelPosition.INSIDE ? yOff : (rLabel.height + yOff) * -1;
                             break;
                     }
                 }
@@ -466,10 +464,10 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
                             x = (width - rLabel.width) / 2 - xOff;
                             break;
                         case Align.RIGHT:
-                            x = width - rLabel.width - xOff;
+                            x = label.position === GuideLabelPosition.INSIDE ? width - rLabel.width - xOff : width + xOff;
                             break;
                         default:
-                            x = xOff;
+                            x = label.position === GuideLabelPosition.INSIDE ? xOff : (rLabel.width + xOff) * -1;
                             break;
                     }
         
@@ -564,13 +562,13 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
     
                 switch (label.verticalAlign) {
                     case VerticalAlign.BOTTOM:
-                        y = height - rLabel.height - yOff;
+                        y = label.position === GuideLabelPosition.INSIDE ? height - rLabel.height - yOff : height + yOff;
                         break;
                     case VerticalAlign.MIDDLE:
                         y = (height - rLabel.height) / 2 - yOff;
                         break;
                     default:
-                        y = yOff;
+                        y = label.position === GuideLabelPosition.INSIDE ? yOff : (rLabel.height + yOff) * -1;
                         break;
                 }
     
@@ -590,10 +588,10 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
                         x = (width - rLabel.width) / 2 - xOff;
                         break;
                     case Align.RIGHT:
-                        x = width - rLabel.width - xOff;
+                        x = label.position === GuideLabelPosition.INSIDE ? width - rLabel.width - xOff : width + xOff;
                         break;
                     default:
-                        x = xOff;
+                        x = label.position === GuideLabelPosition.INSIDE ? xOff : (rLabel.width + xOff) * -1;
                         break;
                 }
     
@@ -1351,10 +1349,12 @@ export class BodyView extends ChartElement<Body> implements IAnnotationAnchorOwn
             });
 
             // axis guides
+            const control = this.control;
             if (!this._guideClip) {
-                this._guideClip = this.control.clipBounds(0, 0, w, h);
+                const padding = control._padding;
+                this._guideClip = control.clipBounds((padding.left + this.tx) * -1, (padding.top + this.ty) * -1, control.width(), control.height());
             } else {
-                this._guideClip.resize(w, h);
+                this._guideClip.resize(control.width(), control.height());
             }
             [this._guideContainer, this._frontGuideContainer].forEach(c => {
                 c._views.forEach(v => v.layout(w, h));
