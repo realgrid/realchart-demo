@@ -1,0 +1,38 @@
+name: release test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: martinbeentjes/npm-get-version-action@v1.3.1
+        name: get-npm-version
+        id: package-version
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      - name: Install & Build
+        run: |
+          npm install
+          npm run pdeploy
+          npm run lib
+          npm run lib:report
+      - name: Deploy GitHub NPM
+        uses: JS-DevTools/npm-publish@v3
+        with:
+          registry: 'https://npm.pkg.github.com'
+          package: dist/.githubnpm/package.json
+          token: ${{ secrets.WOORITECH_NPM_ACCESS_TOKEN }}
+      - name: AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
+          aws-region: ${{ secrets.AWS_MAIN_REGION }}
+      - name: Copy latest to the AWS S3
+        run: aws s3 cp dist/deploy/realchart.latest.zip s3://com.realgrid.candidates/realchart/latest/
+      - name: Copy current to the AWS S3
+        run: aws s3 cp dist/deploy/realchart.${{steps.package-version.outputs.current-version}}.zip s3://com.realgrid.candidates/realchart/${{steps.package-version.outputs.current-version}}/

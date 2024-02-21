@@ -55,7 +55,7 @@ export class CircleBarSeries extends BarSeriesBase {
         return 'circlebar';
     }
 
-    protected _initProps(): void {
+    protected override _initProps(): void {
         super._initProps();
 
         this.pointLabel.position = PointItemPosition.INSIDE;

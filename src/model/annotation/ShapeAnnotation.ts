@@ -83,7 +83,7 @@ export class ShapeAnnotation extends Annotation {
         return 'shape';
     }
 
-    protected _doLoadSimple(source: any): boolean {
+    protected override _doLoadSimple(source: any): boolean {
         if (isString(source)) {
             this.shape = source as any;
             return true;

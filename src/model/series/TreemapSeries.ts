@@ -34,14 +34,14 @@ export class TreemapSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _assignTo(proxy: any): any {
+    protected override _assignTo(proxy: any): any {
         return assign(super._assignTo(proxy), {
             id: this.id,
             group: this.group
         });
     }
 
-    protected _readArray(series: TreemapSeries, v: any[]): void {
+    protected override _readArray(series: TreemapSeries, v: any[]): void {
         if (v.length <= 2) {
             this.isNull = true;
         } else {
@@ -56,7 +56,7 @@ export class TreemapSeriesPoint extends DataPoint {
         }
     }
 
-    protected _readObject(series: TreemapSeries, v: any): void {
+    protected override _readObject(series: TreemapSeries, v: any): void {
         super._readObject(series, v);
 
         this.id = toStr(v[series.idField]);
@@ -345,24 +345,24 @@ export class TreemapSeries extends Series {
         return 'treemap';
     }
 
-    needAxes(): boolean {
+    override needAxes(): boolean {
         return false;
     }
 
-    canMixWith(other: IPlottingItem): boolean {
+    override canMixWith(other: IPlottingItem): boolean {
         // 차트나 split pane에 하나의 treemap만 존재할 수 있다.
         return false;
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new TreemapSeriesPoint(source);
     }
 
-    getLabeledPoints(): DataPoint[] {
+    override getLabeledPoints(): DataPoint[] {
         return this._leafs.map(node => node.point);
     }
 
-    protected _doPrepareRender(): void {
+    protected override _doPrepareRender(): void {
         super._doPrepareRender();
 
         this._roots = this.$_buildTree(this._runPoints as TreemapSeriesPoint[]);

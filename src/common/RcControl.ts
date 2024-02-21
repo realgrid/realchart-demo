@@ -91,7 +91,7 @@ export abstract class RcControl extends RcObject {//} RcWrappableObject {
         this.invalidate(true);
     }
 
-    protected _doDestory(): void {
+    protected override _doDestroy(): void {
         this._unresigterEventHandlers(this._dom);
         Dom.remove(this._dom);
         this._dom = null;
@@ -456,7 +456,7 @@ export abstract class RcControl extends RcObject {//} RcWrappableObject {
 
         const desc = doc.createElement('desc');
         // desc.textContent = 'Created by RealChart v$Version'; // sourcemap, rollup issue
-        desc.textContent = 'Created by RealChart v1.0.0';
+        desc.textContent = 'Created by RealChart v1.0.1';
         svg.appendChild(desc);
 
         const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
@@ -685,7 +685,7 @@ export class RcElement extends RcObject {
         (this._styleName = styleName || '') && this.setAttr('class', this._styleName);
     }
 
-    protected _doDestory(): void {
+    protected override _doDestroy(): void {
         this.remove();
     }
 
@@ -1510,7 +1510,7 @@ class RootElement extends RcElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    get control(): RcControl {
+    override get control(): RcControl {
         return this._control;
     }
 }
@@ -1570,7 +1570,7 @@ export class ClipRectElement extends ClipElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    setBounds(x: number, y: number, w: number, h: number): RcElement {
+    override setBounds(x: number, y: number, w: number, h: number): RcElement {
         //this._rect.setBounds(x, y, w, h);
         // this._rect.setAttr('transform', '');
         this._rect.move(x, y);
@@ -1578,7 +1578,7 @@ export class ClipRectElement extends ClipElement {
         return this;
     }
 
-    resize(width: number, height: number, attr?: boolean): boolean {
+    override resize(width: number, height: number, attr?: boolean): boolean {
         // super.resize(width, height);
         return this._rect.resize(width, height);
     }
@@ -1586,31 +1586,31 @@ export class ClipRectElement extends ClipElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    get x(): number {
+    override get x(): number {
         return this._rect.x;
     }
-    set x(value: number) {
+    override set x(value: number) {
         this._rect.x = value;
     }
     
-    get y(): number {
+    override get y(): number {
         return this._rect.y;
     }
-    set y(value: number) {
+    override set y(value: number) {
         this._rect.y = value;
     }
 
-    get width(): number {
+    override get width(): number {
         return this._rect.width;
     }
-    set width(value: number) {
+    override set width(value: number) {
         this._rect.width = value;
     }
     
-    get height(): number {
+    override get height(): number {
         return this._rect.height;
     }
-    set height(value: number) {
+    override set height(value: number) {
         this._rect.height = value;
     }
 }

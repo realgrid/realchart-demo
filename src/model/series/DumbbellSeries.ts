@@ -17,8 +17,8 @@ export class DumbbellSeriesMarker extends SeriesMarker {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    radius = 4;
-    shape = Shape.CIRCLE;
+    override radius = 4;
+    override shape = Shape.CIRCLE;
 }
 
 /**
@@ -93,23 +93,23 @@ export class DumbbellSeries extends ClusterableSeries {
         return 'dumbbell';
     }
 
-    canCategorized(): boolean {
+    override canCategorized(): boolean {
         return true;
     }
 
-    pointLabelCount(): number {
+    override pointLabelCount(): number {
         return 2;
     }
 
-    getLabelOff(off: number): number {
+    override getLabelOff(off: number): number {
         return super.getLabelOff(off) + maxv(0, this.marker.radius);
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new DumbbellSeriesPoint(source);
     }
 
-    protected _doPrepareRender(): void {
+    protected override _doPrepareRender(): void {
         super._doPrepareRender();
 
         const radius = this.marker.radius;
@@ -121,7 +121,7 @@ export class DumbbellSeries extends ClusterableSeries {
         })
     }
 
-    collectValues(axis: IAxis, vals: number[]): void {
+    override collectValues(axis: IAxis, vals: number[]): void {
         super.collectValues(axis, vals);
 
         if (vals && axis === this._yAxisObj) {

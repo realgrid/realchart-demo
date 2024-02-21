@@ -13,6 +13,8 @@ import { PaneAxisMatrix } from "./Axis";
 import { Body } from "./Body";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
+import { GaugeBase } from "./Gauge";
+import { Series } from "./Series";
 
 export class PaneBody extends Body {
 
@@ -33,8 +35,12 @@ export class PaneBody extends Body {
     //-------------------------------------------------------------------------
     // overiden members
     //-------------------------------------------------------------------------
-    base(): Body {
+    override base(): Body {
         return this.chart.body;
+    }
+
+    override contains(obj: GaugeBase | Series): boolean {
+        return obj.col === this.pane.col || obj.row === this.pane.row;
     }
 }
 
@@ -62,7 +68,7 @@ export class Pane extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    prepareRender(): void {
+    override prepareRender(): void {
         this.body.prepareRender();
     }
 
@@ -175,7 +181,7 @@ export class Split extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoadSimple(source: any): boolean {
+    protected override _doLoadSimple(source: any): boolean {
         if (isArray(source) && source.length > 0) {
             this.rows = maxv(1, +source[0]);
             this.cols = maxv(1, pickNum(+source[1], this.rows));
@@ -188,13 +194,13 @@ export class Split extends ChartItem {
         return super._doLoadSimple(source);
     }
 
-    protected _doLoadProp(prop: string, value: any): boolean {
+    protected override _doLoadProp(prop: string, value: any): boolean {
         if (['panes', 'cols', 'rows'].indexOf(prop) >= 0) {
             return true;
         }
     }
 
-    load(source: any): ChartItem {
+    override load(source: any): ChartItem {
         super.load(source);
 
         if (isObject(source)) {
@@ -204,7 +210,7 @@ export class Split extends ChartItem {
         return this;
     }
 
-    protected _doPrepareRender(chart: IChart): void {
+    protected override _doPrepareRender(chart: IChart): void {
         this._xAxes = chart._xPaneAxes;
         this._yAxes = chart._yPaneAxes;
         this._vpanes = this.$_collectPanes(chart);

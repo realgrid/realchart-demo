@@ -43,11 +43,7 @@ export abstract class GroupElement extends RcElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _movable(): boolean {
-        return false;
-    }
-
-    setAttr(attr: string, value: any): RcElement {
+    override setAttr(attr: string, value: any): RcElement {
         if (!GroupElement.IGNORE_ATTRS.hasOwnProperty(attr)) {
             super.setAttr(attr, value);
         }

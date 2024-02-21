@@ -87,7 +87,7 @@ export class TextAnnotation extends Annotation {
         return 'text';
     }
 
-    protected _doLoadSimple(source: any): boolean {
+    protected override _doLoadSimple(source: any): boolean {
         if (isString(source)) {
             this.text = source;
             return true;

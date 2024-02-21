@@ -10,8 +10,6 @@ import { isArray, isNumber, isObject, maxv, minv, pickNum, pickNum3, pickProp } 
 import { DEG_RAD, PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { Axis, AxisGrid, AxisTick, AxisLabel, IAxisTick } from "../Axis";
-import { IChart } from "../Chart";
-import { LabelIconPostion } from "../ChartItem";
 import { IPlottingItem } from "../Series";
 
 export enum CategoryTickPosition {
@@ -65,7 +63,7 @@ class CategoryAxisLabel extends AxisLabel {
         }
     }
 
-    getIcon(tick: IAxisTick): string {
+    override getIcon(tick: IAxisTick): string {
         return (this.axis as CategoryAxis)._categories[tick.index]?.i;
         // return super.getIcon(tick);
     }
@@ -268,7 +266,7 @@ export class CategoryAxis extends Axis {
         return 'category';
     }
 
-    unitPad(): number {
+    override unitPad(): number {
         return this._catPad;
     }
 
@@ -288,19 +286,20 @@ export class CategoryAxis extends Axis {
         return new CategoryAxisLabel(this);
     }
 
-    collectValues(): void {
+    override collectValues(): void {
         // [주의] collectValues()에서 category에 해당하는 값을 가져올 수 있다면 순서를 바꿔야 한다.
         this.$_collectCategories(this._series);
 
-        if (this._series.length > 0) {
-            super.collectValues();
-        } else {
+        if (this._isEmpty === undefined) debugger;
+        if (this._isEmpty) {
             // 시리즈가 연결되지 않은 category 축을 categories 설정만으로 표시할 수 있다.
             this._values = Utils.makeIntArray(0, this._categories.length);
+        } else {
+            super.collectValues();
         }
     }
 
-    getStartAngle(): number {
+    override getStartAngle(): number {
         let start = super.getStartAngle();
         let a = +this.startOffset;
 
@@ -352,7 +351,7 @@ export class CategoryAxis extends Axis {
         len = this._len = this._minPad + this._maxPad + weights.reduce((a, c) => a + c, 0);
         len += this._catLen - cats.length;
 
-        weights.length = cats.length = this._catLen;
+        weights.length = cats.length = this._catLen || 0;
 
         const pts = this._pts = [];
 
@@ -385,7 +384,7 @@ export class CategoryAxis extends Axis {
         return ticks;
     }
 
-    calcPoints(length: number, phase: number): void {
+    override calcPoints(length: number, phase: number): void {
         super.calcPoints(length, phase);
 
         const pts = this._pts;
@@ -448,7 +447,7 @@ export class CategoryAxis extends Axis {
         return this._pts[v + 2] - this._pts[v + 2 - 1];
     }
 
-    getLabelLength(length: number, value: number): number {
+    override getLabelLength(length: number, value: number): number {
         const v = Math.floor(value - this._catMin + 0.5);
 
         if (v > this._tstep) {
@@ -458,7 +457,7 @@ export class CategoryAxis extends Axis {
         }
     }
 
-    getValue(value: any): number {
+    override getValue(value: any): number {
         if (isNumber(value)) {
             return value;
         } else {
@@ -466,7 +465,7 @@ export class CategoryAxis extends Axis {
         }
     }
 
-    getXValue(value: number): any {
+    override getXValue(value: number): any {
         return this._cats[value - this._catMin] || value;
     }
 

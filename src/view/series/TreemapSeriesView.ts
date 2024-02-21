@@ -89,7 +89,7 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _lazyPrepareLabels(): boolean {
+    protected override _lazyPrepareLabels(): boolean {
         return true;
     }
 
@@ -110,12 +110,12 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
         }
     }
 
-    protected _runShowEffect(firstTime: boolean): void {
+    protected override _runShowEffect(firstTime: boolean): void {
         // firstTime && SeriesAnimation.reveal(this);
         firstTime && SeriesAnimation.grow(this);
     }
 
-    protected _doViewRateChanged(rate: number): void {
+    protected override _doViewRateChanged(rate: number): void {
         if (this._rootView) {
             this.$_renderGroups(this.width, this.height);
         } else {

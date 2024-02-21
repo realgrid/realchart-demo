@@ -184,7 +184,7 @@ export class Crosshair extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoadSimple(source: any): boolean {
+    protected override _doLoadSimple(source: any): boolean {
         if (isFunc(source)) {
             this.visible = true;
             this.onChange = source;

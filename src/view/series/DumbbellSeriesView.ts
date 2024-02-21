@@ -18,7 +18,7 @@ class BarElement extends RangeElement implements IPointView {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    point: DumbbellSeriesPoint;
+    override point: DumbbellSeriesPoint;
 
     private _line: LineElement;
     private _hmarker: PathElement;

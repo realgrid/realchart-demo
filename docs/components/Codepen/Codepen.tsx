@@ -14,7 +14,6 @@ export const Codepen = ({ configString }) => {
       css_starter: "neither",
       css_prefix_free: false,
       js:
-        "var realChartLic = 'upVcPE+wPOkOR/egW8JuxkM/nBOseBrflwxYpzGZyYmhB+vWdw2W7OeKriArSGg/tcphfKS2Musnm9T+R9R8ZnQHkEFeJWIE';\n" +
         `${configString}` +
         ';\nchart = RealChart.createChart(document, "realchart", config);',
       js_pre_processor: "none",

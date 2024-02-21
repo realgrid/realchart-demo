@@ -19,7 +19,7 @@ class StickView extends RangeElement implements IPointView {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    point: OhlcSeriesPoint;
+    override point: OhlcSeriesPoint;
 
     private _back: RectElement;
     private _tickOpen: LineElement;
@@ -59,7 +59,7 @@ class StickView extends RangeElement implements IPointView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doInitChildren(doc: Document): void {
+    protected override _doInitChildren(doc: Document): void {
         this.add(this._tickOpen = new LineElement(doc, 'rct-ohlc-point-tick'));
         this.add(this._tickClose = new LineElement(doc, 'rct-ohlc-point-tick'));
         this.add(this._bar = new LineElement(doc));
@@ -103,7 +103,7 @@ export class OhlcSeriesView extends RangedSeriesView<OhlcSeries> {
         view.layout(wPoint, hPoint);
     }
 
-    protected _setPointStyle(v: RcElement, model: OhlcSeries, p: OhlcSeriesPoint, styles?: any[]): void {
+    protected override _setPointStyle(v: RcElement, model: OhlcSeries, p: OhlcSeriesPoint, styles?: any[]): void {
         super._setPointStyle(v, model, p, styles);
 
         if (p.closeValue < p.openValue && model.declineStyle) {

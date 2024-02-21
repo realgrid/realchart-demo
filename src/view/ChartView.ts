@@ -23,7 +23,7 @@ import { LegendItem, LegendLocation } from "../model/Legend";
 import { ISeries, Series } from "../model/Series";
 import { Split } from "../model/Split";
 import { Subtitle, SubtitlePosition, Title } from "../model/Title";
-import { AnnotationView } from "./AnnotationView";
+import { AnnotationView, IAnnotationAnchorOwner } from "./AnnotationView";
 import { AxisScrollView, AxisView } from "./AxisView";
 import { AxisGridRowContainer, AxisGuideContainer, BodyView, createAnnotationView } from "./BodyView";
 import { ChartElement, SectionView } from "./ChartElement";
@@ -55,7 +55,7 @@ class TitleSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doInitChildren(doc: Document): void {
+    protected override _doInitChildren(doc: Document): void {
         this.add(this.titleView = new TitleView(doc, false));
         this.add(this.subtitleView = new TitleView(doc, true));
     }
@@ -318,7 +318,7 @@ class LegendSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doInitChildren(doc: Document): void {
+    protected override _doInitChildren(doc: Document): void {
         this.add(this._legendView = new LegendView(doc));
     }
 
@@ -393,7 +393,7 @@ class AxisSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    prepare(doc: Document, axes: Axis[], guideContainer: AxisGuideContainer, frontGuideContainer: AxisGuideContainer): void {
+    prepare(doc: Document, chart: Chart, axes: Axis[], guideContainer: AxisGuideContainer, frontGuideContainer: AxisGuideContainer): void {
         const views = this.views;
         let i = views.length;
         let v: AxisView;
@@ -412,7 +412,7 @@ class AxisSectionView extends SectionView {
 
         // 추측 계산을 위해 모델을 미리 설정할 필요가 있다.
         views.forEach((v, i) => {
-            v.model = axes[i];
+            v.prepare(axes[i]);
             v.prepareGuides(doc, NaN, NaN, guideContainer, frontGuideContainer);
         });
 
@@ -607,7 +607,7 @@ export class CreditView extends ChartElement<Credits> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: Credits, intWidth: number, hintHeight: number, phase: number): ISize {
+    protected override _doMeasure(doc: Document, model: Credits, intWidth: number, hintHeight: number, phase: number): ISize {
         this._textView.text = model.text;
 
         this.setCursor(model.url ? 'pointer' : '');
@@ -618,7 +618,7 @@ export class CreditView extends ChartElement<Credits> {
 /**
  * @internal
  */
-export class ChartView extends LayerElement {
+export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
 
     //-------------------------------------------------------------------------
     // fields
@@ -680,6 +680,13 @@ export class ChartView extends LayerElement {
         this.add(this._navigatorView = new NavigatorView(doc));
         this.add(this._historyView = new HistoryView(doc));
         this.add(this._tooltipView = new TooltipView(doc));
+    }
+
+    //-------------------------------------------------------------------------
+    // IAnnotationAnchorOwner
+    //-------------------------------------------------------------------------
+    getAnnotationAnchor(model: any): RcElement {
+        return this._annotationMap.get(model);
     }
 
     //-------------------------------------------------------------------------
@@ -1030,17 +1037,18 @@ export class ChartView extends LayerElement {
             }
 
             // body
+            const body = this._currBody;
+
             hPlot = this._plotHeight - hMiddle;
             wPlot = this._plotWidth - wCenter;
 
             x = org.x;
             y = org.y - this._plotHeight;
 
-            this._currBody.resize(wPlot, hPlot);
-            this._currBody.trans(x, y);
-            this._currBody.layout();
-            rPlot = this._currBody.getRect();
-            this._currBody._seriesViews.forEach(v => {
+            body.resize(wPlot, hPlot);
+            body.layout().trans(x, y);
+            rPlot = body.getRect();
+            body._seriesViews.forEach(v => {
                 if (v.needDecoreateLegend()) {
                     const lv = this._legendSectionView._legendView.legendOfSeries(v.model);
                     if (lv) {
@@ -1358,14 +1366,14 @@ export class ChartView extends LayerElement {
         let v = this._annotationViews.find(v => v.model === anno);
         
         if (v) {
-            v.update(this.width, this.height);
+            v.update(this, this.width, this.height);
         } else {
             if (this._model.isSplitted()) {
                 // TODO:
             } else {
                 v = this._currBody._annotationViews.find(v => v.model === anno);
                 if (v) {
-                    v.update(this._currBody.width, this._currBody.height);
+                    v.update(this._currBody, this._currBody.width, this._currBody.height);
                 }
             }
         }
@@ -1378,7 +1386,7 @@ export class ChartView extends LayerElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doAttached(parent: RcElement): void {
+    protected override _doAttached(parent: RcElement): void {
         // this._seriesClip = this.control.clipBounds();
         // this._seriesClip2 = this.control.clipBounds();
         // this._lineSeriesClip = this.control.clipBounds();
@@ -1419,7 +1427,7 @@ export class ChartView extends LayerElement {
             const v = map[dir];
 
             if (need) {
-                v.prepare(doc, m.getAxes(dir as any, false), guideContainer, frontContainer);
+                v.prepare(doc, m, m.getAxes(dir as any, false), guideContainer, frontContainer);
             } else {
                 v.visible = false;
             }
@@ -1624,7 +1632,7 @@ export class ChartView extends LayerElement {
                     break;
             }
 
-            v._layoutView(inverted, x, y, w, h);
+            v._layoutView(inverted, this, x, y, w, h);
         });
     }
 }

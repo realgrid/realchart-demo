@@ -58,6 +58,10 @@ export class ParetoSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getLineType(): LineType {
+        return this.curved ? LineType.SPLINE : LineType.DEFAULT;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -65,22 +69,18 @@ export class ParetoSeries extends LineSeriesBase {
         return 'pareto';
     }
 
-    getLineType(): LineType {
-        return this.curved ? LineType.SPLINE : LineType.DEFAULT;
-    }
-
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new ParetoSeriesPoint(source);
     }
 
-    _referOtherSeries(series: Series): boolean {
+    override _referOtherSeries(series: Series): boolean {
         if (series.name === this.source || series.index === this.source) {
             series.referBy(this);
             return true;
         }
     }
 
-    reference(other: Series, axis: IAxis): void {
+    override reference(other: Series, axis: IAxis): void {
         if (!axis._isX) {
             this.$_loadPoints(other._runPoints);
             this.collectValues(this._xAxisObj, (this._xAxisObj as Axis)._values);

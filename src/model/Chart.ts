@@ -52,7 +52,7 @@ import { SeriesNavigator } from "./SeriesNavigator";
 import { Split } from "./Split";
 import { TextAnnotation } from "./annotation/TextAnnotation";
 import { ImageAnnotation } from "./annotation/ImageAnnotation";
-import { Annotation, AnnotationCollection } from "./Annotation";
+import { Annotation, AnnotationCollection, IAnnotationOwner } from "./Annotation";
 import { ShapeAnnotation } from "./annotation/ShapeAnnotation";
 import { CircleBarSeries, CircleBarSeriesGroup } from "./series/CircleBarSeries";
 import { Utils } from "../common/Utils";
@@ -505,7 +505,7 @@ export interface IChartEventListener {
  * 
  * @config chart
  */
-export class Chart extends RcEventProvider<IChartEventListener> implements IChart, ITooltipOwner {
+export class Chart extends RcEventProvider<IChartEventListener> implements IChart, ITooltipOwner, IAnnotationOwner {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -634,6 +634,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     // IAnnotationOwner
     //-------------------------------------------------------------------------
     get chart(): IChart { return this }
+
+    anchorByName(name: string): ChartItem {
+        return;
+    }
 
     //-------------------------------------------------------------------------
     // properties
@@ -1055,6 +1059,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         // 축에 연결한다.
         this._series.prepareRender();
 
+        xAxes.prepare();
+        yAxes.prepare();
         // 축의 값 범위를 계산한다. 
         // [주의] 반드시 x축을 먼저 준비해야 한다. seriesGroup.$_collectPoints에서 point.xValue를 사용한다.
         xAxes.collectValues();

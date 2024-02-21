@@ -108,7 +108,7 @@ export class AxisLine extends AxisItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoadSimple(source: any): boolean {
+    protected override _doLoadSimple(source: any): boolean {
         return this._loadStroke(source) || super._doLoadSimple(source);
     }
 }
@@ -207,7 +207,7 @@ export class AxisTitle extends AxisItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoadSimple(source: any): boolean {
+    protected override _doLoadSimple(source: any): boolean {
         if (isString(source)) {
             this.text = source;
             return true;
@@ -308,7 +308,7 @@ export class AxisGridRows extends AxisItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoadSimple(source: any): boolean {
+    protected override _doLoadSimple(source: any): boolean {
         if (isString(source)) {
             this.colors = [source, null];
             return true;
@@ -635,7 +635,7 @@ export abstract class AxisTick extends AxisItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoadSimple(source: any): boolean {
+    protected override _doLoadSimple(source: any): boolean {
         if (Utils.canNumber(source)) {
             this.length = +source;
             return true;
@@ -906,7 +906,7 @@ export abstract class AxisLabel extends IconedText {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doPrepareRender(chart: IChart): void {
+    protected override _doPrepareRender(chart: IChart): void {
         super._doPrepareRender(chart);
 
         this._domain.numberFormatter = this._numberFormatter;
@@ -1124,6 +1124,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     _isBetween: boolean;
     _isPolar: boolean;
     protected _series: IPlottingItem[] = [];
+    protected _isEmpty: boolean;
     _range: { min: number, max: number };
     _ticks: IAxisTick[];
     _markPoints: number[];
@@ -1326,7 +1327,18 @@ export abstract class Axis extends ChartItem implements IAxis {
     //minSize: number;
 
     isEmpty(): boolean {
-        return this._series.length < 1;
+        return this._isEmpty;
+    }
+
+    private $_checkEmpty(): boolean {
+        if (this._series.length > 0) {
+            for (const s of this._series) {
+                if (!s.isEmpty(true)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     getBaseValue(): number {
@@ -1377,12 +1389,16 @@ export abstract class Axis extends ChartItem implements IAxis {
         return 0;
     }
 
+    labelsVisible(): boolean {
+        return this.label.visible && this._ticks.length > 0;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     protected abstract _createTickModel(): AxisTick;
     protected abstract _createLabel(): AxisLabel;
-    protected abstract _doPrepareRender(): void;
+    protected abstract override _doPrepareRender(): void;
     protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[];
 
     value2Tooltip(value: number): any {
@@ -1429,7 +1445,11 @@ export abstract class Axis extends ChartItem implements IAxis {
         })
     }
 
-    prepareRender(): void {
+    prepare(): void {
+        this._isEmpty = this.$_checkEmpty();
+    }
+
+    override prepareRender(): void {
         this._isHorz = this.chart.isInverted() ? !this._isX : this._isX;
         this._isBetween = this.chart.isSplitted() && this.position === AxisPosition.BETWEEN && this._isX;
         this._isOpposite = this.position === AxisPosition.OPPOSITE;
@@ -1628,7 +1648,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoadProp(prop: string, value: any): boolean {
+    protected override _doLoadProp(prop: string, value: any): boolean {
         if (prop === 'guide' || prop === 'guides') {
             this.guides.length = 0;
             if (isArray(value)) this.$_loadGuides(value);
@@ -1746,6 +1766,10 @@ export class AxisCollection {
 
     disconnect(): void {
         this._items.forEach(axis => axis.disconnect());
+    }
+
+    prepare(): void {
+        this._items.forEach(axis => axis.prepare());
     }
 
     collectValues(): void {

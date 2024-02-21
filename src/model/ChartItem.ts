@@ -465,7 +465,7 @@ export abstract class FormattableText extends ChartText {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoadSimple(source: any): boolean {
+    protected override _doLoadSimple(source: any): boolean {
         if (isString(source)) {
             this.text = source;
             return true;
@@ -539,7 +539,7 @@ export abstract class IconedText extends FormattableText {
         return (this.iconPosition === LabelIconPostion.DEFAULT) ? this.getDefaultIconPos() : this.iconPosition;
     }
 
-    protected _doPrepareRender(chart: IChart): void {
+    protected override _doPrepareRender(chart: IChart): void {
         this._images = null;
         if (this.imageList) {
             const i = chart.assets.get(this.imageList);
@@ -571,5 +571,5 @@ export class BackgroundImage extends ChartItem {
     // properties
     //-------------------------------------------------------------------------
     url: string;
-    style: SVGStyleOrClass;
+    override style: SVGStyleOrClass;
 }

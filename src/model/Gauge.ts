@@ -333,14 +333,14 @@ export abstract class GaugeGroup<T extends ValueGauge> extends GaugeBase {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoadProp(prop: string, value: any): boolean {
+    protected override _doLoadProp(prop: string, value: any): boolean {
         if (prop === 'children') {
             this.$_loadGauges(this.chart, value);
             return true;
         }
     }
 
-    prepareRender(): void {
+    override prepareRender(): void {
         this._visibles = this._gauges.filter(g => g.visible);
         super.prepareRender();
         this._prepareChildren(this._visibles);
@@ -1044,7 +1044,7 @@ export abstract class GaugeLabel extends FormattableText {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doPrepareRender(chart: IChart): void {
+    protected override _doPrepareRender(chart: IChart): void {
         this._domain.numberFormatter = this._numberFormatter;
     }
 }
@@ -1101,7 +1101,7 @@ export class CircularGaugeLabel extends GaugeLabel {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    load(source: any): ChartItem {
+    override load(source: any): ChartItem {
         super.load(source);
 
         this._offsetXDim = parsePercentSize(this.offsetX, true);
@@ -1414,7 +1414,7 @@ export abstract class CircularGauge extends ValueGauge {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    setGroup(group: GaugeGroup<ValueGauge>, index: number): void {
+    override setGroup(group: GaugeGroup<ValueGauge>, index: number): void {
         super.setGroup(group, index);
 
         if (group && !this.childProps) {
@@ -1422,7 +1422,7 @@ export abstract class CircularGauge extends ValueGauge {
         }
     }
 
-    protected _doPrepareRender(chart: IChart): void {
+    protected override _doPrepareRender(chart: IChart): void {
         super._doPrepareRender(chart);
 
         this.label.prepareRender();

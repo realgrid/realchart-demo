@@ -52,9 +52,9 @@ const config: DocsThemeConfig = {
     }
   },
   banner: {
-    key: "1.0.0-release",
+    key: "1.0.1-release",
     text: (
-      <a href="/guide/release/v1.0.0">🎉 RealChart v1.0.0 is released. Read more →</a>
+      <a href="/guide/release/v1.0.1">🎉 RealChart v1.0.1 is released. Read more →</a>
     ),
   },
   editLink: {

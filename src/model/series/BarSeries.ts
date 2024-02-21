@@ -50,19 +50,19 @@ export abstract class BarSeriesBase extends BasedSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    canCategorized(): boolean {
+    override canCategorized(): boolean {
         return true;
     }
 
-    _colorByPoint(): boolean {
+    override _colorByPoint(): boolean {
         return this.colorByPoint;
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new BarSeriesPoint(source);
     }
 
-    protected _getGroupBase(): number {
+    protected override _getGroupBase(): number {
         return this.group ? (this.group as BarSeriesGroupBase<any>).baseValue : this.baseValue;
     }
 }
@@ -119,7 +119,7 @@ export class BarSeries extends BarSeriesBase {
         return 'bar';
     }
 
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
+    protected override _createLegendMarker(doc: Document, size: number): RcElement {
         return RectElement.create(doc, Series.LEGEND_MARKER, 0, 0, size, size, 2);
     }
 }
@@ -140,15 +140,15 @@ export abstract class BarSeriesGroupBase<T extends BarSeriesBase> extends Cluste
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    canCategorized(): boolean {
+    override canCategorized(): boolean {
         return true;
     }
 
-    getBaseValue(axis: IAxis): number {
+    override getBaseValue(axis: IAxis): number {
         return axis._isX ? NaN : pickNum(this.baseValue, axis.getBaseValue());
     }
 
-    protected _doPrepareSeries(series: T[]): void {
+    protected override _doPrepareSeries(series: T[]): void {
         if (this.layout === SeriesGroupLayout.DEFAULT) {
             const sum = series.length > 1 ? series.map(ser => ser.pointWidth).reduce((a, c) => a + c, 0) : series[0].pointWidth;
             let x = 0;

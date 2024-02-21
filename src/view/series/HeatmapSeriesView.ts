@@ -65,12 +65,12 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
         this.$_layoutCells(width, height);
     }
 
-    protected _runShowEffect(firstTime: boolean): void {
+    protected override _runShowEffect(firstTime: boolean): void {
         // firstTime && SeriesAnimation.reveal(this);
         firstTime && SeriesAnimation.grow(this);
     }
 
-    protected _doViewRateChanged(rate: number): void {
+    protected override _doViewRateChanged(rate: number): void {
         this.$_layoutCells(this.width, this.height);
     }
 

@@ -91,7 +91,7 @@ export class RectElement extends RcElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    setBounds(x: number, y: number, width: number, height: number, r = 0): RectElement {
+    override setBounds(x: number, y: number, width: number, height: number, r = 0): RectElement {
         this.rect = {x, y, width, height, r};
         return this;
     }

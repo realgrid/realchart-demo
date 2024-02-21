@@ -19,6 +19,12 @@ import { Series } from "./model/Series";
 import { ChartPointerHandler } from "./tool/PointerHandler";
 import { ChartView } from "./view/ChartView";
 
+enum RcModule {
+    /**
+     * export 모듈.
+     */
+    EXPORT = '$$realchart_export',
+}
 
 export class ChartControl extends RcControl implements IChartEventListener {
 
@@ -44,11 +50,11 @@ export class ChartControl extends RcControl implements IChartEventListener {
         this.setPointerHandler(new ChartPointerHandler(this));
     }
 
-    protected _doDestory(): void {
+    protected override _doDestroy(): void {
         this.setPointerHandler(null);
         this._model = null;
         
-        super._doDestory();
+        super._doDestroy();
     }
 
     //-------------------------------------------------------------------------
@@ -120,6 +126,18 @@ export class ChartControl extends RcControl implements IChartEventListener {
         this._chartView.getAxis(axis)?.scroll(pos);
     }
 
+    use(_module: any): void {
+        if (!_module.MODULE_NAME) return;
+
+        switch (_module.MODULE_NAME) {
+            case RcModule.EXPORT:
+                this._exporter = _module;
+                break;
+            default:
+                break;
+        }
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -152,7 +170,7 @@ export class ChartControl extends RcControl implements IChartEventListener {
         }
     }
 
-    protected _doRenderBackground(elt: HTMLDivElement, root: RcElement, width: number, height: number): void {
+    protected override _doRenderBackground(elt: HTMLDivElement, root: RcElement, width: number, height: number): void {
         if (this._model) {
             const style: any = this._model.options.style;
 
@@ -170,7 +188,7 @@ export class ChartControl extends RcControl implements IChartEventListener {
 
     private _loadModules(): void {
         if (!this._exporter) {
-            const realChartExporter = window['$$_RealChartExporter'];
+            const realChartExporter = window?.['$$_RealChartExporter'];
             if (realChartExporter) {
                 this._exporter = realChartExporter;
             }

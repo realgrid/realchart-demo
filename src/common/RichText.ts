@@ -139,7 +139,7 @@ abstract class SpanWord extends Word {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepareSpan(span: SVGTSpanElement, target: any, domain: IRichTextDomain): SVGTSpanElement {
+    override prepareSpan(span: SVGTSpanElement, target: any, domain: IRichTextDomain): SVGTSpanElement {
         const s = this.getText(target, domain);
         const x1 = s.indexOf('>') + 1;
         const x2 = s.indexOf('<', x1);
@@ -175,7 +175,7 @@ class NormalWord extends SpanWord {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    get type(): string {
+    override get type(): string {
         return 't';
     }
 }
@@ -185,11 +185,11 @@ class BoldWord extends SpanWord {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    get type(): string {
+    override get type(): string {
         return 'b';
     }
 
-    protected _doPrepare(span: SVGTSpanElement, s: string, x1: number, x2: number): void {
+    protected override _doPrepare(span: SVGTSpanElement, s: string, x1: number, x2: number): void {
         super._doPrepare(span, s, x1, x2);
         span.setAttribute('class', 'rct-text-bold')
     }
@@ -200,11 +200,11 @@ class ItalicWord extends SpanWord {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    get type(): string {
+    override get type(): string {
         return 'i';
     }
 
-    protected _doPrepare(span: SVGTSpanElement, s: string, x1: number, x2: number): void {
+    protected override _doPrepare(span: SVGTSpanElement, s: string, x1: number, x2: number): void {
         super._doPrepare(span, s, x1, x2);
         span.setAttribute('class', 'rct-text-italic')
     }

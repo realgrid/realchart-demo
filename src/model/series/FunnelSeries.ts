@@ -81,7 +81,7 @@ export class FunnelSeries extends WidgetSeries {
      * 
      * @config
      */
-    legendByPoint = false;
+    override legendByPoint = false;
 
     //-------------------------------------------------------------------------
     // methods
@@ -107,11 +107,11 @@ export class FunnelSeries extends WidgetSeries {
         return 'funnel';
     }
 
-    protected _createPoint(source: any): DataPoint {
+    protected override _createPoint(source: any): DataPoint {
         return new FunnelSeriesPoint(source);
     }
 
-    load(src: any): FunnelSeries {
+    override load(src: any): FunnelSeries {
         super.load(src);
 
         this._widthDim = parsePercentSize2(this.width, FunnelSeries.DEF_WIDTH);
