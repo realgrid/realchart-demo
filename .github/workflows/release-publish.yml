@@ -36,6 +36,7 @@ jobs:
         with:
           # registry: https://registry.npmjs.org/
           package: dist/.npm/package.json
+          # npm realchart organization 권한 토큰. 2024/11/27 만료
           token: ${{ secrets.REALCHART_ORG_NPM_ACCESS_TOKEN }}
       - name: AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4

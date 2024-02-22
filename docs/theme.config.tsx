@@ -5,7 +5,9 @@ import { MainFooter } from "@/components/MainFooter";
 import { brand, company, footerData } from "@/lib/const";
 import { theme } from "./lib/theme";
 import { Content, FiddleLink, DefaultValue } from "./components/DocsPage";
+import { getVersion } from "realchart";
 
+const chartVersion = getVersion();
 const config: DocsThemeConfig = {
   components: {
     FiddleLink,
@@ -52,9 +54,9 @@ const config: DocsThemeConfig = {
     }
   },
   banner: {
-    key: "1.0.1-release",
+    key: `${chartVersion}-release`,
     text: (
-      <a href="/guide/release/v1.0.1">🎉 RealChart v1.0.1 is released. Read more →</a>
+      <a href={ "/guide/release/v" + chartVersion }>🎉 RealChart v{chartVersion} is released. Read more →</a>
     ),
   },
   editLink: {
