@@ -1,11 +1,6 @@
-/**
- * @demo
- *
- * Area 시리즈 기본 예제.
- */
 const data = [
     {
-        year: 1994,
+        year: 1993,
         total: 742668,
         students: 521806,
         graduate: 213459,
@@ -289,93 +284,19 @@ const config = {
     title: '년도 별 수학검정시험 재학생 인원',
     series: [
         {
-            template: 'series',
-            name: '재학생',
-            marker: {},
-            pointLabel: {},
-            data: data,
-            yField: 'students',
-            xField: 'year'
-        }
+            layout: 'stack',
+            children: [
+                { name: '검정고시', data: data, yField: 'GED', xField: 'year' },
+                { name: '졸업생', data: data, yField: 'graduate', xField: 'year' },
+                { name: '재학생', data: data, yField: 'students', xField: 'year' },
+            ]
+        },
     ]
 };
+
+let animate = false;
 let chart;
 
-function setActions(container) {
-    createCheckBox(
-        container,
-        'Debug',
-        function (e) {
-            RealChart.setDebugging(_getChecked(e));
-            chart.render();
-        },
-        false
-    );
-    createButton(container, 'Test', function (e) {
-        alert('hello');
-    });
-    createCheckBox(
-        container,
-        'Inverted',
-        function (e) {
-            config.inverted = _getChecked(e);
-            chart.load(config);
-        },
-        false
-    );
-    createCheckBox(
-        container,
-        'X Reversed',
-        function (e) {
-            config.xAxis.reversed = _getChecked(e);
-            chart.load(config);
-        },
-        false
-    );
-    createCheckBox(
-        container,
-        'Y Reversed',
-        function (e) {
-            config.yAxis.reversed = _getChecked(e);
-            chart.load(config);
-        },
-        false
-    );
-    createListBox(
-        container,
-        'Line Type',
-        ['default', 'spline', 'step'],
-        function (e) {
-            config.series[0].lineType = _getValue(e);
-            chart.load(config);
-        },
-        'default'
-    );
-    createCheckBox(
-        container,
-        'Point Marker',
-        function (e) {
-            config.series[0].marker.visible = _getChecked(e);
-            chart.load(config);
-        },
-        false
-    );
-    createCheckBox(
-        container,
-        'Point Label',
-        function (e) {
-            config.series[0].pointLabel.visible = _getChecked(e);
-            chart.load(config);
-        },
-        false
-    );
-}
-
 function init() {
-    console.log('RealChart v' + RealChart.getVersion());
-    // RealChart.setDebugging(true);
-    RealChart.setLogging(true);
-
     chart = RealChart.createChart(document, 'realchart', config);
-    setActions('actions');
 }
