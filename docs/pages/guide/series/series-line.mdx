@@ -6,7 +6,7 @@
 이 시리즈를 기준으로 자동 생성되는 x축은 [선형](/config/config/xAxis/linear)축이다.<br/>
 
 [Bar 시리즈](/guide/series/series-bar), [Pie 시리즈](/guide/series/series-pie)와 더불어 가장 많이 사용되는 기초적인 차트 시리즈이다.
-
+<FiddleLink label="Try line" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/guide/series/line"/>  
 <img src="/images/guide/series/line-01.png" width="70%" className="border-img"/>
 
 ## 설정
@@ -25,16 +25,16 @@ const config = {
 시리즈그룹 [type](/config/config/series#type)은 '**linegroup**'으로 지정한다.<br/>
 이 시리즈그룹을 기준으로 자동 생성되는 x축은 [선형](/config/config/xAxis/linear)축이다.<br/>
 '**children**' 속성에 자식 시리즈들 배열을 지정한다. 자식들을 설정과 상관없이 '**line**' 시리즈로 생성된다.<br/>
-
+<FiddleLink label="Try line group" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/guide/series/line-group"/>  
 <img src="/images/guide/series/linegroup-01.png" width="70%" className="border-img"/>
 
 '**stack**' layout은 시리즈 line들을 아래에서 위로 쌓아서 표시한다.
-
+<FiddleLink label="Try stack" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/guide/series/line-group-stack"/> 
 <img src="/images/guide/series/linegroup-stack.png" width="70%" className="border-img"/>
 
 '**fill**' layout은 시리즈 line들이 y축을 모두 채우도록 아래에서 위로 쌓아서 표시한다.
 하나의 값에 위치한 데이터포인트들의 x값 합이 100이 되도록 상대적 비율로 조정해서 area들의 크기를 표시한다.
-
+<FiddleLink label="Try fill" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/guide/series/line-fill"/> 
 <img src="/images/guide/series/linegroup-fill.png" width="70%" className="border-img"/>
 
 ## 설정
