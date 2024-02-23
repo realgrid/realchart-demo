@@ -136,4 +136,27 @@ export class PWTester extends Tester {
             console.error('DOM 요소의 위치를 가져올 수 없습니다.');
         }
     }
+
+    static irandom(min: number, max?: number): number {
+        if (max !== undefined) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        } else {
+            const v = min >> 0;
+            return (Math.random() * v) >> 0;
+        }
+    }
+
+    static srandom(min: number, max: number): string {
+        let s = '';
+        const len = this.irandom(min, max);
+
+        for (let i = 0; i < len; i++) {
+            s += String.fromCharCode(this.irandom(97, 123))
+        }
+        return s;
+    }
+
+    static arandom(arr: any[]): any {
+        return arr[(Math.random() * arr.length) >> 0];
+    }
 }
