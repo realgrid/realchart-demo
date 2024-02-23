@@ -14,8 +14,8 @@ npm install realchart-export
 ```
 
 ```ts
-import 'realchart/dist/realchart-export.js';
-import 'realchart/dist/realchart-export.css';
+import { RealchartExport } from "realchart-export";
+import "realchart-export/dist/realchart-export.css";
 ```
 
 [우리테크 사이트](https://service.realgrid.com/)에서 내려 받아 html에서 직접 include할 수 있다.
@@ -50,6 +50,19 @@ const config = {
 chart.export({
      type: 'png',
      fileName: 'realchart'
+});
+```
+
+```ts
+import { createChart } from "realchart";
+import { RealchartExport } from "realchart-export";
+import "realchart/dist/realchart-style.css";
+import "realchart-export/dist/realchart-export.css";
+const chart = createChart(document, id, config);
+RealchartExport(chart);
+chart.export({
+    type: 'png',
+    fileName: 'realchart'
 });
 ```
 
