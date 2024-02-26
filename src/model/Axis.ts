@@ -879,6 +879,7 @@ export abstract class AxisLabel extends IconedText {
         }
 
         // [주의] 빈 문자열을 지정할 수 있다.
+        if (idx === 0 && idx === count - 1) return pickProp(this.lastText !== undefined ? this.lastText : this.firstText, this.text);
         if (idx === 0) return pickProp(this.firstText, this.text);
         if (idx === count - 1) return pickProp(this.lastText, this.text);
         return this.text;
@@ -891,6 +892,8 @@ export abstract class AxisLabel extends IconedText {
             const st = this.styleCallback(this.axis.getTickLabelArgs(idx, tick.value));
             if (isObject(st)) return st;
         }
+
+        if (idx === 0 && idx === count - 1) return this.lastStyle || this.firstStyle;
         if (idx === 0) return this.firstStyle;
         if (idx === count - 1) return this.lastStyle;
     }
