@@ -400,7 +400,13 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
             if (mv && mv.setVis(!p.isNull && (polared || !needClip || px >= 0 && px <= width && py >= 0 && py <= height))) {
                 this._layoutMarker(mv, markerStyle, px, py);
-                mv.setStyle('opacity', (vis || (i == 0 && marker.firstVisible === true) || (i === count - 1 && marker.lastVisible === true)) ? '1' : '0');
+                if (i === 0 && marker.firstVisible !== undefined) {
+                    mv.setStyle('opacity', marker.firstVisible ? '1' : '0'); 
+                } else if (i === count - 1 && marker.lastVisible !== undefined) {
+                    mv.setStyle('opacity', marker.lastVisible ? '1' : '0');
+                } else {
+                    mv.setStyle('opacity', vis ? '1' : '0');
+                }
 
                 if (lv) {
                     const rd = mv._radius;
