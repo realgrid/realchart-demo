@@ -12,6 +12,7 @@ import { NumberFormatter } from "../common/NumberFormatter";
 import { SVGStyleOrClass, _undef } from "../common/Types";
 import { IAxis } from "./Axis";
 import { ChartItem } from "./ChartItem";
+import { DataPoint } from "./DataPoint";
 
 /**
  * 크로스헤어 표시 방식.<br/>
@@ -73,6 +74,7 @@ export interface ICrosshairCallbackArgs {
     axis: object;
     pos: number;
     flag: string;
+    points: DataPoint[];
 }
 
 export type CrosshairChangeCallback = (args: ICrosshairCallbackArgs) => void;
@@ -98,7 +100,8 @@ export class Crosshair extends ChartItem {
         this._args = {
             axis: _undef,
             pos: _undef,
-            flag: _undef
+            flag: _undef,
+            points: _undef
         };
     }
 
@@ -169,10 +172,11 @@ export class Crosshair extends ChartItem {
         }
     }
 
-    moved(pos: number, flag: string): void {
+    moved(pos: number, flag: string, points: DataPoint[]): void {
         if (this.onChange) {
             this._args.pos = pos;
             this._args.flag = flag;
+            this._args.points = points;
             this.onChange(this._args);
         }
     }
