@@ -942,7 +942,8 @@ export class AxisView extends ChartElement<Axis> {
         const start = maxv(0, minv(step - 1, labels.startStep || 0));
         const ticks = axis._ticks;
         const nView = ticks.length;
-        const inc = (step = maxv(1, step)) * (rows = maxv(1, rows));
+        // AxisLabel.rows가 tick 개수보다 클 수 없다.
+        const inc = (step = maxv(1, step)) * (rows = minv(maxv(1, rows), ticks.length));
         const a = rotation || 0;
         const arad = absv(a) * DEG_RAD;
         const acute = arad < 35 * DEG_RAD;

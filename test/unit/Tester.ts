@@ -60,9 +60,11 @@ export class Tester {
 
     static irandom(min: number, max?: number): number {
         if (max !== undefined) {
+            // number type
             const v1 = min >> 0;
             const v2 = max >> 0;
-            return (Math.random() * (v2 - v1) + v1) >>> 0;
+            // '>>>' means unsigned number
+            return (Math.random() * (v2 - v1) + v1) >> 0;
         } else {
             const v = min >> 0;
             return (Math.random() * v) >> 0;
