@@ -27,7 +27,7 @@ const config = {
         },
         // pointWidth: '100%',
         pointStyleCallback: args => {
-            if (args.index == 0) {
+            if (args.index == 2) {
                 return { fill: 'lightgray' }
             }
             else if(args.yValue === args.yMax) {

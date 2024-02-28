@@ -17,7 +17,7 @@ export const config = {
     {
       name: 'column1',
       pointLabel: { visible: true, position: 'inside', effect: 'outline' },
-      pointStyleCallback: args => { if (args.index == 0) { return { fill: 'lightgray' } } else if(args.yValue === args.yMax) { return { fill: 'green' } } },
+      pointStyleCallback: args => { if (args.index == 2) { return { fill: 'lightgray' } } else if(args.yValue === args.yMax) { return { fill: 'green' } } },
       data: [
         155, 138, 122, 133,
         114, 113, 123, 119,
