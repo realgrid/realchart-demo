@@ -40,7 +40,8 @@
     "dev": "concurrently \"npm run build-w\" \"npm run dbw\" \"node app\"",
     "fiddle": "node exportFiddle",
     "docs:demo": "node docsDemo",
-    "update:s2": "node snapshotBackup && yarn test:s2"
+    "update:s2": "node snapshotBackup && yarn test:s2",
+    "checkObfuscation": "node checkObfuscation"
   },
   "devDependencies": {
     "@babel/generator": "^7.22.15",
