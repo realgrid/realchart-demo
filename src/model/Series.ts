@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { absv, isArray, isFunc, isNumber, isObject, isString, maxv, minv, pickNum, pickProp, pickProp3 } from "../common/Common";
+import { absv, isArray, isFunc, isNumber, isObject, isString, maxv, minv, pickNum, pickNum3, pickProp, pickProp3 } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { RcAnimation } from "../common/RcAnimation";
 import { RcElement } from "../common/RcControl";
@@ -2456,8 +2456,10 @@ export abstract class BasedSeries extends ClusterableSeries {
      * 숫자가 아닌 값으로 지정하면 0으로 간주한다.
      * 
      * @config
+     * // 0을 설정하지 않으면 belowStyle이 작동하지 않는다.
+     * // http://localhost:6010/realchart/demo/bar-negative.html
      */
-    baseValue = 0;
+    baseValue: number = 0;
     /**
      * null인 y값을 {@link baseValue}로 간주한다.
      * 
@@ -2476,8 +2478,13 @@ export abstract class BasedSeries extends ClusterableSeries {
     //-------------------------------------------------------------------------
     protected override _doPrepareRender(): void {
         super._doPrepareRender();
-
+        
         this._base = pickNum(this._getGroupBase(), this._yAxisObj.getBaseValue());
+        /**
+         * _base 기본값으로 0을 설정하면, auto min/max 가 작동하지 않는다. 
+         * - http://localhost:6010/realchart/demo/sample-01.html
+         */
+        // this._base = pickNum3(this._getGroupBase(), this._yAxisObj.getBaseValue(), 0);
     }
 
     override getBaseValue(axis: IAxis): number {
@@ -2969,27 +2976,32 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
         const map = this.$_collectPoints(axis);
 
         if (!isNaN(base)) {
+            let pi = 0;
             for (const pts of map.values()) {
                 let v = pts[0].yValue || 0;
                 let prev = v >= base ? 0 : -1;
                 let nprev = v < base ? 0 : -1;
 
                 pts[0].yGroup = pts[0].yValue || 0;
-
                 for (let i = 1; i < pts.length; i++) {
                     v = pts[i].yValue || 0;
 
                     if (v >= base) {    
+                        // above
                         if (prev >= 0) {
-                            pts[i].yGroup = pts[prev].yGroup + v;
+                            // v가 음수면 g - v, 양수면 g + v
+                            pts[i].yGroup = pts[prev].yGroup + v * (v < 0 ? -1 : 1);
                         }
                         prev = i;
                     } else {
+                        // below
                         if (nprev >= 0) {
-                            pts[i].yGroup = pts[nprev].yGroup + v;
+                            // v가 양수면 g - v, 음수면 g + v
+                            pts[i].yGroup = pts[nprev].yGroup + v * (v >= 0 ? -1 : 1);
                         }
                         nprev = i;
                     }
+
                 }
                 if (prev >= 0) {
                     vals.push(pts[prev].yGroup);

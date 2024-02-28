@@ -134,8 +134,8 @@ export class EqualizerSeriesView extends BoxedSeriesView<EqualizerSeries> {
         }
 
         pv.wPoint = wPoint;
-        pv.hPoint = hPoint;
-        pv.layout(this._pts, x, y);
+        pv.hPoint = -hPoint;
+        pv.layout(this._pts, x, y - hPoint);
     }
 
     //-------------------------------------------------------------------------

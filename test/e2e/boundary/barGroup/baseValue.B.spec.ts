@@ -38,8 +38,13 @@ const testBaseValue = async ({ page, chart, config, marginErr = 0.0001 }: { page
         return e.getBoundingClientRect();
     });
 
-    const data:Array<number> = config.series.data
-    const min = Math.min(...data);
+    // const data = await page.evaluate(({ chart }) => {
+    //     return chart.series.get('data');
+    // }, { chart })
+
+    const data = config.series.children[0].data;
+
+    // const data:Array<number> = chart['series'].get('data');
 
     if (pointsRect && tickRect) {
         // value가 baseValue 보다 작으면, 해당 값을 표현하는 GraphicElement의 y값으로 비교
@@ -75,12 +80,19 @@ test.describe('barSeries.baseValue test', () => {
         marginErr = browserName == 'firefox' ? 0.05 : 0.001;
         await PWTester.goto(page, url);
         
+        const len = PWTester.irandom(5, 10);
         config = {
-            title: 'Bar.BaseValue',
+            templates: {
+                bar: {
+                    style: {
+                        strokeWidth: 0
+                    }
+                }
+            },
+            title: 'BarGroup.BaseValue',
             yAxis: { 
                 tick: { 
                     visible: true, 
-                    // steps: Array(20).fill(0).map((v, i) => i * 10),
                     steps: [0],
                     style: {
                         strokeWidth: 0
@@ -88,12 +100,15 @@ test.describe('barSeries.baseValue test', () => {
                 },
             },
             series: {
-                type: 'bar',
-                name: '대기질(AQI)',
-                style: {
-                    stroke: 'red',
-                    strokeWidth: 0
-                }
+                type: 'bargroup',
+                layout: 'stack',
+                name: '무작위 값(0-100)',
+                children: Array(3).fill([]).map((v, i) => {
+                    return { 
+                        template: 'bar',
+                        name: `Series ${i}`,
+                        data: PWTester.iarandom(0, 100, len) };
+                }),
             }
         };
         chart = await page.evaluateHandle('chart');
@@ -103,9 +118,7 @@ test.describe('barSeries.baseValue test', () => {
         // const container = await page.$("#realchart");
         expect(chart).exist;
         // config.series.baseValue = 0;
-        const rows = PWTester.irandom(5, 10);
         config.xAxis = { style: { strokeWidth: 0 }};
-        config.series.data = PWTester.iarandom(80, 180, rows);
         await page.evaluate(({chart, config}) => {
             chart?.load(config, false).render();
         }, {chart, config});
@@ -134,18 +147,45 @@ test.describe('barSeries.baseValue test', () => {
         } else {
             expect.fail('Failed to get boundingClientRect');
         }
-        // expect(lineRect.y.toFixed(3)).to.eq(tickRect?.y.toFixed(3));
+    });
 
-        // await PWTester.testChartBySnapshot(page, testInfo);
+    test("set baseValue to 10 - xAxis.line y equals to yAxis.tick y", async ({ page }, testInfo) => {
+        expect(chart).exist;
+        config.series.baseValue = 10;
+        delete config.yAxis.tick.steps;
+        await page.evaluate(({chart, config}) => {
+            chart?.load(config, false).render();
+        }, {chart, config});
+
+        // xAxis line위치가 yAxis 0 틱의 위치와 같아야 한다.
+        const xAxis = await PWTester.getAxis(page, 'x');
+        const line = await xAxis.$('.rct-axis-line');
+        expect(line).exist;
+        const lineRect = await line?.evaluate((e) => {
+            return e.getBoundingClientRect();
+        });
+
+        const yAxis = await PWTester.getAxis(page, 'y');
+        const tick = await yAxis.$('.rct-axis-tick');
+        expect(tick).exist;
+        const tickRect = await tick?.evaluate((e) => {
+            return e.getBoundingClientRect();
+        });
+        
+        if (lineRect && tickRect) {
+            // line의 기본 높이가 4.
+            const diff = Math.abs(tickRect.y - (lineRect.y + lineRect.height/2));
+            expect(diff).lessThan(marginErr);
+            console.debug({diff})
+        } else {
+            expect.fail('Failed to get boundingClientRect');
+        }
     });
 
     PWTester.range(5).map((i) => {
         test(`random:${i} - point bottom equals to yAxis.tick y`, async ({ page }, testInfo) => {
             // const container = await page.$("#realchart");
             expect(chart).exist;
-
-            const rows = PWTester.irandom(5, 10);
-            config.series.data = PWTester.iarandom(80, 180, rows);
 
             const baseValue = Math.floor(Math.random() * 50);
             config.series.baseValue = baseValue;
@@ -164,9 +204,6 @@ test.describe('barSeries.baseValue test', () => {
             config.series.baseValue = baseValue;
             config.yAxis.tick.steps = [baseValue, 0];
 
-            const rows = PWTester.irandom(5, 10);
-            const data = PWTester.iarandom(-180, 180, rows);
-            config.series.data = data;
             await testBaseValue({ page, chart, config, marginErr })
         });
     });
