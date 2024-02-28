@@ -356,6 +356,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const needClip = series.needClip(false);
         const gr = this._getGrowRate();
         const vis = marker.visible;
+        const fVis = marker.firstVisible;
+        const lVis = marker.lastVisible;
         const labels = series.pointLabel as LinePointLabel;
         const labelPos = labels.position;
         const labelAlign = labels.align;
@@ -400,7 +402,11 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
             if (mv && mv.setVis(!p.isNull && (polared || !needClip || px >= 0 && px <= width && py >= 0 && py <= height))) {
                 this._layoutMarker(mv, markerStyle, px, py);
-                mv.setStyle('opacity', (vis || (i == 0 && marker.firstVisible === true) || (i === count - 1 && marker.lastVisible === true)) ? '1' : '0');
+                // current visible
+                const cv = (i == 0 && fVis != void 0) ? fVis
+                    : (i == count - 1 && lVis != void 0) ? lVis
+                    : vis;
+                mv.setStyle('opacity', cv ? '1' : '0');
 
                 if (lv) {
                     const rd = mv._radius;
