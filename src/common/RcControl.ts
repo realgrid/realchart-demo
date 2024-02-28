@@ -455,8 +455,8 @@ export abstract class RcControl extends RcObject {//} RcWrappableObject {
         svg.setAttribute('height', '100%');//contentDiv.clientHeight + 'px');
 
         const desc = doc.createElement('desc');
-        // desc.textContent = 'Created by RealChart v$Version'; // sourcemap, rollup issue
-        desc.textContent = 'Created by RealChart v1.0.1';
+        desc.textContent = 'Created by RealChart v' + '$Version'; // sourcemap, rollup issue
+        // desc.textContent = 'Created by RealChart v1.0.1';
         svg.appendChild(desc);
 
         const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
