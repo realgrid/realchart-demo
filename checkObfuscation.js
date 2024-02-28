@@ -1,7 +1,7 @@
-import fs from "fs";
+import fs from 'fs';
 
 function readFile(file) {
-    return fs.readFileSync(file, "utf-8");
+    return fs.readFileSync(file, 'utf-8');
 }
 
 function removeCopyrightAndLastSpace(str) {
@@ -16,7 +16,8 @@ function hasNoNewline(str) {
 
 function checkObfuscation(path) {
     const code = removeCopyrightAndLastSpace(readFile(path));
-    const startText = '!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"function"==typeof define&&define.amd?define(["exports"],e):e((t="undefined"!=typeof globalThis?globalThis:t||self).RealChart={})}';
+    const startText =
+        '!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"function"==typeof define&&define.amd?define(["exports"],e):e((t="undefined"!=typeof globalThis?globalThis:t||self).RealChart={})}';
 
     const startTextTest = code.startsWith(startText);
     const newLineTest = hasNoNewline(code);
@@ -25,7 +26,7 @@ function checkObfuscation(path) {
         console.log('난독화 테스트 성공!');
     } else {
         throw new Error('난독화 실패!');
-    };
+    }
 }
 
 const path = './dist/.npm/dist/index.js';
