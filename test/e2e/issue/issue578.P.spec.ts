@@ -33,7 +33,7 @@ test.describe('issue578 test', () => {
 			chart.load(config, false);
 		}, {data, firstText});
 		const xAxis = await PWTester.getAxis(page, 'x');
-        const label = await xAxis.$('.rct-axis-label');
+    const label = await xAxis.$('.rct-axis-label');
 		const labelText = await label.textContent();
 		expect(labelText).eq(firstText);
 	});
@@ -63,7 +63,7 @@ test.describe('issue578 test', () => {
 			chart.load(config, false);
 		}, {data, firstText, lastText});
 		const xAxis = await PWTester.getAxis(page, 'x');
-        const label = await xAxis.$('.rct-axis-label');
+    const label = await xAxis.$('.rct-axis-label');
 		const labelText = await label.textContent();
 		expect(labelText).eq(lastText);
 	});
@@ -79,7 +79,7 @@ test.describe('issue578 test', () => {
 			chart.load(config, false);
 		}, {data, firstStyle});
 		const xAxis = await PWTester.getAxis(page, 'x');
-        const label = await xAxis.$('.rct-axis-label');
+    const label = await xAxis.$('.rct-axis-label');
 		const labelFill = await label.evaluate((element) => {
 			return element.parentElement.style.fill;
 		});
@@ -97,7 +97,7 @@ test.describe('issue578 test', () => {
 			chart.load(config, false);
 		}, {data, lastStyle});
 		const xAxis = await PWTester.getAxis(page, 'x');
-        const label = await xAxis.$('.rct-axis-label');
+    const label = await xAxis.$('.rct-axis-label');
 		const labelFill = await label.evaluate((element) => {
 			return element.parentElement.style.fill;
 		});
@@ -119,7 +119,7 @@ test.describe('issue578 test', () => {
 			chart.load(config, false);
 		}, {data, firstStyle, lastStyle});
 		const xAxis = await PWTester.getAxis(page, 'x');
-        const label = await xAxis.$('.rct-axis-label');
+    const label = await xAxis.$('.rct-axis-label');
 		const labelFill = await label.evaluate((element) => {
 			return element.parentElement.style.fill;
 		});
