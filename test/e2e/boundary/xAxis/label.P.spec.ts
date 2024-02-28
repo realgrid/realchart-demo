@@ -18,8 +18,8 @@ test.describe('xAxis label boundary Test', function () {
     
     test.beforeEach(async ({ page }) => {
         const url = "boundary/empty.html?debug";
-        const iran = PWTester.irandom(1, 100);
-        const data = [];
+        const iran = PWTester.irandom(0, 100);
+        const data = Array<Number>();
         for (let i = 1; i < iran; i++) {
             data.push(i);
         }
@@ -27,14 +27,14 @@ test.describe('xAxis label boundary Test', function () {
         config = {
             title: "Boundary",
             xAxis: {
-                    label: {
-                        autoArrange: 'none'
-                    },
+                label: {
+                    autoArrange: 'none'
+                },
             },
             series: [
                 {
-                name: "column1",
-                data,
+                    name: "column1",
+                    data,
                 },
             ],
         };
@@ -42,7 +42,7 @@ test.describe('xAxis label boundary Test', function () {
         await PWTester.goto(page, url);
     });
 
-    for (let t = 0; t < testCount; t++) {
+    PWTester.range(testCount).map((t) => {
         test(`step-${t}`, async ({ page }) => {
             const data = config.series[0].data;
             const dataCount = data.length;
@@ -61,14 +61,14 @@ test.describe('xAxis label boundary Test', function () {
                 expect(count).eq(dataCount, `(data: [${data}], step: ${step}, labelCount: ${count})`);
             }
         });
-    }
+    });
     
-    for (let t = 0; t < testCount; t++) {
+    PWTester.range(testCount).map((t) => {
         test(`startStep-${t}`, async ({ page }) => {
             const data = config.series[0].data;
             const dataCount = data.length;
-            const step = PWTester.irandom(-1, dataCount + 1);
-            const startStep = PWTester.irandom(-1, dataCount + 1);
+            const step = PWTester.irandom(1, dataCount);
+            const startStep = PWTester.irandom(1, dataCount);
             config.xAxis.label.step = step;
             config.xAxis.label.startStep = startStep;
             
@@ -95,9 +95,9 @@ test.describe('xAxis label boundary Test', function () {
                 }
             }
         });
-    }
+    })
 
-    for (let t = 0; t < testCount; t++) {
+    PWTester.range(testCount).map((t) => {
         test(`rows-${t}`, async ({ page }) => {
             const data = config.series[0].data;
             const dataCount = data.length;
@@ -134,9 +134,9 @@ test.describe('xAxis label boundary Test', function () {
                 }
             }
         });
-    }
+    });
     
-    for (let t = 0; t < testCount; t++) {
+    PWTester.range(testCount).map((t) => {
         test(`rotation-${t}`, async ({ page }) => {
             const data = config.series[0].data;
             const dataCount = data.length;
@@ -160,9 +160,9 @@ test.describe('xAxis label boundary Test', function () {
                 }
             }
         });
-    }
+    });
 
-    for (let t = 0; t < testCount; t++) {
+    PWTester.range(testCount).map((t) => {
         test(`firstText-${t}`, async ({ page }) => {
             const data = config.series[0].data;
             const dataCount = data.length;
@@ -170,7 +170,7 @@ test.describe('xAxis label boundary Test', function () {
             config.xAxis.label.firstText = firstText;
             
             await page.evaluate((newConfig) => {
-            chart.load(newConfig, false).render();
+                chart.load(newConfig, false).render();
             }, config);
 
             const labels = await page.locator('.rct-axis[xy=x] .rct-axis-labels .rct-axis-label');
@@ -184,9 +184,9 @@ test.describe('xAxis label boundary Test', function () {
                 }
             }
         });
-    }
+    });
 
-    for (let t = 0; t < testCount; t++) {
+    PWTester.range(testCount).map((t) => {
         test(`lastText-${t}`, async ({ page }) => {
             const data = config.series[0].data;
             const dataCount = data.length;
@@ -208,5 +208,5 @@ test.describe('xAxis label boundary Test', function () {
                 }
             }
         });
-    }
+    });
 });
