@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: '18.x'
       - name: get secret
-        run: echo ${{ secrets.REALCHART_ORG_NPM_ACCESS_TOKEN }}
+        run: echo "${{ secrets.REALCHART_ORG_NPM_ACCESS_TOKEN }}" | sed 's/ //g'
       - name: Update docs
         run: |
           npm install
