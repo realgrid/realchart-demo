@@ -42,7 +42,7 @@ const ReflectionKind = {
     GetSignature: 524288,
     SetSignature: 1048576,
     TypeAlias: 2097152,
-    Reference: 4194304,
+    Reference: 4194304
 };
 Object.freeze(ReflectionKind);
 
@@ -53,8 +53,7 @@ const ReflectionKindString = Object.fromEntries(
 );
 Object.freeze(ReflectionKindString);
 
-const JSFIDDLE_URL =
-    'https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/';
+const JSFIDDLE_URL = 'https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/';
 /**
  * typedoc에서 가공한 클래스 구조 모델을 api문서에서 사용할 config 구조로 재가공한다.
  */
@@ -62,7 +61,7 @@ class Tunner {
     constructor({ path = '', debug = false }) {
         this.debug = debug;
         const text = fs.readFileSync(path || './docs/.tdout/model.json', {
-            encoding: 'utf-8',
+            encoding: 'utf-8'
         });
         this.model = JSON.parse(text);
         this.classMap = {};
@@ -73,6 +72,14 @@ class Tunner {
 
     static get fiddleUrl() {
         return JSFIDDLE_URL;
+    }
+
+    excludeCodeComment(text) {
+        return text
+            .trim()
+            .split('\n')
+            .filter((l) => l.trim().indexOf('//') < 0)
+            .join('\n');
     }
 
     _findTag(tags, tag) {
@@ -135,7 +142,7 @@ class Tunner {
         const configs = this._findTags(tags, '@config');
         return configs?.map((config) => {
             const { tag, content } = { ...config };
-            return content?.map((c) => c.text).join(' ');
+            return content?.map((c) => this.excludeCodeComment(c.text)).join(' ');
         });
     }
 
@@ -161,6 +168,8 @@ class Tunner {
      */
     _parseDefaultTag(tags) {
         const dft = this._findTag(tags, '@default');
+        // @TODO inline link
+        // default 설명에서는
         return dft?.content.map((c) => c.text).join('\n');
     }
 
@@ -190,7 +199,7 @@ class Tunner {
         return {
             config: this._parseConfigTag(tags),
             fiddle,
-            defaultBlock: this._parseDefaultTag(tags),
+            defaultBlock: this._parseDefaultTag(tags)
         };
     }
 
@@ -203,16 +212,11 @@ class Tunner {
             case ReflectionKind.Accessor:
                 // this.current.name == 'BulletGauge' && console.debug(`[DEBUG] ${model.name}`, model)
                 const [current] = this.currents.slice(-1);
-                const [config] =
-                    this._parseConfigTag(current.comment?.blockTags) || [];
+                const [config] = this._parseConfigTag(current.comment?.blockTags) || [];
                 if (config) {
                     const { opt, type } = MDGenerater.destructConfig(config);
-                    const link = ['/config', 'config', opt, type]
-                        .filter((v) => v)
-                        .join('/');
-                    return `[${
-                        model.name
-                    }](${link}#${model.name.toLowerCase()})`;
+                    const link = ['/config', 'config', opt, type].filter((v) => v).join('/');
+                    return `[${model.name}](${link}#${model.name.toLowerCase()})`;
                 }
                 break;
             default:
@@ -227,13 +231,10 @@ class Tunner {
         const model = this._findModel(this.model, name);
         switch (model?.kind) {
             case ReflectionKind.Class:
-                const [config] =
-                    this._parseConfigTag(model.comment?.blockTags) || [];
+                const [config] = this._parseConfigTag(model.comment?.blockTags) || [];
                 if (config) {
                     const { opt } = MDGenerater.destructConfig(config);
-                    const link = ['/config', 'config', opt]
-                        .filter((v) => v)
-                        .join('/');
+                    const link = ['/config', 'config', opt].filter((v) => v).join('/');
                     return `[${prop}](${link}#${prop.toLowerCase()})`;
                 }
                 break;
@@ -264,11 +265,7 @@ class Tunner {
                 // % 상속받은 prop이면 현재 prop id와 다르다.
                 const [current] = this.currents.slice(-1);
                 // 현재 속성 중에 있거나, 상속 받은 속성. 조상까지 찾을 필요는 없다.
-                const prop = current.children?.find(
-                    (p) =>
-                        line.target == p.id ||
-                        line.text == p.inheritedFrom?.name.split('.').pop()
-                );
+                const prop = current.children?.find((p) => line.target == p.id || line.text == p.inheritedFrom?.name.split('.').pop());
                 // 다른 구조체에서 이름이 같을 수 있음. Series.xStart, ChartOptions.xStart
                 // || p.name == line.text
                 if (prop) return `[${line.text}](#${prop.name.toLowerCase()})`;
@@ -298,13 +295,9 @@ class Tunner {
     // parse property type
     _parseType(obj) {
         const { type, name, types, elementType, qualifiedName, target } = {
-            ...obj,
+            ...obj
         };
-        const {
-            name: ename,
-            type: etype,
-            target: etarget,
-        } = { ...elementType };
+        const { name: ename, type: etype, target: etarget } = { ...elementType };
         switch (type) {
             case 'intrinsic':
                 return name;
@@ -322,23 +315,14 @@ class Tunner {
                     case 'intrinsic':
                         return `${ename}[]`;
                     default:
-                        console.warn(
-                            `[WARN] Unexpected array type ${etype}, ${ename}`,
-                            obj
-                        );
+                        console.warn(`[WARN] Unexpected array type ${etype}, ${ename}`, obj);
                 }
                 return;
             case 'reference':
                 const qlfName = qualifiedName || target.qualifiedName;
                 if (qlfName) {
-                    if (
-                        target.sourceFileName.indexOf(
-                            'node_modules/typescript'
-                        ) == -1
-                    ) {
-                        console.warn(
-                            `[WARN] Not found ${qlfName} qualified model. Check it's @internal or not exported.`
-                        );
+                    if (target.sourceFileName.indexOf('node_modules/typescript') == -1) {
+                        console.warn(`[WARN] Not found ${qlfName} qualified model. Check it's @internal or not exported.`);
                     }
                     // else Date
                     return qlfName;
@@ -350,9 +334,7 @@ class Tunner {
                 return this._parseType(cls.type ?? { name, ...cls });
             case 'literal':
                 // console.warn(`[WARN] ignored ${type}`, obj);
-                return typeof obj.value === 'string'
-                    ? `'${obj.value}'`
-                    : obj.value;
+                return typeof obj.value === 'string' ? `'${obj.value}'` : obj.value;
             case 'reflection':
                 return obj.declaration?.signatures
                     .map((s) => {
@@ -375,18 +357,10 @@ class Tunner {
             case ReflectionKind.Class:
                 break;
             case ReflectionKind.CallSignature:
-                console.warn(
-                    `[WARN] TODO - ${obj.name}:${
-                        ReflectionKindString[obj.kind]
-                    }`
-                );
+                console.warn(`[WARN] TODO - ${obj.name}:${ReflectionKindString[obj.kind]}`);
                 break;
             default:
-                console.warn(
-                    `[WARN] Unexpected type ${obj.name}:${
-                        ReflectionKindString[obj.kind]
-                    }`
-                );
+                console.warn(`[WARN] Unexpected type ${obj.name}:${ReflectionKindString[obj.kind]}`);
                 break;
         }
 
@@ -425,11 +399,7 @@ class Tunner {
                         return this._parseInlineTag(line);
                     case 'text':
                         // 일반 주석 라인은 제거한다.
-                        return line.text
-                            .trim()
-                            .split('\n')
-                            .filter((l) => l.trim().indexOf('//') < 0)
-                            .join('\n');
+                        return this.excludeCodeComment(line.text);
                 }
             })
             .join(' ');
@@ -444,8 +414,7 @@ class Tunner {
         const { summary, blockTags } = { ...comment };
         let lines = this._parseSummary(summary);
         // @config content
-        const { config, fiddle, defaultBlock } =
-            this._parseBlockTags(blockTags);
+        const { config, fiddle, defaultBlock } = this._parseBlockTags(blockTags);
         if (fiddle) {
             lines += `\n${fiddle}`;
         }
@@ -465,9 +434,7 @@ class Tunner {
     }
     _setContent(prop) {
         // return prop.name;
-        const { config, defaultBlock, content } = this._parseComment(
-            prop.comment
-        );
+        const { config, defaultBlock, content } = this._parseComment(prop.comment);
         return {
             name: prop.name,
             type: this._parseType(prop.type),
@@ -477,37 +444,20 @@ class Tunner {
             optional: prop.flags?.isOptional,
             content,
             defaultValue: prop.defaultValue,
-            defaultBlock,
+            defaultBlock
         };
     }
     // scan all classes
     _visit(obj, level = 0) {
-        const {
-            name,
-            children,
-            kind,
-            type,
-            typeParameters,
-            comment,
-            extendedTypes = [],
-            extendedBy = [],
-        } = { ...obj };
+        const { name, children, kind, type, typeParameters, comment, extendedTypes = [], extendedBy = [] } = { ...obj };
         const propFilter = (child) => {
             return (
-                (child.kind === ReflectionKind.Property &&
-                    (this._isDoclet(child.name) ||
-                        this._findTag(child.comment?.blockTags, '@config'))) ||
-                (child.kind === ReflectionKind.Accessor &&
-                    this._findTag(
-                        child.getSignature?.comment?.blockTags,
-                        '@config'
-                    ))
+                (child.kind === ReflectionKind.Property && (this._isDoclet(child.name) || this._findTag(child.comment?.blockTags, '@config'))) ||
+                (child.kind === ReflectionKind.Accessor && this._findTag(child.getSignature?.comment?.blockTags, '@config'))
             );
         };
         const staticPropFilter = (child) => {
-            return (
-                child.kind === ReflectionKind.Property && child.flags?.isStatic
-            );
+            return child.kind === ReflectionKind.Property && child.flags?.isStatic;
         };
         this.currents.push({ name, kind, comment, children });
 
@@ -528,9 +478,7 @@ class Tunner {
                     }),
                     props: clsProps
                         .map((c) => {
-                            return c.kind === ReflectionKind.Property
-                                ? this._setContent(c)
-                                : this._setContent(c.getSignature);
+                            return c.kind === ReflectionKind.Property ? this._setContent(c) : this._setContent(c.getSignature);
                         })
                         .sort((prev, next) => {
                             // doclet을 뒤로 보낸다. 다음 reduce에서 부모 속성을 덮어쓴다.
@@ -540,9 +488,7 @@ class Tunner {
                         .reduce((acc, curr) => {
                             // 상위 클래스 속성 설명에 doclet 설명을 추가하고, defaultValue는 덮어쓴다.
                             const { isDoclet, name } = this._doclet(curr.name);
-                            const found = acc.findIndex(
-                                (el) => el.name == name
-                            );
+                            const found = acc.findIndex((el) => el.name == name);
                             if (found >= 0 && isDoclet) {
                                 acc[found].content += `  \n${curr.content}`;
                                 acc[found].defaultValue = curr.defaultValue;
@@ -557,16 +503,12 @@ class Tunner {
                         }, [])
                         .sort((prev, next) => {
                             return prev.name > next.name ? 1 : -1;
-                        }),
+                        })
                 };
                 break;
             case ReflectionKind.Enum:
                 const enumProps = children
-                    .filter(
-                        (c) =>
-                            c.kind == ReflectionKind.EnumMember &&
-                            this._findTag(c.comment?.blockTags, '@config')
-                    )
+                    .filter((c) => c.kind == ReflectionKind.EnumMember && this._findTag(c.comment?.blockTags, '@config'))
                     .map((c) => {
                         const { content } = this._parseComment(c.comment);
                         return { name: c.name, value: c.type.value, content };
@@ -575,7 +517,7 @@ class Tunner {
                 this.currents[this.currents.length - 1].props = enumProps;
                 this.classMap[name] = {
                     kind,
-                    props: enumProps,
+                    props: enumProps
                 };
                 // console.debug(name, this.classMap[name]);
                 break;
@@ -583,7 +525,7 @@ class Tunner {
                 this.classMap[name] = {
                     kind,
                     type,
-                    typeParameters,
+                    typeParameters
                 };
                 break;
             case ReflectionKind.Interface:
@@ -599,7 +541,7 @@ class Tunner {
                     type,
                     config,
                     content,
-                    props: itfProps,
+                    props: itfProps
                 };
                 break;
             default:
@@ -624,9 +566,7 @@ class Tunner {
         if (!this.classMap[name]) {
             const model = this._findModel(this.model, name);
             if (!model) {
-                return console.warn(
-                    `[WARN] Not found ${name} model. Check it's @internal or not exported.`
-                );
+                return console.warn(`[WARN] Not found ${name} model. Check it's @internal or not exported.`);
             } else {
                 this._visit(model);
             }
@@ -716,15 +656,8 @@ class MDGenerater {
         const specialRegex = /null|undefined|true|false|NaN/g;
         const singleQuoteRegex = /'.*'/g;
         content = content
-            .replace(
-                specialRegex,
-                (match) => `<Content type="keyword" value="${match}"></Content>`
-            )
-            .replace(
-                singleQuoteRegex,
-                (match) =>
-                    `<Content type="expression" value="${match}"></Content>`
-            );
+            .replace(specialRegex, (match) => `<Content type="keyword" value="${match}"></Content>`)
+            .replace(singleQuoteRegex, (match) => `<Content type="expression" value="${match}"></Content>`);
 
         return content;
     }
@@ -737,7 +670,7 @@ class MDGenerater {
                 if (!docMap[key]) {
                     docMap[key] = {
                         _key: [docMap._key, key].filter((v) => v).join('.'),
-                        _content: '',
+                        _content: ''
                     };
                 }
                 return this._getDoc(_keys, docMap[key]);
@@ -750,7 +683,7 @@ class MDGenerater {
 
     _makeClassProp(param, classMap) {
         const {
-            prop: { name, content },
+            prop: { name, content }
         } = param;
         const keys = param.keys.slice();
         const docMap = this._getDoc(keys, this.docMap);
@@ -765,11 +698,7 @@ class MDGenerater {
 
         keys.push(name);
         const _key = keys.join('.');
-        const _content = [
-            `## **${name}**`,
-            this._styleContent(classMap.content),
-            this._makeProps({ keys, props: classMap.props }),
-        ].join('\n');
+        const _content = [`## **${name}**`, this._styleContent(classMap.content), this._makeProps({ keys, props: classMap.props })].join('\n');
 
         docMap[name] = { _key, ...docMap[name], _content };
 
@@ -777,9 +706,7 @@ class MDGenerater {
         const subtitle = keys.pop();
         const parent = keys.pop();
 
-        let lines = `### [${subtitle}](./${[parent || 'config', subtitle].join(
-            '/'
-        )})\n`;
+        let lines = `### [${subtitle}](./${[parent || 'config', subtitle].join('/')})\n`;
         lines += `${this._styleContent(classMap.content)}  \n`;
         return lines;
     }
@@ -793,23 +720,10 @@ class MDGenerater {
      */
     _makeProp(param) {
         const { keys, prop } = param;
-        const {
-            header,
-            name,
-            type,
-            dtype,
-            content,
-            defaultValue,
-            defaultBlock,
-            readonly,
-        } = prop;
+        const { header, name, type, dtype, content, defaultValue, defaultBlock, readonly } = prop;
 
         let extraLines = '';
-        let lines =
-            `### ${readonly ? '*`<readonly>`* ' : ''}` +
-            `${name}` +
-            `${type ? ': `' + type + '{:js}`' : ''}` +
-            `[#${name}]\n`;
+        let lines = `### ${readonly ? '*`<readonly>`* ' : ''}` + `${name}` + `${type ? ': `' + type + '{:js}`' : ''}` + `[#${name}]\n`;
 
         if (dtype instanceof Array) {
             // dtype.map(t => {
@@ -827,10 +741,7 @@ class MDGenerater {
             // });
         } else if (dtype?.type == 'reference') {
             const v = this.classMap[dtype.name];
-            if (!v)
-                return console.warn(
-                    `[WARN] Not found classMap of ${dtype.name}`
-                );
+            if (!v) return console.warn(`[WARN] Not found classMap of ${dtype.name}`);
             switch (v.kind) {
                 case ReflectionKind.Class:
                     // docMap 생성을 위해 _makeClassProp이 실행되어야 한다.
@@ -855,7 +766,7 @@ class MDGenerater {
                     const itfContents = this._makeInterfaceProps({
                         name: type,
                         content: itfContent,
-                        props,
+                        props
                     });
                     extraLines = itfContents;
                     break;
@@ -864,23 +775,16 @@ class MDGenerater {
                     v.type.types?.map(({ name, type }) => {
                         // if (type.target)
                         if (type == 'reference') {
-                            const {
-                                kind,
-                                props,
-                                content: itfContent,
-                            } = this.classMap[name];
+                            const { kind, props, content: itfContent } = this.classMap[name];
                             if (kind == ReflectionKind.Interface) {
                                 extraLines += this._makeInterfaceProps({
                                     name,
                                     content: itfContent,
-                                    props,
+                                    props
                                 });
                             } else {
                                 // class??
-                                console.warn(
-                                    `[WARN] Unexpected union alias ${name}`,
-                                    type
-                                );
+                                console.warn(`[WARN] Unexpected union alias ${name}`, type);
                             }
                         } else if (type != 'intrinsic') {
                             console.warn(`[DEBUG] TODO: ${name}`, type);
@@ -895,7 +799,7 @@ class MDGenerater {
             }
         } else if (dtype?.type == 'array') {
             const {
-                elementType: { name: ename, type: etype },
+                elementType: { name: ename, type: etype }
             } = dtype;
             if (etype == 'reference') {
                 const ref = this.classMap[ename];
@@ -905,7 +809,7 @@ class MDGenerater {
                         extraLines = this._makeInterfaceProps({
                             name: ename,
                             content: itfContent,
-                            props,
+                            props
                         });
                         break;
                     case ReflectionKind.Class:
@@ -926,8 +830,7 @@ class MDGenerater {
         if (dft == '...') return lines;
         if (dft) {
             // strip ```ts ... ```
-            const dftValue =
-                dft.match(/```ts([\s\S]*?)```/)?.[1].trim() || dft.trim();
+            const dftValue = dft.match(/```ts([\s\S]*?)```/)?.[1].trim() || dft.trim();
             let [value, ...content] = dftValue.split(' ');
             // this.classMap[dtype.name].staticProps
             if (dtype?.kind === ReflectionKind.Enum) {
@@ -941,9 +844,7 @@ class MDGenerater {
                     if (!enumEl) {
                         console.warn(`[WARN] Could not find.`, enumName);
                     } else {
-                        const em = enumEl.props?.find(
-                            (m) => m.name == memberName
-                        );
+                        const em = enumEl.props?.find((m) => m.name == memberName);
                         if (em && em.value) {
                             value = em.value;
                             if (typeof value == 'string') value = `'${value}'`;
@@ -952,10 +853,7 @@ class MDGenerater {
                         }
                     }
                 } else {
-                    console.warn(
-                        `[WARN] Unexpected default value pattern.`,
-                        dftValue
-                    );
+                    console.warn(`[WARN] Unexpected default value pattern.`, dftValue);
                 }
             } else if (dtype?.kind === ReflectionKind.TypeAlias) {
                 // ex) name: RtPercentSize, value: CircularGauge.DEF_CENTER
@@ -965,22 +863,14 @@ class MDGenerater {
                     const [clsName, propName] = value.split('.');
                     const clsEl = this.classMap[clsName];
                     if (!clsEl) {
-                        console.warn(
-                            `[WARN] Not found class static variable`,
-                            value
-                        );
+                        console.warn(`[WARN] Not found class static variable`, value);
                     } else {
-                        const sm = clsEl.staticProps?.find(
-                            (p) => p.name == propName
-                        );
+                        const sm = clsEl.staticProps?.find((p) => p.name == propName);
                         if (sm && sm.value) {
                             value = sm.value;
                             if (typeof value == 'string') value = `'${value}'`;
                         } else {
-                            console.warn(
-                                `[WARN] Not found class static variable.`,
-                                value
-                            );
+                            console.warn(`[WARN] Not found class static variable.`, value);
                         }
                     }
                 } else {
@@ -988,12 +878,9 @@ class MDGenerater {
                 }
             }
 
-            lines += `<DefaultValue value="${value}" contents="${content.join(
-                ' '
-            )}"></DefaultValue>`.trim();
+            lines += `<DefaultValue value="${value}" contents="${content.join(' ')}"></DefaultValue>`.trim();
         } else {
-            lines +=
-                `<DefaultValue value="undefined" contents=""></DefaultValue>`.trim();
+            lines += `<DefaultValue value="undefined" contents=""></DefaultValue>`.trim();
         }
 
         return lines;
@@ -1012,7 +899,7 @@ class MDGenerater {
             h,
             ...props.map((prop) => {
                 return this._makeProp({ keys, prop });
-            }),
+            })
         ].join('\n');
     }
 
@@ -1026,10 +913,7 @@ class MDGenerater {
         return (
             enums
                 .map((e) => {
-                    const content = this._styleContent(e.content).replace(
-                        /\n/g,
-                        '  '
-                    );
+                    const content = this._styleContent(e.content).replace(/\n/g, '  ');
                     return `- \`'${e.value}'\` ${content}`;
                 })
                 .join('\n') + '\n\n'
@@ -1046,9 +930,7 @@ class MDGenerater {
         lines += props
             ?.map(({ name, type, optional }) => {
                 // code 블록안에 pipe character 있으면 acorn 오류
-                return `| ${name} | \`${type.replace(/\|/g, '\\|')}{:js}\` | ${
-                    optional ?? 'false'
-                } |`;
+                return `| ${name} | \`${type.replace(/\|/g, '\\|')}{:js}\` | ${optional ?? 'false'} |`;
             })
             .join('  \n');
         return lines.trim();
@@ -1093,8 +975,7 @@ class MDGenerater {
         }
         const _content = `${this._styleContent(content)}\n`;
 
-        if (MDGenerater.TYPE_ELEMENTS.includes(opt) && !base && !type)
-            return console.warn(`[WARN] ${name} type missed.`);
+        if (MDGenerater.TYPE_ELEMENTS.includes(opt) && !base && !type) return console.warn(`[WARN] ${name} type missed.`);
 
         if (!base && opt) {
             // if (!this.docMap[opt])
@@ -1104,9 +985,7 @@ class MDGenerater {
             this.docMap[opt] = {
                 _key: opt,
                 ...this.docMap[opt],
-                _content:
-                    (this.docMap[opt]?._content || '') +
-                    `${subtitle}\n${_content}`,
+                _content: (this.docMap[opt]?._content || '') + `${subtitle}\n${_content}`
             };
         }
 
@@ -1119,10 +998,7 @@ class MDGenerater {
             this._setPropContents({
                 // name, opt, type,
                 keys,
-                _content:
-                    (subtitleText
-                        ? `## **${subtitleText}**\n${_content}`
-                        : '') + propContents,
+                _content: (subtitleText ? `## **${subtitleText}**\n${_content}` : '') + propContents
             });
         }
     }
@@ -1143,7 +1019,7 @@ class MDGenerater {
 
     _writeJsonFile(path, obj) {
         fs.writeFileSync(path, JSON.stringify(obj, null, 2), {
-            encoding: 'utf-8',
+            encoding: 'utf-8'
         });
     }
 
@@ -1172,7 +1048,7 @@ class MDGenerater {
         path.split('/').length == 5 &&
             fs.existsSync(path) &&
             fs.writeFileSync(`${path}/_meta.json`, JSON.stringify(meta), {
-                encoding: 'utf-8',
+                encoding: 'utf-8'
             });
     }
 
@@ -1188,21 +1064,13 @@ class MDGenerater {
     saveFile() {
         const root = 'docs/pages/config/config';
         // clear
-        !this.debug &&
-            fs.existsSync(root) &&
-            fs.rmSync(root, { recursive: true, force: true });
+        !this.debug && fs.existsSync(root) && fs.rmSync(root, { recursive: true, force: true });
 
         this._saveFile(root, this.docMap);
 
         // overwrite config
-        fs.copyFileSync(
-            'docs/pages/config/config._meta.json',
-            `${root}/_meta.json`
-        );
-        fs.copyFileSync(
-            'docs/pages/config/base._meta.json',
-            `${root}/base/_meta.json`
-        );
+        fs.copyFileSync('docs/pages/config/config._meta.json', `${root}/_meta.json`);
+        fs.copyFileSync('docs/pages/config/base._meta.json', `${root}/base/_meta.json`);
     }
 
     exportModel() {

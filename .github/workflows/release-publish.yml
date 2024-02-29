@@ -35,7 +35,6 @@ jobs:
       - name: Deploy NPM
         uses: JS-DevTools/npm-publish@v3
         with:
-          # registry: https://registry.npmjs.org/
           package: dist/.npm/package.json
           # npm realchart repo 권한 토큰. 2024/12/18 만료
           token: ${{ secrets.REALCHART_NPM_ACCESS_TOKEN }}
@@ -54,6 +53,7 @@ jobs:
           npm run dldoc
       - name: Create release mdx
         run: |
+          echo # ${{github.event.release.tag_name}} >> docs/pages/guide/release/${{ github.event.release.tag_name }}.mdx
           echo ${{github.event.release.body}} >> docs/pages/guide/release/${{ github.event.release.tag_name }}.mdx
       - name: setup git config
         run: |

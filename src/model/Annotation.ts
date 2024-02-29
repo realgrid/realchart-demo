@@ -98,7 +98,8 @@ export abstract class Annotation extends ChartItem {
      * 수평 배치.<br/>
      * 
      * @config
-     * @default {@link anchor}가 지정되면 'center', 아니면 'left'
+     * 
+     * @default Align.LEFT anchor가 지정되면 'center', 아니면 'left'
      */
     align: Align;
     /**

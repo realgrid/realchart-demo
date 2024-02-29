@@ -1,0 +1,34 @@
+name: release publish to fix errors
+
+on:
+  workflow_dispatch:
+# on:
+#   push:
+#     branches: [deploy-actions]
+
+jobs:
+  release-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: martinbeentjes/npm-get-version-action@v1.3.1
+        name: get-npm-version
+        id: package-version
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      - name: get secret
+        run: echo ${{ secrets.REALCHART_ORG_NPM_ACCESS_TOKEN }}
+      - name: Update docs
+        run: |
+          npm install
+          npm run dldoc
+      - name: setup git config
+        run: |
+          git config user.name "benny-yoo"
+          git config user.email "benny@wooritech.com"
+      - name: commit all changes
+        run: |
+          git add .
+          git commit -m "v1.0.2 release"
+          git push
