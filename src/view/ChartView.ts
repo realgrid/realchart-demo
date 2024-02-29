@@ -1313,18 +1313,14 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
                         const nearest: DataPoint[] = [];
                         body._seriesViews.forEach((sv) => {
                             let dataPoint: DataPoint;
-                            if (sv['getHintDistance']) {
-                                dataPoint = sv['getNearest'](x - body.tx, y - body.ty).pv.point as DataPoint;
-                            } else {
-                                let min = Number.MAX_SAFE_INTEGER;
-                                sv.model._visPoints.forEach((dp) => {
-                                    const distance = Math.sqrt(Math.abs((x - body.tx) - dp.xPos) ** 2 + Math.abs((y - body.ty) - dp.yPos) ** 2);
-                                    if (distance < min) {
-                                        min = distance;
-                                        dataPoint = dp;
-                                    };
-                                })
-                            }
+                            let min = Number.MAX_SAFE_INTEGER;
+                            sv.model._visPoints.forEach((dp) => {
+                                const distance = axis._isX ? Math.abs(Number(flag) - dp.xValue) : Math.abs(Number(flag) - dp.yValue);
+                                if (distance < min) {
+                                    min = distance;
+                                    dataPoint = dp;
+                                };
+                            })
                             nearest.push(dataPoint);
                         })
                         axis.crosshair.moved(pos, flag, nearest);
