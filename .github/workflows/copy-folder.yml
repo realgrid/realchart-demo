@@ -24,13 +24,15 @@ jobs:
         
         git clone https://x-access-token:$TOKEN@github.com/realgrid/realchart-demo.git
         cp -r fiddle/* realchart-demo/
-       # 변경 사항이 있는지 확인
-        if [[ $(git status --porcelain) ]]; then
-            # 변경 사항이 있을 때만 커밋 실행
-            git add .
-            git commit -m "Copied folder for fiddle demo"
-            git push
-        else
-            # 변경 사항이 없을 때는 메시지만 출력
-            echo "No changes to commit."
-        fi
+
+        echo '#!/bin/bash' > commit_and_push.sh
+        echo 'if [[ $(git status --porcelain) ]]; then' >> commit_and_push.sh
+        echo '    git add .' >> commit_and_push.sh
+        echo '    git commit -m "Copied folder for fiddle demo"' >> commit_and_push.sh
+        echo '    git push' >> commit_and_push.sh
+        echo 'else' >> commit_and_push.sh
+        echo '    echo "No changes to commit."' >> commit_and_push.sh
+        echo 'fi' >> commit_and_push.sh
+
+        chmod +x commit_and_push.sh
+        ./commit_and_push.sh
