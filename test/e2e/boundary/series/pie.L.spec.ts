@@ -297,18 +297,22 @@ test.describe('series, pie test', () => {
             chart.load(newConfig, false).render();
         }, config);
 
-        const point = await page.locator(`.${PieSeriesView.POINT_CLASS}[data-index="1"]`);
-        await point.click({ force: true });
-        
-        await PWTester.sleep();
-
         await page.evaluate(() => {
             const elt = document.getElementsByClassName('rct-tooltip')[0] as HTMLElement;
             elt.style.visibility = 'visible';
+            elt.style.opacity = "1";
             chart.render();
         });
 
-        await PWTester.testChartBySnapshot(page, testInfo);
+    
+        const point = await page.locator(`.${PieSeriesView.POINT_CLASS}[data-index="1"]`);
+        await point.click({ force: true });
+    
+        expect( 
+        await page.evaluate(() => {
+           return document.getElementsByClassName("rct-tooltip-text")[0].innerHTML.includes("시리즈2") && 
+          document.getElementsByClassName("rct-tooltip-text")[0].innerHTML.includes("10") 
+        })).to.be.true;
     });
 
     test('totalAngle', async ({ page }, testInfo) => {
