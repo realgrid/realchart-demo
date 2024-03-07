@@ -1,7 +1,7 @@
 const config = {
     xAxis: {
         type: 'time',
-        grid: true
+        grid: true,
     },
     yAxis: {
         title: 'Temparature',
@@ -9,7 +9,7 @@ const config = {
     },
     series: {
         type: 'arearange',
-        data: [
+        data: [ 
             [20.6, 17.2],
             [25.9, 18.7],
             [22.4, 17.7],

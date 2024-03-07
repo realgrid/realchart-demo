@@ -385,7 +385,8 @@ export function RealChartReact({
             height="400px"
             language="javascript"
             // options - https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor.IStandaloneEditorConstructionOptions.html
-            options={{ autoIndent: true }}
+            // https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor.IStandaloneEditorConstructionOptions.html#autoIndent
+            options={{ autoIndent: 'advanced' }}
             value={configString}
             onChange={onChangeEditor}
             onMount={handleDidMount}
