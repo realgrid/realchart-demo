@@ -1,0 +1,848 @@
+const data = [{
+  age: 63,
+  thalachh: 150,
+  sex: '0'
+}, {
+  age: 37,
+  thalachh: 187,
+  sex: '1'
+}, {
+  age: 56,
+  thalachh: 178,
+  sex: '0'
+}, {
+  age: 57,
+  thalachh: 148,
+  sex: '1'
+}, {
+  age: 44,
+  thalachh: 173,
+  sex: '0'
+}, {
+  age: 52,
+  thalachh: 162,
+  sex: '1'
+}, {
+  age: 57,
+  thalachh: 174,
+  sex: '0'
+}, {
+  age: 54,
+  thalachh: 160,
+  sex: '1'
+}, {
+  age: 49,
+  thalachh: 171,
+  sex: '0'
+}, {
+  age: 64,
+  thalachh: 144,
+  sex: '1'
+}, {
+  age: 43,
+  thalachh: 171,
+  sex: '0'
+}, {
+  age: 59,
+  thalachh: 161,
+  sex: '1'
+}, {
+  age: 44,
+  thalachh: 179,
+  sex: '0'
+}, {
+  age: 42,
+  thalachh: 178,
+  sex: '1'
+}, {
+  age: 61,
+  thalachh: 137,
+  sex: '0'
+}, {
+  age: 40,
+  thalachh: 178,
+  sex: '1'
+}, {
+  age: 59,
+  thalachh: 157,
+  sex: '0'
+}, {
+  age: 51,
+  thalachh: 123,
+  sex: '1'
+}, {
+  age: 53,
+  thalachh: 152,
+  sex: '0'
+}, {
+  age: 65,
+  thalachh: 140,
+  sex: '1'
+}, {
+  age: 44,
+  thalachh: 188,
+  sex: '0'
+}, {
+  age: 54,
+  thalachh: 152,
+  sex: '1'
+}, {
+  age: 51,
+  thalachh: 125,
+  sex: '0'
+}, {
+  age: 54,
+  thalachh: 165,
+  sex: '1'
+}, {
+  age: 48,
+  thalachh: 180,
+  sex: '0'
+}, {
+  age: 45,
+  thalachh: 148,
+  sex: '1'
+}, {
+  age: 39,
+  thalachh: 182,
+  sex: '0'
+}, {
+  age: 52,
+  thalachh: 172,
+  sex: '1'
+}, {
+  age: 44,
+  thalachh: 180,
+  sex: '0'
+}, {
+  age: 47,
+  thalachh: 156,
+  sex: '1'
+}, {
+  age: 66,
+  thalachh: 151,
+  sex: '0'
+}, {
+  age: 62,
+  thalachh: 146,
+  sex: '1'
+}, {
+  age: 52,
+  thalachh: 158,
+  sex: '0'
+}, {
+  age: 48,
+  thalachh: 186,
+  sex: '1'
+}, {
+  age: 45,
+  thalachh: 185,
+  sex: '0'
+}, {
+  age: 34,
+  thalachh: 174,
+  sex: '1'
+}, {
+  age: 54,
+  thalachh: 156,
+  sex: '0'
+}, {
+  age: 52,
+  thalachh: 190,
+  sex: '1'
+}, {
+  age: 41,
+  thalachh: 132,
+  sex: '0'
+}, {
+  age: 58,
+  thalachh: 165,
+  sex: '1'
+}, {
+  age: 51,
+  thalachh: 143,
+  sex: '0'
+}, {
+  age: 44,
+  thalachh: 170,
+  sex: '1'
+}, {
+  age: 54,
+  thalachh: 147,
+  sex: '0'
+}, {
+  age: 51,
+  thalachh: 154,
+  sex: '1'
+}, {
+  age: 29,
+  thalachh: 202,
+  sex: '0'
+}, {
+  age: 51,
+  thalachh: 186,
+  sex: '1'
+}, {
+  age: 51,
+  thalachh: 166,
+  sex: '0'
+}, {
+  age: 59,
+  thalachh: 164,
+  sex: '1'
+}, {
+  age: 52,
+  thalachh: 184,
+  sex: '0'
+}, {
+  age: 58,
+  thalachh: 154,
+  sex: '1'
+}, {
+  age: 41,
+  thalachh: 179,
+  sex: '0'
+}, {
+  age: 45,
+  thalachh: 170,
+  sex: '1'
+}, {
+  age: 52,
+  thalachh: 178,
+  sex: '0'
+}, {
+  age: 68,
+  thalachh: 151,
+  sex: '1'
+}, {
+  age: 46,
+  thalachh: 156,
+  sex: '0'
+}, {
+  age: 48,
+  thalachh: 175,
+  sex: '1'
+}, {
+  age: 57,
+  thalachh: 168,
+  sex: '0'
+}, {
+  age: 52,
+  thalachh: 169,
+  sex: '1'
+}, {
+  age: 53,
+  thalachh: 111,
+  sex: '0'
+}, {
+  age: 52,
+  thalachh: 147,
+  sex: '1'
+}, {
+  age: 43,
+  thalachh: 162,
+  sex: '0'
+}, {
+  age: 53,
+  thalachh: 173,
+  sex: '1'
+}, {
+  age: 42,
+  thalachh: 178,
+  sex: '0'
+}, {
+  age: 59,
+  thalachh: 145,
+  sex: '1'
+}, {
+  age: 42,
+  thalachh: 194,
+  sex: '0'
+}, {
+  age: 50,
+  thalachh: 163,
+  sex: '1'
+}, {
+  age: 69,
+  thalachh: 131,
+  sex: '0'
+}, {
+  age: 57,
+  thalachh: 173,
+  sex: '1'
+}, {
+  age: 43,
+  thalachh: 161,
+  sex: '0'
+}, {
+  age: 55,
+  thalachh: 155,
+  sex: '1'
+}, {
+  age: 41,
+  thalachh: 168,
+  sex: '0'
+}, {
+  age: 56,
+  thalachh: 162,
+  sex: '1'
+}, {
+  age: 59,
+  thalachh: 182,
+  sex: '0'
+}, {
+  age: 47,
+  thalachh: 143,
+  sex: '1'
+}, {
+  age: 42,
+  thalachh: 162,
+  sex: '0'
+}, {
+  age: 41,
+  thalachh: 153,
+  sex: '1'
+}, {
+  age: 62,
+  thalachh: 140,
+  sex: '0'
+}, {
+  age: 57,
+  thalachh: 126,
+  sex: '1'
+}, {
+  age: 64,
+  thalachh: 105,
+  sex: '0'
+}, {
+  age: 43,
+  thalachh: 181,
+  sex: '1'
+}, {
+  age: 70,
+  thalachh: 143,
+  sex: '0'
+}, {
+  age: 44,
+  thalachh: 169,
+  sex: '1'
+}, {
+  age: 42,
+  thalachh: 150,
+  sex: '0'
+}, {
+  age: 66,
+  thalachh: 138,
+  sex: '1'
+}, {
+  age: 64,
+  thalachh: 155,
+  sex: '0'
+}, {
+  age: 47,
+  thalachh: 179,
+  sex: '1'
+}, {
+  age: 35,
+  thalachh: 174,
+  sex: '0'
+}, {
+  age: 58,
+  thalachh: 144,
+  sex: '1'
+}, {
+  age: 56,
+  thalachh: 163,
+  sex: '0'
+}, {
+  age: 56,
+  thalachh: 169,
+  sex: '1'
+}, {
+  age: 41,
+  thalachh: 182,
+  sex: '0'
+}, {
+  age: 38,
+  thalachh: 173,
+  sex: '1'
+}, {
+  age: 38,
+  thalachh: 173,
+  sex: '0'
+}, {
+  age: 67,
+  thalachh: 108,
+  sex: '1'
+}, {
+  age: 67,
+  thalachh: 129,
+  sex: '0'
+}, {
+  age: 63,
+  thalachh: 147,
+  sex: '1'
+}, {
+  age: 53,
+  thalachh: 155,
+  sex: '0'
+}, {
+  age: 56,
+  thalachh: 142,
+  sex: '1'
+}, {
+  age: 48,
+  thalachh: 168,
+  sex: '0'
+}, {
+  age: 58,
+  thalachh: 160,
+  sex: '1'
+}, {
+  age: 58,
+  thalachh: 173,
+  sex: '0'
+}, {
+  age: 60,
+  thalachh: 132,
+  sex: '1'
+}, {
+  age: 40,
+  thalachh: 114,
+  sex: '0'
+}, {
+  age: 60,
+  thalachh: 160,
+  sex: '1'
+}, {
+  age: 64,
+  thalachh: 158,
+  sex: '0'
+}, {
+  age: 43,
+  thalachh: 120,
+  sex: '1'
+}, {
+  age: 57,
+  thalachh: 112,
+  sex: '0'
+}, {
+  age: 55,
+  thalachh: 132,
+  sex: '1'
+}, {
+  age: 58,
+  thalachh: 165,
+  sex: '0'
+}, {
+  age: 50,
+  thalachh: 128,
+  sex: '1'
+}, {
+  age: 44,
+  thalachh: 153,
+  sex: '0'
+}, {
+  age: 60,
+  thalachh: 144,
+  sex: '1'
+}, {
+  age: 54,
+  thalachh: 109,
+  sex: '0'
+}, {
+  age: 50,
+  thalachh: 163,
+  sex: '1'
+}, {
+  age: 41,
+  thalachh: 158,
+  sex: '0'
+}, {
+  age: 58,
+  thalachh: 131,
+  sex: '1'
+}, {
+  age: 54,
+  thalachh: 113,
+  sex: '0'
+}, {
+  age: 60,
+  thalachh: 142,
+  sex: '1'
+}, {
+  age: 60,
+  thalachh: 155,
+  sex: '0'
+}, {
+  age: 59,
+  thalachh: 140,
+  sex: '1'
+}, {
+  age: 46,
+  thalachh: 147,
+  sex: '0'
+}, {
+  age: 67,
+  thalachh: 163,
+  sex: '1'
+}, {
+  age: 62,
+  thalachh: 99,
+  sex: '0'
+}, {
+  age: 65,
+  thalachh: 158,
+  sex: '1'
+}, {
+  age: 44,
+  thalachh: 177,
+  sex: '0'
+}, {
+  age: 60,
+  thalachh: 141,
+  sex: '1'
+}, {
+  age: 58,
+  thalachh: 111,
+  sex: '0'
+}, {
+  age: 68,
+  thalachh: 150,
+  sex: '1'
+}, {
+  age: 52,
+  thalachh: 161,
+  sex: '0'
+}, {
+  age: 59,
+  thalachh: 142,
+  sex: '1'
+}, {
+  age: 49,
+  thalachh: 139,
+  sex: '0'
+}, {
+  age: 59,
+  thalachh: 162,
+  sex: '1'
+}, {
+  age: 57,
+  thalachh: 150,
+  sex: '0'
+}, {
+  age: 61,
+  thalachh: 140,
+  sex: '1'
+}, {
+  age: 39,
+  thalachh: 140,
+  sex: '0'
+}, {
+  age: 56,
+  thalachh: 144,
+  sex: '1'
+}, {
+  age: 63,
+  thalachh: 132,
+  sex: '0'
+}, {
+  age: 65,
+  thalachh: 127,
+  sex: '1'
+}, {
+  age: 48,
+  thalachh: 150,
+  sex: '0'
+}, {
+  age: 55,
+  thalachh: 111,
+  sex: '1'
+}, {
+  age: 65,
+  thalachh: 174,
+  sex: '0'
+}, {
+  age: 54,
+  thalachh: 126,
+  sex: '1'
+}, {
+  age: 70,
+  thalachh: 125,
+  sex: '0'
+}, {
+  age: 62,
+  thalachh: 103,
+  sex: '1'
+}, {
+  age: 35,
+  thalachh: 130,
+  sex: '0'
+}, {
+  age: 59,
+  thalachh: 159,
+  sex: '1'
+}, {
+  age: 64,
+  thalachh: 131,
+  sex: '0'
+}, {
+  age: 47,
+  thalachh: 152,
+  sex: '1'
+}, {
+  age: 57,
+  thalachh: 124,
+  sex: '0'
+}, {
+  age: 55,
+  thalachh: 145,
+  sex: '1'
+}, {
+  age: 64,
+  thalachh: 96,
+  sex: '0'
+}, {
+  age: 70,
+  thalachh: 109,
+  sex: '1'
+}, {
+  age: 51,
+  thalachh: 173,
+  sex: '0'
+}, {
+  age: 58,
+  thalachh: 171,
+  sex: '1'
+}, {
+  age: 60,
+  thalachh: 170,
+  sex: '0'
+}, {
+  age: 77,
+  thalachh: 162,
+  sex: '1'
+}, {
+  age: 35,
+  thalachh: 156,
+  sex: '0'
+}, {
+  age: 70,
+  thalachh: 112,
+  sex: '1'
+}, {
+  age: 64,
+  thalachh: 132,
+  sex: '0'
+}, {
+  age: 57,
+  thalachh: 88,
+  sex: '1'
+}, {
+  age: 56,
+  thalachh: 105,
+  sex: '0'
+}, {
+  age: 48,
+  thalachh: 166,
+  sex: '1'
+}, {
+  age: 66,
+  thalachh: 120,
+  sex: '0'
+}, {
+  age: 54,
+  thalachh: 195,
+  sex: '1'
+}, {
+  age: 69,
+  thalachh: 146,
+  sex: '0'
+}, {
+  age: 51,
+  thalachh: 122,
+  sex: '1'
+}, {
+  age: 43,
+  thalachh: 143,
+  sex: '0'
+}, {
+  age: 67,
+  thalachh: 125,
+  sex: '1'
+}, {
+  age: 59,
+  thalachh: 125,
+  sex: '0'
+}, {
+  age: 45,
+  thalachh: 147,
+  sex: '1'
+}, {
+  age: 58,
+  thalachh: 130,
+  sex: '0'
+}, {
+  age: 50,
+  thalachh: 126,
+  sex: '1'
+}, {
+  age: 38,
+  thalachh: 182,
+  sex: '0'
+}, {
+  age: 52,
+  thalachh: 160,
+  sex: '1'
+}, {
+  age: 53,
+  thalachh: 95,
+  sex: '0'
+}, {
+  age: 54,
+  thalachh: 108,
+  sex: '1'
+}, {
+  age: 66,
+  thalachh: 132,
+  sex: '0'
+}, {
+  age: 49,
+  thalachh: 126,
+  sex: '1'
+}, {
+  age: 54,
+  thalachh: 116,
+  sex: '0'
+}, {
+  age: 56,
+  thalachh: 103,
+  sex: '1'
+}, {
+  age: 46,
+  thalachh: 144,
+  sex: '0'
+}, {
+  age: 61,
+  thalachh: 145,
+  sex: '1'
+}, {
+  age: 67,
+  thalachh: 71,
+  sex: '0'
+}, {
+  age: 58,
+  thalachh: 156,
+  sex: '1'
+}, {
+  age: 47,
+  thalachh: 118,
+  sex: '0'
+}, {
+  age: 52,
+  thalachh: 168,
+  sex: '1'
+}, {
+  age: 58,
+  thalachh: 105,
+  sex: '0'
+}, {
+  age: 57,
+  thalachh: 141,
+  sex: '1'
+}, {
+  age: 61,
+  thalachh: 125,
+  sex: '0'
+}, {
+  age: 42,
+  thalachh: 125,
+  sex: '1'
+}, {
+  age: 52,
+  thalachh: 156,
+  sex: '0'
+}, {
+  age: 59,
+  thalachh: 134,
+  sex: '1'
+}, {
+  age: 40,
+  thalachh: 181,
+  sex: '0'
+}, {
+  age: 61,
+  thalachh: 138,
+  sex: '1'
+}, {
+  age: 46,
+  thalachh: 120,
+  sex: '0'
+}, {
+  age: 59,
+  thalachh: 162,
+  sex: '1'
+}, {
+  age: 57,
+  thalachh: 164,
+  sex: '0'
+}, {
+  age: 57,
+  thalachh: 143,
+  sex: '1'
+}, {
+  age: 61,
+  thalachh: 161,
+  sex: '0'
+}, {
+  age: 58,
+  thalachh: 140,
+  sex: '1'
+}, {
+  age: 67,
+  thalachh: 150,
+  sex: '0'
+}, {
+  age: 44,
+  thalachh: 144,
+  sex: '1'
+}, {
+  age: 63,
+  thalachh: 144,
+  sex: '0'
+}, {
+  age: 59,
+  thalachh: 90,
+  sex: '1'
+}, {
+  age: 45,
+  thalachh: 132,
+  sex: '0'
+}, {
+  age: 68,
+  thalachh: 141,
+  sex: '1'
+}, {
+  age: 57,
+  thalachh: 115,
+  sex: '0'
+}];
+const config = {
+  type: 'scatter',
+  series: [{
+    name: '여자',
+    data: data.filter(d => d.sex === '0'),
+    xField: 'age',
+    yField: 'thalachh'
+  }, {
+    name: '남자',
+    data: data.filter(d => d.sex === '1'),
+    xField: 'age',
+    yField: 'thalachh'
+  }]
+};
+let animate = false;
+let chart;
+function init() {
+  chart = RealChart.createChart(document, 'realchart', config);
+}
