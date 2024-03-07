@@ -1046,7 +1046,8 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
             y = org.y - this._plotHeight;
 
             body.resize(wPlot, hPlot);
-            body.layout().trans(x, y);
+            body.trans(x, y);
+            body.layout();
             rPlot = body.getRect();
             body._seriesViews.forEach(v => {
                 if (v.needDecoreateLegend()) {
