@@ -1,7 +1,7 @@
 const config = {
     xAxis: {
         type: 'time',
-        grid: true,
+        grid: true
     },
     yAxis: {
         title: 'Temparature',

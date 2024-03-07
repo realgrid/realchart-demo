@@ -13,12 +13,7 @@ jobs:
     - name: Checkout source repository
       uses: actions/checkout@v2
 
-    - name: Check for changes
-      id: check_changes
-      run: echo "::set-output name=changed::$(git status --porcelain)"
-    
     - name: Copy folder to destination repository
-      if: steps.check_changes.outputs.changed != ''
       env:
         TOKEN: ${{ secrets.REAL_CHART_FIDDLE_TOKEN }}
       run: |

@@ -3,7 +3,7 @@ const config = {
     series: {
         type: 'barrange',
         data: [
-            [-13.9, 5.2], 
+            [-13.9, 5.2], // [low, y(high)]
             [-16.7, 10.6],
             [-4.7, 11.6],
             [-4.4, 16.8],
