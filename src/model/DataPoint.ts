@@ -291,20 +291,23 @@ export class DataPointCollection {
         return this._points[index];
     }
 
-    pointAt(xValue: number | any): DataPoint {
-        if (isObject(xValue)) {
-            const id = xValue.pid;
-            for (const p of this._points) {
-                if (p.pid === id) return p;
-            }
+    private _pointAtCond(a, b) {
+        if (isObject(b)) {
+            return a.pid === b.pid;
         } else {
-            for (const p of this._points) {
-                if (p.xValue === xValue) return p;
-            }
+            return a === b;
         }
     }
 
-    contains(p: DataPoint) {
+    pointAt(xValue: number | any, yValue?: number | any): DataPoint {
+        return this._points.find(p => 
+                this._pointAtCond(p.xValue, xValue)
+                // yValue가 undefined이면 true로 리턴해서 xValue 조건만 유효하도록 한다.
+                && (yValue === void 0 || this._pointAtCond(p.yValue, yValue)) 
+        );
+    }
+
+    contains(p: DataPoint): boolean {
         return this._points.indexOf(p) >= 0;
     }
 

@@ -1050,13 +1050,8 @@ export class BodyView extends ChartElement<Body> implements IAnnotationAnchorOwn
                     }
 
                     const pts = sers.map((ser) => {
-                        for (let i = 0; i < ser.getPoints().count; i++) {
-                            const point = ser.getPoints().get(i);
-                            if (point.xValue === pv.point.xValue && point.yValue === pv.point.yValue) {
-                                return point;
-                            };
-                        }
-                    });
+                        return ser.getPoints().pointAt(pv.point.xValue, pv.point.yValue);
+                    })
                     
                     svs = sers.map(s => this._owner.getSeriesView(s));
                     pvs = [];
