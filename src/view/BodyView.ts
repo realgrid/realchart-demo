@@ -67,6 +67,7 @@ import { SvgShapes } from "../common/impl/SvgShape";
 import { Utils } from "../common/Utils";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { DataPoint } from "../model/DataPoint";
+import { BubbleSeries } from "../model/series/BubbleSeries";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -1056,7 +1057,17 @@ export class BodyView extends ChartElement<Body> implements IAnnotationAnchorOwn
                             let min = Number.MAX_SAFE_INTEGER;
                             for (let i = 0; i < ser.getPoints().count; i++) {
                                 const point = ser.getPoints().get(i);
-                                const distance = Math.sqrt((point.xPos - p.x) ** 2 + (point.yPos - p.y) ** 2);
+                                let distance: number;
+                                if (ser instanceof BubbleSeries) {
+                                    const zAxis = ser._xAxisObj._vlen < ser._yAxisObj._vlen ? ser._xAxisObj : ser._yAxisObj;
+                                    const len = zAxis._vlen;
+                                    const {min, max} = ser.getPixelMinMax(len);
+                                    const radius = ser.getRadius(point.zValue, min, max);
+                                    distance = Math.sqrt((point.xPos - p.x) ** 2 + (point.yPos - p.y) ** 2) - radius;
+                                } else {
+                                    distance = Math.sqrt((point.xPos - p.x) ** 2 + (point.yPos - p.y) ** 2);
+                                }
+                                
                                 if (distance < min) {
                                     min = distance;
                                     nearestsPoint = point;
