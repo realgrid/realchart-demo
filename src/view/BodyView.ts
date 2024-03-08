@@ -1363,7 +1363,7 @@ export class BodyView extends ChartElement<Body> implements IAnnotationAnchorOwn
                 this._guideClip.resize(control.width(), control.height());
             }
             [this._guideContainer, this._frontGuideContainer].forEach(c => {
-                c._views.forEach(v => v.layout(w, h));
+                c._views.forEach(v => v.setVis(v.model.visible) &&  v.layout(w, h));
                 c.setClip(this._guideClip);
             });
             this._gridRowContainer.layout(w, h, false);
