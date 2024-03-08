@@ -1317,8 +1317,7 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
                             // @TODO visPoint가 많으면 성능이슈 가능성 있음.
                             // 모델에서 정렬된 값을 가지고 이진탐색을 구현.
                             sv.model._visPoints.forEach((dp) => {
-                                const val = axis._isX ? dp.xValue : dp.yValue;
-                                const distance = Math.abs(Number(flag) - val)
+                                const distance = axis._isX ? Math.abs(p.x - dp.xPos) : Math.abs(p.y - dp.yPos);
                                 if (distance < min) {
                                     min = distance;
                                     dataPoint = dp;
