@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { IRcDataPoint } from '../api/RcChartModels';
 import { isFunc } from "../common/Common";
 import { DatetimeFormatter } from "../common/DatetimeFormatter";
 import { NumberFormatter } from "../common/NumberFormatter";
@@ -74,7 +75,7 @@ export interface ICrosshairCallbackArgs {
     axis: object;
     pos: number;
     flag: string;
-    points: DataPoint[];
+    points: IRcDataPoint[];
 }
 
 export type CrosshairChangeCallback = (args: ICrosshairCallbackArgs) => void;
@@ -176,7 +177,7 @@ export class Crosshair extends ChartItem {
         if (this.onChange) {
             this._args.pos = pos;
             this._args.flag = flag;
-            this._args.points = points;
+            this._args.points = points.map(p => p?.proxy());
             this.onChange(this._args);
         }
     }
