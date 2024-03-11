@@ -1195,7 +1195,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 let ph:number;
                 // base에서 시작하는 데이터포인트
                 if (p.yGroup == p.yValue) {
-                    ph = yBase - py;
+                    ph = py - yBase;
                 } else {
                     // below or above
                     const below = base > p.yGroup;
@@ -1223,7 +1223,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                     //     console.log('g - v');
                     //     fy = p.yGroup - p.yValue;
                     // }
-                    ph = getYPos(fy) - py;
+                    ph = py - getYPos(fy);
 
                 }
 
@@ -1253,7 +1253,8 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
 
                 // 아래에서 위로 올라가는 animation을 위해 기준 지점을 전달한다.
                 // this._layoutPoint(pv, i, x, yOrg - yBase - yGroup, wPoint, hPoint);
-                this._layoutPoint(pv, i, x, y, wPoint, hPoint);
+                // this._layoutPoint(pv, i, x, y, wPoint, hPoint);
+                this._layoutPoint(pv, i, x, yOrg - yBase, wPoint, hPoint);
                 
                 // [주의] tooltip이 p.xPos, p.yPos를 사용한다. label이 미표시여도 계산한다.
                 if (inverted) {
@@ -1275,7 +1276,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                     info.x = x;
                     info.y = y;
                     info.wPoint = wPoint;
-                    info.hPoint = -hPoint;
+                    info.hPoint = hPoint;
                     this._layoutLabel(info, width, height);
                 }
             }
