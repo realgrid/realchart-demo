@@ -30,6 +30,7 @@ web/realchart/lib/realchart*.*
 test-results
 playwright-report
 .playwright
+test/e2e/snapshot-test/*backup
 test/e2e/copyDemo.spec.js
 
 # docs
