@@ -53,7 +53,7 @@ jobs:
           npm run dldoc
       - name: Create release mdx
         run: |
-          echo # ${{github.event.release.tag_name}} >> docs/pages/guide/release/${{ github.event.release.tag_name }}.mdx
+          echo "# ${{github.event.release.tag_name}}" >> docs/pages/guide/release/${{ github.event.release.tag_name }}.mdx
           echo ${{github.event.release.body}} >> docs/pages/guide/release/${{ github.event.release.tag_name }}.mdx
       - name: setup git config
         run: |
