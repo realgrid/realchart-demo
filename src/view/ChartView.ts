@@ -23,6 +23,7 @@ import { LegendItem, LegendLocation } from "../model/Legend";
 import { ISeries, Series } from "../model/Series";
 import { Split } from "../model/Split";
 import { Subtitle, SubtitlePosition, Title } from "../model/Title";
+import { AreaRangeSeriesPoint } from "../model/series/LineSeries";
 import { AnnotationView, IAnnotationAnchorOwner } from "./AnnotationView";
 import { AxisScrollView, AxisView } from "./AxisView";
 import { AxisGridRowContainer, AxisGuideContainer, BodyView, createAnnotationView } from "./BodyView";
@@ -1316,8 +1317,11 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
                             let min = Number.MAX_SAFE_INTEGER;
                             // @TODO visPoint가 많으면 성능이슈 가능성 있음.
                             // 모델에서 정렬된 값을 가지고 이진탐색을 구현.
+                            const inverted = this._model.inverted;
                             sv.model._visPoints.forEach((dp) => {
-                                const distance = axis._isX ? Math.abs(p.x - dp.xPos) : Math.abs(p.y - dp.yPos);
+                                const xPos = dp.xPos;
+                                const yPos = dp instanceof AreaRangeSeriesPoint && !inverted ? dp.yPos - ((dp.yPos - dp.yLow) / 2) : dp.yPos;
+                                const distance = axis._isX ? Math.abs(p.x - xPos) : Math.abs(p.y - yPos);
                                 if (distance < min) {
                                     min = distance;
                                     dataPoint = dp;
