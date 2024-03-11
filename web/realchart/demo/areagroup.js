@@ -300,11 +300,6 @@ const config = {
             children: [
                 {
                     template: 'series',
-                    name: '검정고시',
-                    data: data.map((d) => d.GED)
-                },
-                {
-                    template: 'series',
                     name: '졸업생',
                     data: data.map((d) => d.graduate)
                 },
@@ -312,7 +307,13 @@ const config = {
                     template: 'series',
                     name: '재학생',
                     data: data.map((d) => d.students)
-                }
+                },
+                {
+                    template: 'series',
+                    name: '검정고시',
+                    data: data.map((d) => d.GED)
+                },
+             
             ]
         }
     ]
