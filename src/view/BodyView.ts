@@ -19,7 +19,7 @@ import { Axis, AxisGrid, AxisGuide, AxisLineGuide, AxisRangeGuide, GuideLabelPos
 import { Body, IPolar } from "../model/Body";
 import { Chart, IChart, PointHoverScope } from "../model/Chart";
 import { Crosshair } from "../model/Crosshair";
-import { ISeries, Series } from "../model/Series";
+import { ISeries, MarkerSeries, Series } from "../model/Series";
 import { AxisBreak, ContinuousAxis, LinearAxis } from "../model/axis/LinearAxis";
 import { Gauge, GaugeBase } from "../model/Gauge";
 import { ChartElement } from "./ChartElement";
@@ -66,6 +66,8 @@ import { SectorElement } from "../common/impl/SectorElement";
 import { SvgShapes } from "../common/impl/SvgShape";
 import { Utils } from "../common/Utils";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
+import { DataPoint } from "../model/DataPoint";
+import { BubbleSeries } from "../model/series/BubbleSeries";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -1050,8 +1052,32 @@ export class BodyView extends ChartElement<Body> implements IAnnotationAnchorOwn
                     }
 
                     const pts = sers.map((ser) => {
-                        return ser.getPoints().pointAt(pv.point.xValue, pv.point.yValue);
-                    })
+                        if (ser instanceof MarkerSeries) {
+                            let nearestsPoint: DataPoint;
+                            let min = Number.MAX_SAFE_INTEGER;
+                            for (let i = 0; i < ser.getPoints().count; i++) {
+                                const point = ser.getPoints().get(i);
+                                let distance: number;
+                                if (ser instanceof BubbleSeries) {
+                                    const zAxis = ser._xAxisObj._vlen < ser._yAxisObj._vlen ? ser._xAxisObj : ser._yAxisObj;
+                                    const len = zAxis._vlen;
+                                    const {min, max} = ser.getPixelMinMax(len);
+                                    const radius = ser.getRadius(point.zValue, min, max);
+                                    distance = Math.sqrt((point.xPos - p.x) ** 2 + (point.yPos - p.y) ** 2) - radius;
+                                } else {
+                                    distance = Math.sqrt((point.xPos - p.x) ** 2 + (point.yPos - p.y) ** 2);
+                                }
+                                
+                                if (distance < min) {
+                                    min = distance;
+                                    nearestsPoint = point;
+                                };
+                            }
+                            return nearestsPoint;
+                        } else {
+                            return ser.getPoints().pointAt(pv.point.xValue);
+                        }
+                    });
                     
                     svs = sers.map(s => this._owner.getSeriesView(s));
                     pvs = [];
