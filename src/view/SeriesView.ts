@@ -1192,11 +1192,11 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 const wUnit = xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad);
                 let wPoint = series.getPointWidth(wUnit);
                 let py:number = getYPos(p.yGroup);
-                let ph:number;
-                // base에서 시작하는 데이터포인트
-                if (p.yGroup == p.yValue) {
-                    ph = py - yBase;
-                } else {
+                // let ph:number;
+                // point의 시작 위치
+                let pBase: number = yBase;
+                // base위치에서 시작하지 않는 데이터포인트
+                if (p.yGroup != p.yValue) {
                     // below or above
                     const below = base > p.yGroup;
                     // negative yGroup
@@ -1223,22 +1223,24 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                     //     console.log('g - v');
                     //     fy = p.yGroup - p.yValue;
                     // }
-                    ph = py - getYPos(fy);
-
+                    pBase = getYPos(fy);
+                    // ph = py - getYPos(fy);
                 }
+
+                // ph = py - pBase;
 
                 // const yVal = yAxis.getPos(yLen, p.yValue) - yBase;
                 // const yGroup = (yAxis.getPos(yLen, p.yGroup) - yBase - yVal) * gr;
                 // const hPoint = yVal * gr;
 
-                const hPoint = ph * gr;
+                const hPoint = (py - pBase) * gr;
                 let x = getXPos(p.xValue) - wUnit / 2;
                 if (isNaN(x)) {
                     const wUnit2 = xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad);
                     x = getXPos(p.xValue) - wUnit2 / 2;
                 }
                 // let y = yOrg - yAxis.getPos(yLen, p.yGroup) * gr;
-                let y = yOrg - py * gr;
+                let y = yOrg - py;
 
                 if (!isNaN(pr + pv.wSave)) {
                     wPoint = pv.wSave + (wPoint - pv.wSave) * pr;
@@ -1253,8 +1255,8 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
 
                 // 아래에서 위로 올라가는 animation을 위해 기준 지점을 전달한다.
                 // this._layoutPoint(pv, i, x, yOrg - yBase - yGroup, wPoint, hPoint);
-                // this._layoutPoint(pv, i, x, y, wPoint, hPoint);
-                this._layoutPoint(pv, i, x, yOrg - yBase, wPoint, hPoint);
+                // this._layoutPoint(pv, i, x, yOrg - hPoint, wPoint, -hPoint);
+                this._layoutPoint(pv, i, x, yOrg - yBase * (1 - gr) - pBase * gr, wPoint, hPoint);
                 
                 // [주의] tooltip이 p.xPos, p.yPos를 사용한다. label이 미표시여도 계산한다.
                 if (inverted) {

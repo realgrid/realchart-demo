@@ -21,6 +21,7 @@ test.describe('guide label displayInside test', async function () {
 
 	test('line position: inside & align: left', async ({ page }) => {
 		await page.evaluate(`
+        config.yAxis.guides[0].visible = true;
         config.yAxis.guides[0].type = 'line';
         config.yAxis.guides[0].front = false;
         config.yAxis.guides[0].label.position = 'inside';
@@ -37,6 +38,7 @@ test.describe('guide label displayInside test', async function () {
 
 	test('line position: outside & align: left', async ({ page }) => {
 		await page.evaluate(`
+		config.yAxis.guides[0].visible = true;
         config.yAxis.guides[0].type = 'line';
         config.yAxis.guides[0].front = false;
         config.yAxis.guides[0].label.position = 'outside';
@@ -53,6 +55,7 @@ test.describe('guide label displayInside test', async function () {
 
 	test('line position: inside & align: right', async ({ page }) => {
 		await page.evaluate(`
+		config.yAxis.guides[0].visible = true;
         config.yAxis.guides[0].type = 'line';
         config.yAxis.guides[0].front = false;
         config.yAxis.guides[0].label.position = 'inside';
@@ -69,6 +72,7 @@ test.describe('guide label displayInside test', async function () {
 
 	test('line position: outside3 & align: right', async ({ page }) => {
 		await page.evaluate(`
+		config.yAxis.guides[0].visible = true;
         config.yAxis.guides[0].type = 'line';
         config.yAxis.guides[0].front = false;
         config.yAxis.guides[0].label.position = 'outside';
@@ -86,6 +90,7 @@ test.describe('guide label displayInside test', async function () {
 	test('line inverted: true & position: inside & verticalAlign: top', async ({ page }) => {
 		await page.evaluate(`
 		config.inverted = true;
+		config.yAxis.guides[0].visible = true;
         config.yAxis.guides[0].type = 'line';
         config.yAxis.guides[0].front = false;
         config.yAxis.guides[0].label.position = 'inside';
@@ -103,6 +108,7 @@ test.describe('guide label displayInside test', async function () {
 	test('line inverted: true & position: outside & verticalAlign: top', async ({ page }) => {
 		await page.evaluate(`
 		config.inverted = true;
+		config.yAxis.guides[0].visible = true;
         config.yAxis.guides[0].type = 'line';
         config.yAxis.guides[0].front = false;
         config.yAxis.guides[0].label.position = 'outside';
@@ -120,6 +126,7 @@ test.describe('guide label displayInside test', async function () {
 	test('line inverted: true & position: inside & verticalAlign: bottom', async ({ page }) => {
 		await page.evaluate(`
 		config.inverted = true;
+		config.yAxis.guides[0].visible = true;
         config.yAxis.guides[0].type = 'line';
         config.yAxis.guides[0].front = false;
         config.yAxis.guides[0].label.position = 'inside';
@@ -137,6 +144,7 @@ test.describe('guide label displayInside test', async function () {
 	test('line inverted: true & position: outside & verticalAlign: bottom', async ({ page }) => {
 		await page.evaluate(`
 		config.inverted = true;
+		config.yAxis.guides[0].visible = true;
         config.yAxis.guides[0].type = 'line';
         config.yAxis.guides[0].front = false;
         config.yAxis.guides[0].label.position = 'outside';
@@ -153,6 +161,7 @@ test.describe('guide label displayInside test', async function () {
 
 	test('range position: inside & align: left', async ({ page }) => {
 		await page.evaluate(`
+		config.yAxis.guides[1].visible = true;
         config.yAxis.guides[1].type = 'range';
         config.yAxis.guides[1].front = true;
         config.yAxis.guides[1].label.position = 'inside';
@@ -160,7 +169,7 @@ test.describe('guide label displayInside test', async function () {
         chart.load(config, false)`);
 		
 		const body = await page.$('.rct-body rect');
-		const guideLabel = await page.$('.rct-axis-guide .rct-axis-guide-label');
+		const guideLabel = await page.$('.rct-front-axis-guides .rct-axis-guide-label');
 
 		const bb = await body.boundingBox();
 		const gb = await guideLabel.boundingBox();
@@ -169,6 +178,7 @@ test.describe('guide label displayInside test', async function () {
 
 	test('range position: outside & align: left', async ({ page }) => {
 		await page.evaluate(`
+		config.yAxis.guides[1].visible = true;
         config.yAxis.guides[1].type = 'range';
         config.yAxis.guides[1].front = true;
         config.yAxis.guides[1].label.position = 'outside';
@@ -185,6 +195,7 @@ test.describe('guide label displayInside test', async function () {
 
 	test('range position: inside & align: right', async ({ page }) => {
 		await page.evaluate(`
+		config.yAxis.guides[1].visible = true;
         config.yAxis.guides[1].type = 'range';
         config.yAxis.guides[1].front = true;
         config.yAxis.guides[1].label.position = 'inside';
@@ -201,6 +212,7 @@ test.describe('guide label displayInside test', async function () {
 
 	test('range position: outside3 & align: right', async ({ page }) => {
 		await page.evaluate(`
+		config.yAxis.guides[1].visible = true;
         config.yAxis.guides[1].type = 'range';
         config.yAxis.guides[1].front = true;
         config.yAxis.guides[1].label.position = 'outside';
@@ -218,6 +230,7 @@ test.describe('guide label displayInside test', async function () {
 	test('range inverted: true & position: inside & verticalAlign: top', async ({ page }) => {
 		await page.evaluate(`
 		config.inverted = true;
+		config.yAxis.guides[1].visible = true;
         config.yAxis.guides[1].type = 'range';
         config.yAxis.guides[1].front = true;
         config.yAxis.guides[1].label.position = 'inside';
@@ -235,6 +248,7 @@ test.describe('guide label displayInside test', async function () {
 	test('range inverted: true & position: outside & verticalAlign: top', async ({ page }) => {
 		await page.evaluate(`
 		config.inverted = true;
+		config.yAxis.guides[1].visible = true;
         config.yAxis.guides[1].type = 'range';
         config.yAxis.guides[1].front = true;
         config.yAxis.guides[1].label.position = 'outside';
@@ -252,6 +266,7 @@ test.describe('guide label displayInside test', async function () {
 	test('range inverted: true & position: inside & verticalAlign: bottom', async ({ page }) => {
 		await page.evaluate(`
 		config.inverted = true;
+		config.yAxis.guides[1].visible = true;
         config.yAxis.guides[1].type = 'range';
         config.yAxis.guides[1].front = true;
         config.yAxis.guides[1].label.position = 'inside';
@@ -269,6 +284,7 @@ test.describe('guide label displayInside test', async function () {
 	test('range inverted: true & position: outside & verticalAlign: bottom', async ({ page }) => {
 		await page.evaluate(`
 		config.inverted = true;
+		config.yAxis.guides[1].visible = true;
         config.yAxis.guides[1].type = 'range';
         config.yAxis.guides[1].front = true;
         config.yAxis.guides[1].label.position = 'outside';
