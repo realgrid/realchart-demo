@@ -1,0 +1,105 @@
+const config = {
+    title: {
+        template: 'title',
+        text: '소싱처리 준수율'
+    },
+    templates: {
+        series: {
+            pointPadding: 0,
+            pointLabel: {
+                visible: true,
+                position: 'inside',
+                effect: 'outline',
+                textCallback: (args) => {
+                    if (args.y > 1) {
+                        return args.y;
+                    }
+                    return ' ';
+                }
+            }
+        }
+    },
+    xAxis: {
+        type: 'category',
+        categories: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
+    },
+    yAxis: {
+        type: 'linear',
+        strictMax: 100,
+        title: {
+            text: '단위: %',
+            align: 'end',
+            style: {
+                fontSize: 12,
+                fill: 'gray'
+            }
+        }
+    },
+    series: [
+        {
+            layout: 'stack',
+            children: [
+                {
+                    template: 'series',
+                    name: '0~3일 이상',
+                    data: [66.7, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 100]
+                },
+                {
+                    template: 'series',
+                    name: '4~5일 이상',
+                    data: [33.3, 0, 0, 0, 100, 0, 0, 0, 0, 100, 0, 0]
+                },
+                {
+                    template: 'series',
+                    name: '6~7일 이상',
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                },
+                {
+                    template: 'series',
+                    name: '8~9일 이상',
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                },
+                {
+                    template: 'series',
+                    name: '10일 이상',
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                }
+            ]
+        },
+        {
+            type: 'line',
+            children: [
+                {
+                    name: '목표율',
+                    data: [95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95],
+                    style: {
+                        fill: 'red',
+                        stroke: 'red'
+                    },
+                    marker: {
+                        style: {
+                            fill: '#fff'
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    legend: {
+        location: 'right'
+    },
+    tooltip: {
+        scope: 'group'
+    }
+};
+
+let animate = false;
+let chart;
+
+function init() {
+    console.log('RealChart v' + RealChart.getVersion());
+    // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
+
+    chart = RealChart.createChart(document, 'realchart', config);
+}
