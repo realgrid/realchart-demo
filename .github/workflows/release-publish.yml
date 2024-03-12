@@ -45,9 +45,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
           aws-region: ${{ secrets.AWS_MAIN_REGION }}
       - name: Copy latest to the AWS S3
-        run: aws s3 cp dist/deploy/realchart.latest.zip s3://com.realgrid.releases/realchart/latest/
+        run: aws s3 cp dist/deploy/realchart.latest.zip s3://com.realgrid.releases/realchart/latest/ --acl public-read
       - name: Copy current to the AWS S3
-        run: aws s3 cp dist/deploy/realchart.${{steps.package-version.outputs.current-version}}.zip s3://com.realgrid.releases/realchart/${{steps.package-version.outputs.current-version}}/
+        run: aws s3 cp dist/deploy/realchart.${{steps.package-version.outputs.current-version}}.zip s3://com.realgrid.releases/realchart/${{steps.package-version.outputs.current-version}}/ --acl public-read
       - name: Update docs
         run: |
           npm run dldoc
