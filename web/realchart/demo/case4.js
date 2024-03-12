@@ -1,4 +1,4 @@
-const title = '계획 대비 실정 달성률 (반기)';
+const title = '계획 대비 실적 달성률 (반기)';
 const productData = [
     { productDivision: 'CyberGuardian', salesStrtg: '662,110,000', currSales: '489,961,400', achievePercent: 74, salesProduct: '신규' },
     { productDivision: 'CloudCollab', salesStrtg: '651,675,000', currSales: '632,124,750', achievePercent: 97, salesProduct: '기능' },
@@ -127,7 +127,7 @@ var setChart = () => {
             top: i < 3 ? 40 : '57%',
             left: i % 3 === 0 ? '7%' : i % 3 === 1 ? '37%' : '67%',
             value: productData[i].achievePercent, //달성률 값
-            innerRadius: '85%', //게이지 두께
+            innerRadius: '75%', //게이지 두께
             valueRim: {
                 stroked: true, //게이지 스타일
                 style: {
@@ -146,7 +146,7 @@ var setChart = () => {
             },
             label: {
                 text:
-                    '<t style="fill:#533cf5">${value}</t><t style="font-size:12px;"></t><t style="font-size:20px;">%</t><br><t style="font-size:18px;font-weight:normal">' +
+                    '<t style="fill:#533cf5">${value}</t><t style="font-size:12px;"></t><t style="font-size:20px;">%</t><br><t style="font-size:18px;font-weight:bold;fill:#999">' +
                     productData[i].salesProduct +
                     '</t>',
                 style: {
@@ -160,7 +160,10 @@ var setChart = () => {
 
 let animate;
 let chart;
-let timer;
+const tool = {
+    width: 1000,
+    height: 800
+};
 const config = {
     templates: {
         gauge: {
@@ -174,11 +177,11 @@ const config = {
                 ranges: [
                     {
                         toValue: 25,
-                        color: '#ff5c35'
+                        color: '#FFD938'
                     },
                     {
-                        toValue: 50,
-                        color: '#66d0ff'
+                        toValue: 51,
+                        color: '#FFD938'
                     },
                     {
                         toValue: 75,
