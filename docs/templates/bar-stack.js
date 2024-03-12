@@ -1,10 +1,11 @@
 export const config = {
-  options: { credits: false },
+  options: { credits: false, animatable: true },
   title: 'Inflation CPI of Korea',
   xAxis: { title: 'Month of Year', type: 'category', tick: { step: 3 } },
   yAxis: { title: 'Inflation CPI(%)' },
   series: {
     layout: 'stack',
+    baseValue: 0,
     children: [
       {
         name: 'Food',

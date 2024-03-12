@@ -14,7 +14,6 @@ export const config = {
     guides: [
       {
         type: 'line',
-        visible: false,
         value: 12,
         label: {
           text: 'line guide',

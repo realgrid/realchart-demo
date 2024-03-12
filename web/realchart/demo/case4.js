@@ -136,7 +136,7 @@ var setChart = () => {
             },
             backgroundStyle: {
                 //상자
-                stroke: '#c5c9ca',
+                // stroke: '#c5c9ca',
                 strokeWidth: '2px',
                 borderRadius: '10px',
                 height: '300px', //상자 크기

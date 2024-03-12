@@ -103,5 +103,8 @@
 	},
 	"Demo": {
 		"title": "Demo"
+	},
+	"UseCases": {
+		"title": "Use Cases"
 	}
 }
