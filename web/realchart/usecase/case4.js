@@ -1,10 +1,10 @@
 const title = '계획 대비 실정 달성률 (반기)';
 const productData = [
-    { productDivision: 'A솔루션', salesStrtg: '662,110,000', currSales: '489,961,400', achievePercent: 74, salesProduct: '신규' },
-    { productDivision: 'B솔루션', salesStrtg: '651,675,000', currSales: '632,124,750', achievePercent: 97, salesProduct: '기능' },
-    { productDivision: 'C솔루션', salesStrtg: '377,110,000', currSales: '494,014,100', achievePercent: 131, salesProduct: 'INF' },
-    { productDivision: 'D솔루션', salesStrtg: '269,110,000', currSales: '565,131,000', achievePercent: 210, salesProduct: 'Tax' },
-    { productDivision: 'E솔루션', salesStrtg: '443,272,000', currSales: '443,272,000', achievePercent: 100, salesProduct: 'Firm' },
+    { productDivision: 'CyberGuardian', salesStrtg: '662,110,000', currSales: '489,961,400', achievePercent: 74, salesProduct: '신규' },
+    { productDivision: 'CloudCollab', salesStrtg: '651,675,000', currSales: '632,124,750', achievePercent: 97, salesProduct: '기능' },
+    { productDivision: 'DataWiseAI', salesStrtg: '377,110,000', currSales: '494,014,100', achievePercent: 131, salesProduct: 'INF' },
+    { productDivision: 'AppShield', salesStrtg: '269,110,000', currSales: '565,131,000', achievePercent: 210, salesProduct: 'Tax' },
+    { productDivision: 'ProcessPilot', salesStrtg: '443,272,000', currSales: '443,272,000', achievePercent: 100, salesProduct: 'Firm' },
     { productDivision: 'BP포탈', salesStrtg: '441,231,000', currSales: '220,615,500', achievePercent: 50, salesProduct: 'Pro' }
 ];
 
