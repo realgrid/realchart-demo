@@ -18,7 +18,7 @@ const children = cols.map((c) => {
 const config = {
     options: {
         credits: false,
-        animatable: false
+        animatable: !false
     },
     title: 'Inflation CPI of Korea',
     xAxis: {
@@ -33,7 +33,7 @@ const config = {
     },
     series: {
         layout: 'stack',
-        baseValue: 2,
+        baseValue: 0,
         children: children
     }
 };
