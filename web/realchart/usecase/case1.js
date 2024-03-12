@@ -45,7 +45,7 @@ const config = {
                         stroke: 'none'
                     },
                     hoverStyle: {
-                        fill: '#7ACC90',
+                        fill: '#FF4F63',
                         stroke: 'none'
                     }
                 },
@@ -53,7 +53,7 @@ const config = {
                     name: '매출이익',
                     data: [8, 13, 6, 10, 23, 14, 23, 11, 11, 14, 8, 13],
                     pointLabel: {
-                        style: { fill: '#3E4345' },
+                        style: { fill: '#' },
                         visible: true,
                         position: 'inside'
                     },
@@ -62,7 +62,7 @@ const config = {
                         stroke: 'none'
                     },
                     hoverStyle: {
-                        fill: '#54755A',
+                        fill: '#60D4C4',
                         stroke: 'none'
                     }
                 }
