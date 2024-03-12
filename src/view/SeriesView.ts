@@ -1233,7 +1233,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 // const yGroup = (yAxis.getPos(yLen, p.yGroup) - yBase - yVal) * gr;
                 // const hPoint = yVal * gr;
 
-                const hPoint = py - pBase;
+                const hPoint = (py - pBase) * gr;
                 let x = getXPos(p.xValue) - wUnit / 2;
                 if (isNaN(x)) {
                     const wUnit2 = xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad);
@@ -1256,7 +1256,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 // 아래에서 위로 올라가는 animation을 위해 기준 지점을 전달한다.
                 // this._layoutPoint(pv, i, x, yOrg - yBase - yGroup, wPoint, hPoint);
                 // this._layoutPoint(pv, i, x, yOrg - hPoint, wPoint, -hPoint);
-                this._layoutPoint(pv, i, x, yOrg - pBase, wPoint, hPoint * gr);
+                this._layoutPoint(pv, i, x, yOrg - yBase * (1 - gr) - pBase * gr, wPoint, hPoint);
                 
                 // [주의] tooltip이 p.xPos, p.yPos를 사용한다. label이 미표시여도 계산한다.
                 if (inverted) {
