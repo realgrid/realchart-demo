@@ -135,14 +135,14 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
 
                 if (v) {
                     v.trans(0, 0);
-                    this.$_slice(v, true, false);
+                    this.$_slice(v, this.model.autoSlice, false);
                 }
             });
         }
     }
 
     protected override _doPointClicked(view: IPointView): void {
-        if (view instanceof SectorView) {
+        if (view instanceof SectorView && this.model.autoSlice) {
             const v = this._sectors.find(s => s.point.sliced);
 
             if (v) {
@@ -151,7 +151,9 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
             if (view !== v) {
                 this.$_slice(view, true, true);
             }
-            !this.model.autoSlice && this.invalidate();
+            // !this.model.autoSlice && this.invalidate();
+        } else {
+            this.invalidate();
         }
     }
 

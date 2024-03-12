@@ -80,8 +80,8 @@ export class LollipopSeriesView extends BoxedSeriesView<LollipopSeries> {
     }
 
     protected _layoutPoint(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
-        view.trans(x, y);
-        view.layout(-hPoint);
+        view.trans(x, y - hPoint);
+        view.layout(hPoint);
     }
 
     //-------------------------------------------------------------------------
