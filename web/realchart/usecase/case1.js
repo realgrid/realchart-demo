@@ -34,18 +34,18 @@ const config = {
             children: [
                 {
                     name: '매입실적',
-                    data: [54, 73, 40, 61, 103, 72, 84, 73, 58, 84, 42, 83],
+                    data: [54, 73, 40, 61, 98, 72, 84, 73, 58, 84, 42, 83],
                     pointLabel: {
                         style: { fill: '#fff' },
                         visible: true,
                         position: 'inside'
                     },
                     style: {
-                        fill: '#008CFF',
+                        fill: '#0098ff',
                         stroke: 'none'
                     },
                     hoverStyle: {
-                        fill: '#FF4F63',
+                        fill: '#5EB3E4',
                         stroke: 'none'
                     }
                 },
@@ -58,11 +58,11 @@ const config = {
                         position: 'inside'
                     },
                     style: {
-                        fill: '#FFB900',
+                        fill: '#FFC239',
                         stroke: 'none'
                     },
                     hoverStyle: {
-                        fill: '#60D4C4',
+                        fill: '#none',
                         stroke: 'none'
                     }
                 }
@@ -82,14 +82,19 @@ const config = {
                 },
                 hoverStyle: {
                     fill: '#FFB900',
-                    stroke: 'none'
+                    stroke: '#fff'
                 }
             }
         }
     ],
     legend: {
-        location: 'bottom'
-        // reversed: true
+        //location: 'bottom'
+        //간격
+        itemGap: 30,
+        style: {
+            // 글자 크기
+            fontSize: '12px'
+        }
     }
 };
 

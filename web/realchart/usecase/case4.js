@@ -14,7 +14,7 @@ let position = productData.length <= 6 ? 3 : 4;
 position = 3;
 var setChart = () => {
     var colorIndex = 0;
-    var backgroundColor = ['#1632a2', '#11a44c', '#fd9c14'];
+    var backgroundColor = ['#0098ff', '#ff9f00', '#fd9c14'];
     for (var i = 0; i < productData.length; i++) {
         if (i == 0) {
             prevProd = productData[i].productDivision;
@@ -101,7 +101,7 @@ var setChart = () => {
             style: {
                 fill: backgroundColor[colorIndex],
                 textAlign: 'center',
-                stroke: '#000000'
+                stroke: 'none'
             }
         };
         annotationArr.push(annotation);
@@ -136,7 +136,7 @@ var setChart = () => {
             },
             backgroundStyle: {
                 //상자
-                stroke: 'lightblue',
+                stroke: '#c5c9ca',
                 strokeWidth: '2px',
                 borderRadius: '10px',
                 height: '300px', //상자 크기
@@ -146,7 +146,7 @@ var setChart = () => {
             },
             label: {
                 text:
-                    '<t style="fill:blue">${value}</t><t style="font-size:12px;"></t><t style="font-size:20px;">%</t><br><t style="font-size:18px;font-weight:normal">' +
+                    '<t style="fill:#533cf5">${value}</t><t style="font-size:12px;"></t><t style="font-size:20px;">%</t><br><t style="font-size:18px;font-weight:normal">' +
                     productData[i].salesProduct +
                     '</t>',
                 style: {
@@ -174,18 +174,18 @@ const config = {
                 ranges: [
                     {
                         toValue: 25,
-                        color: 'red'
+                        color: '#ff5c35'
                     },
                     {
                         toValue: 50,
-                        color: '#ffaa00'
+                        color: '#66d0ff'
                     },
                     {
                         toValue: 75,
-                        color: '#1632a2'
+                        color: '#66d0ff'
                     },
                     {
-                        color: 'green'
+                        color: '#66d0ff'
                     }
                 ]
             }
