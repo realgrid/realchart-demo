@@ -19,7 +19,11 @@ const config = {
     xAxis: {
         type: 'category'
     },
-    yAxis: {},
+    yAxis: {
+        tick:{
+            stepInterval: 25
+        }
+    },
     series: [
         {
             name: '매입금액',
