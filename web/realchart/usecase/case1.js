@@ -6,6 +6,12 @@
 const config = {
     title: '매출실적 및 매출이익',
     options: {},
+    body: {
+      style: {
+        fill: "#dadada",
+        background: "red"
+      }
+    },
     xAxis: {
         categories: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
         grid: {
@@ -64,8 +70,8 @@ const config = {
         }
     ],
     legend: {
-        location: 'right'
-        //   reversed: true
+        location: 'right',
+          // reversed: true
     }
 };
 
