@@ -1,5 +1,5 @@
 export const config = {
-  title: '매출실적 및 매출이익',
+  title: { text: '매출실적 및 매출이익', style: { fontSize: '20px' } },
   options: {},
   body: { style: { fill: '#fff', background: '#6080E7' } },
   xAxis: {

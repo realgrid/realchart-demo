@@ -5,8 +5,12 @@
  */
 
 const config = {
-    title: '매입금액',
-
+    title: {
+        text: '매입금액',
+        style: {
+            fontSize: '20px'
+        }
+    },
     templates: {
         pointLabel: {
             pointLabel: {
@@ -20,7 +24,7 @@ const config = {
         type: 'category'
     },
     yAxis: {
-        tick:{
+        tick: {
             stepInterval: 25
         }
     },

@@ -1,5 +1,5 @@
 export const config = {
-  title: '매입금액',
+  title: { text: '매입금액', style: { fontSize: '20px' } },
   templates: {
     pointLabel: {
       pointLabel: { visible: true, position: 'inside', effect: 'outline' }

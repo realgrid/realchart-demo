@@ -16,7 +16,8 @@ export const config = {
       }
     }
   },
-  title: '계획 대비 실적 달성률 (반기)',
+  title: { text: '계획 대비 실적 달성률 (반기)', style: { fontSize: '20px' } },
+  options: { style: { backgroundColor: '#F4F7F8' } },
   subtitle: { text: '※ 비정기 금액 기준', align: 'right' },
   body: {
     annotations: [
@@ -393,7 +394,8 @@ export const config = {
       innerRadius: '75%',
       valueRim: { stroked: true, style: { strokeLinecap: 'round' } },
       backgroundStyle: {
-        stroke: '#c5c9ca',
+        fill: 'white',
+        filter: 'drop-shadow(3px 5px 2px rgb(0 0 0 / 0.1))',
         strokeWidth: '2px',
         borderRadius: '10px',
         height: '300px',
@@ -416,7 +418,8 @@ export const config = {
       innerRadius: '75%',
       valueRim: { stroked: true, style: { strokeLinecap: 'round' } },
       backgroundStyle: {
-        stroke: '#c5c9ca',
+        fill: 'white',
+        filter: 'drop-shadow(3px 5px 2px rgb(0 0 0 / 0.1))',
         strokeWidth: '2px',
         borderRadius: '10px',
         height: '300px',
@@ -439,7 +442,8 @@ export const config = {
       innerRadius: '75%',
       valueRim: { stroked: true, style: { strokeLinecap: 'round' } },
       backgroundStyle: {
-        stroke: '#c5c9ca',
+        fill: 'white',
+        filter: 'drop-shadow(3px 5px 2px rgb(0 0 0 / 0.1))',
         strokeWidth: '2px',
         borderRadius: '10px',
         height: '300px',
@@ -462,7 +466,8 @@ export const config = {
       innerRadius: '75%',
       valueRim: { stroked: true, style: { strokeLinecap: 'round' } },
       backgroundStyle: {
-        stroke: '#c5c9ca',
+        fill: 'white',
+        filter: 'drop-shadow(3px 5px 2px rgb(0 0 0 / 0.1))',
         strokeWidth: '2px',
         borderRadius: '10px',
         height: '300px',
@@ -485,7 +490,8 @@ export const config = {
       innerRadius: '75%',
       valueRim: { stroked: true, style: { strokeLinecap: 'round' } },
       backgroundStyle: {
-        stroke: '#c5c9ca',
+        fill: 'white',
+        filter: 'drop-shadow(3px 5px 2px rgb(0 0 0 / 0.1))',
         strokeWidth: '2px',
         borderRadius: '10px',
         height: '300px',
@@ -508,7 +514,8 @@ export const config = {
       innerRadius: '75%',
       valueRim: { stroked: true, style: { strokeLinecap: 'round' } },
       backgroundStyle: {
-        stroke: '#c5c9ca',
+        fill: 'white',
+        filter: 'drop-shadow(3px 5px 2px rgb(0 0 0 / 0.1))',
         strokeWidth: '2px',
         borderRadius: '10px',
         height: '300px',

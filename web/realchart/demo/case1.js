@@ -4,7 +4,12 @@
  * Bar Series 기본 예제.
  */
 const config = {
-    title: '매출실적 및 매출이익',
+    title: {
+        text: '매출실적 및 매출이익',
+        style: {
+            fontSize: '20px'
+        }
+    },
     options: {},
     body: {
         style: {

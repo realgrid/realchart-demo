@@ -1,4 +1,9 @@
-const title = '계획 대비 실적 달성률 (반기)';
+const title = {
+    text: '계획 대비 실적 달성률 (반기)',
+    style: {
+        fontSize: '20px'
+    }
+};
 const productData = [
     { productDivision: 'CyberGuardian', salesStrtg: '662,110,000', currSales: '489,961,400', achievePercent: 74, salesProduct: '신규' },
     { productDivision: 'CloudCollab', salesStrtg: '651,675,000', currSales: '632,124,750', achievePercent: 97, salesProduct: '기능' },
@@ -137,6 +142,8 @@ var setChart = () => {
             backgroundStyle: {
                 //상자
                 // stroke: '#c5c9ca',
+                fill: 'white',
+                filter: 'drop-shadow(3px 5px 2px rgb(0 0 0 / 0.1))',
                 strokeWidth: '2px',
                 borderRadius: '10px',
                 height: '300px', //상자 크기
@@ -195,6 +202,11 @@ const config = {
         }
     },
     title: title,
+    options: {
+        style: {
+            backgroundColor: '#F4F7F8'
+        }
+    },
     subtitle: {
         text: '※ 비정기 금액 기준',
         align: 'right'
