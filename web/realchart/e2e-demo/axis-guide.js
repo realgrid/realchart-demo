@@ -24,7 +24,7 @@ const config = {
         title: 'Y Axis',
         guides: [{
             type: 'line',
-            visible: false,
+            // visible: false,
             // front: true,
             value: 12,
             label: {
