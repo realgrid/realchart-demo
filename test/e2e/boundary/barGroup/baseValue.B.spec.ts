@@ -91,6 +91,7 @@ test.describe('barSeries.baseValue test', () => {
             },
             title: 'BarGroup.BaseValue',
             yAxis: { 
+                minValue: 0,
                 tick: { 
                     visible: true, 
                     steps: [0],
@@ -107,8 +108,9 @@ test.describe('barSeries.baseValue test', () => {
                     return { 
                         template: 'bar',
                         name: `Series ${i}`,
-                        data: PWTester.iarandom(0, 100, len) };
-                }),
+                        data:  PWTester.iarandom(0, 100, len)
+                    }
+                })
             }
         };
         chart = await page.evaluateHandle('chart');
@@ -142,7 +144,7 @@ test.describe('barSeries.baseValue test', () => {
         if (lineRect && tickRect) {
             // line의 기본 높이가 4.
             const diff = Math.abs(tickRect.y - (lineRect.y + lineRect.height/2));
-            expect(diff).lessThan(marginErr);
+            expect(diff).lessThan(marginErr, `${config}`);
             console.debug({diff})
         } else {
             expect.fail('Failed to get boundingClientRect');
@@ -153,6 +155,7 @@ test.describe('barSeries.baseValue test', () => {
         expect(chart).exist;
         config.series.baseValue = 10;
         delete config.yAxis.tick.steps;
+
         await page.evaluate(({chart, config}) => {
             chart?.load(config, false).render();
         }, {chart, config});
