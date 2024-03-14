@@ -5,6 +5,7 @@ x, y로 지정된 데이터포인트에 길이와 방향(각도)를 지정해서
 시리즈 [type](/config/config/series#type)은 '**vetor**'로 지정한다.<br/>
 이 시리즈를 기준으로 자동 생성되는 x축은 [선형](/config/config/xAxis/linear)축이다.
 
+<FiddleLink label="Try Vector" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/guide/series/vector"/>
 <img src="/images/guide/series/vector-01.png" width="70%" className="border-img"/>
 
 ## 설정
@@ -14,15 +15,15 @@ const config = {
     series: {
         type: 'vector',
         data: [
-            [0, 0, -6.8],   // [y, length, angle]
-            [0, 1, -5.4],
-            [0, 2, -4.5],
-            [0, 3, -3.9],
-            [0, 4, -4],
-            [0, 5, -7.6],
-            [0, 6, -7],
-            [1, 0, -3.6],
-            [1, 1, -7],
+            [5,5,190,95],   // [x, y, length, angle]
+            [5,10,185,105],
+            [5,15,180,105],
+            [5,20,175,115],
+            [5,25,170,115],
+            [5,30,165,125],
+            [5,35,160,125],
+            [5,40,155,135],
+            [5,45,150,135],
             ...
         ]
     }
