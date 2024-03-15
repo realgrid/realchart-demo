@@ -30,14 +30,6 @@ const config = {
             }
         }
     },
-    options: {
-        // animatable: false,
-        credits: {
-            // visible: false,
-            // verticalAlign: 'top'
-            // align: 'center'
-        }
-    },
     title: "Multiple Gauges",
     gauge: [{
         template: "gauge",
