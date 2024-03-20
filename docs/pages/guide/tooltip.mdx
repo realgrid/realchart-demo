@@ -15,7 +15,7 @@ realchart [css 파일](/guide/install)에 '**.rct-point[data-hover]**' class로 
 
 기본 hover 스티일이 적당하지 않다면 chart의 options의 
 pointHovering.[style](/config/config/options/pointHovering#style) 설정을 통해 변경할 수 있다.
-
+<FiddleLink label="Try Hover Style" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/guide/hovering"/>  
 <img src="/images/guide/hovering-style-01.png" width="70%"/>
 
 ```js
@@ -82,7 +82,7 @@ marker의 위치가 찾아지도록 할 수 있다.<br/>
 차트 옵션의 pointHovering.[hintDistance](/config/config/options/pointHovering#hintDistance) 속성에 가상의 추가 반경을 지정한다.
 pointHovering.hintDistance 기본값은 **30** 픽셀이다.
 0이하면 marker 본래 크기로 계산된다. 상당히 큰 크기로 지정하면 (body 영역 내에서)마우스가 어느 위치에 있든 마우스에 가장 가까운 marker가 찾아질 것이다.<br/>
-
+<FiddleLink label="Try Hovering Distance" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/guide/hoveringDistance"/>  
 ```js
 const config = {
     options: {
@@ -115,7 +115,7 @@ tooltip.[followPointer](/config/config/tooltip#followPointer)가 true로 지정�
 툴팁은 hover된 데이터포인트(들)의 값이나 추가 정보를 보여주는 view이다.
 툴팁뷰에 표시될 데이터포인트들은 기본적으로 위의 hovering 범위에서 결정된 것들과 동일한 데,
 tooltip.[scope](/config/config/tooltip#scope) 속성으로 다르게 지정할 수도 있다.
-
+<FiddleLink label="Try Tooltip" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/guide/tooltip"/>  
 <img src="/images/guide/tooltip-01.png" width="80%"/>
 
 [Tooltip 모델](/config/config/tooltip)에는 툴팁 표시와 관련된 여러 속성들이 있다.
