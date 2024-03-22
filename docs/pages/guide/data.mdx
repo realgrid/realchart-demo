@@ -9,7 +9,7 @@
 [bar 시리즈](/config/config/series/bar)와 같은 단순 시리즈의 경우,
 데이터포인트마다 x, y 두 값이 필요한데 대개의 경우 x 값은 자동으로 결정되므로,
 y값들만 지정해도 되는 경우가 흔하다.
-
+<FiddleLink label="Try Y values" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/guide/yvalues"/>  
 ```js
 const config = {
     series: {
@@ -57,7 +57,7 @@ const config = {
 [candlestcik](/config/config/series/candlestick) 시리즈와 같이 데이터포인트 별로 여러개의 값이 필요한 경우,
 시리즈 종류별로 값 배치 방식이 해당 설정 문서에 설명되어 있다. 
 candlestick의 경우,
-
+<FiddleLink label="Try Json Array" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/guide/jsonarray"/>  
 ###### 단일 값 및 값 배열
 |형식|설명|
 |---|---|
@@ -108,6 +108,8 @@ const config = {
 [RcChartData](/docs/api/classes/RcChartData) 객체를 생성하고,
 시리즈의 data 속성에 설정할 수 있다.
 
+<FiddleLink label="Try Chart Data" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/guide/chartData"/>  
+
 ```js
 const data = RealChart.createData('main', [
     ['신흥1동', 3904],
@@ -142,7 +144,7 @@ const data = RealChart.createData('main', [...], {
 ## 데이터포인트 변경
 
 데이터포인트 값은 api을 통해 직접 변경할 수 있고, 값 변경은 바로 차트에 반영된다.
-
+<FiddleLink label="Try Update Point" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/guide/updatePoint"/>  
 ```js
 const x = 'google';
 const v = chart.series.getValueAt(x);
@@ -158,7 +160,7 @@ RcChartSeries.[getValueAt](/docs/api/classes/RcChartSeries#getvalueat)은
 
 api를 통해 데이터포인트(들)를 추가하거나 기존 데이터포인트(들)를 제거할 수도 있다.
 데이터포인트 하나를 추가하려면 RcChartSeries.[addPoint](/docs/api/classes/RcChartSeries#addpoint)를 호출한다.
-
+<FiddleLink label="Try Add & Remove" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/guide/addPoint"/>  
 ```js
 const x = getName();
 const y = getValue();
