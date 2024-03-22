@@ -39,15 +39,26 @@ function createHTML(leafName) {
                 'href',
                 'https://unpkg.com/realchart/dist/realchart-style.css'
             );
-        } else {
+        } else if (link.attribs.href.includes('realchart-export')) {
+            $(link).attr(
+                'href',
+                'https://unpkg.com/realchart-export/dist/realchart-export.css'
+            );
+        }else {
             $(link).remove();
         }
     }
 
     for (let script of scripts) {
         const src = $(script).attr('src');
+        // console.log(src)
         if (src && src.includes('realchart.js')) {
             $(script).attr('src', 'https://unpkg.com/realchart');
+            continue;
+        }
+        if(src && src.includes('realchart-export')) {
+            console.log(src)
+            $(script).attr('src', 'https://unpkg.com/realchart-export');
             continue;
         }
         if (src) $(script).remove();
