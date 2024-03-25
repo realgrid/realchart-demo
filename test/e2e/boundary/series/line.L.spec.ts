@@ -1,4 +1,3 @@
-import { StyleProps } from './../../../../src/common/Types';
 ////////////////////////////////////////////////////////////////////////////////
 // line.L.spec.ts
 // 2024. 01. 31. created by dltlghkd930217
@@ -178,7 +177,7 @@ test.describe('series, line test', () => {
 
         await PWTester.testChartBySnapshot(page, testInfo);
     });
-    
+
     test('name', async ({ page }, testInfo) => {
         const NAME = 'line series name';
         config.series.data = createJsonData('json');
