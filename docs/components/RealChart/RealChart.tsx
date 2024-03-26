@@ -377,7 +377,7 @@ export function RealChartReact({
         >
           적용
         </Button>
-        <Codepen configString={configString} />
+        <Codepen configString={configString} width={width} height={height} />
       </Grid>
       {showEditor ? (
         <Grid>
