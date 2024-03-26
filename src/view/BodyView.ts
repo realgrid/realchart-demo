@@ -171,7 +171,7 @@ export class AxisGridView extends ChartElement<AxisGrid> {
                 } else {
                     vis = true;
                 }
-                if (line.setVis(true)) {
+                if (line.setVis(vis)) {
                     // line.setVLineC(pts[i], 0, h);
                     line.setVLine(axis.prev(pts[i]), 0, h);
                 }
