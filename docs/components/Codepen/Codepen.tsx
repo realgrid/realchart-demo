@@ -7,7 +7,7 @@ export const Codepen = ({ configString }) => {
     let data = {
       title: "Cool Pen",
       description: "",
-      html: '<script>var realChartLic = \'upVcPE+wPOkOR/egW8JuxkM/nBOseBrflwxYpzGZyYmhB+vWdw2W7OeKriArSGg/tcphfKS2Musnm9T+R9R8ZnQHkEFeJWIE\';</script><script src="https://unpkg.com/realchart"></script>\n<div id="realchart"></div>',
+      html: '<script>var realChartLic = "upVcPE+wPOkOR/egW8JuxkM/nBOseBrflwxYpzGZyYmhB+vWdw2W7OeKriArSGg/wmotbP/makia8x2CR2MtWnQHkEFeJWIE";</script><script src="https://unpkg.com/realchart"></script>\n<div id="realchart"></div>',
       html_pre_processor: "none",
       css: '@import url("https://unpkg.com/realchart/dist/realchart-style.css");\n#realchart {\n    width: 800px;\n    height: 500px;\n    border: 1px solid lightgray;\n    margin: 20px auto;\n}',
       css_pre_processor: "none",
