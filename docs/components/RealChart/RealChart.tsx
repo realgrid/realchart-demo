@@ -15,7 +15,6 @@ import {
   createStyles,
   rem,
   Checkbox,
-  Slider,
   Select,
   Flex,
 } from "@mantine/core";
@@ -28,6 +27,7 @@ import "node_modules/realchart/dist/realchart-style.css";
 import Editor from "@monaco-editor/react";
 import { Panel } from "../Panels";
 import { Codepen } from "../Codepen/Codepen";
+import { AutoSlider } from '../DemoPage/AutoSlider';
 
 /**
  * DOM API 사용 문제
@@ -147,6 +147,10 @@ export function RealChartReact({
     window["chart"] = chart;
     setVersion(getVersion());
 
+    // return () => {
+    //   chart.destroy();
+    // }
+
   }, [chartRef]);
 
   const handleSave = () => {
@@ -259,26 +263,36 @@ export function RealChartReact({
       </Grid>
       {sliders?.map((action, idx) => {
         const { min, max, step, label, value } = action;
-        const onSliderChanged = (value) => {
-          action.action && action.action({ tool, config, value });
-        };
+       
         // const marks = [min, max].map((v) => {
         //   return { value: v, label: v.toString() };
         // });
+
+        const onSliderChanged = (value: number) => {
+          try {
+            if (chartRef.current && window['chart']) {
+              action.action && action.action({ tool, config, value });
+            }
+          } catch(err) {
+            console.error(err);
+          }
+        };
+
         return (
           <Grid align={"center"} key={idx}>
             <Grid.Col span={2}>
               <Text align={"right"}>{label}: </Text>
             </Grid.Col>
             <Grid.Col span={8}>
-              <Slider
-                min={min}
-                max={max}
-                step={step}
-                defaultValue={value || min}
-                color="blue"
-                onChangeEnd={onSliderChanged}
-              />
+              <AutoSlider
+                  min={min}
+                  max={max}
+                  step={step}
+                  initValue={value || min}
+                  color="blue"
+                  onChange={(value) => { onSliderChanged(value); }}
+                  // onChangeEnd={onSliderChanged}
+                />
             </Grid.Col>
           </Grid>
         );
