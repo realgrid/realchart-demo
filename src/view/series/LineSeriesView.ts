@@ -535,6 +535,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         if (pts.length > 1) {
             sb.moveOrLine(connected, pts[0].px, pts[0].py);
             for (let i = 1; i < pts.length; i++) {
+                if (this.model instanceof LineSeries && this.model.connectNullPoints && pts[i].isNull) continue;
                 sb.line(pts[i].px, pts[i].py);
             }
         }
