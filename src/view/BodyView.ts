@@ -161,15 +161,17 @@ export class AxisGridView extends ChartElement<AxisGrid> {
             line.setBoolData('last', pts[i] === (axis._isHorz ? w : h));
         })
 
+        const firstVisible = m.firstVisible !== undefined ? m.firstVisible : m.isVisible(axis._isPolar);
+        const lastVisible = m.lastVisible !== undefined ? m.lastVisible : m.isVisible(axis._isPolar);
         if (axis._isHorz) {
             lines.forEach((line, i) => {
                 // 최소/최대값이 tick에 해당되지 않을 때는 표시한다.
                 if (i === 0) {
-                    vis = m.firstVisible || !reversed && pts[i] > 0 || reversed && pts[i] < w;
+                    vis = firstVisible || !reversed && pts[i] > 0 || reversed && pts[i] < w;
                 } else if (i === end) {
-                    vis = m.lastVisible || !reversed && pts[i] < w || reversed && pts[i] > 0;
+                    vis = lastVisible || !reversed && pts[i] < w || reversed && pts[i] > 0;
                 } else {
-                    vis = true;
+                    vis = m.isVisible(axis._isPolar);
                 }
                 if (line.setVis(vis)) {
                     // line.setVLineC(pts[i], 0, h);
@@ -181,11 +183,11 @@ export class AxisGridView extends ChartElement<AxisGrid> {
                 p = h - pts[i];
                 // 최소/최대값이 tick에 해당되지 않을 때는 표시한다.
                 if (i === 0) {
-                    vis = m.firstVisible || !reversed && p < h || reversed && p > 0;
+                    vis = firstVisible || !reversed && p < h || reversed && p > 0;
                 } else if (i === end) {
-                    vis = m.lastVisible || !reversed && p > 0 || reversed && p < h;
+                    vis = lastVisible || !reversed && p > 0 || reversed && p < h;
                 } else {
-                    vis = true;
+                    vis = m.isVisible(axis._isPolar);
                 }
                 if (line.setVis(vis)) {
                     // line.setHLineC(h - pts[i], 0, w); // TODO: grid line과 pointer가 1 정도 틀어진다. #369
@@ -1443,7 +1445,8 @@ export class BodyView extends ChartElement<Body> implements IAnnotationAnchorOwn
 
         if (needAxes) {
             [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {
-                if (axis.grid.isVisible(false) && !gridMap.has(axis)) {
+                // if (axis.grid.isVisible(false) && !gridMap.has(axis)) {
+                if (!gridMap.has(axis)) {
                     const v = new AxisGridView(doc);
     
                     gridMap.set(axis, v);
