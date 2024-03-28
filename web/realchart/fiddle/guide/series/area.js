@@ -281,7 +281,7 @@ const data = [
 ];
 const config = {
     type: 'area',
-    title: '년도 별 수학검정시험 재학생 인원',
+    title: '연도별 수학검정시험 재학생 인원',
     series: [
         {
             name: '재학생',
@@ -295,8 +295,6 @@ const config = {
 let animate = false;
 let chart;
 
-
 function init() {
-	chart = RealChart.createChart(document, 'realchart', config);
+    chart = RealChart.createChart(document, 'realchart', config);
 }
- 

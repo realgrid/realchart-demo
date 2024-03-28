@@ -281,16 +281,16 @@ const data = [
 ];
 const config = {
     type: 'area',
-    title: '년도 별 수학검정시험 재학생 인원',
+    title: '연도별 수학검정시험 재학생 인원',
     series: [
         {
             layout: 'fill',
             children: [
                 { name: '검정고시', data: data, yField: 'GED', xField: 'year' },
                 { name: '졸업생', data: data, yField: 'graduate', xField: 'year' },
-                { name: '재학생', data: data, yField: 'students', xField: 'year' },
+                { name: '재학생', data: data, yField: 'students', xField: 'year' }
             ]
-        },
+        }
     ]
 };
 

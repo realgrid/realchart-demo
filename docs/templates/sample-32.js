@@ -1085,7 +1085,7 @@ export const config = {
     ],
     getSum: (d) => { return d.china + d.japan + d.hongkong + d.taiwan + d.vietnam + d.america;}
   },
-  title: '년도 별 제주도 외국인 관광객 현황',
+  title: '연도별 제주도 외국인 관광객 현황',
   templates: {
     series: {
       marker: { visible: false },
