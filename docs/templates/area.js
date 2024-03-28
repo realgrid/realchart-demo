@@ -1,6 +1,10 @@
 export const config = {
   type: 'area',
-  title: '년도 별 수학검정시험 재학생 인원',
+  title: '연도별 수학검정시험 재학생 인원',
+  templates: {
+    series: { marker: { visible: false }, xStart: '1993', xStep: '1y' }
+  },
+  xAxis: { type: 'time' },
   series: [
     {
       template: 'series',
@@ -9,7 +13,7 @@ export const config = {
       pointLabel: {},
       data: [
         {
-          year: 1994,
+          year: '1993',
           total: 742668,
           students: 521806,
           graduate: 213459,
@@ -18,7 +22,7 @@ export const config = {
           female: 305203
         },
         {
-          year: 1994,
+          year: '1994',
           total: 750181,
           students: 496617,
           graduate: 243826,
@@ -27,7 +31,7 @@ export const config = {
           female: 305569
         },
         {
-          year: 1995,
+          year: '1995',
           total: 781749,
           students: 477960,
           graduate: 261492,
@@ -36,7 +40,7 @@ export const config = {
           female: 329389
         },
         {
-          year: 1996,
+          year: '1996',
           total: 840661,
           students: 526833,
           graduate: 300482,
@@ -45,7 +49,7 @@ export const config = {
           female: 361954
         },
         {
-          year: 1997,
+          year: '1997',
           total: 824374,
           students: 545023,
           graduate: 268044,
@@ -54,7 +58,7 @@ export const config = {
           female: 351847
         },
         {
-          year: 1998,
+          year: '1998',
           total: 885321,
           students: 613376,
           graduate: 261424,
@@ -63,7 +67,7 @@ export const config = {
           female: 390142
         },
         {
-          year: 1999,
+          year: '1999',
           total: 868643,
           students: 623130,
           graduate: 233893,
@@ -72,7 +76,7 @@ export const config = {
           female: 393018
         },
         {
-          year: 2000,
+          year: '2000',
           total: 896122,
           students: 631745,
           graduate: 250064,
@@ -81,7 +85,7 @@ export const config = {
           female: 412520
         },
         {
-          year: 2001,
+          year: '2001',
           total: 872297,
           students: 603238,
           graduate: 254538,
@@ -90,7 +94,7 @@ export const config = {
           female: 406751
         },
         {
-          year: 2002,
+          year: '2002',
           total: 739129,
           students: 541662,
           graduate: 185946,
@@ -99,7 +103,7 @@ export const config = {
           female: 348656
         },
         {
-          year: 2003,
+          year: '2003',
           total: 675922,
           students: 482089,
           graduate: 179880,
@@ -108,7 +112,7 @@ export const config = {
           female: 319504
         },
         {
-          year: 2004,
+          year: '2004',
           total: 674154,
           students: 476129,
           graduate: 184317,
@@ -117,7 +121,7 @@ export const config = {
           female: 316733
         },
         {
-          year: 2005,
+          year: '2005',
           total: 610257,
           students: 435538,
           graduate: 161524,
@@ -126,7 +130,7 @@ export const config = {
           female: 285557
         },
         {
-          year: 2006,
+          year: '2006',
           total: 593806,
           students: 422310,
           graduate: 159190,
@@ -135,7 +139,7 @@ export const config = {
           female: 279483
         },
         {
-          year: 2007,
+          year: '2007',
           total: 588899,
           students: 425396,
           graduate: 151697,
@@ -144,7 +148,7 @@ export const config = {
           female: 275184
         },
         {
-          year: 2008,
+          year: '2008',
           total: 584934,
           students: 446597,
           graduate: 126729,
@@ -153,7 +157,7 @@ export const config = {
           female: 272870
         },
         {
-          year: 2009,
+          year: '2009',
           total: 588839,
           students: 448472,
           graduate: 127586,
@@ -162,7 +166,7 @@ export const config = {
           female: 275837
         },
         {
-          year: 2010,
+          year: '2010',
           total: 677834,
           students: 532436,
           graduate: 130658,
@@ -171,7 +175,7 @@ export const config = {
           female: 319692
         },
         {
-          year: 2011,
+          year: '2011',
           total: 712227,
           students: 541880,
           graduate: 154661,
@@ -180,7 +184,7 @@ export const config = {
           female: 332842
         },
         {
-          year: 2012,
+          year: '2012',
           total: 693631,
           students: 526418,
           graduate: 151887,
@@ -189,7 +193,7 @@ export const config = {
           female: 321860
         },
         {
-          year: 2013,
+          year: '2013',
           total: 668522,
           students: 510972,
           graduate: 142561,
@@ -198,7 +202,7 @@ export const config = {
           female: 311598
         },
         {
-          year: 2014,
+          year: '2014',
           total: 650747,
           students: 509081,
           graduate: 127634,
@@ -207,7 +211,7 @@ export const config = {
           female: 307971
         },
         {
-          year: 2015,
+          year: '2015',
           total: 640621,
           students: 495027,
           graduate: 131539,
@@ -216,7 +220,7 @@ export const config = {
           female: 307417
         },
         {
-          year: 2016,
+          year: '2016',
           total: 631187,
           students: 482054,
           graduate: 136090,
@@ -225,7 +229,7 @@ export const config = {
           female: 307404
         },
         {
-          year: 2017,
+          year: '2017',
           total: 605987,
           students: 459342,
           graduate: 135120,
@@ -234,7 +238,7 @@ export const config = {
           female: 295536
         },
         {
-          year: 2018,
+          year: '2018',
           total: 593527,
           students: 444873,
           graduate: 137533,
@@ -243,7 +247,7 @@ export const config = {
           female: 289907
         },
         {
-          year: 2019,
+          year: '2019',
           total: 594924,
           students: 448111,
           graduate: 135482,
@@ -252,7 +256,7 @@ export const config = {
           female: 288783
         },
         {
-          year: 2020,
+          year: '2020',
           total: 548734,
           students: 394024,
           graduate: 142271,
@@ -261,7 +265,7 @@ export const config = {
           female: 266698
         },
         {
-          year: 2021,
+          year: '2021',
           total: 493434,
           students: 346673,
           graduate: 133070,
@@ -270,7 +274,7 @@ export const config = {
           female: 239407
         },
         {
-          year: 2022,
+          year: '2022',
           total: 509821,
           students: 360710,
           graduate: 134834,
@@ -279,7 +283,7 @@ export const config = {
           female: 248471
         },
         {
-          year: 2023,
+          year: '2023',
           total: 508030,
           students: 350239,
           graduate: 142303,
@@ -288,8 +292,8 @@ export const config = {
           female: 247904
         }
       ],
-      yField: 'students',
-      xField: 'year'
+      xField: 'year',
+      yField: 'students'
     }
   ]
 }
