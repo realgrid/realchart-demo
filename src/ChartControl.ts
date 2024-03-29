@@ -188,9 +188,9 @@ export class ChartControl extends RcControl implements IChartEventListener {
 
     private _loadModules(): void {
         if (!this._exporter) {
-            const realChartExporter = window?.['$$_RealChartExporter'];
-            if (realChartExporter) {
-                this._exporter = realChartExporter;
+            const realChartExport = window?.['$$_RealChartExporter'];
+            if (realChartExport) {
+                realChartExport.RealchartExport(this);
             }
         }
     }
