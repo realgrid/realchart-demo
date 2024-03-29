@@ -1103,7 +1103,7 @@ const config = {
             // xStart: "2013",
             // xStep: "1m",
             lineType: 'spline',
-            connectNullPoints: true
+            connectNullPoints: false
         }
     },
     xAxis: {

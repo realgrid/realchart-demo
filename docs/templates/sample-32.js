@@ -1090,7 +1090,7 @@ export const config = {
     series: {
       marker: { visible: false },
       lineType: 'spline',
-      connectNullPoints: true
+      connectNullPoints: false
     }
   },
   xAxis: { type: 'time' },
