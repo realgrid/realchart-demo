@@ -10,5 +10,11 @@
 		"theme": {
 			"toc": false
 		}
+	},
+	"sample-12": {
+		"title": "Treemap Stock",
+		"theme": {
+			"toc": false
+		}
 	}
 }
