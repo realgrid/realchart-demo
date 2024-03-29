@@ -12,7 +12,7 @@ export const config = {
       'Oct', 'Nov', 'Dec'
     ]
   },
-  yAxis: [],
+  yAxis: {},
   series: [
     {
       name: '월 매출',
