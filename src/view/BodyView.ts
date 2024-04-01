@@ -24,7 +24,7 @@ import { AxisBreak, ContinuousAxis, LinearAxis } from "../model/axis/LinearAxis"
 import { Gauge, GaugeBase } from "../model/Gauge";
 import { ChartElement } from "./ChartElement";
 import { GaugeView } from "./GaugeView";
-import { IPointView, SeriesView } from "./SeriesView";
+import { IPointView, MarkerSeriesPointView, SeriesView } from "./SeriesView";
 import { CircleGaugeGroupView, CircleGaugeView } from "./gauge/CircleGaugeView";
 import { ClockGaugeView } from "./gauge/ClockGaugeView";
 import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
@@ -1231,6 +1231,22 @@ export class BodyView extends ChartElement<Body> implements IAnnotationAnchorOwn
 
     getSeries(series: ISeries): SeriesView<Series> {
         return this._seriesViews.find(sv => sv.model === series);
+    }
+
+    removeFocuse() {
+        this._seriesViews.forEach((seriesView) => {
+            seriesView._hoverPts.forEach((pointView: MarkerSeriesPointView) => {
+                pointView.endHover(seriesView, false);
+                pointView.setBoolData(SeriesView.DATA_HOVER, false);
+            });
+            seriesView._hoverAnis.forEach(ani => {
+                ani.stop();
+            })
+        });
+        this._owner.hideTooltip();
+        this._focused = null;
+        this._siblings = null;
+        this._siblingSeries = null;
     }
 
     //-------------------------------------------------------------------------

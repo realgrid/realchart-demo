@@ -380,6 +380,10 @@ export class PaneContainer extends LayerElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    bodies(): PaneBodyView[] {
+        return this._bodies;
+    }
+
     bodyViewOf(dom: Element): PaneBodyView {
         return this._bodies.find(b => b.contains(dom));
     }
