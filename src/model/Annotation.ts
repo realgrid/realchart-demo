@@ -353,6 +353,9 @@ export abstract class Annotation extends ChartItem {
                     }
                     break;
             }
+        } else {
+            offset = offset || this.getOffset(width, height);
+            x = this._x + offset.x;
         }
 
         if (isNaN(y = this._y)) {
@@ -372,7 +375,11 @@ export abstract class Annotation extends ChartItem {
                     y += offset.y;
                     break;
             }
+        } else {
+            offset = offset || this.getOffset(width, height);
+            y = this._y + offset.y;
         }
+        
         return { x, y };
     }
 
