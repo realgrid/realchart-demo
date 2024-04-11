@@ -210,6 +210,21 @@ class ItalicWord extends SpanWord {
     }
 }
 
+class LinkWord extends SpanWord {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    override get type(): string {
+        return 'a';
+    }
+
+    protected override _doPrepare(span: SVGTSpanElement, s: string, x1: number, x2: number): void {
+        super._doPrepare(span, s, x1, x2);
+        span.setAttribute('class', 'rct-text-link')
+    }
+}
+
 const Words = {
     't': NormalWord,
     'b': BoldWord,
@@ -266,6 +281,8 @@ class SvgLine {
                             x += s3.length;
                         }
                     }
+                } else if (c2 === 'a') {
+                    debugger;
                 }
 
                 if (w) {
@@ -304,6 +321,7 @@ const line_sep = /<br.*?>|\r\n|\n/;
 /**
  * <t>, <b>, <i>, <br>,
  * <b>${label}</b><br><t style="fill:#c00;">${endValue}</t>
+ * <a href='...'>...</a>
  */
 export class SvgRichText {
 	
