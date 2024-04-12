@@ -334,6 +334,7 @@ export abstract class AxisGrid extends AxisItem {
         super(axis, null);
 
         this.rows = new AxisGridRows(this.axis);
+        this.lastVisible = !axis._isX;
     }
 
     //-------------------------------------------------------------------------
@@ -348,11 +349,11 @@ export abstract class AxisGrid extends AxisItem {
      * 
      * @config
      */
-    firstVisible: boolean;
+    firstVisible = false;
     /**
      * 끝 값에 표시되는 그리드 선을 표시할 지 여부.
      * 
-     * @default y축이면 true.
+     * @default x축이면 false, y축이면 true.
      * @config
      */
     lastVisible: boolean;

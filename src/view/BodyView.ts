@@ -1463,12 +1463,8 @@ export class BodyView extends ChartElement<Body> implements IAnnotationAnchorOwn
 
         if (needAxes) {
             [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {
-                // if (axis.grid.isVisible(false) && !gridMap.has(axis)) {
-                if (!gridMap.has(axis)) {
-                    const v = new AxisGridView(doc);
-    
-                    gridMap.set(axis, v);
-                    gridContainer.add(v);
+                if ((axis.grid.isVisible(false) || axis.grid.firstVisible || axis.grid.lastVisible) && !gridMap.has(axis)) {
+                    this._prepareGrids(doc, axis);
                 }
                 if (axis instanceof ContinuousAxis && axis.baseLine.visible && axis.isBaseVisible() && !baseMap.has(axis)) {
                     const v = new LineElement(doc, 'rct-axis-baseline');
@@ -1479,6 +1475,13 @@ export class BodyView extends ChartElement<Body> implements IAnnotationAnchorOwn
                 }
             }));
         }
+
+    }
+
+    protected _prepareGrids(doc: Document, axis: Axis) {
+        const v = new AxisGridView(doc);
+        this._gridViews.set(axis, v);
+        this._gridContainer.add(v);
     }
 
     protected _prepareSeries(doc: Document, chart: IChart, series: Series[]): void {
