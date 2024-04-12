@@ -1356,10 +1356,9 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
             }
         } else {
             if (this._model.isSplitted()) {
-                const bodies = this._paneContainer.bodies();
-                bodies.forEach((bodyView, i) => {
-                    bodyView.removeFocus();
-                })
+                this._paneContainer.bodies.forEach(bv => {
+                    bv.removeFocus();
+                });
             } else {
                 this._currBody.removeFocus();
             }

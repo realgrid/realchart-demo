@@ -378,12 +378,15 @@ export class PaneContainer extends LayerElement {
     }
 
     //-------------------------------------------------------------------------
-    // methods
+    // properties
     //-------------------------------------------------------------------------
-    bodies(): PaneBodyView[] {
+    get bodies(): PaneBodyView[] {
         return this._bodies;
     }
 
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
     bodyViewOf(dom: Element): PaneBodyView {
         return this._bodies.find(b => b.contains(dom));
     }
