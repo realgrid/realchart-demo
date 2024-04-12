@@ -1300,6 +1300,11 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
         if (body) {
             const p = body.controlToElement(x, y);
             const inBody = body.pointerMoved(p, target);
+
+            if (!inBody) {
+                body.removeFocus();
+                return;
+            }
             
             for (const dir in this._axisSectionMap) {
                 this._axisSectionMap[dir].views.forEach(av => {
@@ -1348,6 +1353,14 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
 
             if (prevItem instanceof LegendItem && !(this._hoverItem instanceof LegendItem)) {
                 body.hoverSeries(null);
+            }
+        } else {
+            if (this._model.isSplitted()) {
+                this._paneContainer.bodies.forEach(bv => {
+                    bv.removeFocus();
+                });
+            } else {
+                this._currBody.removeFocus();
             }
         }
     }
