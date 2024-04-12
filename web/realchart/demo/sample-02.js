@@ -63,7 +63,7 @@ const config = {
             {
                 type: 'text',
                 text: '`23년 1월<br><t style="fill:red">120</t>',
-                x1: new Date(2023, 1),
+                x1: new Date(2023, 0),
                 y1: 120,
                 offsetX: '-0.5w',
                 offsetY: '-1h',
