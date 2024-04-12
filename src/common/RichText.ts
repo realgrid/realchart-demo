@@ -231,13 +231,13 @@ class LinkWord extends SpanWord {
             if (i > 0) {
                 const name = attr.substring(0, i);
                 const val = attr.substring(i + 1, attr.length);
-
+                const url = val.substring(1, val.length - 1);
                 switch (name) {
                     case 'href':
-                        this.url = val.substring(1, val.length - 2);
+                        this.url = url;
                         break;
                     case 'target':
-                        this.target = val.substring(1, val.length - 2);
+                        this.target = url;
                         break;
                 }
             }
