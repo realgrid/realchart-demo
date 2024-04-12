@@ -1233,7 +1233,7 @@ export class BodyView extends ChartElement<Body> implements IAnnotationAnchorOwn
         return this._seriesViews.find(sv => sv.model === series);
     }
 
-    removeFocuse() {
+    removeFocus() {
         this._seriesViews.forEach((seriesView) => {
             seriesView._hoverPts.forEach((pointView: MarkerSeriesPointView) => {
                 pointView.endHover(seriesView, false);

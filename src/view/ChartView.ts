@@ -1302,7 +1302,7 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
             const inBody = body.pointerMoved(p, target);
 
             if (!inBody) {
-                body.removeFocuse();
+                body.removeFocus();
                 return;
             }
             
@@ -1358,10 +1358,10 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
             if (this._model.isSplitted()) {
                 const bodies = this._paneContainer.bodies();
                 bodies.forEach((bodyView, i) => {
-                    bodyView.removeFocuse();
+                    bodyView.removeFocus();
                 })
             } else {
-                this._currBody.removeFocuse();
+                this._currBody.removeFocus();
             }
         }
     }
