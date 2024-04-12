@@ -582,6 +582,14 @@ export abstract class RcControl extends RcObject {//} RcWrappableObject {
         return event;
     }
 
+    setPointerCapture(ev: PointerEvent): void {
+        this._dom.setPointerCapture(ev.pointerId);
+    }
+
+    releasePointerCapture(ev: PointerEvent): void {
+        this._dom.releasePointerCapture(ev.pointerId);
+    }
+
     private _clickHandler = (ev: PointerEvent) => {
         this._pointerHandler && this._pointerHandler.handleClick(this.toOffset(ev));
     }
@@ -594,7 +602,6 @@ export abstract class RcControl extends RcObject {//} RcWrappableObject {
     }
 
     private _pointerDownHandler = (ev: PointerEvent) => {
-        this._dom.setPointerCapture(ev.pointerId);
         this._pointerHandler && this._pointerHandler.handleDown(this.toOffset(ev));
     }
 
@@ -603,7 +610,6 @@ export abstract class RcControl extends RcObject {//} RcWrappableObject {
     }
 
     private _pointerUpHandler = (ev: PointerEvent) => {
-        this._dom.releasePointerCapture(ev.pointerId);
         this._pointerHandler && this._pointerHandler.handleUp(this.toOffset(ev));
     }
 

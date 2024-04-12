@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { maxv, pickNum } from "./Common";
+import { SVGNS, maxv, pickNum } from "./Common";
 import { DatetimeFormatter } from "./DatetimeFormatter";
 import { NumberFormatter } from "./NumberFormatter";
 import { Sides } from "./Sides";
@@ -43,7 +43,7 @@ class Word {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    get type(): string {
+    tag(): string {
         return '';
     }
 
@@ -142,7 +142,7 @@ abstract class SpanWord extends Word {
     override prepareSpan(span: SVGTSpanElement, target: any, domain: IRichTextDomain): SVGTSpanElement {
         const s = this.getText(target, domain);
         const x1 = s.indexOf('>') + 1;
-        const x2 = s.indexOf('<', x1);
+        const x2 = s.indexOf(this.tag(), x1);
 
         this._doPrepare(span, s, x1, x2);
 
@@ -175,8 +175,8 @@ class NormalWord extends SpanWord {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    override get type(): string {
-        return 't';
+    override tag(): string {
+        return '</t>';
     }
 }
 
@@ -185,8 +185,8 @@ class BoldWord extends SpanWord {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    override get type(): string {
-        return 'b';
+    override tag(): string {
+        return '</b>';
     }
 
     protected override _doPrepare(span: SVGTSpanElement, s: string, x1: number, x2: number): void {
@@ -200,8 +200,8 @@ class ItalicWord extends SpanWord {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    override get type(): string {
-        return 'i';
+    override tag(): string {
+        return '</i>';
     }
 
     protected override _doPrepare(span: SVGTSpanElement, s: string, x1: number, x2: number): void {
@@ -213,13 +213,36 @@ class ItalicWord extends SpanWord {
 class LinkWord extends SpanWord {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    url: string;
+    target = '_blank';
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    override get type(): string {
-        return 'a';
+    override tag(): string {
+        return '</a>';
     }
 
     protected override _doPrepare(span: SVGTSpanElement, s: string, x1: number, x2: number): void {
+        s.substring(2, x1 - 1).trim().split(/\s+/g).forEach(attr => {
+            const i = attr.indexOf('=');
+            if (i > 0) {
+                const name = attr.substring(0, i);
+                const val = attr.substring(i + 1, attr.length);
+
+                switch (name) {
+                    case 'href':
+                        this.url = val.substring(1, val.length - 2);
+                        break;
+                    case 'target':
+                        this.target = val.substring(1, val.length - 2);
+                        break;
+                }
+            }
+        });
+
         super._doPrepare(span, s, x1, x2);
         span.setAttribute('class', 'rct-text-link')
     }
@@ -228,7 +251,8 @@ class LinkWord extends SpanWord {
 const Words = {
     't': NormalWord,
     'b': BoldWord,
-    'i': ItalicWord
+    'i': ItalicWord,
+    'a': LinkWord,
 }
 
 class SvgLine {
@@ -265,24 +289,25 @@ class SvgLine {
 
         while (x < s.length) {
             const c = s[x];
-            const c2 = s[x + 1];
 
             if (c == '<') {
+                const c2 = s[x + 1];
                 let w: Word;
 
                 if (c2 in Words) {
                     const i = s.indexOf('>', x + 2);
+
                     if (i >= 0) {
                         const s2 = '</' + c2 + '>';
                         const j = s.indexOf(s2, i + 1);
+
                         if (j >= 0) {
                             const s3 = s.substring(x, j + s2.length);
+
                             w = new Words[c2]().parse(s3);
                             x += s3.length;
                         }
                     }
-                } else if (c2 === 'a') {
-                    debugger;
                 }
 
                 if (w) {
@@ -401,8 +426,16 @@ export class SvgRichText {
                 w += r.width;
                 span[WIDTH] = r.width;
                 h = maxv(h, span[HEIGHT] = r.height);
-
                 if (!first) first = span;
+
+                if (word instanceof LinkWord) {
+                    const link = doc.createElementNS(SVGNS, 'a');
+
+                    link.setAttribute('href', word.url);
+                    link.setAttribute('target', word.target);
+                    link.appendChild(span);
+                    view.appendDom(link);
+                }
             }
 
             firsts.push(first);

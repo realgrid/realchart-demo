@@ -56,7 +56,7 @@ export class ChartPointerHandler implements IPointerHandler {
         // Utils.log('POINT DOWN', p.x, p.y);
 
         if (this._dragTracker) {
-            this.$_stopDragTracker(elt, p.x, p.y);
+            this.$_stopDragTracker(ev, elt, p.x, p.y);
         }
 
         this._prevX = this._clickX = p.x;
@@ -65,7 +65,7 @@ export class ChartPointerHandler implements IPointerHandler {
 
     handleUp(ev: PointerEvent): void {
         if (this.isDragging()) {
-            this.$_stopDragTracker(ev.target as Element, this._prevX, this._prevY);
+            this.$_stopDragTracker(ev, ev.target as Element, this._prevX, this._prevY);
         }
     }
 
@@ -201,7 +201,7 @@ export class ChartPointerHandler implements IPointerHandler {
 
     private $_doDrag(ev: PointerEvent, dom: Element, x: number, y: number): boolean {
         if (!this.$_drag(dom, this._prevX, this._prevY, x, y)) {
-            this.$_stopDragTracker(dom, x, y, true);
+            this.$_stopDragTracker(ev, dom, x, y, true);
             this._stopEvent(ev);
             return true;
         }
@@ -217,6 +217,7 @@ export class ChartPointerHandler implements IPointerHandler {
             } else {
                 this._stopEvent(ev);
             }
+            this._chart.setPointerCapture(ev);
         }
     }
 
@@ -237,8 +238,9 @@ export class ChartPointerHandler implements IPointerHandler {
         return this._dragTracker.drag(dom, xPrev, yPrev, x, y);
     }
 
-    private $_stopDragTracker(dom: Element, x: number, y: number, canceled = false): void {
+    private $_stopDragTracker(ev: PointerEvent, dom: Element, x: number, y: number, canceled = false): void {
         if (this.isDragging()) {
+            this._chart.releasePointerCapture(ev);
             if (canceled) {
                 this._dragTracker.cancel();
             } else {
