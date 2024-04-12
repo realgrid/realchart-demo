@@ -1239,9 +1239,11 @@ export class BodyView extends ChartElement<Body> implements IAnnotationAnchorOwn
                 pointView.endHover(seriesView, false);
                 pointView.setBoolData(SeriesView.DATA_HOVER, false);
             });
+            seriesView._hoverPts = [];
             seriesView._hoverAnis.forEach(ani => {
                 ani.stop();
-            })
+            });
+            seriesView._hoverAnis = [];
         });
         this._owner.hideTooltip();
         this._focused = null;
