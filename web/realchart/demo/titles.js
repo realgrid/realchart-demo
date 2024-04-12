@@ -18,11 +18,10 @@ const config = {
         }
     },
     subtitle: {
-        text: "Sub Title",
-        text: "2023.01 World Bank.",
+        text: "<b>2023.01</b> <a href='https://www.worldbank.org/en/home'>World Bank.</a>",
         style: {
             fill: 'gray',
-            fontStyle: 'italic'
+            // fontStyle: 'italic'
         },
         // backgroundStyle: {
         //     fill: 'black',
