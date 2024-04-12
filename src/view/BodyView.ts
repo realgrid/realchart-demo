@@ -1461,12 +1461,9 @@ export class BodyView extends ChartElement<Body> implements IAnnotationAnchorOwn
     }
 
     protected _prepareGrids(doc: Document, axis: Axis) {
-        const gridContainer = this._gridContainer;
-        const gridMap = this._gridViews;
-
         const v = new AxisGridView(doc);
-        gridMap.set(axis, v);
-        gridContainer.add(v);
+        this._gridViews.set(axis, v);
+        this._gridContainer.add(v);
     }
 
     protected _prepareSeries(doc: Document, chart: IChart, series: Series[]): void {
