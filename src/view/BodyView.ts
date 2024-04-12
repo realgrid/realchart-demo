@@ -161,15 +161,17 @@ export class AxisGridView extends ChartElement<AxisGrid> {
             line.setBoolData('last', pts[i] === (axis._isHorz ? w : h));
         })
 
-        const firstVisible = m.firstVisible !== undefined ? m.firstVisible : m.isVisible(axis._isPolar);
-        const lastVisible = m.lastVisible !== undefined ? m.lastVisible : m.isVisible(axis._isPolar);
+        const firstVisible = m.firstVisible == null ? m.isVisible(axis._isPolar) : m.firstVisible;
+        const lastVisible = m.lastVisible == null ? m.isVisible(axis._isPolar) : m.lastVisible;
         if (axis._isHorz) {
             lines.forEach((line, i) => {
                 // 최소/최대값이 tick에 해당되지 않을 때는 표시한다.
                 if (i === 0) {
-                    vis = firstVisible || !reversed && pts[i] > 0 || reversed && pts[i] < w;
+                    // vis = firstVisible || !reversed && pts[i] > 0 || reversed && pts[i] < w;
+                    vis = firstVisible;
                 } else if (i === end) {
-                    vis = lastVisible || !reversed && pts[i] < w || reversed && pts[i] > 0;
+                    // vis = lastVisible || !reversed && pts[i] < w || reversed && pts[i] > 0;
+                    vis = lastVisible;
                 } else {
                     vis = m.isVisible(axis._isPolar);
                 }
@@ -183,9 +185,11 @@ export class AxisGridView extends ChartElement<AxisGrid> {
                 p = h - pts[i];
                 // 최소/최대값이 tick에 해당되지 않을 때는 표시한다.
                 if (i === 0) {
-                    vis = firstVisible || !reversed && p < h || reversed && p > 0;
+                    // vis = firstVisible || !reversed && p < h || reversed && p > 0;
+                    vis = firstVisible;
                 } else if (i === end) {
-                    vis = lastVisible || !reversed && p > 0 || reversed && p < h;
+                    // vis = lastVisible || !reversed && p > 0 || reversed && p < h;
+                    vis = lastVisible;
                 } else {
                     vis = m.isVisible(axis._isPolar);
                 }
