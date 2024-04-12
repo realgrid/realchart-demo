@@ -338,6 +338,12 @@ export class PaneBodyView extends BodyView {
         this._prepareAnnotations(doc, body.getAnnotations());
     }
 
+    override _prepareGrids(doc: Document, axis: Axis) {
+        if (axis.row === this.row && axis.col === this.col) {
+            super._prepareGrids(doc, axis);
+        }
+    }
+
     override getTooltipPos(): IPoint {
         return {x: this.parent.parent.tx + this.tx, y: this.parent.parent.ty + this.ty};
     }
