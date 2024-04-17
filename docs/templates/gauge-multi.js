@@ -18,7 +18,6 @@ export const config = {
       }
     }
   },
-  options: { credits: {} },
   title: 'Multiple Gauges',
   gauge: [
     {
@@ -26,7 +25,7 @@ export const config = {
       name: 'gauge1',
       left: 0,
       top: 0,
-      value: 82.45425300047981
+      value: 96.00219351478256
     },
     {
       template: 'gauge',
@@ -34,21 +33,21 @@ export const config = {
       left: '33%',
       top: 0,
       valueRim: { thickness: '200%' },
-      value: 20.127811025099774
+      value: 34.511126772855974
     },
     {
       template: 'gauge',
       name: 'gauge3',
       left: '66%',
       top: 0,
-      value: 83.04711822611092
+      value: 53.63428764237277
     },
     {
       template: 'gauge',
       name: 'gauge4',
       left: 0,
       top: '50%',
-      value: 99.30688259892526,
+      value: 42.36352133589336,
       innerRadius: '85%',
       valueRim: { stroked: true, style: { strokeLinecap: 'round' } },
       backgroundStyle: { stroke: 'lightblue', strokeWidth: '2px', borderRadius: '10px' }
@@ -58,7 +57,7 @@ export const config = {
       name: 'gauge5',
       left: '33%',
       top: '50%',
-      value: 86.8993396329279,
+      value: 26.475818780065886,
       innerRadius: '75%',
       valueRim: { stroked: true, style: { strokeDasharray: '3' } },
       label: { style: { fontSize: '30px' } }
@@ -68,7 +67,7 @@ export const config = {
       name: 'gauge6',
       left: '66%',
       top: '50%',
-      value: 59.40816068799728,
+      value: 93.35971775949791,
       innerStyle: { fill: '#003300', stroke: 'white', strokeWidth: '5px' },
       label: {
         text: '<t style="fill:yellow">${value}</t><t style="font-size:12px;">&nbsp;</t><t style="font-size:20px;">%</t><br><t style="font-size:20px;font-weight:normal">Gauge Test</t>',
