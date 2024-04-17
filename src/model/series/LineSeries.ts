@@ -287,7 +287,8 @@ export abstract class LineSeriesBase extends Series {
 
 export enum LineStepDirection {
     FORWARD = 'forward',
-    BACKWARD = 'backward'
+    BACKWARD = 'backward',
+    CENTER = 'center'
 }
 
 export type PointLine = IPointPos[];
