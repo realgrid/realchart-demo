@@ -29,7 +29,6 @@
   "gpt": {
     "title": "GPT",
     "type": "page",
-    "display": "hidden",
     "theme": {
       "layout": "raw",
       "footer": false

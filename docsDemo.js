@@ -169,7 +169,7 @@ import { tool } from "@/templates/${value2}";
 
 # ${key2}
 			
-<RealChartReact configString="const config = ${encodeURI(configString)}" tool={tool} />
+<RealChartReact configString="const config = ${encodeURIComponent(configString)}" tool={tool} />
 `
             );
             ++count;

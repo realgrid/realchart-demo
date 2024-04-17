@@ -9,7 +9,7 @@ export const config = {
         {
           name: 'gauge1',
           template: 'gauge',
-          value: 92.80479230964124,
+          value: 41.893566311065044,
           valueRim: { style: { fill: 'var(--color-1)' } },
           rim: { style: {} },
           label: {
@@ -20,7 +20,7 @@ export const config = {
         {
           name: 'gauge2',
           template: 'gauge',
-          value: 81.4596118243527,
+          value: 24.41521368648263,
           valueRim: { style: { fill: 'var(--color-2)' } },
           label: {
             style: { fill: 'var(--color-2)' },
@@ -30,7 +30,7 @@ export const config = {
         {
           name: 'gauge3',
           template: 'gauge',
-          value: 49.80584693204213,
+          value: 78.11556543572691,
           valueRim: { style: { fill: 'var(--color-3)' } },
           label: {
             style: { fill: 'var(--color-3)' },
@@ -40,7 +40,7 @@ export const config = {
         {
           name: 'gauge4',
           template: 'gauge',
-          value: 89.75888838788858,
+          value: 41.75537319927234,
           valueRim: { style: { fill: 'var(--color-4)' } },
           label: {
             style: { fill: 'var(--color-4)' },

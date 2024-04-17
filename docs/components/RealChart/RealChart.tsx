@@ -126,7 +126,7 @@ export function RealChartReact({
   containerId?: string
   // autoUpdate?: boolean;
 }) {
-  configString = beautify(decodeURI(configString));
+  configString = beautify(decodeURIComponent(configString));
   const config = evalCode(configString);
   const chartRef = useRef(null);
   const editorRef = useRef(null);

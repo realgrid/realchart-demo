@@ -1,8 +1,9 @@
-import { Title, Text, Textarea, Grid, ActionIcon, Stack, Flex, createStyles, rem, Skeleton } from '@mantine/core';
-import { IconSend } from '@tabler/icons-react'
+import { Title, Text, Textarea, Grid, ActionIcon, Stack, Flex, createStyles, rem, Skeleton, Card, Box, Button } from '@mantine/core';
+import { IconSend } from '@tabler/icons-react';
+import util from 'util';
 
 import { RealChartReact } from '@/components/RealChart';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react';
 import { getHotkeyHandler } from '@mantine/hooks';
 import { Prism } from '@mantine/prism';
 // import { CodeHighlight } from '@mantine/code-highlight'; // support mantime >= 7.0
@@ -30,18 +31,15 @@ const useStyles = createStyles((theme) => ({
       padding: theme.spacing.xl,
     },
   },
-
   grid: {
     height: '100%',
     margin: '-1rem'
   },
-
   title: {
     fontFamily: `${theme.fontFamily}`,
     color: theme.white,
     lineHeight: 1,
   },
-
   description: {
     color: theme.colors[theme.primaryColor][0],
     maxWidth: rem(300),
@@ -50,7 +48,6 @@ const useStyles = createStyles((theme) => ({
       maxWidth: '100%',
     },
   },
-
   input: {
     backgroundColor: theme.white,
     borderColor: theme.colors.gray[4],
@@ -65,7 +62,6 @@ const useStyles = createStyles((theme) => ({
       color: theme.colors.gray[5],
     },
   },
-
   controls: {
     display: 'flex',
     position: 'sticky',
@@ -73,29 +69,24 @@ const useStyles = createStyles((theme) => ({
     alignItems: 'center',
     gap: theme.spacing.xs
   },
-
   inputWrapper: {
     width: '100%',
     flex: '1',
     margin: '0 !important',
   },
-
   control: {
     backgroundColor: '#439CE8 !important',
   },
-
   chatText: {
     boxShadow: theme.shadows.xs,
     borderRadius: theme.radius.md,
     padding: theme.spacing.md,
     backgroundColor: theme.colors.gray[0]
   },
-  
   chatTextQuery: {
     textAlign: 'right',
     backgroundColor: theme.colors.blue[0]
   },
-
   chatWrapper: {
     paddingTop: theme.spacing.md,
     backgroundColor: theme.white,
@@ -104,13 +95,11 @@ const useStyles = createStyles((theme) => ({
     boxShadow: theme.shadows.lg,
     height: '100%'
   },
-
   stackWrapper: {
     // width: '100%',
     height: '100%',
     justifyContent: 'flex-start'
   },
-
   stack: {
     gap: 0,
     height: '100%',
@@ -118,17 +107,17 @@ const useStyles = createStyles((theme) => ({
     justifyContent: 'flex-start',
     paddingBottom: theme.spacing.xl
   },
-
   chat: {
     padding: theme.spacing.xs,
     paddingTop: 0,
-    // paddingBottom: theme.spacing.xs,
   },
-
   code: {
-    fontSize: '1.125rem'
+    fontSize: '1rem'
+  },
+  guide: {
+    textWrap: 'pretty',
+    lineHeight: '1.2rem'
   }
-
 }));
 
 interface Chat {
@@ -144,7 +133,7 @@ if (!process.env.NEXT_PUBLIC_OPENAI_API_KEY) console.warn('OPENAI_API_KEY is req
 const aiOptions = {
   // model: "gpt-3.5-turbo-instruct", // Defaults
   temperature: 0,
-  max_tokens: 2048,
+  max_tokens: 4096,
   // In Node.js defaults to process.env.OPENAI_API_KEY
   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY
 }
@@ -160,6 +149,14 @@ export const GPTPage = () => {
   const queryRef = useRef<HTMLTextAreaElement>(null);
   const stackRef = useRef<HTMLDivElement>(null);
 
+  const handleGuideClick = (evt) => {
+    if (queryRef.current) {
+      const query = (evt.target as HTMLSpanElement).textContent;
+      queryRef.current.value = query;
+      handleSend();
+    }
+  }
+
   const handleSend = async() => {
     if (awaiting || !queryRef.current?.value) return;
 
@@ -169,6 +166,7 @@ export const GPTPage = () => {
     }
     setChatList([...chatList, chat, { type: 'awaiting' }]);
     setAwaiting(true);
+    queryRef.current.value = '';
 
     const augmented = `다음 질문은 highcharts를 활용한 javascript개발에서 차트를 생성하기 위한 요청이야.
 highcharts 함수 호출에 필요한 JSON타입의 options 부분만 대답해.
@@ -196,14 +194,14 @@ A:`;
     console.log(res)
     let newChats = [];
     try {
-      eval(`const config = ${res}`);
+      eval(`const config = ${res} || {}`);
       newChats.push({
         type: 'js',
         contents: res
       }, 
       {
         type: 'chart',
-        contents: res
+        contents: `const config = ${encodeURIComponent(res)}`
       })
     } catch(err) {
       newChats.push({
@@ -224,7 +222,6 @@ A:`;
     [['Enter', (evt) => {
       if (awaiting || (evt as KeyboardEvent).isComposing) return;
       handleSend();
-      queryRef.current.value = '';
     }]]
   ) 
 
@@ -247,11 +244,20 @@ A:`;
           <Text className={classes.description} mt="sm" mb={30}>
             GPT로 리얼차트를 만들어보세요.
           </Text>
+          <Card shadow="sm" padding="sm" radius="md" withBorder>
+            <Button variant="light" color="blue" fullWidth radius="md" classNames={{ label: classes.guide }}
+              onClick={handleGuideClick}>
+              5년간 딸기, 배, 포도 수출량을 바차트로 그려줘
+            </Button>
+            {/* <Button variant="light" color="blue" fullWidth radius="md" classNames={{ label: classes.guide }}>
+              연간 월 평균 온도를 라인차트로 그려줘
+            </Button> */}
+          </Card>
         </Grid.Col>
 
         <Grid.Col span={9} className={classes.chatWrapper}>
           <Flex direction="column" className={classes.stackWrapper}>
-            <Stack ref={stackRef} className={classes.stack} onLoad={() => console.log('loaded')}>
+            <Stack ref={stackRef} className={classes.stack}>
               {
                 chatList.map(({type, contents}, i) => {
                   let child;
