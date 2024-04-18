@@ -19,6 +19,9 @@ import {
   Flex,
 } from "@mantine/core";
 
+/**
+ * @dependency raelchart-convert에서 포함하고 있다.
+ */
 import beautify from 'js-beautify';
 
 import { createChart, getVersion } from "realchart";

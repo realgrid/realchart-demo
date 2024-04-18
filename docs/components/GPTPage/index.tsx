@@ -7,6 +7,8 @@ import { MouseEventHandler, useCallback, useEffect, useRef, useState } from 'rea
 import { getHotkeyHandler } from '@mantine/hooks';
 import { Prism } from '@mantine/prism';
 // import { CodeHighlight } from '@mantine/code-highlight'; // support mantime >= 7.0
+
+import { highToReal, objectify, textify } from 'realchart-convert';
 import { OpenAI } from '@langchain/openai';
 
 const useStyles = createStyles((theme) => ({
@@ -114,11 +116,23 @@ const useStyles = createStyles((theme) => ({
   code: {
     fontSize: '1rem'
   },
-  guide: {
-    textWrap: 'pretty',
-    lineHeight: '1.2rem'
-  }
 }));
+
+const style = {
+  guide: {
+    root: {
+      paddingLeft: 0,
+      paddingRight: 0
+    },
+    inner: {
+      justifyContent: 'start'
+    },
+    label: {
+      textWrap: 'pretty',
+      lineHeight: '1.2rem',
+    }
+  }
+}
 
 interface Chat {
   type: 'query' |'text' | 'chart' | 'js' | 'awaiting' | 'error'
@@ -194,14 +208,15 @@ A:`;
     console.log(res)
     let newChats = [];
     try {
-      eval(`const config = ${res} || {}`);
+      const options = objectify(res);
+      const config = highToReal(options);
       newChats.push({
         type: 'js',
         contents: res
       }, 
       {
         type: 'chart',
-        contents: `const config = ${encodeURIComponent(res)}`
+        contents: `const config = ${encodeURIComponent(textify(config))}`
       })
     } catch(err) {
       newChats.push({
@@ -236,6 +251,11 @@ A:`;
     setTimeout(scrollToBottom, 100);
   }, [chatList]);
 
+  const guides = [
+    '5년간 딸기, 배, 포도 수출량을 바차트로 그려줘',
+    '연간 월 평균 온도를 라인차트로 그려줘'
+  ]
+
   return (
     <div className={classes.wrapper}>
       <Grid className={classes.grid}>
@@ -244,15 +264,17 @@ A:`;
           <Text className={classes.description} mt="sm" mb={30}>
             GPT로 리얼차트를 만들어보세요.
           </Text>
-          <Card shadow="sm" padding="sm" radius="md" withBorder>
-            <Button variant="light" color="blue" fullWidth radius="md" classNames={{ label: classes.guide }}
-              onClick={handleGuideClick}>
-              5년간 딸기, 배, 포도 수출량을 바차트로 그려줘
-            </Button>
-            {/* <Button variant="light" color="blue" fullWidth radius="md" classNames={{ label: classes.guide }}>
-              연간 월 평균 온도를 라인차트로 그려줘
-            </Button> */}
-          </Card>
+          {
+            guides.map((guide, i) => {
+              return <Card key={`guide-${i}`} shadow="sm" padding="xs" mb="sm" radius="md" withBorder>
+                <Button variant="light" color="blue" fullWidth radius="xs" 
+                  styles={ style.guide }
+                  onClick={handleGuideClick}>{guide}
+                </Button>
+              </Card>
+            })
+          }
+          
         </Grid.Col>
 
         <Grid.Col span={9} className={classes.chatWrapper}>
@@ -305,7 +327,7 @@ A:`;
                 // required
                 // label="Your message"
                 size='lg'
-                placeholder="Create a line chart that compares 3 series over 10 years"
+                placeholder=""
                 minRows={1}
                 mt="sm"
                 classNames={{ input: classes.input, root: classes.inputWrapper }}
