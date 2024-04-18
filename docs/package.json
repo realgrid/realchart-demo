@@ -16,24 +16,23 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
+    "@langchain/openai": "^0.0.28",
     "@mantine/core": "^6.0.19",
     "@mantine/hooks": "^6.0.19",
     "@mantine/next": "^6.0.19",
+    "@mantine/prism": "^6.0.21",
     "@monaco-editor/react": "^4.5.2",
     "@tabler/icons-react": "^2.34.0",
     "@vercel/analytics": "^1.1.1",
     "common-tags": "^1.8.2",
-    "js-beautify": "^1.14.11",
     "next": "^13.4.19",
     "nextra": "^2.12.3",
     "nextra-theme-docs": "^2.12.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "realchart": "^1.0.3",
+    "realchart-convert": "^0.1.7",
     "tmp": "^0.2.1"
-  },
-  "resolutions": {
-    "flexsearch": "0.7.31"
   },
   "devDependencies": {
     "@types/common-tags": "^1.8.1",

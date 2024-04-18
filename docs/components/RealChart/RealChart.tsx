@@ -19,6 +19,9 @@ import {
   Flex,
 } from "@mantine/core";
 
+/**
+ * @dependency raelchart-convert에서 포함하고 있다.
+ */
 import beautify from 'js-beautify';
 
 import { createChart, getVersion } from "realchart";
@@ -78,12 +81,23 @@ const parseOptionsByConfig = (
     }
     return !!axis?.reversed;
   };
-  return {
-    inverted: !!config["inverted"],
-    polar: !!config["polar"],
-    xReversed: axisReversed(config["xAxis"]),
-    yReversed: axisReversed(config["yAxis"]),
-  };
+
+  try {
+    return {
+      inverted: !!config["inverted"],
+      polar: !!config["polar"],
+      xReversed: axisReversed(config["xAxis"]),
+      yReversed: axisReversed(config["yAxis"]),
+    };
+  } catch(err) {
+    return {
+      inverted: false,
+      polar: false,
+      xReversed: false,
+      yReversed: false
+    }
+  }
+  
 };
 
 /**
@@ -104,16 +118,18 @@ export function RealChartReact({
   // config,
   configString,
   tool,
-  showEditor,
-  autoUpdate,
+  compact,
+  containerId = "realchart",
+  // autoUpdate,
 }: {
   // config: RealChartConfig;
   configString: string;
-  tool: unknown;
-  showEditor: boolean;
-  autoUpdate: boolean;
+  tool?: unknown;
+  compact?: boolean;
+  containerId?: string
+  // autoUpdate?: boolean;
 }) {
-  configString = beautify(decodeURI(configString));
+  configString = beautify(decodeURIComponent(configString));
   const config = evalCode(configString);
   const chartRef = useRef(null);
   const editorRef = useRef(null);
@@ -140,7 +156,7 @@ export function RealChartReact({
 
   useEffect(() => {
     if (!chartRef.current) return;
-    document.getElementById("realchart").innerHTML = "";
+    document.getElementById(containerId).innerHTML = "";
 
     const chart = createChart(document, chartRef.current, config);
     setChart(chart);
@@ -248,14 +264,15 @@ export function RealChartReact({
   const inputs = tool["actions"]?.filter((m) => m.type != "slider");
   return (
     <Panel
-      title={`RealChart ${version}`}
+      title={!compact && `RealChart ${version}`}
       stackSpacing={0}
       contentPadding="8px"
-      headerActions={<></>}
+      // headerActions={<></>}
+      noForm={true}
     >
       <Grid>
         <div
-          id="realchart"
+          id={containerId}
           ref={chartRef}
           className={classes.wrapper}
           style={{ width, height }}
@@ -320,8 +337,8 @@ export function RealChartReact({
             case "button":
               return (
                 <Button
-                  compact
-                  hidden={!showEditor}
+                  compact // button prop
+                  hidden={compact}
                   className={classes.button}
                   onClick={() => {
                     setIntervalId(action.action());
@@ -354,7 +371,7 @@ export function RealChartReact({
           }
         })}
       </Grid>
-      <Grid className={classes.menu}>
+      <Grid className={classes.menu} hidden={compact}>
         <div className={classes.menuDiv} hidden={hasPieOrGauge}>
           <Checkbox
             label="Inverted"
@@ -384,7 +401,7 @@ export function RealChartReact({
 
         <Button
           compact
-          hidden={!showEditor}
+          hidden={compact}
           className={classes.button}
           onClick={handleSave}
           variant="outline"
@@ -393,10 +410,10 @@ export function RealChartReact({
         </Button>
         <Codepen configString={configString} width={width} height={height} />
       </Grid>
-      {showEditor ? (
+      {!compact ? (
         <Grid>
           <Editor
-            height="400px"
+            height={height}
             language="javascript"
             // options - https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor.IStandaloneEditorConstructionOptions.html
             // https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor.IStandaloneEditorConstructionOptions.html#autoIndent

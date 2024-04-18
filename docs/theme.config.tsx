@@ -1,10 +1,10 @@
 import { DocsThemeConfig, Link } from "nextra-theme-docs";
-import { Logo } from "./components/Logo";
+import { Logo } from "@/components/Logo";
 import { IconHelp } from "@tabler/icons-react";
 import { MainFooter } from "@/components/MainFooter";
 import { brand, company, footerData } from "@/lib/const";
 import { theme } from "./lib/theme";
-import { Content, FiddleLink, DefaultValue } from "./components/DocsPage";
+import { Content, FiddleLink, DefaultValue } from "@/components/DocsPage";
 import { getVersion } from "realchart";
 
 const chartVersion = getVersion();
