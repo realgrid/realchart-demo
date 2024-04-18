@@ -32,7 +32,8 @@
     "theme": {
       "layout": "raw",
       "footer": false
-    }
+    },
+    "display": "hidden"
   },
   "pricing": {
     "title": "구입문의",
