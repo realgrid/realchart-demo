@@ -1460,7 +1460,7 @@ export abstract class Axis extends ChartItem implements IAxis {
 
         this._doPrepareRender();
 
-        this.label.prepareRender();
+        this.label?.prepareRender();
 
         // range
         const series = this._series;

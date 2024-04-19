@@ -59,6 +59,7 @@ import { Utils } from "../common/Utils";
 import { ITooltipContext, ITooltipOwner, Tooltip, TooltipScope } from "./Tooltip";
 import { PaletteMode } from "./ChartTypes";
 import { ChartDataCollection } from "../data/ChartData";
+import { WidgetAxis } from "./axis/WidgetAxis";
 
 export interface IChartProxy {
     getChartObject(model: any): object;
@@ -523,6 +524,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _legend: Legend;
     private _tooltip: Tooltip;
     private _series: PlottingItemCollection;
+    private _wXAxis: WidgetAxis;
+    private _wYAxis: WidgetAxis;
     private _xAxes: AxisCollection;
     private _yAxes: AxisCollection;
     private _split: Split;
@@ -569,6 +572,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._tooltip = new Tooltip(this);
         this._split = new Split(this);
         this._series = new PlottingItemCollection(this);
+        this._wXAxis = new WidgetAxis(this, true);
+        this._wYAxis = new WidgetAxis(this, false);
         this._xAxes = new AxisCollection(this, true);
         this._yAxes = new AxisCollection(this, false);
         this._xPaneAxes = new PaneXAxisMatrix(this);
@@ -1027,7 +1032,15 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     _connectSeries(series: IPlottingItem, isX: boolean): Axis {
-        return isX ? this._xAxes.connect(series) : this._yAxes.connect(series);
+        if (series.needAxes()) {
+            return isX ? this._xAxes.connect(series) : this._yAxes.connect(series);
+        } else if (isX) {
+            this._wXAxis._connect(series);
+            return this._wXAxis;
+        } else {
+            this._wYAxis._connect(series);
+            return this._wYAxis;
+        }
     }
 
     dataChanged(): void {
@@ -1039,6 +1052,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     prepareRender(): void {
+        const wXAxis = this._wXAxis;
+        const wYAxis = this._wYAxis;
         const xAxes = this._xAxes;
         const yAxes = this._yAxes;
         const split = this._split;
@@ -1059,16 +1074,25 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         // 축에 연결한다.
         this._series.prepareRender();
 
+        wXAxis.prepare();
+        wYAxis.prepare();
         xAxes.prepare();
         yAxes.prepare();
         // 축의 값 범위를 계산한다. 
         // [주의] 반드시 x축을 먼저 준비해야 한다. seriesGroup.$_collectPoints에서 point.xValue를 사용한다.
+
+        wXAxis.collectValues();
+        wYAxis.collectValues();
         xAxes.collectValues();
         yAxes.collectValues();
+        wXAxis.collectReferentsValues();
+        wYAxis.collectReferentsValues();
         xAxes.collectReferentsValues();
         yAxes.collectReferentsValues();
         // TODO: xAxes.collectRanges() ?
         yAxes.collectRanges();
+        wXAxis.prepareRender();
+        wYAxis.prepareRender();
         xAxes.prepareRender();
         yAxes.prepareRender();
 
