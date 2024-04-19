@@ -11,85 +11,85 @@ const config = {
             id: 'pattern-0',
             pattern: 0,
             style: {
-                stroke: 'black',
-            },
+                stroke: 'black'
+            }
         },
         {
             type: 'pattern',
             id: 'pattern-1',
-            pattern: 1,
+            pattern: 1
         },
         {
             type: 'pattern',
             id: 'pattern-2',
-            pattern: 2,
+            pattern: 2
         },
         {
             type: 'pattern',
             id: 'pattern-3',
-            pattern: 3,
+            pattern: 3
         },
         {
             type: 'pattern',
             id: 'pattern-4',
-            pattern: 4,
+            pattern: 4
         },
         {
             type: 'pattern',
             id: 'pattern-5',
-            pattern: 5,
+            pattern: 5
         },
         {
             type: 'pattern',
             id: 'pattern-6',
-            pattern: 6,
+            pattern: 6
         },
         {
             type: 'pattern',
             id: 'pattern-7',
-            pattern: 7,
+            pattern: 7
         },
         {
             type: 'pattern',
             id: 'pattern-8',
-            pattern: 8,
+            pattern: 8
         },
         {
             type: 'pattern',
             id: 'pattern-9',
-            pattern: 9,
+            pattern: 9
         },
         {
             type: 'pattern',
             id: 'pattern-10',
-            pattern: 10,
+            pattern: 10
         },
         {
             type: 'pattern',
             id: 'pattern-11',
-            pattern: 11,
+            pattern: 11
         },
         {
             type: 'pattern',
             id: 'pattern-12',
-            pattern: 12,
-        },
+            pattern: 12
+        }
     ],
     legend: true,
     body: {
         style: {
-            stroke: 'none',
-        },
+            stroke: 'none'
+        }
     },
     xAxis: {
         title: {
-            text: '수정구',
-        },
+            text: '수정구'
+        }
     },
     yAxis: {
         title: {
-            text: '전체 인구수',
-        },
+            text: '전체 인구수'
+        }
     },
     tooltip: false,
     series: [
@@ -97,7 +97,7 @@ const config = {
             pointLabel: {
                 visible: true,
                 effect: 'outline', // 'background',
-                style: {},
+                style: {}
             },
             data: [
                 ['신흥1동', 12904],
@@ -107,10 +107,15 @@ const config = {
                 ['태평2동', 14627],
                 ['태평3동', 12649],
                 ['태평4동', 12279],
+                // dummy for pie space
+                [],
+                [],
+                [],
+                []
             ],
             style: {
-                fill: 'url(#pattern-0)',
-            },
+                fill: 'url(#pattern-0)'
+            }
         },
         {
             type: 'pie',
@@ -122,12 +127,12 @@ const config = {
                 return {
                     fill: `url(#pattern-${index})`,
                     stroke: '#FFF',
-                    strokeWidth: '4px',
+                    strokeWidth: '4px'
                 };
             },
-            data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        },
-    ],
+            data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        }
+    ]
 };
 
 let animate;
@@ -145,22 +150,17 @@ function createCodePenButton() {
         css_pre_processor: 'none',
         css_starter: 'neither',
         css_prefix_free: false,
-        js:
-            'const config = ' +
-            JSON.stringify(config, null, 2) +
-            '; \n  chart = RealChart.createChart(document, "realchart", config);',
+        js: 'const config = ' + JSON.stringify(config, null, 2) + '; \n  chart = RealChart.createChart(document, "realchart", config);',
         js_pre_processor: 'none',
         js_modernizr: false,
         js_library: '',
         html_classes: '',
         css_external: '',
         js_external: '',
-        template: true,
+        template: true
     };
 
-    let JSONstring = JSON.stringify(data)
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&apos;');
+    let JSONstring = JSON.stringify(data).replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 
     let form = document.createElement('form');
     form.setAttribute('action', 'https://codepen.io/pen/define');
@@ -245,7 +245,7 @@ function setActions(container) {
         function (e) {
             config.assets[0].style = {
                 fill: _getValue(e),
-                stroke: _getValue(e),
+                stroke: _getValue(e)
             };
             chart.load(config, animate);
         },

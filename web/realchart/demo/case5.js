@@ -53,17 +53,18 @@ const config = {
             }
         }
     },
-    title: 'Technical automation potential with and without generative AI<br>by occupation group in 2023',
+    title: '<b>Technical automation potential with and without generative AI</b><br><b>by occupation group in 2023</b>',
     inverted: true,
     legend: false,
     xAxis: {
         type: 'category',
         reversed: true,
-        // grid: {
-        //     firstVisible: true,
-        //     lastVisible: true
-        // },
-        categories
+        categories,
+        label: {
+            style: {
+                fill: '#000'
+            }
+        }
     },
     yAxis: [{ template: 'yAxis' }, { template: 'yAxis', position: 'opposite' }],
     series: [
@@ -71,7 +72,7 @@ const config = {
             type: 'bar',
             data: singleData,
             color: '#66d0ff',
-            hoverEffect: false,
+            hoverEffect: 'none',
             yAxis: 1
         },
         {
@@ -81,7 +82,7 @@ const config = {
                 offset: 10
                 // distance: 10
             },
-            hoverStyle: 'none',
+            hoverEffect: 'none',
             data
         },
         {
@@ -95,11 +96,21 @@ const config = {
                     fill: '#fff'
                 }
             },
+            hoverEffect: 'none',
             style: {
                 strokeWidth: 0
             }
         }
-    ]
+    ],
+    body: {
+        // annotations: [
+        //     {
+        //         type: 'text',
+        //         text: 'MOST<br>IMPACTED',
+        //         align: 'right'
+        //     }
+        // ]
+    }
 };
 
 function init() {
