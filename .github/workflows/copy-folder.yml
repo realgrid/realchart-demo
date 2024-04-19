@@ -13,7 +13,8 @@ jobs:
     - name: Checkout source repository
       uses: actions/checkout@v2
 
-    - name: Copy folder to destination repository
+    - name: Copy to realchart-demo
+      id: check_changes
       env:
         TOKEN: ${{ secrets.REAL_CHART_FIDDLE_TOKEN }}
       run: |
@@ -23,6 +24,11 @@ jobs:
         git clone https://x-access-token:$TOKEN@github.com/realgrid/realchart-demo.git
         cp -r fiddle/* realchart-demo/
         cd realchart-demo
+        echo ::set-output name=changes::$(git status --porcelain)
+
+    - name: Push to realchart-demo
+      if: ${{ steps.check_changes.outputs.changes != '' }}
+      run: |
         git add .
         git commit -m "Copied folder for fiddle demo"
         git push
