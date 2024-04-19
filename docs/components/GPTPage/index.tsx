@@ -1,9 +1,8 @@
-import { Title, Text, Textarea, Grid, ActionIcon, Stack, Flex, createStyles, rem, Skeleton, Card, Box, Button } from '@mantine/core';
+import { Title, Text, Textarea, Grid, ActionIcon, Stack, Flex, createStyles, rem, Skeleton, Card, Button } from '@mantine/core';
 import { IconSend } from '@tabler/icons-react';
-import util from 'util';
 
 import { RealChartReact } from '@/components/RealChart';
-import { MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getHotkeyHandler } from '@mantine/hooks';
 import { Prism } from '@mantine/prism';
 // import { CodeHighlight } from '@mantine/code-highlight'; // support mantime >= 7.0

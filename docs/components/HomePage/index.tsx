@@ -1,5 +1,5 @@
 import { Title } from "@mantine/core";
-import Head from "next/head";
+// import Head from "next/head";
 import { Container, Text } from "@mantine/core";
 import { theme } from "@/lib/theme";
 import { HeroBullets } from "./Hero";
