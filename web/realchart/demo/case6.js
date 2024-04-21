@@ -63,11 +63,10 @@ const config = {
             x1: 2032,
             front: true,
             offsetX: '-1w',
-            offsetY: '-1h',
+            offsetY: '-0.9h',
         }
     },
-    title: false,
-    // title: 'Before Inflation Reduction Act',
+    title: '<b>Projections of US Installed solar and wind capacity,</b> gigawatts',
     split: {
         visible: true,
         cols: 2,
@@ -78,7 +77,7 @@ const config = {
                     annotations: [
                         { text: 'Pre-IRA', template: 'annTitle' },
                         { text: '+6%', template: 'ann' },
-                        { text: 'Wind', template: 'annLegend', y1: 165 },
+                        { text: 'Wind', template: 'annLegend', y1: 165, offsetY: '0.2h' },
                         { text: 'Storage', template: 'annLegend', y1: 219 },
                         { text: 'Solar', template: 'annLegend', y1: 444 },
                     ],
@@ -90,7 +89,7 @@ const config = {
                     annotations: [
                         { text: 'Post-IRA', template: 'annTitle' },
                         { text: '+16%', template: 'ann' },
-                        { text: 'Wind', template: 'annLegend', y1: 553 },
+                        { text: 'Wind', template: 'annLegend', y1: 553, offsetY: '0.2h' },
                         { text: 'Storage', template: 'annLegend', y1: 628 },
                         { text: 'Solar', template: 'annLegend', y1: 1245 },
                     ]
@@ -125,6 +124,11 @@ const config = {
     }),
     options: {
         pointHovering: false,
+        credits: {
+            align: 'left',
+            text: 'Source: Inflation Reduction Act of 2022; Mckinsey Power Solutions',
+            url: 'https://www.mckinsey.com/featured-insights/2023-year-in-review/2023-the-year-in-charts'
+        }
     }
 };
 

@@ -102,14 +102,13 @@ const config = {
             }
         }
     ],
-    body: {
-        // annotations: [
-        //     {
-        //         type: 'text',
-        //         text: 'MOST<br>IMPACTED',
-        //         align: 'right'
-        //     }
-        // ]
+    options: {
+        pointHovering: false,
+        credits: {
+            align: 'left',
+            text: 'Source: Mckinsey Global Institute analysis',
+            url: 'https://www.mckinsey.com/featured-insights/2023-year-in-review/2023-the-year-in-charts'
+        }
     }
 };
 
