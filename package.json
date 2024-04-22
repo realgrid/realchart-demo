@@ -32,6 +32,8 @@
     "test:pw": "yarn dbundle && npx playwright test --trace on",
     "test:s2": "yarn dbundle && npx playwright test --trace on --project=chromium ./test/e2e/snapshot-test/snapshotTest.spec.js",
     "test:boundary": "yarn dbundle && npx playwright test --trace on --project=chromium ./test/e2e/boundary/**/*.spec.ts",
+    "docker:linux": "docker run --rm --name realchart-e2e --network host --ipc=host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v1.40.1-jammy yarn dev",
+    "docker:bash": "docker exec -it realchart-e2e /bin/bash",
     "tsdoc": "npx typedoc --entryPointStrategy expand ./src/model --entryPointStrategy expand ./src/common --json ./docs/.tdout/model.json",
     "jsdoc": "rm -rf api/jsdoc && npx jsdoc -c jsdoc.json",
     "dldoc": "npm run tsdoc && node dldoc && npx typedoc && node docs/typedoc",
