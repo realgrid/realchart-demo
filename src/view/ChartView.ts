@@ -1237,6 +1237,7 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
 
     getSeriesView(series: ISeries): SeriesView<Series> {
         if (this._model.isSplitted()) {
+            return this._paneContainer.getSeries(series);
         } else {
             return this._currBody.getSeries(series);
         }

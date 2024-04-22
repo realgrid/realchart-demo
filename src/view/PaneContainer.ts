@@ -14,7 +14,7 @@ import { _undef } from "../common/Types";
 import { RectElement } from "../common/impl/RectElement";
 import { Axis, PaneAxes, PaneAxisMatrix } from "../model/Axis";
 import { Chart, IChart } from "../model/Chart";
-import { Series } from "../model/Series";
+import { ISeries, Series } from "../model/Series";
 import { Split } from "../model/Split";
 import { AxisScrollView, AxisView } from "./AxisView";
 import { BodyView, IPlottingOwner } from "./BodyView";
@@ -478,6 +478,17 @@ export class PaneContainer extends LayerElement {
             const v = body.seriesByDom(dom);
             if (v) return v;
         }
+    }
+    
+    getSeries(series: ISeries): SeriesView<Series> {
+        let seriesView: SeriesView<Series>;
+        this.bodies.forEach(body => {
+            const sv = body.findSeries(series as Series);
+            if (sv) {
+                seriesView = sv;
+            }
+        });
+        return seriesView;
     }
 
     //-------------------------------------------------------------------------
