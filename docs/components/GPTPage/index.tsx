@@ -81,8 +81,9 @@ const useStyles = createStyles((theme) => ({
   chatText: {
     boxShadow: theme.shadows.xs,
     borderRadius: theme.radius.md,
-    padding: theme.spacing.md,
-    backgroundColor: theme.colors.gray[0]
+    padding: '0.5rem',
+    backgroundColor: theme.colors.gray[0],
+    fontSize: '1rem',
   },
   chatTextQuery: {
     textAlign: 'right',
@@ -113,7 +114,8 @@ const useStyles = createStyles((theme) => ({
     paddingTop: 0,
   },
   code: {
-    fontSize: '1rem'
+    fontSize: '0.9rem',
+    lineHeight: '1.375rem'
   },
 }));
 
@@ -285,7 +287,7 @@ A:`;
                   let child;
                   switch(type) {
                     case 'chart':
-                      child = <RealChartReact containerId={'realchart-' + i} configString={contents} compact={true}></RealChartReact>
+                      child = <RealChartReact containerId={'realchart-' + i} configString={contents} tool={{ height: 450 }} compact={true}></RealChartReact>
                       break;
                     case 'js':
                       // return <Editor key={'chat-' + i} language="javascript" value={contents}></Editor>
