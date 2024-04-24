@@ -578,3 +578,14 @@ export interface RealChartExporter {
     // exportToPDF: (dom: HTMLElement, options: any) => void;
     render: (doc: Document, dom: HTMLElement, options: any) => void;
 }
+
+export enum WritingMode {
+    HORIZONTAL_TB = 'horizontal-tb',
+    VERTICAL_LR = 'vertical-lr',
+    VERTICAL_RL = 'vertical-rl'
+}
+
+export enum TextOrientation {
+    MIXED = 'MIXED',
+    UPRIGHT = 'UPRIGHT',
+}

@@ -6,12 +6,13 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { TextAnnotationView } from "../view/annotation/TextAnnotationView";
 import { SVGNS, maxv, pickNum } from "./Common";
 import { DatetimeFormatter } from "./DatetimeFormatter";
 import { NumberFormatter } from "./NumberFormatter";
 import { Sides } from "./Sides";
 import { TextFormatter } from "./TextFormatter";
-import { Align, ZWSP, _undef } from "./Types";
+import { Align, WritingMode, ZWSP, _undef } from "./Types";
 import { TextAnchor, TextElement } from "./impl/TextElement";
 
 const HEIGHT = '$_TH';
@@ -413,6 +414,8 @@ export class SvgRichText {
         view.clearDom();
         target = target || view;
 
+        let x = 0;
+        let y = 0;
         for (let i = 0; i < cnt; i++) {
             const line = lines[i];
             let w = 0;
@@ -423,9 +426,27 @@ export class SvgRichText {
                 const span = word.prepareSpan(view.appendElement(doc, 'tspan') as SVGTSpanElement, target, domain);
                 const r = span.getBBox();
                 
-                w += r.width;
+                if (view.parent instanceof TextAnnotationView) {
+                    const writingMode = view.parent.model.writingMode;
+                    switch (writingMode) {
+                        case WritingMode.VERTICAL_LR:
+                            span.setAttribute('x', i + 0.5 + 'em');
+                            span.setAttribute('y', '0');
+                            break;
+                        case WritingMode.VERTICAL_RL:
+                            span.setAttribute('x', lines.length - i - 0.5 + 'em');
+                            span.setAttribute('y', '0');
+                            break;
+                        default:
+                            span.setAttribute('x', '0');
+                            span.setAttribute('y', i + 1 + 'em');
+                            break;
+                    }
+                }
+                
+                x += w += r.width;
                 span[WIDTH] = r.width;
-                h = maxv(h, span[HEIGHT] = r.height);
+                y += h = maxv(h, span[HEIGHT] = r.height);
                 if (!first) first = span;
 
                 if (word instanceof LinkWord) {
@@ -449,26 +470,26 @@ export class SvgRichText {
             // if (firsts[0]) {
             //     firsts[0].setAttribute('x', '0');
             // }
-            prev = lines[0][HEIGHT];
-            for (let i = 1; i < firsts.length; i++) {
-                if (firsts[i]) { // 중복된 <br>은 무시한다.
-                    const span = view.insertElement(doc, 'tspan', firsts[i]);
-                    let h = Math.floor(prev - view.getAscent(prev)) + view.getAscent(lines[i][HEIGHT]);
-                    // let h = lines[i][HEIGHT];
+            // prev = lines[0][HEIGHT];
+            // for (let i = 1; i < firsts.length; i++) {
+            //     if (firsts[i]) { // 중복된 <br>은 무시한다.
+            //         const span = view.insertElement(doc, 'tspan', firsts[i]);
+            //         let h = Math.floor(prev - view.getAscent(prev)) + view.getAscent(lines[i][HEIGHT]);
+            //         // let h = lines[i][HEIGHT];
 
-                    // [CHECK] 이전 line 높이가 지금행보다 많이 큰 경우, 두 line이 겹치는 경우가 많다.
-                    //         아래행을 조금 더 민다.
-                    // if (dy > 0 && lines[i - 1][HEIGHT] >= h * 1.8) {
-                    //     h = Math.floor(h * 1.1);
-                    // } else {
-                    //     h = Math.ceil(h);
-                    // }
-                    span.setAttribute('x', '0');
-                    span.setAttribute('dy', String(h));
-                    span.innerHTML = ZWSP;
-                    prev = lines[i][HEIGHT];
-                }
-            }
+            //         // [CHECK] 이전 line 높이가 지금행보다 많이 큰 경우, 두 line이 겹치는 경우가 많다.
+            //         //         아래행을 조금 더 민다.
+            //         // if (dy > 0 && lines[i - 1][HEIGHT] >= h * 1.8) {
+            //         //     h = Math.floor(h * 1.1);
+            //         // } else {
+            //         //     h = Math.ceil(h);
+            //         // }
+            //         span.setAttribute('x', '0');
+            //         span.setAttribute('dy', String(h));
+            //         span.innerHTML = ZWSP;
+            //         prev = lines[i][HEIGHT];
+            //     }
+            // }
 
             view.layoutText(lines[0][HEIGHT]); // 첫 행의 높이를 전달한다.
             // view.layoutText(hMax); // 가장 큰 높이의 행 높이를 전달한다. 맞나?
@@ -477,22 +498,44 @@ export class SvgRichText {
 
     layout(tv: TextElement, align: Align, width: number, height: number, pad: Sides): void {
         const r = tv.getBBox();
-        let y = pad.top + (height - pad.top - pad.bottom - r.height) / 2;
-        let x: number;
+        let x = 0;
+        let y = 0;
 
-        switch (align) {
-            case Align.CENTER:
-                tv.anchor = TextAnchor.MIDDLE;
-                x = pad.left + (width - pad.left - pad.right) / 2;
-                break;
-            case Align.RIGHT:
-                tv.anchor = TextAnchor.END;
-                x = r.width - pad.right;
-                break;
-            default:
-                tv.anchor = TextAnchor.START;
-                x = pad.left;
-                break;
+        const writingMode = tv.getStyle('writing-mode');
+        const isVertical = writingMode === WritingMode.VERTICAL_LR || writingMode === WritingMode.VERTICAL_RL;
+
+        if (isVertical) {
+            x = pad.left;
+            switch (align) {
+                case Align.CENTER:
+                    tv.anchor = TextAnchor.MIDDLE;
+                    y = pad.top + (height - pad.top - pad.bottom) / 2;
+                    break;
+                case Align.RIGHT:
+                    tv.anchor = TextAnchor.END;
+                    y = r.height - pad.bottom;
+                    break;
+                default:
+                    tv.anchor = TextAnchor.START;
+                    y = pad.top;
+                    break;
+            }
+        } else {
+            y = pad.top + (height - pad.top - pad.bottom - r.height) / 2;
+            switch (align) {
+                case Align.CENTER:
+                    tv.anchor = TextAnchor.MIDDLE;
+                    x = pad.left + (width - pad.left - pad.right) / 2;
+                    break;
+                case Align.RIGHT:
+                    tv.anchor = TextAnchor.END;
+                    x = r.width - pad.right;
+                    break;
+                default:
+                    tv.anchor = TextAnchor.START;
+                    x = pad.left;
+                    break;
+            }
         }
         tv.trans(x, y);
     }
