@@ -481,14 +481,10 @@ export class PaneContainer extends LayerElement {
     }
     
     getSeries(series: ISeries): SeriesView<Series> {
-        let seriesView: SeriesView<Series>;
-        this.bodies.forEach(body => {
-            const sv = body.findSeries(series as Series);
-            if (sv) {
-                seriesView = sv;
-            }
-        });
-        return seriesView;
+        for (const body of this.bodies) {
+            const found = body.findSeries(series as Series);
+            if (found) return found;
+        }
     }
 
     //-------------------------------------------------------------------------

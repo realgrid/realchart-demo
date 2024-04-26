@@ -1356,7 +1356,8 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
                 body.hoverSeries(null);
             }
         } else {
-            if (this._model.isSplitted()) {
+            // 새로고침으로 화면 갱신 중에 이벤트가 발생하면 model이 없을 수 있다.
+            if (this._model?.isSplitted()) {
                 this._paneContainer.bodies.forEach(bv => {
                     bv.removeFocus();
                 });

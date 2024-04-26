@@ -1171,7 +1171,7 @@ export class BodyView extends ChartElement<Body> implements IAnnotationAnchorOwn
     }
 
     findSeries(ser: Series): SeriesView<Series> {
-        return this._seriesViews.find(v => v.model === ser);
+        return this._seriesMap.get(ser);
     }
 
     isConnected(axis: Axis): boolean {
