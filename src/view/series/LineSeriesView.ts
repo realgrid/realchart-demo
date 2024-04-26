@@ -340,7 +340,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     protected _layoutMarker(mv: LineMarkerView, markerStyle: SVGStyleOrClass, x: number, y: number): void {
         const series = this.model;
         const p = mv.point as LineSeriesPoint;
-        const rd = mv._radius;
+        const rd = mv._radius = series.getRadius(p);
 
         markerStyle && mv.internalSetStyleOrClass(markerStyle);
         SvgShapes.setShape(mv, series.getShape(p), rd, rd);
@@ -398,7 +398,6 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             p.yPos = py;
 
             const mv = this._markers.get(i);
-            const rd = mv._radius = series.getRadius(p);
             const lv = labelViews && labelViews.get(p, 0);
 
             if (mv && mv.setVis(!p.isNull && (polared || !needClip || px >= 0 && px <= width && py >= 0 && py <= height))) {
@@ -411,6 +410,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
                 if (lv) {
                     const r = lv.getBBox();
+                    const rd = mv._radius;
 
                     lv.visible = true;
                     lv.setContrast(null);
