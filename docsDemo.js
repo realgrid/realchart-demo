@@ -3,14 +3,7 @@
  * https://github.com/realgrid/realreport-chart/wiki/TEST-%EA%B0%80%EC%9D%B4%EB%93%9C
  */
 import { chromium } from '@playwright/test';
-import {
-    existsSync,
-    mkdirSync,
-    readFileSync,
-    rmdirSync,
-    copyFileSync,
-    writeFileSync,
-} from 'fs';
+import { existsSync, mkdirSync, readFileSync, rmdirSync, copyFileSync, writeFileSync } from 'fs';
 // import fs from 'fs/promises';
 // import beautify from 'js-beautify';
 import util from 'util';
@@ -31,15 +24,9 @@ function createMetaJson() {
             // console.log(`${key}: ${value}`);
             demos[value2] = { title: key2, theme: { toc: false } };
         });
-        writeFileSync(
-            `./docs/pages/demo/${key.replace(' ', '')}/_meta.json`,
-            JSON.stringify(demos, null, '\t')
-        );
+        writeFileSync(`./docs/pages/demo/${key.replace(' ', '')}/_meta.json`, JSON.stringify(demos, null, '\t'));
     });
-    writeFileSync(
-        `./docs/pages/demo/_meta.json`,
-        JSON.stringify(categories, null, '\t')
-    );
+    writeFileSync(`./docs/pages/demo/_meta.json`, JSON.stringify(categories, null, '\t'));
 }
 
 (async () => {
@@ -47,10 +34,7 @@ function createMetaJson() {
     //     rmdirSync('./docs/public/realchart', { recursive: true });
     // }
     mkdirSync('./docs/public/realchart', { recursive: true });
-    copyFileSync(
-        './web/realchart/lib/realchart-lic.js',
-        './docs/public/realchart/realchart-lic.js'
-    );
+    copyFileSync('./web/realchart/lib/realchart-lic.js', './docs/public/realchart/realchart-lic.js');
 
     if (existsSync('./docs/templates')) {
         rmdirSync('./docs/templates', { recursive: true });
@@ -104,10 +88,7 @@ function createMetaJson() {
                                     Object.assign(o, functionToStirng(o));
                                 }
                             }
-                        } else if (
-                            typeof obj[key] === 'object' &&
-                            obj[key] !== null
-                        ) {
+                        } else if (typeof obj[key] === 'object' && obj[key] !== null) {
                             obj[key] = functionToStirng(obj[key]);
                         } else {
                             const type = typeof obj[key];
@@ -127,24 +108,17 @@ function createMetaJson() {
                 return {
                     config: functionToStirng(config),
                     tool: typeof tool !== 'undefined' && functionToStirng(tool),
-                    callbacks,
+                    callbacks
                 };
             });
 
             // 문자로 변환한 callback 함수 복원
             const restoreFunctions = (obj) => {
                 for (const key in obj) {
-                    if (
-                        typeof obj[key] === 'string' &&
-                        (obj[key].startsWith('function') ||
-                            obj[key].includes('=>'))
-                    ) {
+                    if (typeof obj[key] === 'string' && (obj[key].startsWith('function') || obj[key].includes('=>'))) {
                         console.log(new Function(`return ${obj[key]}`));
                         obj[key] = new Function(`return ${obj[key]}`);
-                    } else if (
-                        typeof obj[key] === 'object' &&
-                        obj[key] !== null
-                    ) {
+                    } else if (typeof obj[key] === 'object' && obj[key] !== null) {
                         obj[key] = restoreFunctions(obj[key]);
                     }
                 }
@@ -156,7 +130,7 @@ function createMetaJson() {
                 return util.inspect(conf, {
                     showHidden: false,
                     depth: null,
-                    maxArrayLength: null,
+                    maxArrayLength: null
                 });
             };
 
@@ -167,10 +141,7 @@ function createMetaJson() {
                 return callbacks.reduce((agg, callback) => {
                     const index = agg.indexOf(callback);
                     if (index > 0) {
-                        agg =
-                            agg.slice(0, index - 1) +
-                            agg.slice(index, index + callback.length) +
-                            agg.slice(index + callback.length + 1);
+                        agg = agg.slice(0, index - 1) + agg.slice(index, index + callback.length) + agg.slice(index + callback.length + 1);
                     }
                     return agg;
                 }, conf);
@@ -184,11 +155,7 @@ function createMetaJson() {
             const configString = parseConfigToString(config);
             const toolString = parseConfigToString(tool);
 
-            writeFileSync(
-                './docs/templates/' + value2 + '.js',
-                `export const config = ${configString}\n` +
-                    `export const tool = ${toolString}`
-            );
+            writeFileSync('./docs/templates/' + value2 + '.js', `export const config = ${configString}\n` + `export const tool = ${toolString}`);
             ++count;
             console.log(count, `./docs/templates/${value2}.js`);
 
@@ -197,14 +164,12 @@ function createMetaJson() {
                 `---
 title: "${key2}"
 ---
-import { RealChartReact } from "@/components/RealChart/RealChartReact";
+import { RealChartReact } from "@/components/RealChart";
 import { tool } from "@/templates/${value2}";
 
 # ${key2}
 			
-<RealChartReact configString="const config = ${encodeURI(
-                    configString
-                )}" tool={tool} showEditor={true} autoUpdate={false}/>
+<RealChartReact configString="const config = ${encodeURIComponent(configString)}" tool={tool} />
 `
             );
             ++count;

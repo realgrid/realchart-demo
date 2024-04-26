@@ -13,7 +13,7 @@ import { BarSeriesBase, BarSeriesGroupBase } from "./BarSeries";
  * CirleBar 시리즈.<br/>
  * 직사각형 대신 원형 막대로 여러 값들을 **비교**하는 데 사용한다.
  * 원 지름이 y값을 나타낸다.<br/>
- * 이 시리즈를 기준으로 생성되는 x축은 [category](/config/config/xAxis/category)이다.<br/><br/>
+ * X축 타입이 설정되지 않은 경우, 이 시리즈를 기준으로 생성되는 축은 [category](/config/config/xAxis/category)이다.<br/><br/>
  * 
  *{@link data}는 아래 형식들로 전달할 수 있다.<br/>
  * 

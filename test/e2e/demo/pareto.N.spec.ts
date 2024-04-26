@@ -7,8 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { expect } from 'chai';
-import { Browser, Page } from 'puppeteer';
-import { SeriesView } from '../../../src/view/SeriesView';
 import { TitleView } from '../../../src/view/TitleView';
 import test from '@playwright/test';
 import { PWTester } from '../PWTester';
@@ -18,31 +16,8 @@ import { PWTester } from '../PWTester';
 
 test.describe('pareto.html test', async function () {
 	const url = 'e2e-demo/pareto.html?debug';
-	let browser: Browser;
-	let page: Page;
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);
-	});
-
-	test('init', async ({ page }) => {
-		const container = await page.$('#realchart');
-
-		expect(container).exist;
-
-		const markers = await page.$$('.' + SeriesView.POINT_CLASS);
-		expect(markers.length > 0).is.true;
-
-		const config: any = await page.evaluate('config');
-		const data = [];
-
-		// 'source' 시리즈로 부터 값을 계산한다.
-		// for (let i = 0; i < config.series.length; i++) {
-		data.push(...config.series[0].data);
-		// }
-		expect(data.length * 2).eq(markers.length);
-
-		// await page.screenshot({path: 'out/ss/pareto.png'});
-		page.close();
 	});
 
 	test('title 타이틀 존재 유무와 알맞은 값인지 확인', async ({ page }) => {

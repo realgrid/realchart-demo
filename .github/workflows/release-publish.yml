@@ -65,7 +65,7 @@ jobs:
         run: |
           git add .
           git commit -m "${{ github.event.release.tag_name }} release"
-          git push
+          git push origin HEAD:release/v1.1.0
       - name: Branch and push
         run: |
           git checkout -b release/${{ github.event.release.tag_name }}

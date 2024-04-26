@@ -1431,13 +1431,13 @@ export abstract class Axis extends ChartItem implements IAxis {
     collectValues(): void {
         this._values = [];
         this._series.forEach(item => {
-            item.collectValues(this, this._values);
+            item.collectValues(this, item.needAxes() ? this._values : null);
         })
     }
 
     collectRanges(): void {
         this._series.forEach(item => {
-            item.collectRanges(this._values);
+            item.needAxes() && item.collectRanges(this._values); 
         })
     }
 
@@ -1460,7 +1460,7 @@ export abstract class Axis extends ChartItem implements IAxis {
 
         this._doPrepareRender();
 
-        this.label.prepareRender();
+        this.label?.prepareRender();
 
         // range
         const series = this._series;

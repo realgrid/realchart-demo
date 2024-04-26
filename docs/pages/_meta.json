@@ -26,6 +26,15 @@
     "title": "API",
     "type":"page"
   },
+  "gpt": {
+    "title": "GPT",
+    "type": "page",
+    "theme": {
+      "layout": "raw",
+      "footer": false
+    },
+    "display": "hidden"
+  },
   "pricing": {
     "title": "구입문의",
     "type": "page",

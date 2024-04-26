@@ -5,8 +5,8 @@ export const config = {
     backgroundStyle: { fill: '#333', padding: '1px 4px', rx: '4' }
   },
   subtitle: {
-    text: '2023.01 World Bank.',
-    style: { fill: 'gray', fontStyle: 'italic' }
+    text: "<b>2023.01</b> <a href='https://www.worldbank.org/en/home'>World Bank.</a>",
+    style: { fill: 'gray' }
   },
   xAxis: {
     title: 'X Axis',

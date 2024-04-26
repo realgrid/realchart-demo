@@ -549,12 +549,20 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         if (pts.length > 1) {
             sb.moveOrLine(connected, pts[0].px, pts[0].py);
             for (let i = 1; i < pts.length; i++) {
-                if (dir === LineStepDirection.BACKWARD) {
-                    sb.line(pts[i - 1].px, pts[i].py);
-                    sb.line(pts[i].px, pts[i].py);
-                } else {
-                    sb.line(pts[i].px, pts[i - 1].py);
-                    sb.line(pts[i].px, pts[i].py);
+                switch (dir) {
+                    case LineStepDirection.BACKWARD:
+                        sb.line(pts[i - 1].px, pts[i].py);
+                        sb.line(pts[i].px, pts[i].py);
+                        break;
+                    case LineStepDirection.CENTER:
+                        sb.line((pts[i].px + pts[i - 1].px) / 2 , pts[i - 1].py);
+                        sb.line((pts[i].px + pts[i - 1].px) / 2, pts[i].py);
+                        i + 1 === pts.length && sb.line(pts[i].px, pts[i].py);
+                        break;
+                    default:
+                        sb.line(pts[i].px, pts[i - 1].py);
+                        sb.line(pts[i].px, pts[i].py);
+                        break;
                 }
             }
         }

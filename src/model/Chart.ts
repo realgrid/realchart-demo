@@ -1063,6 +1063,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         yAxes.prepare();
         // 축의 값 범위를 계산한다. 
         // [주의] 반드시 x축을 먼저 준비해야 한다. seriesGroup.$_collectPoints에서 point.xValue를 사용한다.
+
         xAxes.collectValues();
         yAxes.collectValues();
         xAxes.collectReferentsValues();

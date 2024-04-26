@@ -1,6 +1,6 @@
 {
   "name": "realchart",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Wooritech charting library",
   "main": "index.js",
   "author": "",
@@ -32,6 +32,8 @@
     "test:pw": "yarn dbundle && npx playwright test --trace on",
     "test:s2": "yarn dbundle && npx playwright test --trace on --project=chromium ./test/e2e/snapshot-test/snapshotTest.spec.js",
     "test:boundary": "yarn dbundle && npx playwright test --trace on --project=chromium ./test/e2e/boundary/**/*.spec.ts",
+    "docker:linux": "docker run --rm --name realchart-e2e -p 6010:6010 -p 7777:7777 --ipc=host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v1.43.1-jammy yarn dev",
+    "docker:bash": "docker exec -it realchart-e2e /bin/bash",
     "tsdoc": "npx typedoc --entryPointStrategy expand ./src/model --entryPointStrategy expand ./src/common --json ./docs/.tdout/model.json",
     "jsdoc": "rm -rf api/jsdoc && npx jsdoc -c jsdoc.json",
     "dldoc": "npm run tsdoc && node dldoc && npx typedoc && node docs/typedoc",
@@ -48,7 +50,7 @@
     "@babel/generator": "^7.22.15",
     "@babel/parser": "^7.22.15",
     "@babel/traverse": "^7.22.15",
-    "@playwright/test": "^1.40.1",
+    "@playwright/test": "^1.43.1",
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-terser": "^0.4.0",
@@ -89,8 +91,8 @@
     "ts-node": "^10.9.1",
     "tslib": "^2.5.0",
     "typedoc": "^0.25.3",
+    "typedoc-nextra": "file:packages/typedoc-nextra",
     "typescript": "^4.9.5",
-    "vite": "^4.1.4",
-    "typedoc-nextra": "file:packages/typedoc-nextra"
+    "vite": "^4.1.4"
   }
 }

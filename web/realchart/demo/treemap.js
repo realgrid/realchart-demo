@@ -521,6 +521,6 @@ function init() {
     RealChart.setLogging(true);
     // 그룹별 최대 값 저장을 위한 객체
 
-    chart = RealChart.createChart(document, 'realchart', config, false);
+    chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions');
 }
