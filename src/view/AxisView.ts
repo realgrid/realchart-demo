@@ -13,7 +13,7 @@ import { PathElement, RcElement } from "../common/RcControl";
 import { rectToSize } from "../common/Rectangle";
 import { SvgRichText } from "../common/RichText";
 import { ISize } from "../common/Size";
-import { Align, DEG_RAD } from "../common/Types";
+import { Align, DEG_RAD, WritingMode } from "../common/Types";
 import { LabelElement } from "./LabelElement";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
@@ -72,6 +72,12 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
         // this._textView.text = model.text;
         this._richText.setFormat(model.text);
         this._richText.build(this._textView, hintWidth, hintHeight, null, null);
+
+        const isVertical = model.writingMode === WritingMode.VERTICAL_LR || model.writingMode === WritingMode.VERTICAL_RL;
+        if (!model.chart.isInverted() == !model.axis._isX && isVertical) {
+            this._textView.unsetAttr('text-anchor');
+            this._textView.unsetAttr('y');
+        }
 
         const sz = rectToSize(this._textView.getBBox());
 

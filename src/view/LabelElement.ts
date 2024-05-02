@@ -99,6 +99,10 @@ export class LabelElement extends GroupElement {
         return this;
     }
 
+    getModel() {
+        return this._model;
+    }
+
     setContrast(target: Element): LabelElement {
         // contrast
         if (target && this._model.autoContrast) {

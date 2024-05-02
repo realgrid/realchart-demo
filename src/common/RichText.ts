@@ -5,8 +5,6 @@
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
-
-import { TextAnnotationView } from "../view/annotation/TextAnnotationView";
 import { SVGNS, maxv, pickNum } from "./Common";
 import { DatetimeFormatter } from "./DatetimeFormatter";
 import { NumberFormatter } from "./NumberFormatter";
@@ -414,8 +412,6 @@ export class SvgRichText {
         view.clearDom();
         target = target || view;
 
-        let x = 0;
-        let y = 0;
         for (let i = 0; i < cnt; i++) {
             const line = lines[i];
             let w = 0;
@@ -426,27 +422,9 @@ export class SvgRichText {
                 const span = word.prepareSpan(view.appendElement(doc, 'tspan') as SVGTSpanElement, target, domain);
                 const r = span.getBBox();
                 
-                if (view.parent instanceof TextAnnotationView) {
-                    const writingMode = view.parent.model.writingMode;
-                    switch (writingMode) {
-                        case WritingMode.VERTICAL_LR:
-                            span.setAttribute('x', i + 0.5 + 'em');
-                            span.setAttribute('y', '0');
-                            break;
-                        case WritingMode.VERTICAL_RL:
-                            span.setAttribute('x', lines.length - i - 0.5 + 'em');
-                            span.setAttribute('y', '0');
-                            break;
-                        default:
-                            span.setAttribute('x', '0');
-                            span.setAttribute('y', i + 1 + 'em');
-                            break;
-                    }
-                }
-                
-                x += w += r.width;
+                w += r.width;
                 span[WIDTH] = r.width;
-                y += h = maxv(h, span[HEIGHT] = r.height);
+                h = maxv(h, span[HEIGHT] = r.height);
                 if (!first) first = span;
 
                 if (word instanceof LinkWord) {
@@ -458,7 +436,6 @@ export class SvgRichText {
                     view.appendDom(link);
                 }
             }
-
             firsts.push(first);
             widths.push(w);
             line[HEIGHT] = h * hLine;
@@ -467,33 +444,52 @@ export class SvgRichText {
         }
         
         if (cnt > 0) {
-            // if (firsts[0]) {
-            //     firsts[0].setAttribute('x', '0');
-            // }
-            // prev = lines[0][HEIGHT];
-            // for (let i = 1; i < firsts.length; i++) {
-            //     if (firsts[i]) { // 중복된 <br>은 무시한다.
-            //         const span = view.insertElement(doc, 'tspan', firsts[i]);
-            //         let h = Math.floor(prev - view.getAscent(prev)) + view.getAscent(lines[i][HEIGHT]);
-            //         // let h = lines[i][HEIGHT];
+            const writingMode = view.parent.getStyle('writing-mode');
+            const isVertical = writingMode === WritingMode.VERTICAL_LR || writingMode === WritingMode.VERTICAL_RL;
+            if (firsts[0]) {
+                const width = firsts.reduce((acc, cur) => {return acc += cur[WIDTH]}, 0) - firsts[0][WIDTH];
+                firsts[0].setAttribute('x', isVertical ? `${width / -2}` : '0');
+            }
+            prev = lines[0][HEIGHT];
+            for (let i = 1; i < firsts.length; i++) {
+                const tspan = firsts[i];
+                if (tspan) { // 중복된 <br>은 무시한다.
+                    // const span = view.insertElement(doc, 'tspan', firsts[i]);
+                    let h = Math.floor(prev - view.getAscent(prev)) + view.getAscent(lines[i][HEIGHT]);
+                    // let h = lines[i][HEIGHT];
 
-            //         // [CHECK] 이전 line 높이가 지금행보다 많이 큰 경우, 두 line이 겹치는 경우가 많다.
-            //         //         아래행을 조금 더 민다.
-            //         // if (dy > 0 && lines[i - 1][HEIGHT] >= h * 1.8) {
-            //         //     h = Math.floor(h * 1.1);
-            //         // } else {
-            //         //     h = Math.ceil(h);
-            //         // }
-            //         span.setAttribute('x', '0');
-            //         span.setAttribute('dy', String(h));
-            //         span.innerHTML = ZWSP;
-            //         prev = lines[i][HEIGHT];
-            //     }
-            // }
+                    // [CHECK] 이전 line 높이가 지금행보다 많이 큰 경우, 두 line이 겹치는 경우가 많다.
+                    //         아래행을 조금 더 민다.
+                    // if (dy > 0 && lines[i - 1][HEIGHT] >= h * 1.8) {
+                    //     h = Math.floor(h * 1.1);
+                    // } else {
+                    //     h = Math.ceil(h);
+                    // }
+                    // span.setAttribute('x', '0');
+                    // span.setAttribute('dy', String(h));
+                    // span.innerHTML = ZWSP;
+                    
+                    switch (writingMode) {
+                        case WritingMode.VERTICAL_LR:
+                            tspan.setAttribute('dx', String(firsts[i - 1][WIDTH] * hLine));
+                            tspan.setAttribute('y', '0');
+                            break;
+                        case WritingMode.VERTICAL_RL:
+                            tspan.setAttribute('dx', String(firsts[i - 1][WIDTH] * hLine * -1));
+                            tspan.setAttribute('y', '0');
+                            break;
+                        default:
+                            tspan.setAttribute('x', '0');
+                            tspan.setAttribute('dy', String(h));
+                            break;
+                    }
+                    prev = lines[i][HEIGHT];
+                }
+            }
 
             view.layoutText(lines[0][HEIGHT]); // 첫 행의 높이를 전달한다.
             // view.layoutText(hMax); // 가장 큰 높이의 행 높이를 전달한다. 맞나?
-        } 
+        }
     }
 
     layout(tv: TextElement, align: Align, width: number, height: number, pad: Sides): void {
