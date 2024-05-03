@@ -47,9 +47,6 @@ export class TextAnnotationView extends AnnotationView<TextAnnotation> {
         const sz = model.getSize(hintWidth, hintHeight);
         const tv = this._textView;
 
-        model.writingMode && this._textView.setStyle('writingMode', model.writingMode);
-        model.textOrientation && this._textView.setStyle('textOrientation', model.textOrientation);
-
         this._deflatePaddings(sz);
         this._richText.setFormat(model.text);
         this._richText.build(tv, hintWidth, hintHeight, null, model._domain);

@@ -8,7 +8,7 @@
 
 import { isArray, isNumber, isObject, isString, maxv, minv, pickNum, pickProp } from "../common/Common";
 import { IRichTextDomain } from "../common/RichText";
-import { Align, DEG_RAD, ORG_ANGLE, SVGStyleOrClass, TextOrientation, VerticalAlign, WritingMode, _undef, fixnum, isNull } from "../common/Types";
+import { Align, DEG_RAD, ORG_ANGLE, SVGStyleOrClass, VerticalAlign, _undef, fixnum, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem, ChartTextOverflow, FormattableText, IconedText, LabelIconPostion } from "./ChartItem";
@@ -186,19 +186,6 @@ export class AxisTitle extends AxisItem {
      * @config
      */
     backgroundStyle: SVGStyleOrClass;
-    /**
-     * 타이틀을 가로 또는 세로로 배치할지 여부와 블록이 진행되는 방향을 지정한다.
-     * 
-     * @config
-     */
-    writingMode: WritingMode;
-    /**
-     * 텍스트 문자 방향을 지정한다.
-     * 세로 모드의 텍스트에만 적용된다.
-     * 
-     * @config
-     */
-    textOrientation: TextOrientation;
 
     //-------------------------------------------------------------------------
     // methods
