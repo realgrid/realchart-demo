@@ -586,6 +586,6 @@ export enum WritingMode {
 }
 
 export enum TextOrientation {
-    MIXED = 'MIXED',
-    UPRIGHT = 'UPRIGHT',
+    MIXED = 'mixed',
+    UPRIGHT = 'upright',
 }
