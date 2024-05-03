@@ -10,7 +10,7 @@ import { isString } from "../../common/Common";
 import { DatetimeFormatter } from "../../common/DatetimeFormatter";
 import { NumberFormatter } from "../../common/NumberFormatter";
 import { IRichTextDomain } from "../../common/RichText";
-import { SVGStyleOrClass, TextOrientation, WritingMode, _undef, isNull } from "../../common/Types";
+import { SVGStyleOrClass, _undef, isNull } from "../../common/Types";
 import { Annotation } from "../Annotation";
 
 /**
@@ -44,19 +44,6 @@ export class TextAnnotation extends Annotation {
      * @config 
      */
     text = 'Text';
-    /**
-     * 타이틀을 가로 또는 세로로 배치할지 여부와 블록이 진행되는 방향을 지정한다.
-     * 
-     * @config
-     */
-    writingMode: WritingMode;
-    /**
-     * 텍스트 문자 방향을 지정한다.
-     * 세로 모드의 텍스트에만 적용된다.
-     * 
-     * @config
-     */
-    textOrientation: TextOrientation;
     /**
      * {@link text}에 동적으로 전달되는 값이 숫자일 때 사용되는 표시 형식.
      * 
