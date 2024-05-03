@@ -5,13 +5,12 @@
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
-
 import { SVGNS, maxv, pickNum } from "./Common";
 import { DatetimeFormatter } from "./DatetimeFormatter";
 import { NumberFormatter } from "./NumberFormatter";
 import { Sides } from "./Sides";
 import { TextFormatter } from "./TextFormatter";
-import { Align, ZWSP, _undef } from "./Types";
+import { Align, WritingMode, ZWSP, _undef } from "./Types";
 import { TextAnchor, TextElement } from "./impl/TextElement";
 
 const HEIGHT = '$_TH';
@@ -437,7 +436,6 @@ export class SvgRichText {
                     view.appendDom(link);
                 }
             }
-
             firsts.push(first);
             widths.push(w);
             line[HEIGHT] = h * hLine;
@@ -446,13 +444,17 @@ export class SvgRichText {
         }
         
         if (cnt > 0) {
-            // if (firsts[0]) {
-            //     firsts[0].setAttribute('x', '0');
-            // }
+            const writingMode = view.parent.getStyle('writing-mode');
+            const isVertical = writingMode === WritingMode.VERTICAL_LR || writingMode === WritingMode.VERTICAL_RL;
+            if (firsts[0]) {
+                const width = firsts.reduce((acc, cur) => {return acc += cur[WIDTH]}, 0) - firsts[0][WIDTH];
+                firsts[0].setAttribute('x', isVertical ? `${width / -2}` : '0');
+            }
             prev = lines[0][HEIGHT];
             for (let i = 1; i < firsts.length; i++) {
-                if (firsts[i]) { // 중복된 <br>은 무시한다.
-                    const span = view.insertElement(doc, 'tspan', firsts[i]);
+                const tspan = firsts[i];
+                if (tspan) { // 중복된 <br>은 무시한다.
+                    // const span = view.insertElement(doc, 'tspan', firsts[i]);
                     let h = Math.floor(prev - view.getAscent(prev)) + view.getAscent(lines[i][HEIGHT]);
                     // let h = lines[i][HEIGHT];
 
@@ -463,36 +465,73 @@ export class SvgRichText {
                     // } else {
                     //     h = Math.ceil(h);
                     // }
-                    span.setAttribute('x', '0');
-                    span.setAttribute('dy', String(h));
-                    span.innerHTML = ZWSP;
+                    // span.setAttribute('x', '0');
+                    // span.setAttribute('dy', String(h));
+                    // span.innerHTML = ZWSP;
+                    
+                    switch (writingMode) {
+                        case WritingMode.VERTICAL_LR:
+                            tspan.setAttribute('dx', String(firsts[i - 1][WIDTH] * hLine));
+                            tspan.setAttribute('y', '0');
+                            break;
+                        case WritingMode.VERTICAL_RL:
+                            tspan.setAttribute('dx', String(firsts[i - 1][WIDTH] * hLine * -1));
+                            tspan.setAttribute('y', '0');
+                            break;
+                        default:
+                            tspan.setAttribute('x', '0');
+                            tspan.setAttribute('dy', String(h));
+                            break;
+                    }
                     prev = lines[i][HEIGHT];
                 }
             }
 
             view.layoutText(lines[0][HEIGHT]); // 첫 행의 높이를 전달한다.
             // view.layoutText(hMax); // 가장 큰 높이의 행 높이를 전달한다. 맞나?
-        } 
+        }
     }
 
     layout(tv: TextElement, align: Align, width: number, height: number, pad: Sides): void {
         const r = tv.getBBox();
-        let y = pad.top + (height - pad.top - pad.bottom - r.height) / 2;
-        let x: number;
+        let x = 0;
+        let y = 0;
 
-        switch (align) {
-            case Align.CENTER:
-                tv.anchor = TextAnchor.MIDDLE;
-                x = pad.left + (width - pad.left - pad.right) / 2;
-                break;
-            case Align.RIGHT:
-                tv.anchor = TextAnchor.END;
-                x = r.width - pad.right;
-                break;
-            default:
-                tv.anchor = TextAnchor.START;
-                x = pad.left;
-                break;
+        const writingMode = tv.getStyle('writing-mode');
+        const isVertical = writingMode === WritingMode.VERTICAL_LR || writingMode === WritingMode.VERTICAL_RL;
+
+        if (isVertical) {
+            x = pad.left;
+            switch (align) {
+                case Align.CENTER:
+                    tv.anchor = TextAnchor.MIDDLE;
+                    y = pad.top + (height - pad.top - pad.bottom) / 2;
+                    break;
+                case Align.RIGHT:
+                    tv.anchor = TextAnchor.END;
+                    y = r.height - pad.bottom;
+                    break;
+                default:
+                    tv.anchor = TextAnchor.START;
+                    y = pad.top;
+                    break;
+            }
+        } else {
+            y = pad.top + (height - pad.top - pad.bottom - r.height) / 2;
+            switch (align) {
+                case Align.CENTER:
+                    tv.anchor = TextAnchor.MIDDLE;
+                    x = pad.left + (width - pad.left - pad.right) / 2;
+                    break;
+                case Align.RIGHT:
+                    tv.anchor = TextAnchor.END;
+                    x = r.width - pad.right;
+                    break;
+                default:
+                    tv.anchor = TextAnchor.START;
+                    x = pad.left;
+                    break;
+            }
         }
         tv.trans(x, y);
     }
