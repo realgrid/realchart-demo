@@ -580,12 +580,17 @@ export interface RealChartExporter {
 }
 
 export enum WritingMode {
+    /** @config */
     HORIZONTAL_TB = 'horizontal-tb',
+    /** @config */
     VERTICAL_LR = 'vertical-lr',
+    /** @config */
     VERTICAL_RL = 'vertical-rl'
 }
 
 export enum TextOrientation {
+    /** @config */
     MIXED = 'mixed',
+    /** @config */
     UPRIGHT = 'upright',
 }
