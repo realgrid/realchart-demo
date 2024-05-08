@@ -1301,6 +1301,19 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
             const p = body.controlToElement(x, y);
             const inBody = body.pointerMoved(p, target);
 
+            if (!this._hoverItem) {
+                if (this._legendSectionView._legendView.contains(elt)) {
+                    const item = this._hoverItem = this._legendSectionView._legendView.legendByDom(elt);
+                    if (item && item.legend.seriesHovering && item.source as Series) {
+                        body.hoverSeries(item.source as Series);
+                    } 
+                }
+            }
+
+            if (prevItem instanceof LegendItem && !(this._hoverItem instanceof LegendItem)) {
+                body.hoverSeries(null);
+            }
+            
             if (!inBody) {
                 body.removeFocus();
                 return;
@@ -1342,18 +1355,6 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
                 })
             }
 
-            if (!this._hoverItem) {
-                if (this._legendSectionView._legendView.contains(elt)) {
-                    const item = this._hoverItem = this._legendSectionView._legendView.legendByDom(elt);
-                    if (item && item.legend.seriesHovering && item.source as Series) {
-                        body.hoverSeries(item.source as Series);
-                    } 
-                }
-            }
-
-            if (prevItem instanceof LegendItem && !(this._hoverItem instanceof LegendItem)) {
-                body.hoverSeries(null);
-            }
         } else {
             if (this._model.isSplitted()) {
                 this._paneContainer.bodies.forEach(bv => {
