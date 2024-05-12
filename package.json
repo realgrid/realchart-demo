@@ -43,7 +43,8 @@
     "dev": "concurrently \"npm run build-w\" \"npm run dbw\" \"node app\"",
     "fiddle": "node exportFiddle",
     "docs:demo": "node docsDemo",
-    "update:s2": "node snapshotBackup && yarn test:s2",
+    "update:s2": "node backup snapshot && yarn dbundle && npx playwright test --update-snapshots --project=chromium ./test/e2e/snapshot-test/snapshotTest.spec.js",
+    "update:boundary": "node backup boundary && yarn dbundle && npx playwright test --update-snapshots --project=chromium ./test/e2e/boundary/**/*.spec.ts",
     "checkObfuscation": "node checkObfuscation"
   },
   "devDependencies": {
