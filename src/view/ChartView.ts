@@ -1302,6 +1302,19 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
             const p = body.controlToElement(x, y);
             const inBody = body.pointerMoved(p, target);
 
+            if (!this._hoverItem) {
+                if (this._legendSectionView._legendView.contains(elt)) {
+                    const item = this._hoverItem = this._legendSectionView._legendView.legendByDom(elt);
+                    if (item && item.legend.seriesHovering && item.source as Series) {
+                        body.hoverSeries(item.source as Series);
+                    } 
+                }
+            }
+
+            if (prevItem instanceof LegendItem && !(this._hoverItem instanceof LegendItem)) {
+                body.hoverSeries(null);
+            }
+            
             if (!inBody) {
                 body.removeFocus();
                 return;
@@ -1343,18 +1356,6 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
                 })
             }
 
-            if (!this._hoverItem) {
-                if (this._legendSectionView._legendView.contains(elt)) {
-                    const item = this._hoverItem = this._legendSectionView._legendView.legendByDom(elt);
-                    if (item && item.legend.seriesHovering && item.source as Series) {
-                        body.hoverSeries(item.source as Series);
-                    } 
-                }
-            }
-
-            if (prevItem instanceof LegendItem && !(this._hoverItem instanceof LegendItem)) {
-                body.hoverSeries(null);
-            }
         } else {
             // 새로고침으로 화면 갱신 중에 이벤트가 발생하면 model이 없을 수 있다.
             if (this._model?.isSplitted()) {
