@@ -207,7 +207,10 @@
     "공급업체 Top 20": "case2",
     "소싱처리 준수율": "case3",
     "계획 대비 실적 달성율": "case4",
-    "생성형 AI 자동화 잠재력": "case5"
+    "생성형 AI 자동화 잠재력": "case5",
+    "재생에너지 IRA 효과": "case6",
+    "Global gender parity": "case7",
+    "Representation in corporate role, by gender and race": "case8"
   }
 }
 

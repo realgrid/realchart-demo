@@ -22,5 +22,29 @@
 		"theme": {
 			"toc": false
 		}
+	},
+	"case5": {
+		"title": "생성형 AI 자동화 잠재력",
+		"theme": {
+			"toc": false
+		}
+	},
+	"case6": {
+		"title": "재생에너지 IRA 효과",
+		"theme": {
+			"toc": false
+		}
+	},
+	"case7": {
+		"title": "Global gender parity",
+		"theme": {
+			"toc": false
+		}
+	},
+	"case8": {
+		"title": "Representation in corporate role, by gender and race",
+		"theme": {
+			"toc": false
+		}
 	}
 }
