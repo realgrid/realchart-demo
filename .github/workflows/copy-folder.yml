@@ -18,12 +18,13 @@ jobs:
       env:
         TOKEN: ${{ secrets.REAL_CHART_FIDDLE_TOKEN }}
       run: |
-        git config --global user.email "dltlghkd930217@gmail.com"
-        git config --global user.name "dltlghkd930217"
+        git config user.name "benny-yoo"
+        git config user.email "benny@wooritech.com"
         
-        git clone https://x-access-token:$TOKEN@github.com/realgrid/realchart-demo.git
+        git clone https://github.com/realgrid/realchart-demo.git
         cp -r fiddle/* realchart-demo/
         cd realchart-demo
+        git remote set-url origin https://github.com/realgrid/realchart-demo.git  
         echo ::set-output name=changes::$(git status --porcelain)
 
     - name: Push to realchart-demo
