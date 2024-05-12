@@ -153,7 +153,7 @@
     --rct-axis-line-stroke: #aaa;
     --rct-axis-baseline-stroke: #333;
     --rct-axis-tick-stroke: #555;
-    --rct-axis-label-fill: #555;
+    --rct-axis-label-fill: #333;
     --rct-axis-grid-line-stroke: #ddd;
     --rct-axis-grid-line-stroke-start: none;
     --rct-axis-grid-line-stroke-end: none;
@@ -384,6 +384,7 @@
     fill: var(--rct-legend-fill);
     stroke: none;
     padding: 3px 6px;
+    font-size: 14px;
 }
 .rct-legend-background {
     fill: var(--rct-legend-background);
@@ -392,7 +393,7 @@
 }
 .rct-legend-item-label[data-hidden] {
     fill: var(--rct-legend-item-disabled);
-    text-decoration: var(--rct-legend-item-disabled-decoration)
+    text-decoration: var(--rct-legend-item-disabled-decoration);
 }
 /* .rct-legend-item-marker {
     stroke: none;
@@ -416,7 +417,7 @@
 
 /** axis */
 .rct-axis-title {
-    font-size: 16px;
+    font-size: 15px;
     fill: var(--rct-axis-title-fill);
 }
 .rct-axis-title-background {

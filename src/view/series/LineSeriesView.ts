@@ -409,8 +409,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                 mv.setStyle('opacity', cv ? '1' : '0');
 
                 if (lv) {
-                    const rd = mv._radius;
                     const r = lv.getBBox();
+                    const rd = mv._radius;
 
                     lv.visible = true;
                     lv.setContrast(null);

@@ -29,7 +29,7 @@ export function fixnum(value: number): number {
     return parseFloat(value.toPrecision(12));
 }
 export function fixpos(value: number): number {
-    return Math.round(value * 1000000) / 1000000;
+    return Math.floor(value * 1000000) / 1000000;
 }
 export function toStr(value: any): string {
     return value == null ? null : String(value);

@@ -1237,6 +1237,7 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
 
     getSeriesView(series: ISeries): SeriesView<Series> {
         if (this._model.isSplitted()) {
+            return this._paneContainer.getSeries(series);
         } else {
             return this._currBody.getSeries(series);
         }
@@ -1356,7 +1357,8 @@ export class ChartView extends LayerElement implements IAnnotationAnchorOwner {
             }
 
         } else {
-            if (this._model.isSplitted()) {
+            // 새로고침으로 화면 갱신 중에 이벤트가 발생하면 model이 없을 수 있다.
+            if (this._model?.isSplitted()) {
                 this._paneContainer.bodies.forEach(bv => {
                     bv.removeFocus();
                 });

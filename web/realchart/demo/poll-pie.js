@@ -6,7 +6,7 @@ const pieData = Object.entries(catiMainData)
         return { label: key, value, color: colors[i] };
     });
 const tool = {
-    height: 550,
+    height: 550
 };
 const config = {
     templates: {
@@ -25,17 +25,17 @@ const config = {
                 numberFormat: '#.00',
                 suffix: '%',
                 position: 'inside',
-                text: '${x}<br>${y}%',
-            },
+                text: '${x}<br>${y}%'
+            }
         },
         xAxis: {
             line: false,
-            label: false,
+            label: false
         },
         xAxis: {
             line: false,
-            label: false,
-        },
+            label: false
+        }
     },
     annotations: [
         {
@@ -46,8 +46,8 @@ const config = {
             align: 'center',
             style: {
                 fill: colors[0],
-                textAlign: 'center',
-            },
+                textAlign: 'center'
+            }
         },
         {
             text: `<t>부정적으로 평가한다</t><br>
@@ -57,18 +57,18 @@ const config = {
             align: 'center',
             style: {
                 fill: colors[3],
-                textAlign: 'center',
-            },
+                textAlign: 'center'
+            }
         },
         {
-            imageUrl: 'https://realchart.co.kr/demo/assets/images/seoul.png',
+            imageUrl: '../assets/images/seoul.png',
             front: true,
             width: 260,
             align: 'center',
             verticalAlign: 'middle',
             offsetX: -10,
-            offsetY: -25,
-        },
+            offsetY: -25
+        }
     ],
     // inverted: true,
     options: {
@@ -85,8 +85,8 @@ const config = {
         style: {
             // fill: '#fff',
             fontSize: '16px',
-            padding: '2px 5px',
-        },
+            padding: '2px 5px'
+        }
     },
     subtitle: {
         align: 'left',
@@ -95,15 +95,15 @@ const config = {
             fill: 'black',
             fontSize: '32px',
             fontWeight: 'bold',
-            marginBottom: '10px',
-        },
+            marginBottom: '10px'
+        }
     },
     legend: false,
     xAxis: {
-        template: 'xAxis',
+        template: 'xAxis'
     },
     yAxis: {
-        template: 'yAxis',
+        template: 'yAxis'
     },
     series: [
         {
@@ -114,15 +114,15 @@ const config = {
             data: pieData,
             pointLabel: {
                 style: {
-                    fill: '#fff',
+                    fill: '#fff'
                 },
                 textCallback: ({ x, y }) => {
                     const fontSize = Math.max(15, y);
                     return `${x}<br><b style="font-size:${fontSize}px">${y}</b>`;
-                },
-            },
-        },
-    ],
+                }
+            }
+        }
+    ]
 };
 
 let animate = false;
