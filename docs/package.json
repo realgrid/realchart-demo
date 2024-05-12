@@ -30,7 +30,7 @@
     "nextra-theme-docs": "^2.12.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "realchart": "^1.0.3",
+    "realchart": "^1.0.7",
     "realchart-convert": "^0.1.7",
     "tmp": "^0.2.1"
   },
