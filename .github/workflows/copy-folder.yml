@@ -16,8 +16,6 @@ jobs:
 
     - name: Copy to realchart-demo
       id: check_changes
-      env:
-        TOKEN: ${{ secrets.REAL_CHART_FIDDLE_TOKEN }}
       run: |
         git config user.name "benny-yoo"
         git config user.email "benny@wooritech.com"
@@ -25,12 +23,14 @@ jobs:
         git clone https://github.com/realgrid/realchart-demo.git
         cp -r fiddle/* realchart-demo/
         cd realchart-demo
-        git remote set-url origin https://github.com/realgrid/realchart-demo.git  
         echo ::set-output name=changes::$(git status --porcelain)
 
     - name: Push to realchart-demo
+      uses: GuillaumeFalourd/git-commit-push@v1.3
       if: ${{ steps.check_changes.outputs.changes != '' }}
-      run: |
-        git add .
-        git commit -m "Copied folder for fiddle demo"
-        git push
+      with:
+        target_branch: main
+        remote_repository: https://github.com/realgrid/realchart-demo.git
+        access_token: ${{secrets.REAL_CHART_FIDDLE_TOKEN}}
+        commit_message: "Copied folder for fiddle demo"
+        force: true
