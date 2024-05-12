@@ -1,6 +1,7 @@
 name: Copy Folder to realchart-demo
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'fiddle/**'
