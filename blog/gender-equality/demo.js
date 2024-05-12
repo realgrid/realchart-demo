@@ -42,7 +42,7 @@ const config = {
       width: 100,
       anchor: 'gauge1',
       offsetY: 220,
-      imageUrl: 'https://realchart.co.kr/assets/images/gender_equality.png',
+      imageUrl: 'https://realchart.co.kr/demo/assets/images/gender-equality.png',
       style: {
         filter: 'opacity(0.5)'
       }
