@@ -17,16 +17,13 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18.x'
-      - name: Update docs
-        run: |
-          npm install
-          npm run dldoc
       - name: setup git config
         run: |
           git config user.name "benny-yoo"
           git config user.email "benny@wooritech.com"
-      - name: commit all changes
+      - name: Merge into main
         run: |
-          git add .
-          git commit -m "v1.0.2 release"
+          git fetch origin
+          git checkout main
+          git merge origin/release/v1.0.8 --no-edit
           git push
