@@ -1,3 +1,7 @@
+const tool = {
+  width: 1000,
+  height: 600
+};
 const data = {
   pre: [{
     year: 2021,
