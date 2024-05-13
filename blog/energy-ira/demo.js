@@ -189,14 +189,17 @@ const config = {
       xAxis: i,
       yAxis: i,
       children: [{
+        name: 'Wind',
         template: 'area',
         yField: 'wind',
         data: data[k]
       }, {
+        name: 'Storage',
         template: 'area',
         yField: 'storage',
         data: data[k]
       }, {
+        name: 'Solar',
         template: 'area',
         yField: 'solar',
         data: data[k]
