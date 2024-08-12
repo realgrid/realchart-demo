@@ -34,7 +34,6 @@ const config = {
     alignBase: 'body'
     // paddingLeft: 20,
   },
-
   body: {
     annotations: [{
       type: 'image',

@@ -5,7 +5,7 @@
 const config = {
   options: {},
   title: 'Bubble Series',
-  assets: [{
+  asset: [{
     type: 'radialGradient',
     id: 'gradient-1',
     color: ['#fff', '#0088ff'],

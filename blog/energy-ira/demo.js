@@ -86,7 +86,6 @@ const config = {
         // step: 2,
       }
     },
-
     annTitle: {
       style: {
         fontSize: '2rem',
@@ -165,7 +164,6 @@ const config = {
     // { title: 'After Inflation Reduction Act' },
     ]
   },
-
   legend: false,
   xAxis: [{
     type: 'linear',

@@ -19,22 +19,22 @@ const config = {
         }]
       },
       label: {
-        text: '<t style="fill:blue">${value}</t><t style="font-size:12px;">&nbsp;</t><t style="font-size:20px;">%</t><br><t style="font-size:20px;font-weight:normal">Gauge Test</t>',
+        text: '<t style="fill:blue">${value}</t><t style="font-size:12px;"> </t><t style="font-size:20px;">%</t><br><t style="font-size:20px;font-weight:normal">Gauge Test</t>',
         style: {
           fontWeight: 'bold'
         }
       }
     }
   },
-  title: "Multiple Gauges",
+  title: 'Multiple Gauges',
   gauge: [{
-    template: "gauge",
+    template: 'gauge',
     name: 'gauge1',
     left: 0,
     top: 0,
     value: Math.random() * 100
   }, {
-    template: "gauge",
+    template: 'gauge',
     name: 'gauge2',
     left: '33%',
     top: 0,
@@ -43,13 +43,13 @@ const config = {
     },
     value: Math.random() * 100
   }, {
-    template: "gauge",
+    template: 'gauge',
     name: 'gauge3',
     left: '66%',
     top: 0,
     value: Math.random() * 100
   }, {
-    template: "gauge",
+    template: 'gauge',
     name: 'gauge4',
     left: 0,
     top: '50%',
@@ -67,7 +67,7 @@ const config = {
       borderRadius: '10px'
     }
   }, {
-    template: "gauge",
+    template: 'gauge',
     name: 'gauge5',
     left: '33%',
     top: '50%',
@@ -85,7 +85,7 @@ const config = {
       }
     }
   }, {
-    template: "gauge",
+    template: 'gauge',
     name: 'gauge6',
     left: '66%',
     top: '50%',
@@ -96,7 +96,7 @@ const config = {
       strokeWidth: '5px'
     },
     label: {
-      text: '<t style="fill:yellow">${value}</t><t style="font-size:12px;">&nbsp;</t><t style="font-size:20px;">%</t><br><t style="font-size:20px;font-weight:normal">Gauge Test</t>',
+      text: '<t style="fill:yellow">${value}</t><t style="font-size:12px;"> </t><t style="font-size:20px;">%</t><br><t style="font-size:20px;font-weight:normal">Gauge Test</t>',
       style: {
         fontWeight: 'bold',
         fill: 'white'

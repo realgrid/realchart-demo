@@ -1,5 +1,5 @@
 const config = {
-  assets: [{
+  asset: [{
     type: 'colors',
     id: 'color1',
     colors: ['#88f', '#aaf', '#bbf', '#ddf', '#eef'],

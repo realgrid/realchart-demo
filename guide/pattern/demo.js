@@ -5,7 +5,7 @@
 const config = {
   options: {},
   title: 'Pattern Fill',
-  assets: [{
+  asset: [{
     type: 'pattern',
     id: 'pattern-0',
     pattern: 0,

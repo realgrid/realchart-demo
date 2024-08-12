@@ -8,7 +8,7 @@ const config = {
       hintDistance: 100
     }
   },
-  assets: [{
+  asset: [{
     type: 'pattern',
     id: 'pattern-1',
     pattern: 0,

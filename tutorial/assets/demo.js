@@ -1,5 +1,5 @@
 const config = {
-  assets: [{
+  asset: [{
     id: 'brown-mint',
     type: 'colors',
     colors: ['#009D92', '#47AFA8', '#835337', '#593219', '#937B6F']

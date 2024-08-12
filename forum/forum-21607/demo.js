@@ -35,6 +35,6 @@ let chart;
 function init() {
   chart = RealChart.createChart(document, "realchart", config);
   setTimeout(() => {
-    chart.series.setValueAt(0, 20);
+    chart.series.updatePoint(0, 20);
   }, 2000);
 }

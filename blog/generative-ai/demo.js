@@ -46,7 +46,6 @@ const config = {
       offset: 10
       // distance: 10
     },
-
     hoverEffect: 'none',
     data
   }, {

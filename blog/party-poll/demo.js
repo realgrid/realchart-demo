@@ -4,7 +4,7 @@
 
 const config = {
   title: '정당별 비례대표 지지율',
-  assets: [{
+  asset: [{
     type: 'colors',
     id: '비례대표정당색',
     colors: ['#0050C5', '#E61E29', '#017B32', '#FE7722', '#132450', '#0173CC', '#BFBDBE']

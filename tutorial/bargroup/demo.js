@@ -123,7 +123,6 @@ const config = {
   }
   // { name: '긍정', type: 'line', template: 'line' },
   ],
-
   legend: {
     reversed: true
   }

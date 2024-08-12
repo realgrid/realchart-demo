@@ -1,7 +1,7 @@
 const config = {
   options: {},
   title: 'Assets - gradient',
-  assets: [{
+  asset: [{
     type: 'linearGradient',
     id: 'gradient-0',
     color: ['#0088ff', 'red'],

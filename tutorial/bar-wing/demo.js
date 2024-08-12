@@ -26,7 +26,6 @@ const config = {
       numberFormat: 'a' // absolute
     }
   },
-
   series: {
     type: 'bargroup',
     layout: 'overlap',

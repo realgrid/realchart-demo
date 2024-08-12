@@ -9,7 +9,6 @@ const config = {
     title: 'X Axis'
     // startFit: 'tick'
   },
-
   yAxis: {
     title: 'Y Axis'
   },

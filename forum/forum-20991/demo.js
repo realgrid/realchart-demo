@@ -21,7 +21,6 @@ const config = {
         strokeLinecap: "round" //// 이 부분입니다
       }
     },
-
     scale: {
       visible: true
     },
