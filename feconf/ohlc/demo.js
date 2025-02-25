@@ -25,6 +25,16 @@ const config = {
     highField: 'highprc',
     lowField: 'lowprc',
     closeField: 'closeprc',
+    pointStyleCallback: function ({
+      open,
+      close
+    }) {
+      if (close > open) return {
+        stroke: '#FF5C35'
+      };else return {
+        stroke: '#0098FF'
+      };
+    },
     data: [{
       date: '2021-04-01',
       openprc: 82500,
